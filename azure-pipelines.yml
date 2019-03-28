@@ -1,0 +1,16 @@
+trigger:
+- master
+
+pool:
+  vmImage: 'Ubuntu-16.04'
+
+steps:
+- script: yarn
+  displayName: 'yarn install'
+
+- script: yarn build
+  displayName: 'yarn build'
+
+- script: yarn test
+  displayName: 'yarn test'
+  
