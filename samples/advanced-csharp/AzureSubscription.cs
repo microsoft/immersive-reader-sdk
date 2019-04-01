@@ -1,4 +1,7 @@
-﻿namespace AdvancedSampleWebApp
+﻿// Copyright (c) Microsoft Corporation. All rights reserved.
+// Licensed under the MIT License.
+
+namespace AdvancedSampleWebApp
 {
 	public static class AzureSubscription
 	{

@@ -1,3 +1,6 @@
+// Copyright (c) Microsoft Corporation. All rights reserved.
+// Licensed under the MIT License.
+
 import { launchAsync } from '../src/launchAsync';
 import { Content } from '../src/content';
 import { Options } from '../src/options';
@@ -14,7 +17,7 @@ describe('launchAsync tests', () => {
             expect(reason).not.toBeFalsy();
         }
     });
-    
+
     it('fails due to missing content', async () => {
         expect.assertions(1);
         try {
@@ -30,7 +33,7 @@ describe('launchAsync tests', () => {
             .then(iframe => {
                 expect(iframe).not.toBeNull();
             });
-        
+
         // launchAsync creates an iframe which points to the Immersive Reader,
         // which then sends a postMessage to the parent window with the message
         // 'ImmersiveReader-ReadyForContent'. This mocks that behavior.
@@ -72,7 +75,7 @@ describe('launchAsync tests', () => {
 
     it('fails to launch due to timeout', async () => {
         jest.useFakeTimers();
-        
+
         expect.assertions(1);
         const launchPromise = launchAsync(SampleToken, SampleContent);
 

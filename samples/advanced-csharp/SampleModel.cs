@@ -1,4 +1,7 @@
-﻿using Microsoft.AspNetCore.Mvc.RazorPages;
+﻿// Copyright (c) Microsoft Corporation. All rights reserved.
+// Licensed under the MIT License.
+
+using Microsoft.AspNetCore.Mvc.RazorPages;
 using System;
 using System.Net.Http;
 using System.Threading.Tasks;
@@ -13,7 +16,7 @@ namespace AdvancedSampleWebApp
 			{
 				throw new ArgumentNullException("Region or subscriptionKey is null! Did you update AzureSubscription.cs?");
 			}
-            
+
 			using (var client = new HttpClient())
 			{
 				client.DefaultRequestHeaders.Add("Ocp-Apim-Subscription-Key", subscriptionKey);
