@@ -1,0 +1,75 @@
+<!-- Copyright (c) Microsoft Corporation. All rights reserved.
+     Licensed under the MIT License. -->
+
+<!doctype html>
+<html>
+<head>
+    <meta charset='utf-8'>
+    <title>Immersive Reader Example: Document</title>
+    <meta name='viewport' content='width=device-width, initial-scale=1'>
+
+    <script type='text/javascript' src='https://code.jquery.com/jquery-3.3.1.min.js'></script>
+    <script type='text/javascript' src='https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.12.1/jquery-ui.min.js'></script>
+    <script type='text/javascript' src='http://contentstorage.onenote.office.net/onenoteltir/immersivereadersdk/immersive-reader-0.0.1.js'></script>
+    <script type='text/javascript' src='../js/helpers.js'></script>
+
+    <link href='../css/styles.css' rel='stylesheet'>
+    <link href='../css/buttons.css' rel='stylesheet'>
+
+    <style type='text/css'>
+        #ContentArea {
+            margin: 0 auto;
+            position: relative;
+            width: 100%;
+        }
+
+        #IRContent {
+            margin: 0 100px;
+        }
+    </style>
+</head>
+<body>
+    <nav>
+        Examples:
+        <a href='/sections'>Sections</a>
+        <a href='/document' class='active'>Document</a>
+        <a href='/multilang'>Multilingual Document</a>
+        <a href='/uilangs'>UI Language</a>
+        <a href='/math'>Math</a>
+    </nav>
+
+    <header class='ir-button-area'>
+        <button class='ir-button ir-button-wide' role='button' title='Immersive Reader' aria-label='Immersive Reader' onclick='handleLaunchImmersiveReader()'>
+            <img class='ir-button-icon' src='../images/icon.svg' />
+            <span class='ir-button-text' aria-hidden='true'>Immersive Reader</span>
+        </button>
+    </header>
+    <main id='ContentArea'>
+        <article id='IRContent'>
+            <h1 id='ir-title'>Geography</h1>
+            <span id='ir-text'>
+                <p>The study of Earth’s landforms is called physical geography. Landforms can be mountains and valleys. They can also be glaciers, lakes or rivers. Landforms are sometimes called physical features. It is important for students to know about the physical geography of Earth. The seasons, the atmosphere and all the natural processes of Earth affect where people are able to live. Geography is one of a combination of factors that people use to decide where they want to live.</p>
+                <p>The physical features of a region are often rich in resources. Within a nation, mountain ranges become natural borders for settlement areas. In the U.S., major mountain ranges are the Sierra Nevada, the Rocky Mountains, and the Appalachians.</p>
+                <p>Fresh water sources also influence where people settle. People need water to drink. They also need it for washing. Throughout history, people have settled near fresh water. Living near a water source helps ensure that people have the water they need. There was an added bonus, too. Water could be used as a travel route for people and goods. Many Americans live near popular water sources, such as the Mississippi River, the Colorado River and the Great Lakes.</p>
+                <p>Mountains and deserts have been settled by fewer people than the plains areas. However, they have valuable resources of their own.</p>
+            </span>
+        </article>
+    </main>
+
+    <script type='text/javascript'>
+        async function handleLaunchImmersiveReader() {
+            const data = {
+                title: $('#ir-title').text().trim(),
+                chunks: [{
+                    content: $('#ir-text').text().trim(),
+                    lang: 'en'
+                }]
+            };
+
+            const token = await getImmersiveReaderTokenAsync();
+
+            ImmersiveReader.launchAsync(token, data);
+        }
+    </script>
+</body>
+</html>

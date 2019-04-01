@@ -1,0 +1,197 @@
+﻿@page
+@model AdvancedSampleWebApp.Pages.MathModel
+
+<!-- Copyright (c) Microsoft Corporation. All rights reserved.
+     Licensed under the MIT License. -->
+
+<!doctype html>
+<html>
+<head>
+    <meta charset='utf-8'>
+    <title>Immersive Reader Example: Math</title>
+    <meta name='viewport' content='width=device-width, initial-scale=1'>
+
+    <script type='text/javascript' src='https://code.jquery.com/jquery-3.3.1.min.js'></script>
+    <script type='text/javascript' src='https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.12.1/jquery-ui.min.js'></script>
+    <script type='text/javascript' async src='https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-MML-AM_CHTML'></script>
+    <script type='text/javascript' src='http://contentstorage.onenote.office.net/onenoteltir/immersivereadersdk/immersive-reader-0.0.1.js'></script>
+
+    <link href='~/css/styles.css' rel='stylesheet'>
+    <link href='~/css/buttons.css' rel='stylesheet'>
+
+    <script type='text/javascript'>
+        var Token = '@ViewData["Token"]';
+    </script>
+
+    <style type='text/css'>
+        #ContentArea {
+            display: block;
+            margin: 0 20%;
+            padding-top: 50px;
+            width: 60%;
+            height: 100%;
+        }
+
+        .section {
+            border-radius: 4px;
+            box-sizing: border-box;
+            display: block;
+            margin-bottom: 20px;
+            padding: 20px 20px 10px 20px;
+            position: relative;
+            width: 100%;
+            height: 70%;
+        }
+
+        .ir-math-text {
+            height: 50%;
+            width: 50%;
+            resize: none;
+            border-color: lightgrey;
+        }
+
+        .ir-button {
+            float: right;
+            margin-right: 0px;
+            margin-bottom: 1000px;
+        }
+
+        #DisplayMath {
+            position: absolute;
+            top: 30%;
+            right: 30%;
+            border: 3px solid black;
+            padding: 5px;
+        }
+
+        #DisplayMathContent {
+            margin-top: 30px;
+            padding: 10px;
+        }
+    </style>
+</head>
+<body>
+    <nav>
+        Examples:
+        <a href='/index'>Sections</a>
+        <a href='/document'>Document</a>
+        <a href='/multilang'>Multilingual Document</a>
+        <a href='/uilangs'>UI Language</a>
+        <a href='/math' class='active'>Math</a>
+    </nav>
+
+    <main id='ContentArea'>
+        <h1 id='IrTitle'>Math Document</h1>
+        <p>We can send the Immersive Reader math content via the MathML format</p>
+        <h3>Examples:</h3>
+        <section class='section'>
+            <textarea readonly id='IrMath0' class='ir-math-text'>
+<math xmlns='http://www.w3.org/1998/Math/MathML' display='block'>
+    <mfrac>
+        <mrow>
+            <msup>
+                <mi>x</mi>
+                <mn>2</mn>
+            </msup>
+            <mo>+</mo>
+            <mn>3</mn>
+            <mi>x</mi>
+            <mo>+</mo>
+            <mn>2</mn>
+        </mrow>
+        <mrow>
+            <mi>x</mi>
+            <mo>−</mo>
+            <mn>3</mn>
+        </mrow>
+    </mfrac>
+    <mo>=</mo>
+    <mn>4</mn>
+</math>
+            </textarea>
+            <textarea readonly id='IrMath1' class='ir-math-text'>
+<math xmlns='http://www.w3.org/1998/Math/MathML' display='block' mathvariant='italic'>
+    <mrow>
+        <msup>
+            <mi>a</mi>
+            <mn>2</mn>
+        </msup>
+            <mo>+</mo>
+            <msup>
+            <mi>b</mi>
+            <mn>2</mn>
+        </msup>
+            <mo>=</mo>
+            <msup>
+            <mi>c</mi>
+            <mn>2</mn>
+        </msup>
+    </mrow>
+</math>
+            </textarea>
+            <textarea readonly id='IrMath2' class='ir-math-text'>
+<math xmlns='http://www.w3.org/1998/Math/MathML' display='block'>
+    <munderover>
+        <mo>∫</mo>
+        <mn>0</mn>
+         <mn>1</mn>
+    </munderover>
+    <mrow>
+        <msup>
+            <mi>x</mi>
+            <mn>2</mn>
+        </msup>
+        <mo>ⅆ</mo>
+        <mi>x</mi>
+    </mrow>
+</math>
+            </textarea>
+        </section>
+        <div id='DisplayMath'>
+            <button class='ir-button ir-button-small' role='button' title='Immersive Reader' aria-label='Immersive Reader' onclick='handleLaunchImmersiveReader()'>
+                <img class='ir-button-icon' src='~/images/icon.svg' />
+            </button>
+            <div id='DisplayMathContent'></div>
+        </div>
+    </main>
+
+    <script type='text/javascript'>
+        function handleLaunchImmersiveReader() {
+            var title = $('#IrTitle').text().trim();
+
+            // Populate math chunks
+            var chunks = [];
+
+            for (var i = 0; i < 3; i++) {
+                var mathChunkContent = $('#IrMath' + i).val().trim();
+
+                chunks.push({
+                    content: mathChunkContent,
+                    lang: 'en',
+                    mimeType: 'application/mathml+xml'
+                });
+
+                // Add a chunk of text to make a new line between math chunks
+                chunks.push({
+                    content: '\n',
+                    lang: 'en'
+                });
+            }
+
+            const data = {
+                title: title,
+                chunks: chunks
+            };
+            
+            ImmersiveReader.launchAsync(Token, data);
+        }
+
+        // Display math preview with MathJax
+        var mathHtml = '';
+        for (var i = 0; i < 3; i++) {
+            mathHtml += $('#IrMath' + i).val();
+        }
+        $('#DisplayMathContent').append(mathHtml);
+    </script>
+</body>
+</html>

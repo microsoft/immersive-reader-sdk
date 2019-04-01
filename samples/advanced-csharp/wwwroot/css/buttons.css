@@ -1,0 +1,66 @@
+/* Copyright (c) Microsoft Corporation. All rights reserved.
+ Licensed under the MIT License. */
+
+/* the launch button */
+
+.ir-button-area {
+    margin: 0 auto;
+    position: relative;
+    width: 100%;
+}
+    .ir-button {
+        border-radius: 4px;
+        overflow: hidden;
+    }
+        .ir-button:hover,
+        .ir-button:hover:active,
+        .ir-button:focus,
+        .ir-button:focus:active {
+            border-color: #1eccbc;
+            color: #000000;
+            outline: none;
+        }
+        .ir-button::-moz-focus-inner {
+            border: 0; /* Hides default focus in Mozilla browsers */
+        }
+        .ir-button-icon {
+            float: left;
+            height: 21px;
+            margin-top: 11px;
+            width: 21px;
+        }
+        .ir-button-text {
+            display: inline-block;
+            line-height: 38px;
+            margin-left: 8px;
+        }
+
+    .ir-button-small {
+        background-color: #ffffff;
+        border: 1px solid transparent;
+        cursor: pointer;
+        padding: 4px 4px 2px 4px;
+        position: absolute;
+        right: 5px;
+        top: 5px;
+    }
+        .ir-button-small > .ir-button-icon {
+            display: block;
+            height: 20px;
+            width: 20px;
+            margin: 0;
+        }
+
+    .ir-button-wide {
+        background: #ffffff;
+        border: 1px solid #cccccc;
+        color: #444444;
+        cursor: pointer;
+        display: block;
+        font-family: Sans-Serif;
+        font-size: 14px;
+        margin-left: 100px;
+        padding: 0 8px;
+        width: 162px;
+        -webkit-tap-highlight-color: transparent; /* Hides default tap highlight in iOS */
+    }
