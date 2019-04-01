@@ -8,3 +8,10 @@ Follow these steps to get the sample up and running:
 2. Open AzureSubscription.cs and fill in your subscription and region information.
 
 3. Run Debug->Start Debugging
+
+License
+----------------------------------
+
+Copyright (c) Microsoft Corporation. All rights reserved.
+
+Licensed under the MIT License.
