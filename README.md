@@ -24,7 +24,6 @@ Include the library in your web application:
 <script type='text/javascript' src='https://contentstorage.onenote.office.net/onenoteltir/immersivereadersdk/immersive-reader-preview.js'></script>
 ```
 
-
 Invoke the Immersive Reader:
 
 ```typescript
@@ -36,6 +35,8 @@ const content = {
 };
 ImmersiveReader.launchAsync(YOUR_TOKEN, content);
 ```
+
+Take a look at the [samples](./samples) for examples of a full end-to-end integration.
 
 ## Building
 
