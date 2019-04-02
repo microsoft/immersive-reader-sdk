@@ -8,7 +8,7 @@ The Immersive Reader SDK is a JavaScript library that allows you to easily and q
 
 Usage of this SDK requires an Azure subscription to Immersive Reader. Follow [these steps](https://docs.microsoft.com/en-us/azure/cognitive-services/cognitive-services-apis-create-account) first to set up a subscription.
 
-Once you have a subscription key, exchange that for an authentication token by following [these steps](https://docs.microsoft.com/en-us/azure/cognitive-services/authentication#authenticate-with-an-authentication-token).
+Once you have a subscription key, use that to acquire an access token by following [these steps](https://docs.microsoft.com/en-us/azure/cognitive-services/authentication#authenticate-with-an-authentication-token).
 
 Include the library in your web application:
 
@@ -36,8 +36,6 @@ const content = {
 };
 ImmersiveReader.launchAsync(YOUR_TOKEN, content);
 ```
-
-For more details about how to use the SDK, check out our [documentation](https://docs.microsoft.com/en-us/azure/cognitive-services/immersive-reader/tutorial).
 
 ## Building
 
