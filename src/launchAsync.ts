@@ -3,7 +3,13 @@
 
 import { Content } from './content';
 import { Options } from './options';
-import { Message } from './message';
+import { Error } from './error';
+
+type Message = {
+    cogSvcsAccessToken: string;
+    request: Content;
+    launchToPostMessageSentDurationInMs: number;
+};
 
 /**
  * Launch the Immersive Reader within an iframe.
@@ -13,14 +19,24 @@ import { Message } from './message';
  * @return A promise that resolves when the Immersive Reader is launched. The promise resolves with the div that contains an iframe which contains the Immersive Reader.
  */
 export function launchAsync(token: string, content: Content, options?: Options): Promise<HTMLDivElement> {
-    return new Promise((resolve, reject): void => {
+    return new Promise((resolve, reject: (reason: Error) => void): void => {
         if (!token) {
-            reject('token is missing');
+            reject({ code: 'BadArgument', message: 'Token must not be null' });
             return;
         }
 
-        if (!content || !content.chunks) {
-            reject('content is missing');
+        if (!content) {
+            reject({ code: 'BadArgument', message: 'Content must not be null' });
+            return;
+        }
+
+        if (!content.chunks) {
+            reject({ code: 'BadArgument', message: 'Chunks must not be null' });
+            return;
+        }
+
+        if (!content.chunks.length) {
+            reject({ code: 'BadArgument', message: 'Chunks must not be empty' });
             return;
         }
 
@@ -87,7 +103,7 @@ export function launchAsync(token: string, content: Content, options?: Options):
 
         // Reject the promise if the Immersive Reader page fails to load.
         timeoutId = window.setTimeout((): void => {
-            reject('timeout');
+            reject({ code: 'Timeout', message: `Page failed to load after timeout (${options.timeout} ms)` });
         }, options.timeout);
 
         // Create and style iframe
