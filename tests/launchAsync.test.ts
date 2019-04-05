@@ -14,7 +14,7 @@ describe('launchAsync tests', () => {
         try {
             await launchAsync(null, { chunks: [] });
         } catch (reason) {
-            expect(reason).not.toBeFalsy();
+            expect(reason.code).toBe('BadArgument');
         }
     });
 
@@ -23,7 +23,25 @@ describe('launchAsync tests', () => {
         try {
             await launchAsync(SampleToken, null);
         } catch (reason) {
-            expect(reason).not.toBeFalsy();
+            expect(reason.code).toBe('BadArgument');
+        }
+    });
+
+    it('fails due to missing chunks', async () => {
+        expect.assertions(1);
+        try {
+            await launchAsync(SampleToken, { chunks: null });
+        } catch (reason) {
+            expect(reason.code).toBe('BadArgument');
+        }
+    });
+
+    it('fails due to empty chunks', async () => {
+        expect.assertions(1);
+        try {
+            await launchAsync(SampleToken, { chunks: [] });
+        } catch (reason) {
+            expect(reason.code).toBe('BadArgument');
         }
     });
 
@@ -85,7 +103,7 @@ describe('launchAsync tests', () => {
         try {
             await launchPromise;
         } catch (reason) {
-            expect(reason).not.toBeFalsy();
+            expect(reason.code).toBe('Timeout');
         }
     });
 });
