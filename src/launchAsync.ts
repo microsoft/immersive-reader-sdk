@@ -44,6 +44,7 @@ export function launchAsync(token: string, content: Content, options?: Options):
         options = {
             uiZIndex: 1000,
             timeout: 15000,  // Default to 15 seconds
+            useWebview: false,
             ...options
         };
 
@@ -54,7 +55,7 @@ export function launchAsync(token: string, content: Content, options?: Options):
 
         let timeoutId: number | null = null;
         const iframeContainer: HTMLDivElement = document.createElement('div');
-        const iframe: HTMLIFrameElement = document.createElement('iframe');
+        const iframe: HTMLIFrameElement = options.useWebview ? document.createElement('webview') : document.createElement('iframe');
         const bodyOverflow: string | null = document.body.style.overflow;
         const htmlOverflow: string | null = document.documentElement.style.overflow;
 
