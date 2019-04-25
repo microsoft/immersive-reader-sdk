@@ -44,6 +44,7 @@ export function launchAsync(token: string, content: Content, options?: Options):
         options = {
             uiZIndex: 1000,
             timeout: 15000,  // Default to 15 seconds
+            useWebview: false,
             ...options
         };
 
@@ -54,7 +55,7 @@ export function launchAsync(token: string, content: Content, options?: Options):
 
         let timeoutId: number | null = null;
         const iframeContainer: HTMLDivElement = document.createElement('div');
-        const iframe: HTMLIFrameElement = document.createElement('iframe');
+        const iframe: HTMLIFrameElement = options.useWebview ? <HTMLIFrameElement>document.createElement('webview') : document.createElement('iframe');
         const bodyOverflow: string | null = document.body.style.overflow;
         const htmlOverflow: string | null = document.documentElement.style.overflow;
 
@@ -109,6 +110,13 @@ export function launchAsync(token: string, content: Content, options?: Options):
         // Create and style iframe
         iframe.setAttribute('allowfullscreen', '');
         iframe.style.cssText = 'position: static; width: 100vw; height: 100vh; left: 0; top: 0; border-width: 0';
+
+        // Send an initial message to the webview so it has a reference to this parent window
+        if (options.useWebview) {
+            iframe.addEventListener('loadstop', () => {
+                iframe.contentWindow.postMessage(JSON.stringify({ messageType: 'WebviewHost' }), '*');
+            });
+        }
 
         let src = 'https://learningtools.onenote.com/learningtoolsapp/cognitive/reader?exitCallback=ImmersiveReader-Exit';
         if (options.uiLang) {
