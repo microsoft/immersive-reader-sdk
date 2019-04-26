@@ -1,7 +1,7 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // Licensed under the MIT License.
 
-import { launchAsync } from '../src/launchAsync';
+import { launchAsync, styleLaunchDivs } from '../src/launchAsync';
 import { Content } from '../src/content';
 import { Options } from '../src/options';
 
@@ -105,5 +105,72 @@ describe('launchAsync tests', () => {
         } catch (reason) {
             expect(reason.code).toBe('Timeout');
         }
+    });
+});
+
+describe('styleLaunchDivs', () => {
+    it('styles a single div as expected', () => {
+        const numImgsBeforeStyling = document.getElementsByTagName('img').length;
+        const newDiv: HTMLDivElement = document.createElement('div');
+        newDiv.className = 'IRLaunchDiv';
+        document.body.appendChild(newDiv);
+
+        expect(numImgsBeforeStyling).toBe(0);
+
+        styleLaunchDivs('IRLaunchDiv');
+        const numImgsAfterStyling = document.getElementsByTagName('img').length;
+
+        expect(numImgsAfterStyling).toBe(1);
+
+        // Cleanup the DOM
+        newDiv.remove();
+    });
+
+    it('styles multiple divs as expected', () => {
+        const numImgsBeforeStyling = document.getElementsByTagName('img').length;
+        const newDiv1: HTMLDivElement = document.createElement('div');
+        const newDiv2: HTMLDivElement = document.createElement('div');
+        const newDiv3: HTMLDivElement = document.createElement('div');
+        newDiv1.className = newDiv2.className = newDiv3.className = 'IRLaunchDiv';
+
+        document.body.appendChild(newDiv1);
+        document.body.appendChild(newDiv2);
+        document.body.appendChild(newDiv3);
+
+        expect(numImgsBeforeStyling).toBe(0);
+
+        styleLaunchDivs('IRLaunchDiv');
+
+        const numImgsAfterStyling = document.getElementsByTagName('img').length;
+
+        expect(numImgsAfterStyling).toBe(3);
+
+        // Cleanup the DOM
+        newDiv1.remove();
+        newDiv2.remove();
+        newDiv3.remove();
+    });
+
+    it('does nothing for incorrect classnames', () => {
+        const numImgsBeforeStyling = document.getElementsByTagName('img').length;
+        const newDiv1: HTMLDivElement = document.createElement('div');
+        const newDiv2: HTMLDivElement = document.createElement('div');
+        newDiv1.className = 'IRLaunchDivv';
+        newDiv2.className = 'IRLaunchhDiv';
+
+        document.body.appendChild(newDiv1);
+        document.body.appendChild(newDiv2);
+
+        expect(numImgsBeforeStyling).toBe(0);
+
+        styleLaunchDivs('IRLaunchDiv');
+
+        const numImgsAfterStyling = document.getElementsByTagName('img').length;
+
+        expect(numImgsAfterStyling).toBe(0);
+
+        // Cleanup the DOM
+        newDiv1.remove();
+        newDiv2.remove();
     });
 });
