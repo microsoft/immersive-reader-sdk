@@ -14,13 +14,10 @@
     <script type='text/javascript' src='https://code.jquery.com/jquery-3.3.1.min.js'></script>
     <script type='text/javascript' src='https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.12.1/jquery-ui.min.js'></script>
     <script type='text/javascript' src='http://contentstorage.onenote.office.net/onenoteltir/immersivereadersdk/immersive-reader-0.0.1.js'></script>
+    <script type='text/javascript' src='~/js/helpers.js'></script>
 
     <link href='~/css/styles.css' rel='stylesheet'>
     <link href='~/css/buttons.css' rel='stylesheet'>
-
-    <script type='text/javascript'>
-        var Token = '@ViewData["Token"]';
-    </script>
 
     <style media='screen' type='text/css'>
         #ContentArea {
@@ -103,7 +100,7 @@
     </main>
 
     <script type='text/javascript'>
-        function handleLaunchImmersiveReader(sampleId) {
+        async function handleLaunchImmersiveReader(sampleId) {
             const data = {
                 title: $('#title' + sampleId).text().trim(),
                 chunks: [{
@@ -115,10 +112,11 @@
             var uiLangEl = $('#lang' + sampleId);
             var uiLang = uiLangEl.val() || uiLangEl.text();
             const options = {
-                'uiLang': uiLang
+                uiLang: uiLang
             }
-            
-            ImmersiveReader.launchAsync(Token, data, options);
+
+            const token = await getImmersiveReaderTokenAsync();
+            ImmersiveReader.launchAsync(token, data, options);
         }
     </script>
 </body>

@@ -1,15 +1,11 @@
 ﻿// Copyright (c) Microsoft Corporation. All rights reserved.
 // Licensed under the MIT License.
 
-using System.Threading.Tasks;
+using Microsoft.AspNetCore.Mvc.RazorPages;
 
 namespace AdvancedSampleWebApp.Pages
 {
-    public class DocumentModel : SampleModel
-    {
-        public async Task OnGet()
-        {
-			ViewData["Token"] = await GetTokenAsync(AzureSubscription.Region, AzureSubscription.SubscriptionKey);
-		}
+    public class DocumentModel : PageModel
+	{
     }
 }
