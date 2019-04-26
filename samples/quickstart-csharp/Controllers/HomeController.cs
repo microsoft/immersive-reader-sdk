@@ -18,10 +18,15 @@ namespace QuickstartSampleWebApp.Controllers
 		//   eastus, westus, northeurope, westeurope, centralindia, japaneast, japanwest, australiaeast
 		public const string Region = "";
 
-		public async Task<IActionResult> Index()
+		public IActionResult Index()
 		{
-			ViewBag.AccessToken = await GetTokenAsync(Region, SubscriptionKey);
 			return View();
+		}
+
+		[Route("token")]
+		public async Task<string> Token()
+		{
+			return await GetTokenAsync(Region, SubscriptionKey);
 		}
 
 		/// <summary>
