@@ -136,9 +136,9 @@ export function launchAsync(token: string, content: Content, options?: Options):
 }
 
 /**
- * Append an <img/> of assets/icon.svg to every element with the specified className. Intended to be used with divs to avoid default styles
+ * Append an <img/> of assets/icon.svg to every element with the specified className. Intended to be used with empty divs to avoid default styles
  */
-export function styleLaunchDivs(className: string): void {
+export function renderLaunchButtons(className: string): void {
     const launchDivs: HTMLCollectionOf<Element> = document.getElementsByClassName(className);
     const iconImagePath: string = 'https://contentstorage.onenote.office.net/onenoteltir/permanent-static-resources/immersive-reader-icon.svg';
 
