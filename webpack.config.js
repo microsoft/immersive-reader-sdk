@@ -6,7 +6,7 @@ module.exports = {
             test: /\.tsx?$/,
             use: 'ts-loader',
             exclude: /node_modules/
-        }, 
+        },
         {
             test: /\.ts$/,
             enforce: 'pre',
@@ -16,5 +16,6 @@ module.exports = {
     output: {
         library: 'ImmersiveReader',
         filename: 'immersive-reader.js',
+        libraryTarget: 'umd'
     }
 };
