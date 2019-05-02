@@ -140,7 +140,7 @@ export function launchAsync(token: string, content: Content, options?: Options):
  */
 export function styleLaunchDivs(className: string): void {
     const launchDivs: HTMLCollectionOf<Element> = document.getElementsByClassName(className);
-    const iconImagePath = '../../assets/icon.svg';
+    const iconImagePath: string = 'https://contentstorage.onenote.office.net/onenoteltir/permanent-static-resources/immersive-reader-icon.svg';
 
     for (const launchDiv of launchDivs) {
         const castedLaunchDiv = launchDiv as HTMLDivElement;
