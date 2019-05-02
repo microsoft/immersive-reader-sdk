@@ -1,7 +1,7 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // Licensed under the MIT License.
 
-import { launchAsync, styleLaunchDivs } from '../src/launchAsync';
+import { launchAsync, renderLaunchButtons } from '../src/launchAsync';
 import { Content } from '../src/content';
 import { Options } from '../src/options';
 
@@ -108,7 +108,7 @@ describe('launchAsync tests', () => {
     });
 });
 
-describe('styleLaunchDivs', () => {
+describe('renderLaunchButtons', () => {
     it('styles a single div as expected', () => {
         const numImgsBeforeStyling = document.getElementsByTagName('img').length;
         const newDiv: HTMLDivElement = document.createElement('div');
@@ -117,7 +117,7 @@ describe('styleLaunchDivs', () => {
 
         expect(numImgsBeforeStyling).toBe(0);
 
-        styleLaunchDivs('IRLaunchDiv');
+        renderLaunchButtons('IRLaunchDiv');
         const numImgsAfterStyling = document.getElementsByTagName('img').length;
 
         expect(numImgsAfterStyling).toBe(1);
@@ -139,7 +139,7 @@ describe('styleLaunchDivs', () => {
 
         expect(numImgsBeforeStyling).toBe(0);
 
-        styleLaunchDivs('IRLaunchDiv');
+        renderLaunchButtons('IRLaunchDiv');
 
         const numImgsAfterStyling = document.getElementsByTagName('img').length;
 
@@ -163,7 +163,7 @@ describe('styleLaunchDivs', () => {
 
         expect(numImgsBeforeStyling).toBe(0);
 
-        styleLaunchDivs('IRLaunchDiv');
+        renderLaunchButtons('IRLaunchDiv');
 
         const numImgsAfterStyling = document.getElementsByTagName('img').length;
 

@@ -146,7 +146,6 @@ export function renderLaunchButtons(className: string): void {
         const castedLaunchDiv = launchDiv as HTMLDivElement;
         const iconImage: HTMLImageElement = document.createElement('img');
         iconImage.src = iconImagePath;
-        iconImage.alt = 'Immersive Reader';
 
         castedLaunchDiv.style.height = castedLaunchDiv.style.width = '20px';
         castedLaunchDiv.appendChild(iconImage);
