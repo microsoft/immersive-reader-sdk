@@ -2,7 +2,6 @@
 // Licensed under the MIT License.
 
 using System;
-using System.Net.Http;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 
@@ -10,13 +9,19 @@ namespace QuickstartSampleWebApp.Controllers
 {
 	public class HomeController : Controller
 	{
-		// Insert your Azure subscription key here
-		public const string SubscriptionKey = "";
+		private readonly string SubscriptionKey;
+		private readonly string Endpoint;
 
-		// The location associated with the Immersive Reader resource.
-		// The following are valid values for the region:
-		//   eastus, westus, northeurope, westeurope, centralindia, japaneast, japanwest, australiaeast
-		public const string Region = "";
+		public HomeController(Microsoft.Extensions.Configuration.IConfiguration configuration)
+		{
+			SubscriptionKey = configuration["SubscriptionKey"];
+			Endpoint = configuration["Endpoint"];
+
+			if (string.IsNullOrEmpty(Endpoint) || string.IsNullOrEmpty(SubscriptionKey))
+			{
+				throw new ArgumentNullException("Endpoint or subscriptionKey is null!");
+			}
+		}
 
 		public IActionResult Index()
 		{
@@ -26,23 +31,18 @@ namespace QuickstartSampleWebApp.Controllers
 		[Route("token")]
 		public async Task<string> Token()
 		{
-			return await GetTokenAsync(Region, SubscriptionKey);
+			return await GetTokenAsync();
 		}
 
 		/// <summary>
 		/// Exchange your Azure subscription key for an access token
 		/// </summary>
-		private async Task<string> GetTokenAsync(string region, string subscriptionKey)
+		private async Task<string> GetTokenAsync()
 		{
-			if (string.IsNullOrEmpty(region) || string.IsNullOrEmpty(subscriptionKey))
+			using (var client = new System.Net.Http.HttpClient())
 			{
-				throw new ArgumentNullException("Region or subscriptionKey is null!");
-			}
-
-			using (var client = new HttpClient())
-			{
-				client.DefaultRequestHeaders.Add("Ocp-Apim-Subscription-Key", subscriptionKey);
-				using (var response = await client.PostAsync($"https://{region}.api.cognitive.microsoft.com/sts/v1.0/issueToken", null))
+				client.DefaultRequestHeaders.Add("Ocp-Apim-Subscription-Key", SubscriptionKey);
+				using (var response = await client.PostAsync($"{Endpoint}/issueToken", null))
 				{
 					return await response.Content.ReadAsStringAsync();
 				}
