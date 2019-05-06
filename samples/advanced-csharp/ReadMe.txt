@@ -11,6 +11,8 @@ Follow these steps to get the sample up and running:
   "Endpoint": YOUR_ENDPOINT
 }
 
+The endpoint is of the format https://westus.api.cognitive.microsoft.com/sts/v1.0, and you can find it here: https://azure.microsoft.com/try/cognitive-services/my-apis/.
+
 3. Run Debug->Start Debugging
 
 License

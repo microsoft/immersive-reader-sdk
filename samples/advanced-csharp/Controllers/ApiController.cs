@@ -9,19 +9,24 @@ namespace AdvancedSampleWebApp.Pages
     [ApiController]
     public class ApiController : ControllerBase
     {
-		private readonly string SubscriptionKey;
-		private readonly string Endpoint;
+        private readonly string SubscriptionKey;
+        private readonly string Endpoint;
 
-		public ApiController(Microsoft.Extensions.Configuration.IConfiguration configuration)
-		{
-			SubscriptionKey = configuration["SubscriptionKey"];
-			Endpoint = configuration["Endpoint"];
+        public ApiController(Microsoft.Extensions.Configuration.IConfiguration configuration)
+        {
+            SubscriptionKey = configuration["SubscriptionKey"];
+            Endpoint = configuration["Endpoint"];
 
-			if (string.IsNullOrEmpty(Endpoint) || string.IsNullOrEmpty(SubscriptionKey))
-			{
-				throw new ArgumentNullException("Endpoint or SubscriptionKey is null! Did you add that info to secrets.json?");
-			}
-		}
+            if (string.IsNullOrEmpty(Endpoint))
+            {
+                throw new ArgumentNullException("Endpoint is null! Did you add that info to secrets.json?");
+            }
+
+            if (string.IsNullOrEmpty(SubscriptionKey))
+            {
+                throw new ArgumentNullException("SubscriptionKey is null! Did you add that info to secrets.json?");
+            }
+        }
 
         [Route("token")]
         public async Task<string> Token()
