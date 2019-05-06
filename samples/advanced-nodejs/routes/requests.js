@@ -5,21 +5,13 @@ var express = require('express');
 var router = express.Router();
 var request = require('request');
 
-// Insert your Azure subscription key here
-var cogSvcsSubscriptionKey = '';
-
-// The location associated with the Immersive Reader resource.
-// The following are valid values for the region:
-// eastus, westus, northeurope, westeurope, centralindia, japaneast, japanwest, australiaeast
-var cogSvcsRegion = '';
-
 router.get('/getimmersivereadertoken', function(req, res) {
     request.post({
             headers: {
-                'Ocp-Apim-Subscription-Key': cogSvcsSubscriptionKey,
+                'Ocp-Apim-Subscription-Key': process.env.SUBSCRIPTION_KEY,
                 'content-type': 'application/x-www-form-urlencoded'
             },
-            url: 'https://' + cogSvcsRegion + '.api.cognitive.microsoft.com/sts/v1.0/issueToken'
+            url: process.env.ENDPOINT + '/issueToken'
         },
         function(err, resp, token) {
             if (err) {

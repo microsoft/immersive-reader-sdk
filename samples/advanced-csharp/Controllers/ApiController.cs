@@ -9,23 +9,37 @@ namespace AdvancedSampleWebApp.Pages
     [ApiController]
     public class ApiController : ControllerBase
     {
+        private readonly string SubscriptionKey;
+        private readonly string Endpoint;
+
+        public ApiController(Microsoft.Extensions.Configuration.IConfiguration configuration)
+        {
+            SubscriptionKey = configuration["SubscriptionKey"];
+            Endpoint = configuration["Endpoint"];
+
+            if (string.IsNullOrEmpty(Endpoint))
+            {
+                throw new ArgumentNullException("Endpoint is null! Did you add that info to secrets.json?");
+            }
+
+            if (string.IsNullOrEmpty(SubscriptionKey))
+            {
+                throw new ArgumentNullException("SubscriptionKey is null! Did you add that info to secrets.json?");
+            }
+        }
+
         [Route("token")]
         public async Task<string> Token()
         {
-            return await GetTokenAsync(AzureSubscription.Region, AzureSubscription.SubscriptionKey);
+            return await GetTokenAsync();
         }
 
-        protected async Task<string> GetTokenAsync(string region, string subscriptionKey)
+        protected async Task<string> GetTokenAsync()
         {
-            if (string.IsNullOrEmpty(region) || string.IsNullOrEmpty(subscriptionKey))
-            {
-                throw new ArgumentNullException("Region or subscriptionKey is null! Did you update AzureSubscription.cs?");
-            }
-
             using (var client = new HttpClient())
             {
-                client.DefaultRequestHeaders.Add("Ocp-Apim-Subscription-Key", subscriptionKey);
-                using (var response = await client.PostAsync($"https://{region}.api.cognitive.microsoft.com/sts/v1.0/issueToken", null))
+                client.DefaultRequestHeaders.Add("Ocp-Apim-Subscription-Key", SubscriptionKey);
+                using (var response = await client.PostAsync($"{Endpoint}/issueToken", null))
                 {
                     return await response.Content.ReadAsStringAsync();
                 }

@@ -7,7 +7,9 @@ Follow these steps to get the sample up and running:
 
 2. Run "yarn install"
 
-3. Update the cogSvcsSubscriptionKey and cogSvcsRegion variables in samples/nodejs/routes/requests.js, with your subscription key and region
+3. Create a file called .env and add the following to it, supplying your subscription key and endpoint where appropriate:
+SUBSCRIPTION_KEY={YOUR_SUBSCRIPTION_KEY}
+ENDPOINT={YOUR_ENDPOINT}
 
 4. Run "npm start" (or "nodemon start" if you want to view changes you make after doing a browser refresh)
 

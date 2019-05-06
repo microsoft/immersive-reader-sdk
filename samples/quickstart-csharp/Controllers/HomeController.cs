@@ -2,51 +2,56 @@
 // Licensed under the MIT License.
 
 using System;
-using System.Net.Http;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 
 namespace QuickstartSampleWebApp.Controllers
 {
-	public class HomeController : Controller
-	{
-		// Insert your Azure subscription key here
-		public const string SubscriptionKey = "";
+    public class HomeController : Controller
+    {
+        private readonly string SubscriptionKey;
+        private readonly string Endpoint;
 
-		// The location associated with the Immersive Reader resource.
-		// The following are valid values for the region:
-		//   eastus, westus, northeurope, westeurope, centralindia, japaneast, japanwest, australiaeast
-		public const string Region = "";
+        public HomeController(Microsoft.Extensions.Configuration.IConfiguration configuration)
+        {
+            SubscriptionKey = configuration["SubscriptionKey"];
+            Endpoint = configuration["Endpoint"];
 
-		public IActionResult Index()
-		{
-			return View();
-		}
+            if (string.IsNullOrEmpty(Endpoint))
+            {
+                throw new ArgumentNullException("Endpoint is null!");
+            }
 
-		[Route("token")]
-		public async Task<string> Token()
-		{
-			return await GetTokenAsync(Region, SubscriptionKey);
-		}
+            if (string.IsNullOrEmpty(SubscriptionKey))
+            {
+                throw new ArgumentNullException("SubscriptionKey is null!");
+            }
+        }
 
-		/// <summary>
-		/// Exchange your Azure subscription key for an access token
-		/// </summary>
-		private async Task<string> GetTokenAsync(string region, string subscriptionKey)
-		{
-			if (string.IsNullOrEmpty(region) || string.IsNullOrEmpty(subscriptionKey))
-			{
-				throw new ArgumentNullException("Region or subscriptionKey is null!");
-			}
+        public IActionResult Index()
+        {
+            return View();
+        }
 
-			using (var client = new HttpClient())
-			{
-				client.DefaultRequestHeaders.Add("Ocp-Apim-Subscription-Key", subscriptionKey);
-				using (var response = await client.PostAsync($"https://{region}.api.cognitive.microsoft.com/sts/v1.0/issueToken", null))
-				{
-					return await response.Content.ReadAsStringAsync();
-				}
-			}
-		}
-	}
+        [Route("token")]
+        public async Task<string> Token()
+        {
+            return await GetTokenAsync();
+        }
+
+        /// <summary>
+        /// Exchange your Azure subscription key for an access token
+        /// </summary>
+        private async Task<string> GetTokenAsync()
+        {
+            using (var client = new System.Net.Http.HttpClient())
+            {
+                client.DefaultRequestHeaders.Add("Ocp-Apim-Subscription-Key", SubscriptionKey);
+                using (var response = await client.PostAsync($"{Endpoint}/issueToken", null))
+                {
+                    return await response.Content.ReadAsStringAsync();
+                }
+            }
+        }
+    }
 }
