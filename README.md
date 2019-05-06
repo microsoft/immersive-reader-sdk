@@ -18,10 +18,26 @@ Include the library in your web application:
 <script type='text/javascript' src='https://contentstorage.onenote.office.net/onenoteltir/immersivereadersdk/immersive-reader-0.0.1.js'></script>
 ```
 
+```bash
+npm install @microsoft/immersive-reader-sdk
+```
+
+```bash
+yarn add @microsoft/immersive-reader-sdk
+```
+
 * Canary build (use at your own risk!)
 
 ```html
 <script type='text/javascript' src='https://contentstorage.onenote.office.net/onenoteltir/immersivereadersdk/immersive-reader-preview.js'></script>
+```
+
+```bash
+npm install @microsoft/immersive-reader-sdk@next
+```
+
+```bash
+yarn add @microsoft/immersive-reader-sdk@next
 ```
 
 Invoke the Immersive Reader:
