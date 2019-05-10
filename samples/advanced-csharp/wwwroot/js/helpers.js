@@ -1,8 +1,10 @@
-﻿function getImmersiveReaderTokenAsync() {
+﻿function getImmersiveReaderTokenAsync(canary) {
     return new Promise((resolve, reject) => {
         $.ajax({
             url: '/api/token',
-            type: 'GET',
+            type: 'POST',
+            contentType: 'text/plain',
+            data: canary,
             success: token => {
                 resolve(token);
             },

@@ -19,6 +19,10 @@
     <link href='~/css/styles.css' rel='stylesheet'>
     <link href='~/css/buttons.css' rel='stylesheet'>
 
+    <script type='text/javascript'>
+        var Canary = '@Html.Raw(ViewData["Canary"])';
+    </script>
+
     <style type='text/css'>
         #ContentArea {
             margin: 0 auto;
@@ -69,7 +73,7 @@
                 }]
             };
 
-            const token = await getImmersiveReaderTokenAsync();
+            const token = await getImmersiveReaderTokenAsync(Canary);
             ImmersiveReader.launchAsync(token, data);
         }
     </script>
