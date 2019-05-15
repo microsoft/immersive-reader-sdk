@@ -62,6 +62,7 @@ typings/
 
 /dist/
 bin/
+lib/
 # Check in the nodejs express bin
 !samples/nodejs/bin/
 obj/
