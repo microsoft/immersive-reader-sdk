@@ -6,6 +6,10 @@ using Microsoft.AspNetCore.Mvc.RazorPages;
 namespace AdvancedSampleWebApp.Pages
 {
     public class MathModel : PageModel
-	{
+    {
+        public void OnGet()
+        {
+            ViewData["Canary"] = Canary.Generate();
+        }
     }
 }

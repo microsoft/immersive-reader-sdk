@@ -1,4 +1,5 @@
 ﻿using System;
+using System.IO;
 using System.Net.Http;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
@@ -29,8 +30,29 @@ namespace AdvancedSampleWebApp.Pages
         }
 
         [Route("token")]
-        public async Task<string> Token()
+		[HttpPost]
+		[Consumes("text/plain")]
+		[Produces("text/plain")]
+		public async Task<string> Token()
         {
+            // Retrieve the canary value and authenticate
+            string canary;
+            using (StreamReader reader = new StreamReader(Request.Body))
+            {
+                canary = reader.ReadToEnd();
+            }
+
+            if (string.IsNullOrEmpty(canary))
+            {
+                throw new Exception("Canary missing");
+            }
+
+            if (!Canary.Validate(canary))
+            {
+                throw new Exception("Authentication failed");
+            }
+
+            // Obtain a token using the subscription key
             return await GetTokenAsync();
         }
 

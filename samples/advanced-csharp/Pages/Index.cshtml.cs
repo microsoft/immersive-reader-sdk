@@ -5,7 +5,11 @@ using Microsoft.AspNetCore.Mvc.RazorPages;
 
 namespace AdvancedSampleWebApp.Pages
 {
-	public class IndexModel : PageModel
-	{
-	}
+    public class IndexModel : PageModel
+    {
+        public void OnGet()
+        {
+            ViewData["Canary"] = Canary.Generate();
+        }
+    }
 }
