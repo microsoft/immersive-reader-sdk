@@ -30,7 +30,10 @@ namespace AdvancedSampleWebApp.Pages
         }
 
         [Route("token")]
-        public async Task<string> Token()
+		[HttpPost]
+		[Consumes("text/plain")]
+		[Produces("text/plain")]
+		public async Task<string> Token()
         {
             // Retrieve the canary value and authenticate
             string canary;

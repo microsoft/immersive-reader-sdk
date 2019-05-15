@@ -12,9 +12,10 @@ namespace AdvancedSampleWebApp
     {
         public const int KeyLength = 32;
         public const int NonceLength = 32;
-        public static TimeSpan ExpirationSpan = TimeSpan.FromHours(24);
 
-        private static byte[] _key;
+        private static readonly byte[] _key;
+        private static TimeSpan ExpirationSpan = TimeSpan.FromHours(24);
+
 
         static Canary()
         {
