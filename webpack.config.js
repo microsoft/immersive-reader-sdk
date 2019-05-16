@@ -1,3 +1,5 @@
+const path = require('path');
+
 module.exports = {
     mode: 'production',
     entry: './src/launchAsync.ts',
@@ -14,8 +16,9 @@ module.exports = {
         } ]
     },
     output: {
+        path: path.join(__dirname, 'lib'),
         library: 'ImmersiveReader',
-        filename: 'immersive-reader.js',
+        filename: 'index.js',
         libraryTarget: 'umd'
     }
 };
