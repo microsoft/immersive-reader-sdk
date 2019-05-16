@@ -20,6 +20,7 @@
   },
   "scripts": {
     "build": "webpack --config webpack.config.js",
+    "prepublish": "yarn build",
     "test": "jest"
   },
   "jest": {
