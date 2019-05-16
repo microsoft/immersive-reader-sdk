@@ -5,7 +5,11 @@ using Microsoft.AspNetCore.Mvc.RazorPages;
 
 namespace AdvancedSampleWebApp.Pages
 {
-	public class MultiLangModel : PageModel
-	{
-	}
+    public class MultiLangModel : PageModel
+    {
+        public void OnGet()
+        {
+            ViewData["Canary"] = Canary.Generate();
+        }
+    }
 }
