@@ -1,7 +1,7 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // Licensed under the MIT License.
 
-import { launchAsync, renderLaunchButtons } from '../src/launchAsync';
+import { launchAsync, renderLaunchButtons } from '../src/immersive-reader-sdk';
 import { Content } from '../src/content';
 import { Options } from '../src/options';
 
