@@ -2,7 +2,7 @@ const path = require('path');
 
 module.exports = {
     mode: 'production',
-    entry: './src/launchAsync.ts',
+    entry: './src/immersive-reader-sdk.ts',
     module: {
         rules: [ {
             test: /\.tsx?$/,
@@ -15,10 +15,13 @@ module.exports = {
             use: [ { loader: 'tslint-loader' } ]
         } ]
     },
+    resolve: {
+        extensions: ['.ts', '.js', '.json']
+    },
     output: {
         path: path.join(__dirname, 'lib'),
         library: 'ImmersiveReader',
-        filename: 'index.js',
+        filename: 'immersive-reader-sdk.js',
         libraryTarget: 'umd'
     }
 };
