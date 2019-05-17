@@ -6,10 +6,10 @@
 const fs = require('fs');
 const replace = require('replace-in-file');
 
-fs.copyFileSync('dist/immersive-reader.js', 'dist/immersive-reader.edog.js');
+fs.copyFileSync('lib/immersive-reader-sdk.js', 'lib/immersive-reader-sdk.edog.js');
 
-replace.sync({ 
-    files: 'dist/immersive-reader.edog.js',
+replace.sync({
+    files: 'lib/immersive-reader-sdk.edog.js',
     from: /learningtools\.onenote\.com/g,
     to: 'learningtools.edog.onenote.com'
 });
