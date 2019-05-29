@@ -127,7 +127,7 @@ export function launchAsync(token: string, content: Content, options?: Options):
         iframeContainer.style.cssText = `position: fixed; width: 100vw; height: 100vh; left: 0; top: 0; border-width: 0; -webkit-perspective: 1px; z-index: ${options.uiZIndex}; background: white; overflow: hidden`;
 
         iframeContainer.appendChild(iframe);
-        document.body.append(iframeContainer);
+        document.body.appendChild(iframeContainer);
 
         // Disable body scrolling
         document.body.style.overflow = 'hidden';
