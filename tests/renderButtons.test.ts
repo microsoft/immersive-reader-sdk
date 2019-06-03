@@ -3,10 +3,11 @@
 
 import { renderButtons } from '../src/renderButtons';
 
-function expectIcon(button: HTMLDivElement) {
+function expectIcon(button: HTMLDivElement, text: string) {
     let imageCount = 0;
     for (const child of button.children) {
         if (child.tagName === 'IMG') {
+            expect(child.getAttribute('alt')).toBe(text);
             imageCount++;
         }
     }
@@ -32,7 +33,7 @@ describe('renderButtons', () => {
 
         renderButtons();
 
-        expectIcon(button);
+        expectIcon(button, 'Immersive Reader');
 
         // Cleanup the DOM
         button.remove();
@@ -46,7 +47,7 @@ describe('renderButtons', () => {
 
         renderButtons();
 
-        expectIcon(button);
+        expectIcon(button, 'Immersive Reader');
         expectText(button, 'Immersive Reader');
 
         // Cleanup the DOM
@@ -67,15 +68,16 @@ describe('renderButtons', () => {
         button.remove();
     });
     
-    it('styles a single text button in a different language', () => {
+    it('styles a single button in a different language', () => {
         const button: HTMLDivElement = document.createElement('div');
         button.className = 'immersive-reader-button';
-        button.setAttribute('data-button-style', 'text');
+        button.setAttribute('data-button-style', 'iconAndText');
         button.setAttribute('data-locale', 'fr-FR');
         document.body.appendChild(button);
 
         renderButtons();
 
+        expectIcon(button, 'Lecteur immersif');
         expectText(button, 'Lecteur immersif');
 
         // Cleanup the DOM
@@ -93,8 +95,8 @@ describe('renderButtons', () => {
 
         renderButtons();
 
-        expectIcon(button);
-        expectIcon(button2);
+        expectIcon(button, 'Immersive Reader');
+        expectIcon(button2, 'Immersive Reader');
         expectText(button2, 'Immersive Reader');
 
         // Cleanup the DOM
