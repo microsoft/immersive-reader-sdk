@@ -31,7 +31,7 @@ yarn add @microsoft/immersive-reader-sdk
 * Canary build (use at your own risk!)
 
 ```html
-<script type='text/javascript' src='https://contentstorage.onenote.office.net/onenoteltir/immersivereadersdk/immersive-reader-sdk-preview.js'></script>
+<script type='text/javascript' src='https://contentstorage.onenote.office.net/onenoteltir/immersivereadersdk/immersive-reader-sdk.preview.js'></script>
 ```
 
 ```bash
