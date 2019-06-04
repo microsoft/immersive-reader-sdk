@@ -42,16 +42,24 @@ npm install @microsoft/immersive-reader-sdk@next
 yarn add @microsoft/immersive-reader-sdk@next
 ```
 
-Invoke the Immersive Reader:
+Add an HTML element to your webpage with the `immersive-reader-button` class attribute.
+
+```html
+<div class='immersive-reader-button' onclick='launchImmersiveReader()'></div>
+```
+
+Next, invoke the Immersive Reader when the button is clicked:
 
 ```typescript
-const content = {
-    title: 'Immersive Reader',
-    chunks: [ {
-        content: 'Hello, world!'
-    } ]
-};
-ImmersiveReader.launchAsync(YOUR_TOKEN, content);
+function launchImmersiveReader() {
+    const content = {
+        title: 'Immersive Reader',
+        chunks: [ {
+            content: 'Hello, world!'
+        } ]
+    };
+    ImmersiveReader.launchAsync(YOUR_TOKEN, content);
+}
 ```
 
 Take a look at the [samples](./samples) for examples of a full end-to-end integration.
