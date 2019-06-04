@@ -120,6 +120,10 @@ export function renderButtons(): void {
         div.style.cursor = 'pointer';
         div.style.display = 'inline-block';
         div.style.padding = '5px';
+        div.setAttribute('type', 'button');
+        div.setAttribute('role', 'button');
+        const locale = div.getAttribute(attributeLocale) || 'en';
+        div.setAttribute('aria-label', getLocalizedString(locale));
 
         const style = div.getAttribute(attributeButtonStyle) || 'icon';
         switch (style) {
@@ -177,7 +181,7 @@ function getLocalizedString(locale: string) {
         return locs['zh-hant'];
     }
 
-    // Remove the subscript portion (or the region) portion of the locale, and check to see if the 
+    // Remove the subscript portion (or the region) portion of the locale, and check to see if the
     // localization exists for the resulting locale.
     locale = locale.substring(0, locale.lastIndexOf('-'));
     if (locs[locale]) {
