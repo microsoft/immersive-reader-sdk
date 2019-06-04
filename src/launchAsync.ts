@@ -56,8 +56,8 @@ export function launchAsync(token: string, content: Content, options?: Options):
         let timeoutId: number | null = null;
         const iframeContainer: HTMLDivElement = document.createElement('div');
         const iframe: HTMLIFrameElement = options.useWebview ? <HTMLIFrameElement>document.createElement('webview') : document.createElement('iframe');
-        const bodyOverflow: string | null = document.body.style.overflow;
-        const htmlOverflow: string | null = document.documentElement.style.overflow;
+        const noscroll: HTMLStyleElement = document.createElement('style');
+        noscroll.innerHTML = 'body{height:100%;overflow:hidden;}';
 
         const resetTimeout = (): void => {
             if (timeoutId) {
@@ -76,8 +76,7 @@ export function launchAsync(token: string, content: Content, options?: Options):
             resetTimeout();
 
             // Re-enable scrolling
-            document.body.style.overflow = bodyOverflow;
-            document.documentElement.style.overflow = htmlOverflow;
+            noscroll.remove();
         };
 
         // Reset variables
@@ -130,7 +129,6 @@ export function launchAsync(token: string, content: Content, options?: Options):
         document.body.appendChild(iframeContainer);
 
         // Disable body scrolling
-        document.body.style.overflow = 'hidden';
-        document.documentElement.style.overflow = 'hidden';
+        document.head.appendChild(noscroll);
     });
 }
