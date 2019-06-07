@@ -1,10 +1,7 @@
+import os
 import requests
 from flask import Flask, redirect, render_template, request
 app = Flask(__name__)
-
-# Supply your subscription key and endpoint by replacing the below values.
-SUBSCRIPTION_KEY = 'YOUR_SUBSCRIPTION_KEY'
-ENDPOINT = 'YOUR_ENDPOINT'
 
 @app.route('/')
 def index():
@@ -40,7 +37,7 @@ def math():
 def getimmersivereadertoken():
 	'Get the access token'
 	if request.method == 'POST':
-		payload = {'Ocp-Apim-Subscription-Key': SUBSCRIPTION_KEY,
+		payload = {'Ocp-Apim-Subscription-Key': os.environ.get('SUBSCRIPTION_KEY'),
             	   'content-type': 'application/x-www-form-urlencoded'}
-		resp = requests.post(ENDPOINT + '/issueToken', headers=payload)
+		resp = requests.post(os.environ.get('ENDPOINT') + '/issueToken', headers=payload)
 		return resp.text
