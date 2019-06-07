@@ -37,7 +37,7 @@ def math():
 def getimmersivereadertoken():
 	'Get the access token'
 	if request.method == 'POST':
-		payload = {'Ocp-Apim-Subscription-Key': os.environ.get('SUBSCRIPTION_KEY'),
+		payload = {'Ocp-Apim-Subscription-Key': os.environ.get('SUBSCRIPTION_KEY', 'defaultValue'),
             	   'content-type': 'application/x-www-form-urlencoded'}
-		resp = requests.post(os.environ.get('ENDPOINT') + '/issueToken', headers=payload)
+		resp = requests.post(os.environ.get('ENDPOINT', 'defaultValue') + '/issueToken', headers=payload)
 		return resp.text
