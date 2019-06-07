@@ -48,15 +48,15 @@ Using [Git](https://git-scm.com/), Launch Terminal and run `git clone https://gi
 ⋅⋅* That's it! To test it, in new terminal window, type: `echo $PATH`.
 5. Install Flask by running `pip install flask --user`.
 6. Install [Jinja](http://jinja.pocoo.org/docs/2.10/intro/#installation), a full featured template engine for Python by running `pip install Jinja2 --user`.
-7. Install virtualenv by running `pip install virtualenv`. It's a tool to create isolated Python environments [Learn more](https://virtualenv.pypa.io/en/latest/).
-8. Install virtualenvwrapper by running `pip install virtualenvwrapper`. The idea behind virtualenvwrapper is to ease usage of virtualenv [Learn more](https://virtualenvwrapper.readthedocs.io/en/latest/).
+7. Install virtualenv by running `pip install virtualenv --user`. It's a tool to create isolated Python environments [Learn more](https://virtualenv.pypa.io/en/latest/).
+8. Install virtualenvwrapper by running `pip install virtualenvwrapper --user`. The idea behind virtualenvwrapper is to ease usage of virtualenv [Learn more](https://virtualenvwrapper.readthedocs.io/en/latest/).
 9. Install the [requests module](https://pypi.org/project/requests/2.7.0/) by running `pip install requests --user`. Requests is an Apache2 Licensed HTTP library, written in Python, for human beings.
 10. Choose a place where you would like to keep your virtual environments, e.g. `mkdir ~/.virtualenvs`.
 
 
 #### USAGE
 
-1. `cd` to the sample project root folder on your local machine e.g. `cd C:\immersive-reader-sdk\samples\advanced-python`.
+1. `cd` to the sample project root folder e.g. `cd immersive-reader-sdk/samples/advanced-python`.
 2. Make a virtual environment by launching Terminal and run `mkvirtualenv -p /usr/local/bin/python3 advanced-python`.
 3. Create a file called .env and add the following to it, supplying your subscription key and endpoint where appropriate:
 ⋅⋅* SUBSCRIPTION_KEY={YOUR_SUBSCRIPTION_KEY}
