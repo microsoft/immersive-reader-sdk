@@ -51,12 +51,6 @@
             border-color: lightgrey;
         }
 
-        .ir-button {
-            float: right;
-            margin-right: 0px;
-            margin-bottom: 1000px;
-        }
-
         #DisplayMath {
             position: absolute;
             top: 30%;
@@ -149,9 +143,7 @@
             </textarea>
         </section>
         <div id='DisplayMath'>
-            <button class='ir-button ir-button-small' role='button' title='Immersive Reader' aria-label='Immersive Reader' onclick='handleLaunchImmersiveReader()'>
-                <img class='ir-button-icon' src='~/images/icon.svg' />
-            </button>
+            <div class='immersive-reader-button ir-button-small' onclick='handleLaunchImmersiveReader()'></div>
             <div id='DisplayMathContent'></div>
         </div>
     </main>

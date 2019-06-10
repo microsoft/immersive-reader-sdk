@@ -45,11 +45,8 @@
         <a href='/math'>Math</a>
     </nav>
 
-    <header class='ir-button-area'>
-        <button class='ir-button ir-button-wide' role='button' title='Immersive Reader' aria-label='Immersive Reader' onclick='handleLaunchImmersiveReader()'>
-            <img class='ir-button-icon' src='~/images/icon.svg' />
-            <span class='ir-button-text' aria-hidden='true'>Immersive Reader</span>
-        </button>
+    <header class='ir-button-area' style='padding-left: 100px'>
+        <div class='immersive-reader-button' data-button-style='iconAndText' onclick='handleLaunchImmersiveReader()'></div>
     </header>
     <main id='ContentArea'>
         <article id='IRContent'>
