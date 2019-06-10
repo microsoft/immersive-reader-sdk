@@ -1,0 +1,32 @@
+<!-- Copyright (c) Microsoft Corporation. All rights reserved.
+     Licensed under the MIT License. -->
+
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+        <script type='text/javascript' src='https://code.jquery.com/jquery-3.3.1.min.js'></script>
+        <script type='text/javascript' src='https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.12.1/jquery-ui.min.js'></script>
+        <script type='text/javascript' src='http://contentstorage.onenote.office.net/onenoteltir/immersivereadersdk/immersive-reader-sdk.0.0.1.js'></script>
+        <script src="/static/js/helpers.js"></script>
+        <link href="/static/css/buttons.css" rel="stylesheet">
+        <link href="/static/css/styles.css" rel="stylesheet">
+        {% block styles %}{% endblock %}
+    </head>
+    <body class="body">
+        <nav>
+            Examples:
+            <a href='/index' class='navlink section-route active'>Sections</a>
+            <a href='/document' class='navlink document-route'>Document</a>
+            <a href='/multilang' class='navlink multilang-route'>Multilingual Document</a>
+            <a href='/uilangs' class='navlink uilangs-route'>UI Language</a>
+            <a href='/math' class='navlink math-route'>Math</a>
+        </nav>
+        {% block header %}{% endblock %}
+        <main id='ContentArea' class="container p-5">
+            {% block main %}{% endblock %}
+        </main>
+        {% block scripts %}{% endblock %}
+    </body>
+</html>
