@@ -115,11 +115,12 @@ const locs: { [key: string]: string} = {
 };
 
 export function renderButtons(): void {
+    const buttonStyle: HTMLStyleElement = document.createElement('style');
+    buttonStyle.innerHTML = '.immersive-reader-button{cursor:pointer;display:inline-block;padding:5px;} .immersive-reader-button:hover{background:rgba(0,0,0,.05);border-radius:2px';
+    document.head.appendChild(buttonStyle);
+
     const iconElements = <HTMLCollectionOf<HTMLDivElement>>document.getElementsByClassName('immersive-reader-button');
     for (const div of iconElements) {
-        div.style.cursor = 'pointer';
-        div.style.display = 'inline-block';
-        div.style.padding = '5px';
         div.setAttribute('type', 'button');
         div.setAttribute('role', 'button');
         const locale = div.getAttribute(attributeLocale) || 'en';
