@@ -58,7 +58,7 @@ function launchImmersiveReader() {
             content: 'Hello, world!'
         } ]
     };
-    ImmersiveReader.launchAsync(YOUR_TOKEN, content);
+    ImmersiveReader.launchAsync(YOUR_TOKEN, null, content);
 }
 ```
 

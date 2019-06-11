@@ -12,7 +12,7 @@ describe('launchAsync tests', () => {
     it('fails due to missing token', async () => {
         expect.assertions(1);
         try {
-            await launchAsync(null, { chunks: [] });
+            await launchAsync(null, null, { chunks: [] });
         } catch (reason) {
             expect(reason.code).toBe('BadArgument');
         }
@@ -21,7 +21,7 @@ describe('launchAsync tests', () => {
     it('fails due to missing content', async () => {
         expect.assertions(1);
         try {
-            await launchAsync(SampleToken, null);
+            await launchAsync(SampleToken, null, null);
         } catch (reason) {
             expect(reason.code).toBe('BadArgument');
         }
@@ -30,7 +30,7 @@ describe('launchAsync tests', () => {
     it('fails due to missing chunks', async () => {
         expect.assertions(1);
         try {
-            await launchAsync(SampleToken, { chunks: null });
+            await launchAsync(SampleToken, null, { chunks: null });
         } catch (reason) {
             expect(reason.code).toBe('BadArgument');
         }
@@ -39,7 +39,7 @@ describe('launchAsync tests', () => {
     it('fails due to empty chunks', async () => {
         expect.assertions(1);
         try {
-            await launchAsync(SampleToken, { chunks: [] });
+            await launchAsync(SampleToken, null, { chunks: [] });
         } catch (reason) {
             expect(reason.code).toBe('BadArgument');
         }
@@ -47,7 +47,7 @@ describe('launchAsync tests', () => {
 
     it('succeeds', () => {
         expect.assertions(1);
-        const launchPromise = launchAsync(SampleToken, SampleContent)
+        const launchPromise = launchAsync(SampleToken, null, SampleContent)
             .then(iframe => {
                 expect(iframe).not.toBeNull();
             });
@@ -63,7 +63,7 @@ describe('launchAsync tests', () => {
     it('sets the display language', async () => {
         expect.assertions(1);
         const options: Options = { uiLang: 'zh-Hans' };
-        const launchPromise = launchAsync(SampleToken, SampleContent, options);
+        const launchPromise = launchAsync(SampleToken, null, SampleContent, options);
         window.postMessage('ImmersiveReader-ReadyForContent', '*');
 
         const container = await launchPromise;
@@ -75,7 +75,7 @@ describe('launchAsync tests', () => {
         const zIndex = 12345;
         expect.assertions(1);
         const options: Options = { uiZIndex: zIndex };
-        const launchPromise = launchAsync(SampleToken, SampleContent, options);
+        const launchPromise = launchAsync(SampleToken, null, SampleContent, options);
         window.postMessage('ImmersiveReader-ReadyForContent', '*');
 
         const container = await launchPromise;
@@ -84,7 +84,7 @@ describe('launchAsync tests', () => {
 
     it('launches with default z-index', async () => {
         expect.assertions(1);
-        const launchPromise = launchAsync(SampleToken, SampleContent);
+        const launchPromise = launchAsync(SampleToken, null, SampleContent);
         window.postMessage('ImmersiveReader-ReadyForContent', '*');
 
         const container = await launchPromise;
@@ -95,7 +95,7 @@ describe('launchAsync tests', () => {
         jest.useFakeTimers();
 
         expect.assertions(1);
-        const launchPromise = launchAsync(SampleToken, SampleContent);
+        const launchPromise = launchAsync(SampleToken, null, SampleContent);
 
         // Skip forward in time to trigger timeout logic
         jest.runAllTimers();

@@ -7,18 +7,20 @@ import { Error } from './error';
 
 type Message = {
     cogSvcsAccessToken: string;
+    resourceName: string;
     request: Content;
     launchToPostMessageSentDurationInMs: number;
 };
 
 /**
  * Launch the Immersive Reader within an iframe.
- * @param token The authentication token returned from the Cognitive Services issueToken API.
+ * @param token The authentication token.
+ * @param resourceName Reserved. Leave as null.
  * @param content The content that should be shown in the Immersive Reader.
  * @param options Options for configuring the look and feel of the Immersive Reader.
  * @return A promise that resolves when the Immersive Reader is launched. The promise resolves with the div that contains an iframe which contains the Immersive Reader.
  */
-export function launchAsync(token: string, content: Content, options?: Options): Promise<HTMLDivElement> {
+export function launchAsync(token: string, resourceName: string, content: Content, options?: Options): Promise<HTMLDivElement> {
     return new Promise((resolve, reject: (reason: Error) => void): void => {
         if (!token) {
             reject({ code: 'BadArgument', message: 'Token must not be null' });
@@ -92,6 +94,7 @@ export function launchAsync(token: string, content: Content, options?: Options):
                 resetTimeout();
                 const message: Message = {
                     cogSvcsAccessToken: token,
+                    resourceName,
                     request: content,
                     launchToPostMessageSentDurationInMs: Date.now() - startTime
                 };
