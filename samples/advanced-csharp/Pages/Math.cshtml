@@ -14,7 +14,7 @@
     <script type='text/javascript' src='https://code.jquery.com/jquery-3.3.1.min.js'></script>
     <script type='text/javascript' src='https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.12.1/jquery-ui.min.js'></script>
     <script type='text/javascript' async src='https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-MML-AM_CHTML'></script>
-    <script type='text/javascript' src='http://contentstorage.onenote.office.net/onenoteltir/immersivereadersdk/immersive-reader-0.0.1.js'></script>
+    <script type='text/javascript' src='http://contentstorage.onenote.office.net/onenoteltir/immersivereadersdk/immersive-reader-sdk.0.0.1.js'></script>
     <script type='text/javascript' src='~/js/helpers.js'></script>
 
     <link href='~/css/styles.css' rel='stylesheet'>
@@ -49,12 +49,6 @@
             width: 50%;
             resize: none;
             border-color: lightgrey;
-        }
-
-        .ir-button {
-            float: right;
-            margin-right: 0px;
-            margin-bottom: 1000px;
         }
 
         #DisplayMath {
@@ -149,9 +143,7 @@
             </textarea>
         </section>
         <div id='DisplayMath'>
-            <button class='ir-button ir-button-small' role='button' title='Immersive Reader' aria-label='Immersive Reader' onclick='handleLaunchImmersiveReader()'>
-                <img class='ir-button-icon' src='~/images/icon.svg' />
-            </button>
+            <div class='immersive-reader-button ir-button-small' onclick='handleLaunchImmersiveReader()'></div>
             <div id='DisplayMathContent'></div>
         </div>
     </main>
