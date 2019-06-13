@@ -67,7 +67,7 @@ describe('renderButtons', () => {
         // Cleanup the DOM
         button.remove();
     });
-    
+
     it('styles a single button in a different language', () => {
         const button: HTMLDivElement = document.createElement('div');
         button.className = 'immersive-reader-button';
@@ -121,5 +121,28 @@ describe('renderButtons', () => {
         // Cleanup the DOM
         newDiv1.remove();
         newDiv2.remove();
+    });
+
+    it('works when applied to an array of elements', () => {
+        const button: HTMLDivElement = document.createElement('div');
+        const button2: HTMLDivElement = document.createElement('div');
+        button.className = 'immersive-reader-button';
+        button2.className = 'immersive-reader-button';
+        button2.setAttribute('data-button-style', 'iconAndText');
+        document.body.appendChild(button);
+        document.body.appendChild(button2);
+
+        renderButtons({
+            elements: [button, button2]
+        });
+
+        expectIcon(button, 'Immersive Reader');
+        expectIcon(button2, 'Immersive Reader');
+        expectText(button2, 'Immersive Reader');
+
+        // Cleanup the DOM
+        button.remove();
+        button2.remove();
+
     });
 });
