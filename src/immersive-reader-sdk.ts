@@ -2,9 +2,10 @@
 // Licensed under the MIT License.
 
 import { renderButtons } from './renderButtons';
+import { launchAsync } from './launchAsync';
 
 window.addEventListener('load', () => {
     renderButtons();
 });
 
-export { launchAsync } from './launchAsync';
+export {renderButtons, launchAsync};
