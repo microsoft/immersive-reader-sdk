@@ -1,6 +1,10 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // Licensed under the MIT License.
 
+type RenderButtonsOptions = {
+    elements: HTMLDivElement[];
+};
+
 const attributeIconPxSize = 'data-icon-px-size';
 const attributeButtonStyle = 'data-button-style';
 const attributeLocale = 'data-locale';
@@ -114,12 +118,14 @@ const locs: { [key: string]: string} = {
     zu: 'Isifundi Sokuzizwisa'
 };
 
-export function renderButtons(): void {
+export function renderButtons(options?: RenderButtonsOptions): void {
     const buttonStyle: HTMLStyleElement = document.createElement('style');
     buttonStyle.innerHTML = '.immersive-reader-button{cursor:pointer;display:inline-block;padding:5px;} .immersive-reader-button:hover{background:rgba(0,0,0,.05);border-radius:2px';
     document.head.appendChild(buttonStyle);
-
-    const iconElements = <HTMLCollectionOf<HTMLDivElement>>document.getElementsByClassName('immersive-reader-button');
+    let iconElements = <HTMLDivElement[]>[...document.getElementsByClassName('immersive-reader-button')];
+    if (options && options.elements) {
+        iconElements = options.elements;
+    }
     for (const div of iconElements) {
         div.setAttribute('type', 'button');
         div.setAttribute('role', 'button');
