@@ -2,6 +2,12 @@
 // Licensed under the MIT License.
 
 export type Error = {
-    code: string;    // One of a set of error codes (BadArgument, Timeout, TokenExpired)
+    type: ErrorType;
     message: string; // Human-readable representation of the error
+}
+
+export enum ErrorType {
+    BadArgument = 'BadArgument',
+    Timeout = 'Timeout',
+    TokenExpired = 'TokenExpired'
 }

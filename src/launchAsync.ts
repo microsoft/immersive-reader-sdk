@@ -3,7 +3,7 @@
 
 import { Content } from './content';
 import { Options } from './options';
-import { Error } from './error';
+import { Error, ErrorType } from './error';
 
 type Message = {
     cogSvcsAccessToken: string;
@@ -21,22 +21,22 @@ type Message = {
 export function launchAsync(token: string, content: Content, options?: Options): Promise<HTMLDivElement> {
     return new Promise((resolve, reject: (reason: Error) => void): void => {
         if (!token) {
-            reject({ code: 'BadArgument', message: 'Token must not be null' });
+            reject({ type: ErrorType.BadArgument, message: 'Token must not be null' });
             return;
         }
 
         if (!content) {
-            reject({ code: 'BadArgument', message: 'Content must not be null' });
+            reject({ type: ErrorType.BadArgument, message: 'Content must not be null' });
             return;
         }
 
         if (!content.chunks) {
-            reject({ code: 'BadArgument', message: 'Chunks must not be null' });
+            reject({ type: ErrorType.BadArgument, message: 'Chunks must not be null' });
             return;
         }
 
         if (!content.chunks.length) {
-            reject({ code: 'BadArgument', message: 'Chunks must not be empty' });
+            reject({ type: ErrorType.BadArgument, message: 'Chunks must not be empty' });
             return;
         }
 
@@ -100,14 +100,14 @@ export function launchAsync(token: string, content: Content, options?: Options):
                 resolve(iframeContainer);
             } else if (e.data === 'ImmersiveReader-TokenExpired') {
                 resetTimeout();
-                reject({ code: 'TokenExpired', message: 'The access token supplied is expired.' });
+                reject({ type: ErrorType.TokenExpired, message: 'The access token supplied is expired.' });
             }
         };
         window.addEventListener('message', messageHandler);
 
         // Reject the promise if the Immersive Reader page fails to load.
         timeoutId = window.setTimeout((): void => {
-            reject({ code: 'Timeout', message: `Page failed to load after timeout (${options.timeout} ms)` });
+            reject({ type: ErrorType.Timeout, message: `Page failed to load after timeout (${options.timeout} ms)` });
         }, options.timeout);
 
         // Create and style iframe
