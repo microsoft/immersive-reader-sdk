@@ -54,8 +54,8 @@ describe('launchAsync tests', () => {
 
         // launchAsync creates an iframe which points to the Immersive Reader,
         // which then sends a postMessage to the parent window with the message
-        // 'ImmersiveReader-ReadyForContent'. This mocks that behavior.
-        window.postMessage('ImmersiveReader-ReadyForContent', '*');
+        // 'ImmersiveReader-LaunchSuccessful'. This mocks that behavior.
+        window.postMessage('ImmersiveReader-LaunchSuccessful', '*');
 
         return launchPromise;
     });
@@ -64,7 +64,7 @@ describe('launchAsync tests', () => {
         expect.assertions(1);
         const options: Options = { uiLang: 'zh-Hans' };
         const launchPromise = launchAsync(SampleToken, null, SampleContent, options);
-        window.postMessage('ImmersiveReader-ReadyForContent', '*');
+        window.postMessage('ImmersiveReader-LaunchSuccessful', '*');
 
         const container = await launchPromise;
         const iframe = <HTMLIFrameElement>container.firstElementChild;
@@ -76,7 +76,7 @@ describe('launchAsync tests', () => {
         expect.assertions(1);
         const options: Options = { uiZIndex: zIndex };
         const launchPromise = launchAsync(SampleToken, null, SampleContent, options);
-        window.postMessage('ImmersiveReader-ReadyForContent', '*');
+        window.postMessage('ImmersiveReader-LaunchSuccessful', '*');
 
         const container = await launchPromise;
         expect(container.style.zIndex).toEqual('' + zIndex);
@@ -85,7 +85,7 @@ describe('launchAsync tests', () => {
     it('launches with default z-index', async () => {
         expect.assertions(1);
         const launchPromise = launchAsync(SampleToken, null, SampleContent);
-        window.postMessage('ImmersiveReader-ReadyForContent', '*');
+        window.postMessage('ImmersiveReader-LaunchSuccessful', '*');
 
         const container = await launchPromise;
         expect(container.style.zIndex).toEqual('1000'); // Default is 1000;
@@ -104,6 +104,19 @@ describe('launchAsync tests', () => {
             await launchPromise;
         } catch (reason) {
             expect(reason.code).toBe('Timeout');
+        }
+    });
+
+    it('fails to launch due to expired token', async () => {
+        expect.assertions(1);
+        const launchPromise = launchAsync(SampleToken, null, SampleContent);
+
+        window.postMessage('ImmersiveReader-TokenExpired', '*');
+
+        try {
+            await launchPromise;
+        } catch (reason) {
+            expect(reason.code).toBe('TokenExpired');
         }
     });
 });
