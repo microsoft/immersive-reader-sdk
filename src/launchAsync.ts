@@ -89,14 +89,18 @@ export function launchAsync(token: string, content: Content, options?: Options):
                 reset();
                 window.removeEventListener('message', messageHandler);
             } else if (e.data === 'ImmersiveReader-ReadyForContent') {
-                resetTimeout();
                 const message: Message = {
                     cogSvcsAccessToken: token,
                     request: content,
                     launchToPostMessageSentDurationInMs: Date.now() - startTime
                 };
                 iframe.contentWindow!.postMessage(JSON.stringify({ messageType: 'Content', messageValue: message }), '*');
+            } else if (e.data === 'ImmersiveReader-LaunchSuccessful') {
+                resetTimeout();
                 resolve(iframeContainer);
+            } else if (e.data === 'ImmersiveReader-TokenExpired') {
+                resetTimeout();
+                reject({ code: 'TokenExpired', message: 'The access token supplied is expired.' });
             }
         };
         window.addEventListener('message', messageHandler);
