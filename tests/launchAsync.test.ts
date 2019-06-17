@@ -14,7 +14,7 @@ describe('launchAsync tests', () => {
         try {
             await launchAsync(null, { chunks: [] });
         } catch (error) {
-            expect(error.type).toBe('BadArgument');
+            expect(error.code).toBe('BadArgument');
         }
     });
 
@@ -23,7 +23,7 @@ describe('launchAsync tests', () => {
         try {
             await launchAsync(SampleToken, null);
         } catch (error) {
-            expect(error.type).toBe('BadArgument');
+            expect(error.code).toBe('BadArgument');
         }
     });
 
@@ -32,7 +32,7 @@ describe('launchAsync tests', () => {
         try {
             await launchAsync(SampleToken, { chunks: null });
         } catch (error) {
-            expect(error.type).toBe('BadArgument');
+            expect(error.code).toBe('BadArgument');
         }
     });
 
@@ -41,7 +41,7 @@ describe('launchAsync tests', () => {
         try {
             await launchAsync(SampleToken, { chunks: [] });
         } catch (error) {
-            expect(error.type).toBe('BadArgument');
+            expect(error.code).toBe('BadArgument');
         }
     });
 
@@ -103,7 +103,7 @@ describe('launchAsync tests', () => {
         try {
             await launchPromise;
         } catch (error) {
-            expect(error.type).toBe('Timeout');
+            expect(error.code).toBe('Timeout');
         }
     });
 
@@ -116,7 +116,7 @@ describe('launchAsync tests', () => {
         try {
             await launchPromise;
         } catch (error) {
-            expect(error.type).toBe('TokenExpired');
+            expect(error.code).toBe('TokenExpired');
         }
     });
 });
