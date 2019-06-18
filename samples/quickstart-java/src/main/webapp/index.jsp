@@ -5,6 +5,7 @@
     <title> - QuickstartSampleWebApp</title>
         <link rel="stylesheet" href="/resources/bootstrap.css" />
         <link rel="stylesheet" href="/resources/site.css" />
+        <script type='text/javascript' src='http://contentstorage.onenote.office.net/onenoteltir/immersivereadersdk/immersive-reader-sdk.0.0.1.js'></script>
 </head>
 <body>
     <nav class="navbar navbar-inverse navbar-fixed-top">
@@ -26,14 +27,9 @@
         </div>
     </nav>
     <div class="container body-content">
-        <html>
-<head>
-    <meta charset='utf-8'>
-    <title>Immersive Reader Example: Document</title>
-    <script type='text/javascript' src='http://contentstorage.onenote.office.net/onenoteltir/immersivereadersdk/immersive-reader-0.0.1.js'></script>
+
     <meta name='viewport' content='width=device-width, initial-scale=1'>
-</head>
-<body>
+
     <h1 id='title'>Geography</h1>
     <span id='content'>
         <p>The study of Earth's landforms is called physical geography. Landforms can be mountains and valleys. They can also be glaciers, lakes or rivers. Landforms are sometimes called physical features. It is important for students to know about the physical geography of Earth. The seasons, the atmosphere and all the natural processes of Earth affect where people are able to live. Geography is one of a combination of factors that people use to decide where they want to live.</p>
@@ -87,8 +83,6 @@
                 });
         }
     </script>
-</body>
-</html>
         <hr />
         <footer>
             <p>&copy; 2019 - QuickstartSampleWebApp</p>
