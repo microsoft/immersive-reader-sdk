@@ -122,7 +122,7 @@ export function renderButtons(options?: RenderButtonsOptions): void {
     const buttonStyle: HTMLStyleElement = document.createElement('style');
     buttonStyle.innerHTML = '.immersive-reader-button{cursor:pointer;display:inline-block;padding:5px;} .immersive-reader-button:hover{background:rgba(0,0,0,.05);border-radius:2px';
     document.head.appendChild(buttonStyle);
-    let iconElements = <HTMLDivElement[]>[...document.getElementsByClassName('immersive-reader-button')];
+    let iconElements = <HTMLDivElement[]>[].slice.call(document.getElementsByClassName('immersive-reader-button'));
     if (options && options.elements) {
         iconElements = options.elements;
     }

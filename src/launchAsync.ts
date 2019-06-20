@@ -78,7 +78,9 @@ export function launchAsync(token: string, resourceName: string, content: Conten
             resetTimeout();
 
             // Re-enable scrolling
-            noscroll.remove();
+            if (noscroll.parentNode) {
+                noscroll.parentNode.removeChild(noscroll);
+            }
         };
 
         // Reset variables
