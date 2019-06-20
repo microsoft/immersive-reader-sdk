@@ -4,10 +4,11 @@
 export type Error = {
     code: ErrorCode;
     message: string; // Human-readable representation of the error
-}
+};
 
 export enum ErrorCode {
     BadArgument = 'BadArgument',
     Timeout = 'Timeout',
-    TokenExpired = 'TokenExpired'
+    TokenExpired = 'TokenExpired',
+    Throttled = 'Throttled'
 }

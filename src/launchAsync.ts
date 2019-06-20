@@ -104,6 +104,9 @@ export function launchAsync(token: string, resourceName: string, content: Conten
             } else if (e.data === 'ImmersiveReader-TokenExpired') {
                 resetTimeout();
                 reject({ code: ErrorCode.TokenExpired, message: 'The access token supplied is expired.' });
+            } else if (e.data === 'ImmersiveReader-Throttled') {
+                resetTimeout();
+                reject({ code: ErrorCode.Throttled, message: 'You have exceeded your quota.' });
             }
         };
         window.addEventListener('message', messageHandler);
