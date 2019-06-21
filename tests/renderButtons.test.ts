@@ -5,7 +5,7 @@ import { renderButtons } from '../src/renderButtons';
 
 function expectIcon(button: HTMLDivElement, text: string) {
     let imageCount = 0;
-    for (const child of button.children) {
+    for (const child of <any>button.children) {
         if (child.tagName === 'IMG') {
             expect(child.getAttribute('alt')).toBe(text);
             imageCount++;
@@ -16,7 +16,7 @@ function expectIcon(button: HTMLDivElement, text: string) {
 
 function expectText(button: HTMLDivElement, text: string) {
     let spanCount = 0;
-    for (const child of button.children) {
+    for (const child of <any>button.children) {
         if (child.tagName === 'SPAN' && child.textContent) {
             expect(child.textContent).toBe(text);
             spanCount++;
