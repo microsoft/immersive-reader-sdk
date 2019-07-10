@@ -1,4 +1,4 @@
-﻿Immersive Reader - Advanced Sample
+﻿Immersive Reader - Quick Start Sample
 ----------------------------------
 
 Follow these steps to get the sample up and running:
@@ -31,7 +31,7 @@ Follow these steps to get the sample up and running:
        3) Assigning the 'Cognitive Services User' role to the service principal, granting it access to the Immersive Reader resource created above (via the -scope option)
 
 
-3. Open AdvancedSampleWebApp.sln in Visual Studio
+3. Open QuickStartSampleWebApp.sln in Visual Studio
 
 
 4. Right-click on the project in the Solution Explorer and choose "Manage User Secrets". This will open a file called secrets.json. Replace the contents of that file with the following, supplying your custom property values as appropriate:

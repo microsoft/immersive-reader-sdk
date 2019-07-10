@@ -13,7 +13,7 @@
 
     <script type='text/javascript' src='https://code.jquery.com/jquery-3.3.1.min.js'></script>
     <script type='text/javascript' src='https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.12.1/jquery-ui.min.js'></script>
-    <script type='text/javascript' src='http://contentstorage.onenote.office.net/onenoteltir/immersivereadersdk/immersive-reader-sdk.0.0.1.js'></script>
+    <script type='text/javascript' src='https://contentstorage.onenote.office.net/onenoteltir/immersivereadersdk/immersive-reader-sdk.0.0.2.js'></script>
     <script type='text/javascript' src='~/js/helpers.js'></script>
 
     <link href='~/css/styles.css' rel='stylesheet'>
@@ -21,6 +21,7 @@
 
     <script type='text/javascript'>
         var Canary = '@Html.Raw(ViewData["Canary"])';
+        var Subdomain = '@Html.Raw(ViewData["Subdomain"])';
     </script>
 
     <style media='screen' type='text/css'>
@@ -30,6 +31,7 @@
             padding-top: 50px;
             width: 60%;
         }
+
         .section {
             border: 1px solid #cccccc;
             border-radius: 4px;
@@ -52,9 +54,11 @@
             margin-top: 10px;
             padding: 0;
         }
+
         p {
             line-height: 25px;
         }
+
         @@media screen and (min-width: 900px) {
             #Cols {
                 column-gap: 20px;
@@ -114,7 +118,7 @@
             }
 
             const token = await getImmersiveReaderTokenAsync(Canary);
-            ImmersiveReader.launchAsync(token, data, options);
+            ImmersiveReader.launchAsync(token, Subdomain, data, options);
         }
     </script>
 </body>
