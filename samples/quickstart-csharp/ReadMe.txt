@@ -1,4 +1,4 @@
-﻿Immersive Reader - Advanced Sample
+﻿Immersive Reader - Quick Start Sample
 ----------------------------------
 
 Follow these steps to get the sample up and running:
