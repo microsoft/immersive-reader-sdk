@@ -15,7 +15,7 @@ type Message = {
 /**
  * Launch the Immersive Reader within an iframe.
  * @param token The authentication token.
- * @param resourceName Reserved. Leave as null.
+ * @param subdomain The Immersive Reader Cognitive Service subdomain.
  * @param content The content that should be shown in the Immersive Reader.
  * @param options Options for configuring the look and feel of the Immersive Reader.
  * @return A promise that resolves when the Immersive Reader is launched. The promise resolves with the div that contains an iframe which contains the Immersive Reader.
