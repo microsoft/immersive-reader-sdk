@@ -37,7 +37,12 @@ def math():
 def getimmersivereadertoken():
 	'Get the access token'
 	if request.method == 'POST':
-		payload = {'Ocp-Apim-Subscription-Key': os.environ.get('SUBSCRIPTION_KEY', 'defaultValue'),
-            	   'content-type': 'application/x-www-form-urlencoded'}
-		resp = requests.post(os.environ.get('ENDPOINT', 'defaultValue') + '/issueToken', headers=payload)
+		headers = { 'content-type': 'application/x-www-form-urlencoded' }
+		body = {
+			'grant_type': 'client_credentials',
+			'client_id': os.environ.get('CLIENT_ID'),
+			'client_secret': os.environ.get('CLIENT_SECRET'),
+			'resource': 'https://cognitiveservices.azure.com/'
+		}
+		resp = requests.post('https://login.windows.net/' + os.environ.get('TENANT_ID') + '/oauth2/token', headers=headers, body=body)
 		return resp.text
