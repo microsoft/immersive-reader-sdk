@@ -157,7 +157,7 @@
         };
 
         const token = await getImmersiveReaderTokenAsync();
-        ImmersiveReader.launchAsync(token, data);
+        ImmersiveReader.launchAsync(token, '{{ subdomain }}', data);
     }
 
     // Display math preview with MathJax
