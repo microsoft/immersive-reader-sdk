@@ -1,15 +1,14 @@
 ﻿// Copyright (c) Microsoft Corporation. All rights reserved.
 // Licensed under the MIT License.
 
-using Microsoft.AspNetCore.Mvc.RazorPages;
+using Microsoft.Extensions.Configuration;
 
 namespace AdvancedSampleWebApp.Pages
 {
-    public class MultiLangModel : PageModel
+    public class MultiLangModel : SamplePageModel
     {
-        public void OnGet()
+        public MultiLangModel(IConfiguration configuration) : base(configuration)
         {
-            ViewData["Canary"] = Canary.Generate();
         }
     }
 }
