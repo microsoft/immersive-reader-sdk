@@ -13,6 +13,17 @@ function getImmersiveReaderTokenAsync() {
                 console.log('Error in getting token!', err);
                 reject(err);
             }
-        })
+        });
+    });
+}
+
+function getSubdomainAsync() {
+    return new Promise((resolve, reject) => {
+        $.ajax({
+            url: '/subdomain',
+            type: 'GET',
+            success: subdomain => { resolve(subdomain); },
+            error: err => { reject(err); }
+        });
     });
 }

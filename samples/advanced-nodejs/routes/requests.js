@@ -28,4 +28,8 @@ router.get('/getimmersivereadertoken', function(req, res) {
     );
 });
 
+router.get('/subdomain', function (req, res) {
+    return res.send(process.env.SUBDOMAIN);
+})
+
 module.exports = router;
