@@ -6,7 +6,7 @@ Follow these steps to get the sample up and running:
 1. Follow the instructions at https://docs.microsoft.com/en-us/azure/cognitive-services/immersive-reader/aadauth to create an Immersive Reader resource with a custom subdomain and configure Azure Active Directory (AAD) authentication in your Azure tenant.
 
 
-2. Open AdvancedSampleWebApp.sln in Visual Studio.
+2. Open QuickStartSampleWebApp.sln in Visual Studio.
 
 
 3. Right-click on the project in the Solution Explorer and choose "Manage User Secrets". This will open a file called secrets.json. Replace the contents of that file with the following, supplying your custom property values as appropriate:
