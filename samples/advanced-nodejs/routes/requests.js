@@ -3,10 +3,10 @@
 
 var express = require('express');
 var router = express.Router();
-var request = require('request');
+var request = require('request-promise');
 
-router.get('/getimmersivereadertoken', function(req, res) {
-    request.post({
+router.get('/getimmersivereadertoken', async function(req, res) {
+    await request.post({
             headers: {
                 'content-type': 'application/x-www-form-urlencoded'
             },
