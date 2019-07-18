@@ -5,19 +5,29 @@ import java.io.*;
 import java.net.HttpURLConnection;
 import java.net.URL;
 
-import static Microsoft.ImmersiveReader.Constants.SUBSCRIPTION_KEY;
-import static Microsoft.ImmersiveReader.Constants.ENDPOINT_URL;
+import static Microsoft.ImmersiveReader.Constants.TENANT_ID;
+import static Microsoft.ImmersiveReader.Constants.CLIENT_ID;
+import static Microsoft.ImmersiveReader.Constants.CLIENT_SECRET;
+import static Microsoft.ImmersiveReader.Constants.SUBDOMAIN;
 
 public class GetAuthTokenServlet extends HttpServlet {
 
     public void doGet(HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse)
             throws IOException {
 
-        if (SUBSCRIPTION_KEY.isEmpty() || SUBSCRIPTION_KEY == null) {
+        if (TENANT_ID.isEmpty() || TENANT_ID == null) {
             throw new IllegalArgumentException();
         }
 
-        if (ENDPOINT_URL.isEmpty() || ENDPOINT_URL == null) {
+        if (CLIENT_ID.isEmpty() || CLIENT_ID == null) {
+            throw new IllegalArgumentException();
+        }
+
+        if (CLIENT_SECRET.isEmpty() || CLIENT_SECRET == null) {
+            throw new IllegalArgumentException();
+        }
+
+        if (SUBDOMAIN.isEmpty() || SUBDOMAIN == null) {
             throw new IllegalArgumentException();
         }
 
@@ -29,25 +39,26 @@ public class GetAuthTokenServlet extends HttpServlet {
     }
 
     /**
-     * Returns the token for the Immersive Reader by using the Azure Subscription Key
+     * Returns the token for the Immersive Reader
      *
-     * @return the token for the Immersive Reader by using the Azure Subscription Key
+     * @return the token for the Immersive Reader
      *
      */
     private String getToken() throws IOException {
 
-        URL tokenUrl = new URL(ENDPOINT_URL + "/issueToken");
+        URL tokenUrl = new URL("https://login.windows.net/" + TENANT_ID + "/oauth2/token");
+        String form = "grant_type=client_credentials&resource=https://cognitiveservices.azure.com/&client_id=" + CLIENT_ID + "&client_secret=" + CLIENT_SECRET;
 
         HttpURLConnection connection = (HttpURLConnection) tokenUrl.openConnection();
         connection.setRequestMethod("POST");
 
-        connection.setRequestProperty("Content-type", "application/x-www-form-urlencoded");
-        connection.setRequestProperty("Content-length", "0");
-        connection.setRequestProperty("Ocp-Apim-Subscription-Key", SUBSCRIPTION_KEY);
+        connection.setRequestProperty("Content-Type", "application/x-www-form-urlencoded");
 
         connection.setDoOutput(true);
-        OutputStream os = connection.getOutputStream();
-        os.close();
+        DataOutputStream writer = new DataOutputStream(connection.getOutputStream());
+        writer.writeBytes(form);
+        writer.flush();
+        writer.close();
 
         int responseCode = connection.getResponseCode();
 
