@@ -4,49 +4,32 @@
 using System;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.IdentityModel.Clients.ActiveDirectory;
 
 namespace QuickstartSampleWebApp.Controllers
 {
     public class HomeController : Controller
     {
-        private readonly string TenantId;     // Azure subscription TenantId
-        private readonly string ClientId;     // AAD ApplicationId
-        private readonly string ClientSecret; // AAD Application Service Principal password
-        private readonly string Subdomain;    // Immersive Reader cognitive service resource subdomain (resource 'Name' if the resource was created in the Azure portal, or 'CustomSubDomain' option if the resource was created in Powershell - check the Azure portal for the subdomain on the Endpoint in the resource Overview page, e.g. it will look like 'https://[SUBDOMAIN].cognitiveservices.azure.com/')
+        private readonly string SubscriptionKey;
+        private readonly string Endpoint;
 
         public HomeController(Microsoft.Extensions.Configuration.IConfiguration configuration)
         {
-            TenantId = configuration["TenantId"];
-            ClientId = configuration["ClientId"];
-            ClientSecret = configuration["ClientSecret"];
-            Subdomain = configuration["Subdomain"];
+            SubscriptionKey = configuration["SubscriptionKey"];
+            Endpoint = configuration["Endpoint"];
 
-            if (string.IsNullOrWhiteSpace(TenantId))
+            if (string.IsNullOrEmpty(Endpoint))
             {
-                throw new ArgumentNullException("TenantId is null! Did you add that info to secrets.json? See ReadMe.txt.");
+                throw new ArgumentNullException("Endpoint is null!");
             }
 
-            if (string.IsNullOrWhiteSpace(ClientId))
+            if (string.IsNullOrEmpty(SubscriptionKey))
             {
-                throw new ArgumentNullException("ClientId is null! Did you add that info to secrets.json? See ReadMe.txt.");
-            }
-
-            if (string.IsNullOrWhiteSpace(ClientSecret))
-            {
-                throw new ArgumentNullException("ClientSecret is null! Did you add that info to secrets.json? See ReadMe.txt.");
-            }
-
-            if (string.IsNullOrWhiteSpace(Subdomain))
-            {
-                throw new ArgumentNullException("Subdomain is null! Did you add that info to secrets.json? See ReadMe.txt.");
+                throw new ArgumentNullException("SubscriptionKey is null!");
             }
         }
 
         public IActionResult Index()
         {
-            ViewData["Subdomain"] = Subdomain;
-
             return View();
         }
 
@@ -57,19 +40,18 @@ namespace QuickstartSampleWebApp.Controllers
         }
 
         /// <summary>
-        /// Get an AAD authentication token
+        /// Exchange your Azure subscription key for an access token
         /// </summary>
         private async Task<string> GetTokenAsync()
         {
-            string authority = $"https://login.windows.net/{TenantId}";
-            const string resource = "https://cognitiveservices.azure.com/";
-
-            AuthenticationContext authContext = new AuthenticationContext(authority);
-            ClientCredential clientCredential = new ClientCredential(ClientId, ClientSecret);
-
-            AuthenticationResult authResult = await authContext.AcquireTokenAsync(resource, clientCredential);
-
-            return authResult.AccessToken;
+            using (var client = new System.Net.Http.HttpClient())
+            {
+                client.DefaultRequestHeaders.Add("Ocp-Apim-Subscription-Key", SubscriptionKey);
+                using (var response = await client.PostAsync($"{Endpoint}/issueToken", null))
+                {
+                    return await response.Content.ReadAsStringAsync();
+                }
+            }
         }
     }
 }
