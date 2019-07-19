@@ -25,11 +25,9 @@ Using [Git](https://git-scm.com/), open a Command Prompt and run `git clone http
 3. Connect the sample project with the environment by running `setprojectdir .`. This maps the newly created virtual environment to the sample project root folder. The project should now be active and you'll see something like `(advanced-python) C:\immersive-reader-sdk\samples\advanced-python>` in the Command Prompt.
 4. To deactivate the environment run `deactivate`. The `(advanced-python)` prefix should now be gone as the environment is now deactivated.
 5. To reactivate the environment run `workon advanced-python` from the sample project root folder.
-6. Create a file called .env and add the following to it, supplying the corresponding information where appropriate:
-⋅⋅* TENANT_ID={YOUR_TENANT_ID}
-⋅⋅* CLIENT_ID={YOUR_CLIENT_ID}
-⋅⋅* CLIENT_SECRET={YOUR_CLIENT_SECRET}
-⋅⋅* SUBDOMAIN={YOUR_SUBDOMAIN}
+6. Create a file called .env and add the following to it, supplying your subscription key and endpoint where appropriate:
+⋅⋅* SUBSCRIPTION_KEY={YOUR_SUBSCRIPTION_KEY}
+⋅⋅* ENDPOINT={YOUR_ENDPOINT}
 7. Run the sample project by entering `flask run` from the sample project root folder.
 8. Open a browser and navigate to [http://127.0.0.1:5000/](http://127.0.0.1:5000/)
 
@@ -60,11 +58,9 @@ Using [Git](https://git-scm.com/), Launch Terminal and run `git clone https://gi
 
 1. `cd` to the sample project root folder e.g. `cd immersive-reader-sdk/samples/advanced-python`.
 2. Make a virtual environment by launching Terminal and run `mkvirtualenv -p /usr/local/bin/python3 advanced-python`.
-3. Create a file called .env and add the following to it, supplying the corresponding information where appropriate:
-⋅⋅* TENANT_ID={YOUR_TENANT_ID}
-⋅⋅* CLIENT_ID={YOUR_CLIENT_ID}
-⋅⋅* CLIENT_SECRET={YOUR_CLIENT_SECRET}
-⋅⋅* SUBDOMAIN={YOUR_SUBDOMAIN}
+3. Create a file called .env and add the following to it, supplying your subscription key and endpoint where appropriate:
+⋅⋅* SUBSCRIPTION_KEY={YOUR_SUBSCRIPTION_KEY}
+⋅⋅* ENDPOINT={YOUR_ENDPOINT}
 4. Run the sample project by entering `flask run` from the sample project root folder.
 5. Open a browser and navigate to [http://127.0.0.1:5000/](http://127.0.0.1:5000/)
 

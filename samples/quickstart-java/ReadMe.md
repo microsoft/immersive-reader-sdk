@@ -21,32 +21,30 @@ Using [Git](https://git-scm.com/), Launch Terminal and run `git clone https://gi
 
 #### USAGE
 
-1. Create a new project in IntelliJ by clicking **New -> Project from Existing Sources...** from the menu bar.
-    * Select the **JavaSample** folder from the cloned repo.
-    * Click **Import project from external model** and select **Maven**. Click next.
-    * Leave all default setting and click next.
-    * Under **Select Maven projects to import**, ensure **Microsoft.ImmersiveReader.quickstart-java:1.0-SNAPSHOT** is checked and press next.
-    * Under **Project SDK**, if the Java JDK does not show up, click the plus sign and select the Java JDK from the location it was downloaded in the previous section, then click next.
+1. Create a new project in IntelliJ by clicking **New -> Project from Existing Sources...** from the menu bar. 
+    * Select the **JavaSample** folder from the cloned repo. 
+    * Click **Import project from external model** and select **Maven**. Click next. 
+    * Leave all default setting and click next. 
+    * Under **Select Maven projects to import**, ensure **Microsoft.ImmersiveReader.quickstart-java:1.0-SNAPSHOT** is checked and press next. 
+    * Under **Project SDK**, if the Java JDK does not show up, click the plus sign and select the Java JDK from the location it was downloaded in the previous section, then click next. 
     * After naming the project and selecting a location for the project click Finish.
 
-2. Add a new run configuration by clicking **Run -> Edit Configurations...**
-    * Click the plus sign on the left side of the **Run/Debug Configurations** popup to add a new configuration and select **Maven**.
-    * In the **Name** field, enter **Tomcat**.
-    * Under the **Parameters** tab, in the **Working directory** field, ensure the path to the project is entered.
-    * In the **Command line** field, enter **tomcat7:run**.
-    * At the bottom of the popup under **Before launch: Activate tool window**, click the plus sign and select **Run Maven Goal**.
+2. Add a new run configuration by clicking **Run -> Edit Configurations...** 
+    * Click the plus sign on the left side of the **Run/Debug Configurations** popup to add a new configuration and select **Maven**. 
+    * In the **Name** field, enter **Tomcat**. 
+    * Under the **Parameters** tab, in the **Working directory** field, ensure the path to the project is entered. 
+    * In the **Command line** field, enter **tomcat7:run**. 
+    * At the bottom of the popup under **Before launch: Activate tool window**, click the plus sign and select **Run Maven Goal**. 
     * In the **Command line** field enter **clean**. Click OK.
     * Click Apply, then click OK to close the window.
 
-3. In the JavaSample/src/main/Java/Microsoft.ImmersiveReader folder create a new Java Class called Constants.
-    * Add the following public static final Strings:
-        * TENANT_ID
-        * CLIENT_ID
-        * CLIENT_SECRET
-        * SUBDOMAIN
+3. In the JavaSample/src/main/Java/Microsoft.ImmersiveReader folder create a new Java Class called Constants. 
+    * Add two public static final Strings:
+        * SUBSCRIPTION_KEY which contains your Azure Subscription Key.
+        * ENDPOINT_URL which contains the end point used to retrieve the Cognitive Services token. 
     * This should resolve the errors in the GetAuthTokenServlet.java file.
 
-4. Run the sample project by pressing Shift + F10 or by clicking the Run button.
+4. Run the sample project by pressing Shift + F10 or by clicking the Run button. 
 
 5. Click the link **http://localhost:8888** in the Maven tool build window or open a browser and navigate to http://localhost:8888.
 
