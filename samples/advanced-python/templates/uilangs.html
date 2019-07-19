@@ -96,7 +96,7 @@
         }
 
         const token = await getImmersiveReaderTokenAsync();
-        ImmersiveReader.launchAsync(token, '{{ subdomain }}', data, options);
+        ImmersiveReader.launchAsync(token, data, options);
     }
 
     const loc = window.location.href;
