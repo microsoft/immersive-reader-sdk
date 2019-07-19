@@ -5,7 +5,7 @@
     <title> - QuickstartSampleWebApp</title>
         <link rel="stylesheet" href="/resources/bootstrap.css" />
         <link rel="stylesheet" href="/resources/site.css" />
-        <script type='text/javascript' src='http://contentstorage.onenote.office.net/onenoteltir/immersivereadersdk/immersive-reader-sdk.0.0.1.js'></script>
+        <script type='text/javascript' src='https://contentstorage.onenote.office.net/onenoteltir/immersivereadersdk/immersive-reader-sdk.0.0.2.js'></script>
 </head>
 <body>
     <nav class="navbar navbar-inverse navbar-fixed-top">
@@ -49,7 +49,7 @@
                   url: '/getAuthTokenServlet',
                   type: 'GET',
                   success: token => {
-                      resolve(token);
+                      resolve(JSON.parse(token).access_token);
                   },
                   error: err => {
                       console.log('Error in getting token!', err);
@@ -75,7 +75,7 @@
 
             const token = await getImmersiveReaderTokenAsync();
 
-            ImmersiveReader.launchAsync(token, data, options)
+            ImmersiveReader.launchAsync(token, '<%= Microsoft.ImmersiveReader.Constants.SUBDOMAIN %>', data, options)
                 .then(() => {
                     console.log('success');
                 }, (error) => {
