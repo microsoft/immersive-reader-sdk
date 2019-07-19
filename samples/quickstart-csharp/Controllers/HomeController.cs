@@ -14,7 +14,6 @@ namespace QuickstartSampleWebApp.Controllers
         private readonly string ClientId;     // AAD ApplicationId
         private readonly string ClientSecret; // AAD Application Service Principal password
         private readonly string Subdomain;    // Immersive Reader resource subdomain (resource 'Name' if the resource was created in the Azure portal, or 'CustomSubDomain' option if the resource was created with Azure CLI Powershell. Check the Azure portal for the subdomain on the Endpoint in the resource Overview page, for example, 'https://[SUBDOMAIN].cognitiveservices.azure.com/')
-
         public HomeController(Microsoft.Extensions.Configuration.IConfiguration configuration)
         {
             TenantId = configuration["TenantId"];
@@ -45,13 +44,17 @@ namespace QuickstartSampleWebApp.Controllers
 
         public IActionResult Index()
         {
-            ViewData["Subdomain"] = Subdomain;
-
             return View();
         }
 
+        [Route("subdomain")]
+        public string GetSubdomain()
+        {
+            return Subdomain;
+        }
+
         [Route("token")]
-        public async Task<string> Token()
+        public async Task<string> GetToken()
         {
             return await GetTokenAsync();
         }

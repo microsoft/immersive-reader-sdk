@@ -4,6 +4,11 @@
 
 ## Follow these steps to get the sample up and running
 
+### Create an Immersive Reader resource and configure Azure Active Directory (AAD) authentication
+
+1. Follow the instructions at https://docs.microsoft.com/en-us/azure/cognitive-services/immersive-reader/aadauth to create an Immersive Reader resource with a custom subdomain and configure Azure Active Directory (AAD) authentication in your Azure tenant.  
+You will need some of the values created here when configuring the sample project properties. Save the output of your session into a text file for future reference.
+
 ### Installation on Windows
 
 1. Install [Python](https://www.python.org/downloads/). Choose custom installation and set the installation path as your root folder e.g. `C:\Python37-32\`.
@@ -26,10 +31,21 @@ Using [Git](https://git-scm.com/), open a Command Prompt and run `git clone http
 4. To deactivate the environment run `deactivate`. The `(advanced-python)` prefix should now be gone as the environment is now deactivated.
 5. To reactivate the environment run `workon advanced-python` from the sample project root folder.
 6. Create a file called .env and add the following to it, supplying the corresponding information where appropriate:
-⋅⋅* TENANT_ID={YOUR_TENANT_ID}
-⋅⋅* CLIENT_ID={YOUR_CLIENT_ID}
-⋅⋅* CLIENT_SECRET={YOUR_CLIENT_SECRET}
-⋅⋅* SUBDOMAIN={YOUR_SUBDOMAIN}
+```text
+TENANT_ID={YOUR_TENANT_ID}
+CLIENT_ID={YOUR_CLIENT_ID}
+CLIENT_SECRET={YOUR_CLIENT_SECRET}
+SUBDOMAIN={YOUR_SUBDOMAIN}
+```
+   You need property values from the AAD authentication configuration in step above for this part. Refer back to the text file you saved of that session. See the details section below.  
+
+   Property value details:
+
+   TENANT_ID     => Azure subscription TenantId  
+   CLIENT_ID     => AAD ApplicationId  
+   CLIENT_SECRET => AAD Application Service Principal password  
+   SUBDOMAIN     => Immersive Reader resource subdomain (resource 'Name' if the resource was created in the Azure portal, or 'CustomSubDomain' option if the resource was created with Azure CLI Powershell. Check the Azure portal for the subdomain on the Endpoint in the resource Overview page, for example, 'https://[SUBDOMAIN].cognitiveservices.azure.com/')
+
 7. Run the sample project by entering `flask run` from the sample project root folder.
 8. Open a browser and navigate to [http://127.0.0.1:5000/](http://127.0.0.1:5000/)
 

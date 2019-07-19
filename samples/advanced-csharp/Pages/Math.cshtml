@@ -22,7 +22,6 @@
 
     <script type='text/javascript'>
         var Canary = '@Html.Raw(ViewData["Canary"])';
-        var Subdomain = '@Html.Raw(ViewData["Subdomain"])';
     </script>
 
     <style type='text/css'>
@@ -178,7 +177,9 @@
             };
 
             const token = await getImmersiveReaderTokenAsync(Canary);
-            ImmersiveReader.launchAsync(token, Subdomain, data);
+            const subdomain = await getImmersiveReaderSubdomainAsync();
+
+            ImmersiveReader.launchAsync(token, subdomain, data);
         }
 
         // Display math preview with MathJax

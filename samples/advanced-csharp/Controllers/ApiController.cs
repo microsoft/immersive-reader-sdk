@@ -13,12 +13,14 @@ namespace AdvancedSampleWebApp.Pages
         private readonly string TenantId;     // Azure subscription TenantId
         private readonly string ClientId;     // AAD ApplicationId
         private readonly string ClientSecret; // AAD Application Service Principal password
+        private readonly string Subdomain;    // Immersive Reader resource subdomain (resource 'Name' if the resource was created in the Azure portal, or 'CustomSubDomain' option if the resource was created with Azure CLI Powershell. Check the Azure portal for the subdomain on the Endpoint in the resource Overview page, for example, 'https://[SUBDOMAIN].cognitiveservices.azure.com/')
 
         public ApiController(Microsoft.Extensions.Configuration.IConfiguration configuration)
         {
             TenantId = configuration["TenantId"];
             ClientId = configuration["ClientId"];
             ClientSecret = configuration["ClientSecret"];
+            Subdomain = configuration["Subdomain"];
 
             if (string.IsNullOrWhiteSpace(TenantId))
             {
@@ -34,6 +36,17 @@ namespace AdvancedSampleWebApp.Pages
             {
                 throw new ArgumentNullException("ClientSecret is null! Did you add that info to secrets.json? See ReadMe.txt.");
             }
+
+            if (string.IsNullOrWhiteSpace(Subdomain))
+            {
+                throw new ArgumentNullException("Subdomain is null! Did you add that info to secrets.json? See ReadMe.txt.");
+            }
+        }
+
+        [Route("subdomain")]
+        public string GetSubdomain()
+        {
+            return Subdomain;
         }
 
         [Route("token")]
@@ -65,8 +78,8 @@ namespace AdvancedSampleWebApp.Pages
 
         protected async Task<string> GetTokenAsync()
         {
-            string authority = $"https://login.windows-ppe.net/{TenantId}";
-            const string resource = "https://ppe.cognitiveservices.azure.com/";
+            string authority = $"https://login.windows.net/{TenantId}";
+            const string resource = "https://cognitiveservices.azure.com/";
 
             AuthenticationContext authContext = new AuthenticationContext(authority);
             ClientCredential clientCredential = new ClientCredential(ClientId, ClientSecret);
