@@ -4,6 +4,7 @@
 Follow these steps to get the sample up and running:
 
 1. Follow the instructions at https://docs.microsoft.com/en-us/azure/cognitive-services/immersive-reader/aadauth to create an Immersive Reader resource with a custom subdomain and configure Azure Active Directory (AAD) authentication in your Azure tenant.
+   You will need some of the values created here when configuring the sample project properties. Save the output of your session into a text file for future reference.
 
 
 2. Open AdvancedSampleWebApp.sln in Visual Studio.
@@ -21,6 +22,8 @@ Follow these steps to get the sample up and running:
         (end file contents)
 
 
+    You need property values from the AAD authentication configuration in step #1 for this part. Refer back to the text file you saved of that session. See the details section below.
+    
     Property value details:
 
     TenantId     => Azure subscription TenantId

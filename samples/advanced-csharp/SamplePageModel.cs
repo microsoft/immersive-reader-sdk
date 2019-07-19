@@ -3,29 +3,18 @@
 
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.Extensions.Configuration;
-using System;
 
 namespace AdvancedSampleWebApp.Pages
 {
     public class SamplePageModel : PageModel
     {
-        public readonly string Subdomain; // Immersive Reader resource subdomain (resource 'Name' if the resource was created in the Azure portal, or 'CustomSubDomain' option if the resource was created with Azure CLI Powershell. Check the Azure portal for the subdomain on the Endpoint in the resource Overview page, for example, 'https://[SUBDOMAIN].cognitiveservices.azure.com/')
-
         public SamplePageModel(IConfiguration configuration)
         {
-            Subdomain = configuration["Subdomain"];
-
-            if (string.IsNullOrWhiteSpace(Subdomain))
-            {
-                throw new ArgumentNullException("Subdomain is null! Did you add that info to secrets.json? See ReadMe.txt.");
-            }
         }
 
         public void OnGet()
         {
-            this.
             ViewData["Canary"] = Canary.Generate();
-            ViewData["Subdomain"] = Subdomain;
         }
     }
 }

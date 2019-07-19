@@ -21,7 +21,6 @@
 
     <script type='text/javascript'>
         var Canary = '@Html.Raw(ViewData["Canary"])';
-        var Subdomain = '@Html.Raw(ViewData["Subdomain"])';
     </script>
 
     <style media='screen' type='text/css'>
@@ -118,7 +117,9 @@
             }
 
             const token = await getImmersiveReaderTokenAsync(Canary);
-            ImmersiveReader.launchAsync(token, Subdomain, data, options);
+            const subdomain = await getImmersiveReaderSubdomainAsync();
+
+            ImmersiveReader.launchAsync(token, subdomain, data, options);
         }
     </script>
 </body>
