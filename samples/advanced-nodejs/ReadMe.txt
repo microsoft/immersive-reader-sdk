@@ -18,7 +18,7 @@ Follow these steps to get the sample up and running:
     TENANT_ID={YOUR_TENANT_ID}
     CLIENT_ID={YOUR_CLIENT_ID}
     CLIENT_SECRET={YOUR_CLIENT_SECRET}
-    CLIENT_SUBDOMAIN={YOUR_SUBDOMAIN}
+    SUBDOMAIN={YOUR_SUBDOMAIN}
 
 
     You need property values from the AAD authentication configuration in step #1 for this part. Refer back to the text file you saved of that session. See the details section below.
