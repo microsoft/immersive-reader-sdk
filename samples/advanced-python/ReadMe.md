@@ -37,7 +37,7 @@ CLIENT_ID={YOUR_CLIENT_ID}
 CLIENT_SECRET={YOUR_CLIENT_SECRET}
 SUBDOMAIN={YOUR_SUBDOMAIN}
 ```
-You need property values from the AAD authentication configuration in step above for this part. Refer back to the text file you saved of that session. See the details section below.  
+You need property values from the AAD authentication configuration step above for this part. Refer back to the text file you saved of that session. See the details section below.  
 
 Property value details:
 

@@ -51,7 +51,7 @@ Using [Git](https://git-scm.com/), Launch Terminal and run `git clone https://gi
         * SUBDOMAIN
     * This should resolve the errors in the GetAuthTokenServlet.java file.
 
-   You need property values from the AAD authentication configuration in step above for this part. Refer back to the text file you saved of that session. See the details section below.  
+   You need property values from the AAD authentication configuration step above for this part. Refer back to the text file you saved of that session. See the details section below.  
 
    Property value details:
 
