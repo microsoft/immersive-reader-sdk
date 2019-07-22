@@ -3,7 +3,7 @@
 
 Follow these steps to get the sample up and running:
 
-1. Follow the instructions at https://docs.microsoft.com/en-us/azure/cognitive-services/immersive-reader/aadauth to create an Immersive Reader resource with a custom subdomain and configure Azure Active Directory (AAD) authentication in your Azure tenant.
+1. Follow the instructions at https://docs.microsoft.com/azure/cognitive-services/immersive-reader/aadauth to create an Immersive Reader resource with a custom subdomain and configure Azure Active Directory (AAD) authentication in your Azure tenant.
    You will need some of the values created here when configuring the sample project properties. Save the output of your session into a text file for future reference.
 
 
