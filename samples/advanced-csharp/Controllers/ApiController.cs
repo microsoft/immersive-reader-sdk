@@ -1,8 +1,8 @@
-﻿using System;
+﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.IdentityModel.Clients.ActiveDirectory;
+using System;
 using System.IO;
-using System.Net.Http;
 using System.Threading.Tasks;
-using Microsoft.AspNetCore.Mvc;
 
 namespace AdvancedSampleWebApp.Pages
 {
@@ -10,30 +10,50 @@ namespace AdvancedSampleWebApp.Pages
     [ApiController]
     public class ApiController : ControllerBase
     {
-        private readonly string SubscriptionKey;
-        private readonly string Endpoint;
+        private readonly string TenantId;     // Azure subscription TenantId
+        private readonly string ClientId;     // AAD ApplicationId
+        private readonly string ClientSecret; // AAD Application Service Principal password
+        private readonly string Subdomain;    // Immersive Reader resource subdomain (resource 'Name' if the resource was created in the Azure portal, or 'CustomSubDomain' option if the resource was created with Azure CLI Powershell. Check the Azure portal for the subdomain on the Endpoint in the resource Overview page, for example, 'https://[SUBDOMAIN].cognitiveservices.azure.com/')
 
         public ApiController(Microsoft.Extensions.Configuration.IConfiguration configuration)
         {
-            SubscriptionKey = configuration["SubscriptionKey"];
-            Endpoint = configuration["Endpoint"];
+            TenantId = configuration["TenantId"];
+            ClientId = configuration["ClientId"];
+            ClientSecret = configuration["ClientSecret"];
+            Subdomain = configuration["Subdomain"];
 
-            if (string.IsNullOrEmpty(Endpoint))
+            if (string.IsNullOrWhiteSpace(TenantId))
             {
-                throw new ArgumentNullException("Endpoint is null! Did you add that info to secrets.json?");
+                throw new ArgumentNullException("TenantId is null! Did you add that info to secrets.json? See ReadMe.txt.");
             }
 
-            if (string.IsNullOrEmpty(SubscriptionKey))
+            if (string.IsNullOrWhiteSpace(ClientId))
             {
-                throw new ArgumentNullException("SubscriptionKey is null! Did you add that info to secrets.json?");
+                throw new ArgumentNullException("ClientId is null! Did you add that info to secrets.json? See ReadMe.txt.");
+            }
+
+            if (string.IsNullOrWhiteSpace(ClientSecret))
+            {
+                throw new ArgumentNullException("ClientSecret is null! Did you add that info to secrets.json? See ReadMe.txt.");
+            }
+
+            if (string.IsNullOrWhiteSpace(Subdomain))
+            {
+                throw new ArgumentNullException("Subdomain is null! Did you add that info to secrets.json? See ReadMe.txt.");
             }
         }
 
+        [Route("subdomain")]
+        public string GetSubdomain()
+        {
+            return Subdomain;
+        }
+
         [Route("token")]
-		[HttpPost]
-		[Consumes("text/plain")]
-		[Produces("text/plain")]
-		public async Task<string> Token()
+        [HttpPost]
+        [Consumes("text/plain")]
+        [Produces("text/plain")]
+        public async Task<string> Token()
         {
             // Retrieve the canary value and authenticate
             string canary;
@@ -58,14 +78,15 @@ namespace AdvancedSampleWebApp.Pages
 
         protected async Task<string> GetTokenAsync()
         {
-            using (var client = new HttpClient())
-            {
-                client.DefaultRequestHeaders.Add("Ocp-Apim-Subscription-Key", SubscriptionKey);
-                using (var response = await client.PostAsync($"{Endpoint}/issueToken", null))
-                {
-                    return await response.Content.ReadAsStringAsync();
-                }
-            }
+            string authority = $"https://login.windows.net/{TenantId}";
+            const string resource = "https://cognitiveservices.azure.com/";
+
+            AuthenticationContext authContext = new AuthenticationContext(authority);
+            ClientCredential clientCredential = new ClientCredential(ClientId, ClientSecret);
+
+            AuthenticationResult authResult = await authContext.AcquireTokenAsync(resource, clientCredential);
+
+            return authResult.AccessToken;
         }
     }
 }

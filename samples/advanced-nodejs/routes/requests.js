@@ -8,19 +8,28 @@ var request = require('request');
 router.get('/getimmersivereadertoken', function(req, res) {
     request.post({
             headers: {
-                'Ocp-Apim-Subscription-Key': process.env.SUBSCRIPTION_KEY,
                 'content-type': 'application/x-www-form-urlencoded'
             },
-            url: process.env.ENDPOINT + '/issueToken'
+            url: `https://login.windows.net/${process.env.TENANT_ID}/oauth2/token`,
+            form: {
+                grant_type: 'client_credentials',
+                client_id: process.env.CLIENT_ID,
+                client_secret: process.env.CLIENT_SECRET,
+                resource: 'https://cognitiveservices.azure.com/'
+            }
         },
         function(err, resp, token) {
             if (err) {
                 return res.status(500).send('CogSvcs IssueToken error');
             }
 
-            return res.send(token);
+            return res.send(JSON.parse(token).access_token);
         }
     );
 });
+
+router.get('/subdomain', function (req, res) {
+    return res.send(process.env.SUBDOMAIN);
+})
 
 module.exports = router;
