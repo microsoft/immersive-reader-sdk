@@ -11,8 +11,8 @@ namespace QuickstartSampleWebApp.Controllers
     public class HomeController : Controller
     {
         private readonly string TenantId;     // Azure subscription TenantId
-        private readonly string ClientId;     // AAD ApplicationId
-        private readonly string ClientSecret; // AAD Application Service Principal password
+        private readonly string ClientId;     // Azure AD ApplicationId
+        private readonly string ClientSecret; // Azure AD Application Service Principal password
         private readonly string Subdomain;    // Immersive Reader resource subdomain (resource 'Name' if the resource was created in the Azure portal, or 'CustomSubDomain' option if the resource was created with Azure CLI Powershell. Check the Azure portal for the subdomain on the Endpoint in the resource Overview page, for example, 'https://[SUBDOMAIN].cognitiveservices.azure.com/')
         public HomeController(Microsoft.Extensions.Configuration.IConfiguration configuration)
         {
@@ -60,7 +60,7 @@ namespace QuickstartSampleWebApp.Controllers
         }
 
         /// <summary>
-        /// Get an AAD authentication token
+        /// Get an Azure AD authentication token
         /// </summary>
         private async Task<string> GetTokenAsync()
         {

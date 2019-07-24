@@ -4,9 +4,9 @@
 
 ## Follow these steps to get the sample up and running
 
-### Create an Immersive Reader resource and configure Azure Active Directory (AAD) authentication
+### Create an Immersive Reader resource and configure Azure Active Directory (Azure AD) authentication
 
-1. Follow the instructions at https://docs.microsoft.com/azure/cognitive-services/immersive-reader/aadauth to create an Immersive Reader resource with a custom subdomain and configure Azure Active Directory (AAD) authentication in your Azure tenant.  
+1. Follow the instructions at https://docs.microsoft.com/azure/cognitive-services/immersive-reader/azure-active-directory-authentication to create an Immersive Reader resource with a custom subdomain and configure Azure Active Directory (Azure AD) authentication in your Azure tenant.  
 You will need some of the values created here when configuring the sample project properties. Save the output of your session into a text file for future reference.
 
 ### Installation on Windows
@@ -51,13 +51,13 @@ Using [Git](https://git-scm.com/), Launch Terminal and run `git clone https://gi
         * SUBDOMAIN
     * This should resolve the errors in the GetAuthTokenServlet.java file.
 
-   You need property values from the AAD authentication configuration step above for this part. Refer back to the text file you saved of that session. See the details section below.  
+   You need property values from the Azure AD authentication configuration step above for this part. Refer back to the text file you saved of that session. See the details section below.  
 
    Property value details:
 
    * TENANT_ID => Azure subscription TenantId  
-   * CLIENT_ID => AAD ApplicationId  
-   * CLIENT_SECRET => AAD Application Service Principal password  
+   * CLIENT_ID => Azure AD ApplicationId  
+   * CLIENT_SECRET => Azure AD Application Service Principal password  
    * SUBDOMAIN => Immersive Reader resource subdomain (resource 'Name' if the resource was created in the Azure portal, or 'CustomSubDomain' option if the resource was created with Azure CLI Powershell. Check the Azure portal for the subdomain on the Endpoint in the resource Overview page, for example, 'https://[SUBDOMAIN].cognitiveservices.azure.com/')    
 
 4. Run the sample project by pressing Shift + F10 or by clicking the Run button.
