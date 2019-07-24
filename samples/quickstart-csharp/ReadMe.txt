@@ -1,4 +1,4 @@
-﻿Immersive Reader - Advanced Sample
+﻿Immersive Reader - Quick Start Sample
 ----------------------------------
 
 Follow these steps to get the sample up and running:
@@ -7,7 +7,7 @@ Follow these steps to get the sample up and running:
    You will need some of the values created here when configuring the sample project properties. Save the output of your session into a text file for future reference.
 
 
-2. Open AdvancedSampleWebApp.sln in Visual Studio.
+2. Open QuickStartSampleWebApp.sln in Visual Studio.
 
 
 3. Right-click on the project in the Solution Explorer and choose "Manage User Secrets". This will open a file called secrets.json. Replace the contents of that file with the following, supplying your custom property values as appropriate:
@@ -23,14 +23,14 @@ Follow these steps to get the sample up and running:
 
 
     You need property values from the Azure AD authentication configuration in step #1 for this part. Refer back to the text file you saved of that session. See the details section below.
-    
+
     Property value details:
 
     TenantId     => Azure subscription TenantId
     ClientId     => Azure AD ApplicationId
     ClientSecret => Azure AD Application Service Principal password
     Subdomain    => Immersive Reader resource subdomain (resource 'Name' if the resource was created in the Azure portal, or 'CustomSubDomain' option if the resource was created with Azure CLI Powershell. Check the Azure portal for the subdomain on the Endpoint in the resource Overview page, for example, 'https://[SUBDOMAIN].cognitiveservices.azure.com/')
-
+    
 
 4. Run Debug->Start Debugging.
 
