@@ -93,7 +93,7 @@ export function launchAsync(token: string, subdomain: string, content: Content, 
                 reset();
                 window.removeEventListener('message', messageHandler);
 
-                // execute unload callback if we have one
+                // Execute exit callback if we have one
                 if (options.onExitCallback) {
                     options.onExitCallback();
                 }
