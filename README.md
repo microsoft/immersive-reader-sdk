@@ -6,11 +6,11 @@ The Immersive Reader SDK is a JavaScript library that allows you to easily and q
 
 ## Usage
 
-Usage of this SDK requires an Azure subscription to Immersive Reader. Follow [these instructions](https://docs.microsoft.com/azure/cognitive-services/immersive-reader/aadauth) to create an Immersive Reader resource with a custom subdomain and configure Azure Active Directory (AAD) authentication in your Azure tenant.
+Usage of this SDK requires an Azure subscription to Immersive Reader. Follow [these instructions](https://docs.microsoft.com/azure/cognitive-services/immersive-reader/azure-active-directory-authentication) to create an Immersive Reader resource with a custom subdomain and configure Azure Active Directory (Azure AD) authentication in your Azure tenant.
 
-Once you have completed that configuration, you will have a subdomain and will be able to create an AAD authentication token. Both the subdomain and a token are required when calling the SDK to launch the Immersive Reader.  
+Once you have completed that configuration, you will have a subdomain and will be able to create an Azure AD authentication token. Both the subdomain and a token are required when calling the SDK to launch the Immersive Reader.  
 
-You can find examples of how to acquire an AAD token in the [samples](./samples).
+You can find examples of how to acquire an Azure AD token in the [samples](./samples).
 
 Include the library in your web application:
 
