@@ -68,7 +68,15 @@
 
             const token = await getImmersiveReaderTokenAsync();
 
-            ImmersiveReader.launchAsync(token, data);
+            const options = {
+                'onExitCallback': exitCallback
+            };
+
+            ImmersiveReader.launchAsync(token, null, data, options);
+        }
+
+        function exitCallback() {
+            console.log("This is the callback function.");
         }
     </script>
 </body>

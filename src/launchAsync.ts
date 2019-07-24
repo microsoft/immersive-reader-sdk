@@ -92,6 +92,11 @@ export function launchAsync(token: string, subdomain: string, content: Content, 
             if (e.data === 'ImmersiveReader-Exit') {
                 reset();
                 window.removeEventListener('message', messageHandler);
+
+                // execute unload callback if we have one
+                if (options.onExitCallback) {
+                    options.onExitCallback();
+                }
             } else if (e.data === 'ImmersiveReader-ReadyForContent') {
                 const message: Message = {
                     cogSvcsAccessToken: token,
