@@ -1,15 +1,14 @@
 ﻿// Copyright (c) Microsoft Corporation. All rights reserved.
 // Licensed under the MIT License.
 
-using Microsoft.AspNetCore.Mvc.RazorPages;
+using Microsoft.Extensions.Configuration;
 
 namespace AdvancedSampleWebApp.Pages
 {
-    public class DocumentModel : PageModel
+    public class DocumentModel : SamplePageModel
     {
-        public void OnGet()
+        public DocumentModel(IConfiguration configuration) : base(configuration)
         {
-            ViewData["Canary"] = Canary.Generate();
         }
     }
 }

@@ -11,8 +11,6 @@
     <script type='text/javascript' src='../../lib/immersive-reader-sdk.js'></script>
     <script type='text/javascript'>
         function launchImmersiveReaderFromInlineHtml(elementId, contentLanguage) {
-            var token = ''; // Your token goes here
-
             var element = document.getElementById(elementId);
 
             if (element && element.parentElement) {
@@ -26,7 +24,10 @@
                     }]
                 };
 
-                ImmersiveReader.launchAsync(token, data);
+                var aadToken = ''; // Your Azure AD token goes here
+                var subdomain = ''; // Your subdomain goes here
+
+                ImmersiveReader.launchAsync(aadToken, subdomain, data);
             }
         }
 

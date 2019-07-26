@@ -6,16 +6,18 @@ The Immersive Reader SDK is a JavaScript library that allows you to easily and q
 
 ## Usage
 
-Usage of this SDK requires an Azure subscription to Immersive Reader. Create an Immersive Reader resource in the [Azure portal](https://portal.azure.com).
+Usage of this SDK requires an Azure subscription to Immersive Reader. Follow [these instructions](https://docs.microsoft.com/azure/cognitive-services/immersive-reader/azure-active-directory-authentication) to create an Immersive Reader resource with a custom subdomain and configure Azure Active Directory (Azure AD) authentication in your Azure tenant.
 
-Once you have a subscription key, use that to acquire an access token by following [these steps](https://docs.microsoft.com/en-us/azure/cognitive-services/authentication#authenticate-with-an-authentication-token).
+Once you have completed that configuration, you will have a subdomain and will be able to create an Azure AD authentication token. Both the subdomain and a token are required when calling the SDK to launch the Immersive Reader.  
+
+You can find examples of how to acquire an Azure AD token in the [samples](./samples).
 
 Include the library in your web application:
 
 * Stable build
 
 ```html
-<script type='text/javascript' src='https://contentstorage.onenote.office.net/onenoteltir/immersivereadersdk/immersive-reader-sdk.0.0.1.js'></script>
+<script type='text/javascript' src='https://contentstorage.onenote.office.net/onenoteltir/immersivereadersdk/immersive-reader-sdk.0.0.2.js'></script>
 ```
 
 ```bash
@@ -56,7 +58,7 @@ function launchImmersiveReader() {
             content: 'Hello, world!'
         } ]
     };
-    ImmersiveReader.launchAsync(YOUR_TOKEN, null, content);
+    ImmersiveReader.launchAsync(YOUR_TOKEN, YOUR_SUBDOMAIN, content);
 }
 ```
 
