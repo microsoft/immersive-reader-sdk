@@ -22,7 +22,6 @@
             position: relative;
             width: 100%;
         }
-
         #IRContent {
             margin: 0 100px;
         }
@@ -65,11 +64,18 @@
                     lang: 'en'
                 }]
             };
-
             const token = await getImmersiveReaderTokenAsync();
             const subdomain = await getSubdomainAsync();
 
-            ImmersiveReader.launchAsync(token, subdomain, data);
+            const options = {
+                'onExit': exitCallback
+            };
+
+            ImmersiveReader.launchAsync(token, subdomain, data, options);
+
+            function exitCallback() {
+                console.log("This is the callback function.");
+            }
         }
     </script>
 </body>
