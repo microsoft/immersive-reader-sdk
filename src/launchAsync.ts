@@ -94,8 +94,8 @@ export function launchAsync(token: string, subdomain: string, content: Content, 
                 window.removeEventListener('message', messageHandler);
 
                 // Execute exit callback if we have one
-                if (options.onExitCallback) {
-                    options.onExitCallback();
+                if (options.onExit) {
+                    options.onExit();
                 }
             } else if (e.data === 'ImmersiveReader-ReadyForContent') {
                 const message: Message = {
