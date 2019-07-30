@@ -27,10 +27,10 @@
 		function getImmersiveReaderLaunchConfigAsync(resourceId) {
 			return new Promise((resolve, reject) => {
 				$.ajax({
-					url: '/getLaunchConfig/' + resourceId,
+					url: '/getLaunchParameters/' + resourceId,
 					type: 'GET',
-					success: launchConfig => {
-						resolve(launchConfig);
+					success: launchParams => {
+						resolve(launchParams);
 					},
 					error: err => {
 						reject(err);
@@ -55,10 +55,10 @@
 			}
 
 			getImmersiveReaderLaunchConfigAsync(resourceId)
-				.then((launchConfig) => {
+				.then((launchParams) => {
 
-					const token = launchConfig.token;
-					const subdomain = launchConfig.subdomain;
+					const token = launchParams.token;
+					const subdomain = launchParams.subdomain;
 
 					ImmersiveReader.launchAsync(token, subdomain, data, options)
 						.then(() => {
@@ -69,7 +69,7 @@
 						});
 				})
 				.catch((error) => {
-					handleError('Error in receiving launch configuration.', error);
+					handleError('Error in receiving launch parameters.', error);
 				});
 		}
 

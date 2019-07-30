@@ -75,14 +75,13 @@ namespace QuickstartSampleWebApp.Controllers
         {
             return View();
         }
-		
+
 		/// <summary>
-		/// Get a token by using the resource mapping to the resource key
+		/// Get ImmersiveReaderLaunchParameters by using the resource that maps to the resource key
 		/// </summary>
 		/// <param name="resourceKey">The key for the resource in secrets.json</param>
-		/// <returns></returns>
-        [Route("getLaunchConfig/{resourceKey}")]
-        public async Task<JsonResult> GetToken(string resourceKey)
+		[Route("getLaunchParameters/{resourceKey}")]
+        public async Task<JsonResult> GetLaunchParameters(string resourceKey)
         {
 			if (ResourceKeyToConfigs.TryGetValue(resourceKey, out ImmersiveReaderResourceConfig resourceConfig))
 			{
