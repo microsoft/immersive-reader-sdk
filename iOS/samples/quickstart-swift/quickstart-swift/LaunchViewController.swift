@@ -1,6 +1,3 @@
-// Copyright (c) Microsoft Corporation. All rights reserved.
-// Licensed under the MIT License.
-
 import UIKit
 import immersive_reader_sdk
 
@@ -20,7 +17,7 @@ class LaunchViewController: UIViewController {
         
         titleText = UILabel()
         titleText.text = "Geography"
-        titleText.font = titleText.font.withSize(30)
+        titleText.font = UIFont.boldSystemFont(ofSize: 30)
         titleText.lineBreakMode = .byWordWrapping
         titleText.numberOfLines = 0
         view.addSubview(titleText)
@@ -29,6 +26,26 @@ class LaunchViewController: UIViewController {
         bodyText.text = "The study of Earth’s landforms is called physical geography. Landforms can be mountains and valleys. They can also be glaciers, lakes or rivers. Landforms are sometimes called physical features. It is important for students to know about the physical geography of Earth. The seasons, the atmosphere and all the natural processes of Earth affect where people are able to live. Geography is one of a combination of factors that people use to decide where they want to live.The physical features of a region are often rich in resources. Within a nation, mountain ranges become natural borders for settlement areas. In the U.S., major mountain ranges are the Sierra Nevada, the Rocky Mountains, and the Appalachians.Fresh water sources also influence where people settle. People need water to drink. They also need it for washing. Throughout history, people have settled near fresh water. Living near a water source helps ensure that people have the water they need. There was an added bonus, too. Water could be used as a travel route for people and goods. Many Americans live near popular water sources, such as the Mississippi River, the Colorado River and the Great Lakes.Mountains and deserts have been settled by fewer people than the plains areas. However, they have valuable resources of their own."
         bodyText.lineBreakMode = .byWordWrapping
         bodyText.numberOfLines = 0
+        let screenSize = self.view.frame.height
+        if screenSize <= 667 {
+            // Font size for smaller iPhones.
+            bodyText.font = bodyText.font.withSize(14)
+            
+         } else if screenSize <= 812 {
+            // Font size for medium iPhones.
+            bodyText.font = bodyText.font.withSize(15)
+
+         } else if screenSize <= 896 {
+            // Font size for larger iPhones.
+            bodyText.font = bodyText.font.withSize(17)
+
+         } else if screenSize <= 1024 {
+            // Font size for iPads.
+            bodyText.font = bodyText.font.withSize(25)
+        } else {
+            // Font size for large iPads.
+            bodyText.font = bodyText.font.withSize(28)
+        }
         view.addSubview(bodyText)
         
         launchButton = UIButton()
@@ -45,19 +62,17 @@ class LaunchViewController: UIViewController {
         titleText.topAnchor.constraint(equalTo: layoutGuide.topAnchor, constant: 20).isActive = true
         titleText.leadingAnchor.constraint(equalTo: layoutGuide.leadingAnchor, constant: 20).isActive = true
         titleText.trailingAnchor.constraint(equalTo: layoutGuide.trailingAnchor, constant: -20).isActive = true
-        titleText.bottomAnchor.constraint(equalTo: bodyText.topAnchor).isActive = true
         
         bodyText.translatesAutoresizingMaskIntoConstraints = false
-        bodyText.centerYAnchor.constraint(equalTo: layoutGuide.centerYAnchor).isActive = true
+        bodyText.topAnchor.constraint(equalTo: titleText.bottomAnchor, constant: 15).isActive = true
         bodyText.leadingAnchor.constraint(equalTo: layoutGuide.leadingAnchor, constant: 20).isActive = true
         bodyText.trailingAnchor.constraint(equalTo: layoutGuide.trailingAnchor, constant: -20).isActive = true
         
         launchButton.translatesAutoresizingMaskIntoConstraints = false
         launchButton.widthAnchor.constraint(equalToConstant: 200).isActive = true
         launchButton.heightAnchor.constraint(equalToConstant: 50).isActive = true
-        launchButton.topAnchor.constraint(equalTo: bodyText.bottomAnchor).isActive = true
         launchButton.centerXAnchor.constraint(equalTo: layoutGuide.centerXAnchor).isActive = true
-        launchButton.bottomAnchor.constraint(equalTo: layoutGuide.bottomAnchor, constant: -30).isActive = true
+        launchButton.bottomAnchor.constraint(equalTo: layoutGuide.bottomAnchor, constant: -10).isActive = true
         
         // Create content and options.
         sampleChunk = Chunk(content: bodyText.text!, lang: nil, mimeType: nil)
