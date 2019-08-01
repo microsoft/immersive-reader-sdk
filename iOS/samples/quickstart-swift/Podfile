@@ -1,0 +1,13 @@
+platform :ios, '9.0'
+
+target 'quickstart-swift' do
+  use_frameworks!
+  # Pods for quickstart-swift
+  pod 'immersive-reader-sdk', :path => '../../immersive-reader-sdk'
+
+  target 'quickstart-swiftTests' do
+    inherit! :search_paths
+    # Pods for testing
+  end
+
+end
