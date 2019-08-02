@@ -24,12 +24,11 @@ Using [Git](https://git-scm.com/), Launch Terminal and run `git clone https://gi
 
 1.    Open Xcode and create a new project and choose **Single View App**.
 2.    In the terminal, navigate to the directory that contains the Xcode project created in the previous step, and enter the following command to create a Podfile for the project: `pod init`.
-3.    Open the Podfile created in step 2 in either Xcode or your preferred editor, and uncomment the line that stays 'platform :ios, '9.0'' by removing the #. (TODO: Test if this is iOS 9). Add the following two lines after the 'use_frameworks!' line: 
+3.    Open the Podfile created in step 2 in either Xcode or your preferred editor, and uncomment the line that stays 'platform :ios, '9.0'' by removing the #. Add the following two lines after the 'use_frameworks!' line: 
 ```ruby
-# Pods for quickstart-swift
-pod 'immersive-reader-sdk', :path => '../../immersive-reader-sdk'
+# Pods for project
+pod 'immersive-reader-sdk', :path => 'https://github.com/microsoft/immersive-reader-sdk/iOS/immersive-reader-sdk.git'
 ``` 
-(TODO: Update this path once it is in the GitHib repo)
 4.    In the terminal, in the same directory as the sample project created earlier type the following command: `pod install`. Close the Xcode project and reopen it using **ProjectName.xcworkspace** that was created in the project’s folder.
 5.    Add ‘import immersive_reader_sdk’ at the top of any file to be able to access the iOS SDK from that file.
 6.    Invoke the Immersive Reader when the button is clicked: 

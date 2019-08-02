@@ -7,7 +7,8 @@ import immersive_reader_sdk
 
 class quickstart_swiftUnitTests: XCTestCase {
     
-     var navigationController: UINavigationController = UINavigationController(rootViewController: LaunchViewController())
+    var navigationController: UINavigationController = UINavigationController(rootViewController: LaunchViewController())
+    let testingSrc: String = "test://learningtools.onenote.com/learningtoolsapp/cognitive/reader"
 
     override func setUp() {
         // Put setup code here. This method is called before the invocation of each test method in the class.
@@ -73,7 +74,7 @@ class quickstart_swiftUnitTests: XCTestCase {
             
         })
 
-        immersiveReaderViewController.src = "test://learningtools.onenote.com/learningtoolsapp/cognitive/reader"
+        immersiveReaderViewController.src = testingSrc
         navigationController.pushViewController(immersiveReaderViewController, animated: true)
         
         waitForExpectations(timeout: 15)
@@ -105,7 +106,7 @@ class quickstart_swiftUnitTests: XCTestCase {
             
         })
         
-        immersiveReaderViewController.src = "test://learningtools.onenote.com/learningtoolsapp/cognitive/reader"
+        immersiveReaderViewController.src = testingSrc
         navigationController.pushViewController(immersiveReaderViewController, animated: true)
         
         waitForExpectations(timeout: 15)
@@ -136,7 +137,7 @@ class quickstart_swiftUnitTests: XCTestCase {
             
         })
         
-        immersiveReaderViewController.src = "test://learningtools.onenote.com/learningtoolsapp/cognitive/reader"
+        immersiveReaderViewController.src = testingSrc
         navigationController.pushViewController(immersiveReaderViewController, animated: true)
         
         waitForExpectations(timeout: 15)
@@ -167,7 +168,7 @@ class quickstart_swiftUnitTests: XCTestCase {
             
         })
         
-        immersiveReaderViewController.src = "test://learningtools.onenote.com/learningtoolsapp/cognitive/reader"
+        immersiveReaderViewController.src = testingSrc
         navigationController.pushViewController(immersiveReaderViewController, animated: true)
         
         waitForExpectations(timeout: 15)
