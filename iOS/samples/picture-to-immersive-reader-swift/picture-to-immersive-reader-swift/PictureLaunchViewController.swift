@@ -139,6 +139,7 @@ class PictureLaunchViewController: UIViewController, UINavigationControllerDeleg
         sampleChunk = Chunk(content: bodyText.text!, lang: nil, mimeType: nil)
         sampleContent = Content(title: titleText.text!, chunks: [sampleChunk])
         sampleOptions = Options(uiLang: nil, timeout: nil, uiZIndex: nil)
+        
     }
     
     @IBAction func selectPhotoButton(sender: AnyObject) {
@@ -149,6 +150,7 @@ class PictureLaunchViewController: UIViewController, UINavigationControllerDeleg
             self.imagePicker.allowsEditing = true
             self.present(self.imagePicker, animated: true, completion: nil)
             self.photoButton.isEnabled = true
+        
     }
     
     @IBAction func takePhotoButton(sender: AnyObject) {
@@ -165,6 +167,7 @@ class PictureLaunchViewController: UIViewController, UINavigationControllerDeleg
             self.present(self.imagePicker, animated: true, completion: nil)
             self.cameraButton.isEnabled = true
         }
+        
     }
 
     func imagePickerController(_ picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [UIImagePickerController.InfoKey : Any]) {
@@ -230,6 +233,7 @@ class PictureLaunchViewController: UIViewController, UINavigationControllerDeleg
             }
             
         })
+        
     }
     
     /// Retrieves the token for the Immersive Reader using Azure Active Directory authentication
