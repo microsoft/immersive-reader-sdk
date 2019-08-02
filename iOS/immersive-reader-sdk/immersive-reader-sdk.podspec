@@ -11,12 +11,12 @@ Pod::Spec.new do |spec|
   spec.author       = { "Immersive Reader SDK" => "irsdk@microsoft.com" }
   spec.platform     = :ios, "9.0"
 
-  spec.source       = { :git => "https://github.com/microsoft/immersive-reader-sdk/iOS/immersive-reader-sdk.git", :branch => "master", :tag => "1.0.0" }
-  spec.source_files = ["immersive-reader-sdk/ImmersiveReaderViewController.swift", "immersive-reader-sdk/LaunchImmersiveReader.swift", "immersive-reader-sdk/TestingHandler.swift", "immersive-reader-sdk/immersive_reader_sdk.h"]
+  spec.source       = { :git => "https://github.com/microsoft/immersive-reader-sdk.git", :branch => "master", :tag => "1.0.0" }
+  spec.source_files = ["iOS/immersive-reader-sdk/immersive-reader-sdk/ImmersiveReaderViewController.swift", "iOS/immersive-reader-sdk/immersive-reader-sdk/LaunchImmersiveReader.swift", "iOS/immersive-reader-sdk/immersive-reader-sdk/TestingHandler.swift", "iOS/immersive-reader-sdk/immersive-reader-sdk/immersive_reader_sdk.h"]
 
  spec.resource_bundles = {
-    'immersive-reader-sdk' => ['immersive-reader-sdk/Resources/TestPage.html', 'immersive-reader-sdk/Resources/iFrameMessaging.js']
+    'immersive-reader-sdk' => ['iOS/immersive-reader-sdk/immersive-reader-sdk/Resources/TestPage.html', 'iOS/immersive-reader-sdk/immersive-reader-sdk/Resources/iFrameMessaging.js']
   }
- spec.preserve_paths = "immersive-reader-sdk/Resources/*"
+ spec.preserve_paths = "iOS/immersive-reader-sdk/immersive-reader-sdk/Resources/*"
 
 end
