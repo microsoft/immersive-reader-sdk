@@ -1,0 +1,16 @@
+PODS:
+  - immersive-reader-sdk (1.0.0)
+
+DEPENDENCIES:
+  - immersive-reader-sdk (from `../../immersive-reader-sdk`)
+
+EXTERNAL SOURCES:
+  immersive-reader-sdk:
+    :path: "../../immersive-reader-sdk"
+
+SPEC CHECKSUMS:
+  immersive-reader-sdk: 01ed3e8627be434c7e3eccb40b80965e8f3cfca3
+
+PODFILE CHECKSUM: 1b9f82b72bb8fa725431cd0216e3a57f043782c3
+
+COCOAPODS: 1.7.1
