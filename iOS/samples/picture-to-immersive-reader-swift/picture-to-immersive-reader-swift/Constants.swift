@@ -12,5 +12,5 @@ public struct Constants {
     static let subdomain: String = "<YOUR_SUBDOMAIN>"
     
     static let computerVisionSubscriptionKey: String = "<YOUR_SUBSCRIPTION_KEY>"
-    static let computerVisionEndPoint: String = "<YOU_ENDPOINT>"
+    static let computerVisionEndPoint: String = "<YOUR_ENDPOINT>"
 }
