@@ -27,17 +27,16 @@
 	<script type='text/javascript'>
 
 		function launchUploadedDocx(input) {
-			var docxMimeType = "application/vnd.openxmlformats-officedocument.wordprocessingml.document";
 			var reader = new FileReader();
 			reader.onloadend = function (evt) {
-				var base64EncodedFile = arrayBufferToBase64String(reader.result);
+				var base64EncodedFile = window.btoa(reader.result);
 
 				const data = {
 					title: input.value.toString(),
 					chunks: [{
 						content: base64EncodedFile,
 						lang: 'en',
-						mimeType: docxMimeType
+						mimeType: 'application/vnd.openxmlformats-officedocument.wordprocessingml.document' // Word Docx mimetype
 					}]
 				};
 
@@ -47,17 +46,8 @@
 			if (!input.value.toString().endsWith(".docx")) {
 				alert("You must choose a .docx file");
 			} else {
-				reader.readAsArrayBuffer(input.files[0]);
+				reader.readAsBinaryString(input.files[0]);
 			}
-		}
-
-		function arrayBufferToBase64String(buffer) {
-			var binaryString = '';
-			var bytes = new Uint8Array(buffer);
-			for (var i = 0; i < bytes.byteLength; i++) {
-				binaryString += String.fromCharCode(bytes[i]);
-			}
-			return window.btoa(binaryString);
 		}
 
 		function getImmersiveReaderTokenAsync() {
