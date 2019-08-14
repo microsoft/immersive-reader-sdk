@@ -40,7 +40,7 @@
 					}]
 				};
 
-				handleLaunchImmersiveReader(data);
+				launchImmersiveReader(data);
 			}
 
 			if (!input.value.toString().endsWith(".docx")) {
@@ -82,17 +82,7 @@
 			});
 		}
 
-		async function handleLaunchImmersiveReader(data) {
-			if (!data) {
-				data = {
-					title: document.getElementById('title').innerText,
-					chunks: [{
-						content: document.getElementById('content').innerText,
-						lang: 'en'
-					}]
-				};
-			}
-
+		async function launchImmersiveReader(data) {
 			const options = {
 				uiZIndex: 1000000
 			}
@@ -106,6 +96,18 @@
 				}, (error) => {
 					console.log('error! ' + error);
 				});
+		}
+
+		async function handleLaunchImmersiveReader() {
+			const data = {
+				title: document.getElementById('title').innerText,
+				chunks: [{
+					content: document.getElementById('content').innerText,
+					lang: 'en'
+				}]
+			};
+
+			launchImmersiveReader(data);
 		}
 	</script>
 </body>
