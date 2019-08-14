@@ -1,0 +1,90 @@
+﻿@page
+@model AdvancedSampleWebApp.Pages.WordDocModel
+<!-- Copyright (c) Microsoft Corporation. All rights reserved.
+     Licensed under the MIT License. -->
+
+<!doctype html>
+<html>
+<head>
+    <meta charset='utf-8'>
+    <title>Immersive Reader Example: Loading a Word Document</title>
+    <meta name='viewport' content='width=device-width, initial-scale=1'>
+
+    <script type='text/javascript' src='https://code.jquery.com/jquery-3.3.1.min.js'></script>
+    <script type='text/javascript' src='https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.12.1/jquery-ui.min.js'></script>
+    <script type='text/javascript' src='https://contentstorage.onenote.office.net/onenoteltir/immersivereadersdk/immersive-reader-sdk.0.0.2.js'></script>
+    <script type='text/javascript' src='~/js/helpers.js'></script>
+
+    <link href='~/css/styles.css' rel='stylesheet'>
+    <link href='~/css/buttons.css' rel='stylesheet'>
+
+    <script type='text/javascript'>
+        var Canary = '@Html.Raw(ViewData["Canary"])';
+    </script>
+
+    <style type='text/css'>
+        #ContentArea {
+            margin: 0 auto;
+            position: relative;
+            width: 100%;
+        }
+
+        #IRContent {
+            margin: 0 100px;
+        }
+    </style>
+</head>
+<body>
+    <nav>
+        Examples:
+        <a href='/index'>Sections</a>
+        <a href='/document' class='active'>Document</a>
+        <a href='/multilang'>Multilingual Document</a>
+        <a href='/uilangs'>UI Language</a>
+        <a href='/math'>Math</a>
+        <a href='/worddoc'>Word Document</a>
+    </nav>
+
+    <main id='ContentArea'>
+        <label for="post-docxFile">Launch a Word Doc in Immersive Reader:</label>
+        <div>
+            <input class="btn" type="file" id="post-docxFile" name="file" onchange="launchUploadedDocx(this)" />
+        </div>
+    </main>
+
+    <script type='text/javascript'>
+        function launchUploadedDocx(input) {
+            var reader = new FileReader();
+
+            reader.onloadend = function (evt) {
+                // This method is triggered after the reader.readAsBinaryString() completes.
+                var base64EncodedFile = window.btoa(reader.result);
+
+                const data = {
+                    title: input.value.toString(),
+                    chunks: [{
+                        content: base64EncodedFile,
+                        lang: 'en',
+                        mimeType: 'application/vnd.openxmlformats-officedocument.wordprocessingml.document' // Word Docx mimetype
+                    }]
+                };
+
+                launchImmersiveReader(data);
+            }
+
+            if (!input.value.toString().endsWith(".docx")) {
+                alert("You must choose a .docx file");
+            } else {
+                reader.readAsBinaryString(input.files[0]);
+            }
+        }
+
+        async function launchImmersiveReader(data) {
+            const token = await getImmersiveReaderTokenAsync(Canary);
+            const subdomain = await getImmersiveReaderSubdomainAsync();
+
+            ImmersiveReader.launchAsync(token, subdomain, data);
+        }
+    </script>
+</body>
+</html>
