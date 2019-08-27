@@ -119,4 +119,26 @@ describe('launchAsync tests', () => {
             expect(error.code).toBe('TokenExpired');
         }
     });
+
+    it('launches with a custom subdomain', async () => {
+        expect.assertions(1);
+        const options: Options = { customDomain: 'https://foo.com/' };
+        const launchPromise = launchAsync(SampleToken, null, SampleContent, options);
+        window.postMessage('ImmersiveReader-LaunchSuccessful', '*');
+
+        const container = await launchPromise;
+        const iframe = <HTMLIFrameElement>container.firstElementChild;
+        expect(iframe.src.toLowerCase()).toMatch('https://foo.com/');
+    });
+
+    it('launches with a custom subdomain 2', async () => {
+        expect.assertions(1);
+        const options: Options = { customDomain: '' };
+        const launchPromise = launchAsync(SampleToken, null, SampleContent, options);
+        window.postMessage('ImmersiveReader-LaunchSuccessful', '*');
+
+        const container = await launchPromise;
+        const iframe = <HTMLIFrameElement>container.firstElementChild;
+        expect(iframe.src.toLowerCase()).not.toMatch('https://learningtools.onenote.com/');
+    });
 });
