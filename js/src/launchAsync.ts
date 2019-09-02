@@ -47,6 +47,7 @@ export function launchAsync(token: string, subdomain: string, content: Content, 
             uiZIndex: 1000,
             timeout: 15000,  // Default to 15 seconds
             useWebview: false,
+            allowFullscreen: true,
             ...options
         };
 
@@ -124,7 +125,9 @@ export function launchAsync(token: string, subdomain: string, content: Content, 
         }, options.timeout);
 
         // Create and style iframe
-        iframe.setAttribute('allowfullscreen', '');
+        if (options.allowFullscreen) {
+            iframe.setAttribute('allowfullscreen', '');
+        }
         iframe.style.cssText = 'position: static; width: 100vw; height: 100vh; left: 0; top: 0; border-width: 0';
 
         // Send an initial message to the webview so it has a reference to this parent window
