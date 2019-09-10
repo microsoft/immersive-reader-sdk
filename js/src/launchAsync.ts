@@ -138,7 +138,7 @@ export function launchAsync(token: string, subdomain: string, content: Content, 
             });
         }
 
-        const domain = options.customDomain !== null ? options.customDomain : 'https://learningtools.onenote.com/learningtoolsapp/cognitive/';
+        const domain = options.customDomain ? options.customDomain : 'https://learningtools.onenote.com/learningtoolsapp/cognitive/';
         let src = domain + 'reader?exitCallback=ImmersiveReader-Exit';
         if (options.uiLang) {
             src += '&omkt=' + options.uiLang;
