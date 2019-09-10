@@ -110,10 +110,10 @@ export function launchAsync(token: string, subdomain: string, content: Content, 
                 resetTimeout();
                 resolve(iframeContainer);
             } else if (e.data === 'ImmersiveReader-TokenExpired') {
-                resetTimeout();
+                reset();
                 reject({ code: ErrorCode.TokenExpired, message: 'The access token supplied is expired.' });
             } else if (e.data === 'ImmersiveReader-Throttled') {
-                resetTimeout();
+                reset();
                 reject({ code: ErrorCode.Throttled, message: 'You have exceeded your quota.' });
             }
         };
@@ -121,6 +121,7 @@ export function launchAsync(token: string, subdomain: string, content: Content, 
 
         // Reject the promise if the Immersive Reader page fails to load.
         timeoutId = window.setTimeout((): void => {
+            reset();
             reject({ code: ErrorCode.Timeout, message: `Page failed to load after timeout (${options.timeout} ms)` });
         }, options.timeout);
 
