@@ -9,4 +9,5 @@ export type Options = {
     onExit?: () => any;        // Executes when the Immersive Reader exits
     customDomain?: string;     // Reserved for internal use. Custom domain where the Immersive Reader webapp is hosted (default is null).
     allowFullscreen?: boolean; // The ability to toggle fullscreen (default is true).
+    showExitArrow?: boolean; // Whether or not to show the Immersive Reader's back button arrow (default is true).
 }
