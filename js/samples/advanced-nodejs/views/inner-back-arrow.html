@@ -88,10 +88,8 @@
                 }]
             };
 
-            console.log(data)
-
             const options = {
-                'showExitArrow': false,
+                'hideExitButton': true,
                 'onExit': () => { console.log("You can still have a callback function on exit."); }
             }
 
@@ -104,8 +102,8 @@
         function messageHandler(e) {
             if (!e || !e.data) { return; }
 
-            if (e.data === 'ExitImmersiveReader') {
-                ImmersiveReader.triggerImmersiveReaderExit();
+            if (e.data === 'CloseImmersiveReader') {
+                ImmersiveReader.close();
             }
         };
 

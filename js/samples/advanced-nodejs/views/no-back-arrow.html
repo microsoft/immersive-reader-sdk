@@ -11,7 +11,6 @@
 
     <script type='text/javascript' src='https://code.jquery.com/jquery-3.3.1.min.js'></script>
     <script type='text/javascript' src='https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.12.1/jquery-ui.min.js'></script>
-    <script type='text/javascript' src='https://contentstorage.onenote.office.net/onenoteltir/immersivereadersdk/immersive-reader-sdk.0.0.2.js'></script>
     <script type='text/javascript' src='../js/helpers.js'></script>
 
     <link href='../css/styles.css' rel='stylesheet'>
@@ -46,6 +45,10 @@
             padding: 10px;
         }
 
+        #iframeSample {
+            border: 5px dotted red;
+        }
+
         @media screen and (min-width: 900px) {
             #Cols {
                 column-gap: 20px;
@@ -69,12 +72,13 @@
         <h1 id='ir-title'>Sample: No Back Arrow</h1>
         <span id='ir-text'>
             When you launch this sample, you will not see the Immersive Reader's back arrow, due to the
-            <code>showExitArrow</code> option being
-            <code>false</code>.
+            <code>hideExitButton</code> option being
+            <code>true</code>.
             <br /> An example of when you may want to use this option, is if you render the Immersive Reader on a mobile device
             and would prefer to control exits with the device's native back arrow.
             <br /> You can force the Immersive Reader to close by calling
-            <code>ImmersiveReader.triggerImmersiveReaderExit()</code>
+            <code>ImmersiveReader.close()</code>
+            <br /><br /> In order to demonstrate this behavior, the following example launches the Immersive Reader iframe inside of a parent iframe (with the dotted red border), so the Immersive Reader will take up the parent iframe's window rather than this screen's full window.
         </span>
         <p>
             <button id='closeButton'>Close Immersive Reader</button>
@@ -86,7 +90,7 @@
     <script type='text/javascript'>
         $(document).ready(function() {
             $('#closeButton').click(function() {
-                document.getElementById('iframeSample').contentWindow.postMessage('ExitImmersiveReader');
+                document.getElementById('iframeSample').contentWindow.postMessage('CloseImmersiveReader');
             });
         });
     </script>

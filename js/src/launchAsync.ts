@@ -48,7 +48,7 @@ export function launchAsync(token: string, subdomain: string, content: Content, 
             timeout: 15000,  // Default to 15 seconds
             useWebview: false,
             allowFullscreen: true,
-            showExitArrow: true,
+            hideExitButton: false,
             ...options
         };
 
@@ -140,10 +140,10 @@ export function launchAsync(token: string, subdomain: string, content: Content, 
         }
 
         const domain = options.customDomain ? options.customDomain : 'https://learningtools.onenote.com/learningtoolsapp/cognitive/';
-        let src = domain + 'reader';
+        let src = domain + 'reader?exitCallback=ImmersiveReader-Exit';
 
-        if (options.showExitArrow) {
-            src += '?exitCallback=ImmersiveReader-Exit';
+        if (options.hideExitButton) {
+            src += '&hideExitButton=true';
         }
 
         if (options.uiLang) {
@@ -161,6 +161,6 @@ export function launchAsync(token: string, subdomain: string, content: Content, 
     });
 }
 
-export function triggerImmersiveReaderExit() {
+export function close() {
     window.postMessage('ImmersiveReader-Exit', '*');
 }

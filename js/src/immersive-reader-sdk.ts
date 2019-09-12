@@ -2,10 +2,10 @@
 // Licensed under the MIT License.
 
 import { renderButtons } from './renderButtons';
-import { launchAsync, triggerImmersiveReaderExit } from './launchAsync';
+import { close, launchAsync } from './launchAsync';
 
 window.addEventListener('load', () => {
     renderButtons();
 });
 
-export {renderButtons, launchAsync, triggerImmersiveReaderExit};
+export {renderButtons, close, launchAsync};
