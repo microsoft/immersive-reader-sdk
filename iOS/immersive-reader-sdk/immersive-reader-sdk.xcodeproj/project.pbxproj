@@ -13,6 +13,7 @@
 		44A450C522A7046700511254 /* immersive_reader_sdk.h in Headers */ = {isa = PBXBuildFile; fileRef = 44A450B722A7046700511254 /* immersive_reader_sdk.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		44A450FD22B4655B00511254 /* LaunchImmersiveReader.swift in Sources */ = {isa = PBXBuildFile; fileRef = 44A450FC22B4655B00511254 /* LaunchImmersiveReader.swift */; };
 		44A450FF22B4674B00511254 /* ImmersiveReaderViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 44A450FE22B4674B00511254 /* ImmersiveReaderViewController.swift */; };
+		4655B8982330AF3A00C76A20 /* TestingHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4655B8972330AF3A00C76A20 /* TestingHandler.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -35,6 +36,7 @@
 		44A450C422A7046700511254 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		44A450FC22B4655B00511254 /* LaunchImmersiveReader.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LaunchImmersiveReader.swift; sourceTree = "<group>"; };
 		44A450FE22B4674B00511254 /* ImmersiveReaderViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImmersiveReaderViewController.swift; sourceTree = "<group>"; };
+		4655B8972330AF3A00C76A20 /* TestingHandler.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TestingHandler.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -79,6 +81,7 @@
 			children = (
 				4496DF1F22BC249B0024E543 /* Resources */,
 				44A450B722A7046700511254 /* immersive_reader_sdk.h */,
+				4655B8972330AF3A00C76A20 /* TestingHandler.swift */,
 				44A450B822A7046700511254 /* Info.plist */,
 				44A450FC22B4655B00511254 /* LaunchImmersiveReader.swift */,
 				44A450FE22B4674B00511254 /* ImmersiveReaderViewController.swift */,
@@ -205,6 +208,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				4655B8982330AF3A00C76A20 /* TestingHandler.swift in Sources */,
 				44A450FD22B4655B00511254 /* LaunchImmersiveReader.swift in Sources */,
 				44A450FF22B4674B00511254 /* ImmersiveReaderViewController.swift in Sources */,
 			);

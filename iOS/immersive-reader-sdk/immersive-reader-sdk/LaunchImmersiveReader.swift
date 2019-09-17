@@ -5,29 +5,29 @@ import Foundation
 
 var navigationController: UINavigationController?
 
-public struct Content: Encodable {
+@objc public class Content: NSObject, Encodable {
     var title: String
     var chunks: [Chunk]
     
-    public init(title: String, chunks: [Chunk]) {
+    @objc public init(title: String, chunks: [Chunk]) {
         self.title = title
         self.chunks = chunks
     }
 }
 
-public struct Chunk: Encodable {
+@objc public class Chunk: NSObject, Encodable {
     var content: String
     var lang: String?
     var mimeType: String?
     
-    public init(content: String, lang: String?, mimeType: String?) {
+    @objc public init(content: String, lang: String?, mimeType: String?) {
         self.content = content
         self.lang = lang
         self.mimeType = mimeType
     }
 }
 
-public struct Options {
+@objc public class Options: NSObject {
     var uiLang: String?
     var timeout: TimeInterval?
     
@@ -37,7 +37,7 @@ public struct Options {
     }
 }
 
-public struct Error {
+@objc public class Error: NSObject {
     public var code: String
     public var message: String
     
@@ -63,27 +63,31 @@ struct Message: Encodable {
     }
 }
 
-public func launchImmersiveReader(navController: UINavigationController, token: String, subdomain: String, content: Content, options: Options?, onSuccess: @escaping () -> Void, onFailure: @escaping (_ error: Error) -> Void) {
-    
-    if (content.chunks.count == 0) {
-        let badArgumentError = Error(code: "BadArgument", message: "Chunks must not be empty.")
-        onFailure(badArgumentError)
+@objc public class LaunchImmersiveReader: NSObject{
+    @objc public func launchImmersiveReader(navController: UINavigationController, token: String, subdomain: String, content: Content, options: Options?, onSuccess: @escaping () -> Void, onFailure: @escaping (_ error: Error) -> Void) {
+        
+        if (content.chunks.count == 0) {
+            let badArgumentError = Error(code: "BadArgument", message: "Chunks must not be empty.")
+            onFailure(badArgumentError)
+        }
+        
+        DispatchQueue.main.async {
+            navigationController = navController
+            let immersiveReaderViewController = ImmersiveReaderViewController(tokenToPass: token, subdomainToPass: subdomain, contentToPass: content, optionsToPass: options, onSuccessImmersiveReader: {
+                onSuccess()
+            }, onFailureImmersiveReader: { error in
+                onFailure(error);
+                
+            }, onTimeout: { timeout in
+                navigationController?.popViewController(animated: true)
+                let timeoutError = Error(code: "Timeout", message: "Page failed to load after timeout \(timeout) ms.")
+                onFailure(timeoutError);
+            }, onError: { error in
+                navigationController?.popViewController(animated: true)
+                let errorMessage = Error(code: "Internal Error", message: error)
+                onFailure(errorMessage);
+            })
+            navigationController!.pushViewController(immersiveReaderViewController, animated: true)
+        }
     }
-
-    navigationController = navController
-    let immersiveReaderViewController = ImmersiveReaderViewController(tokenToPass: token, subdomainToPass: subdomain, contentToPass: content, optionsToPass: options, onSuccessImmersiveReader: {
-        onSuccess()
-    }, onFailureImmersiveReader: { error in
-        onFailure(error)
-    }, onTimeout: { timeout in
-        navigationController?.popViewController(animated: true)
-        let timeoutError = Error(code: "Timeout", message: "Page failed to load after timeout \(timeout) ms.")
-        onFailure(timeoutError)
-    }, onError: { error in
-        navigationController?.popViewController(animated: true)
-        let errorMessage = Error(code: "Internal Error", message: error)
-        onFailure(errorMessage)
-    })
-    navigationController!.pushViewController(immersiveReaderViewController, animated: true)
-    
 }
