@@ -139,6 +139,6 @@ describe('launchAsync tests', () => {
 
         const container = await launchPromise;
         const iframe = <HTMLIFrameElement>container.firstElementChild;
-        expect(iframe.src.toLowerCase()).not.toMatch('https://learningtools.onenote.com/');
+        expect(iframe.src.toLowerCase()).toMatch('https://learningtools.onenote.com/learningtoolsapp/cognitive/reader?exitcallback=immersivereader-exit');
     });
 });
