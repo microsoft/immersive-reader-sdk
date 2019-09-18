@@ -7,7 +7,7 @@
   "types": "lib/immersive-reader-sdk.d.ts",
   "devDependencies": {
     "@types/jest": "^24.0.11",
-    "jest": "^24.5.0",
+    "jest": "^24.9.00",
     "replace-in-file": "^3.4.4",
     "ts-jest": "^24.0.0",
     "ts-loader": "^5.3.3",
@@ -15,8 +15,8 @@
     "tslint-loader": "^3.5.4",
     "tslint-microsoft-contrib": "^6.1.0",
     "typescript": "^3.3.3333",
-    "webpack": "^4.29.6",
-    "webpack-cli": "^3.2.3"
+    "webpack": "^4.40.2",
+    "webpack-cli": "^3.3.9"
   },
   "scripts": {
     "build": "webpack --config webpack.config.js",
