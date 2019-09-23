@@ -83,9 +83,9 @@ struct Message: Encodable {
             }, onError: { error in
                 navigationController?.popViewController(animated: true)
                 let errorMessage = Error(code: "Internal Error", message: error)
-                onFailure(errorMessage)
+                onFailure(errorMessage);
             })
             navigationController!.pushViewController(immersiveReaderViewController, animated: true)
-            }
         }
+    }
 }
