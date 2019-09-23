@@ -30,12 +30,12 @@ router.get('/uilangs', function(req, res, next) {
   res.sendFile('uilangs.html', {root: viewRoot});
 });
 
-router.get('/nobackarrow', function(req, res, next) {
-  res.sendFile('no-back-arrow.html', {root: viewRoot});
+router.get('/hideexitbutton', function(req, res, next) {
+  res.sendFile('hide-exit-button.html', {root: viewRoot});
 });
 
-router.get('/inner-back-arrow', function(req, res, next) {
-  res.sendFile('inner-back-arrow.html', {root: viewRoot});
+router.get('/inner-hide-exit-button', function(req, res, next) {
+  res.sendFile('inner-hide-exit-button.html', {root: viewRoot});
 });
 
 module.exports = router;
