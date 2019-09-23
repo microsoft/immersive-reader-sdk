@@ -17,6 +17,7 @@ class PictureLaunchViewController: UIViewController, UINavigationControllerDeleg
     private var spinner: UIActivityIndicatorView!
     private var activityIndicatorBackground: UIView!
     private var textURL = "vision/v2.0/read/core/asyncBatchAnalyze";
+    private var immersiveReaderInstance: LaunchImmersiveReader!
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -195,13 +196,13 @@ class PictureLaunchViewController: UIViewController, UINavigationControllerDeleg
             let sampleImageChunk = Chunk(content: cognitiveText, lang: nil, mimeType: nil)
             let sampleImageContent = Content(title: "Text from image", chunks: [sampleImageChunk])
             let sampleImageOptions = Options(uiLang: nil, timeout: nil, uiZIndex: nil)
-            
+            let immersiveReaderInstance = LaunchImmersiveReader()
             // Callback to get token for Immersive Reader.
             self.getToken(onSuccess: {cognitiveToken in
                 
                 DispatchQueue.main.async {
                     
-                    launchImmersiveReader(navController: self.navigationController!, token: cognitiveToken, subdomain: Constants.subdomain, content: sampleImageContent, options: sampleImageOptions, onSuccess: {
+                    immersiveReaderInstance.launchImmersiveReader(navController: self.navigationController!, token: cognitiveToken, subdomain: Constants.subdomain, content: sampleImageContent, options: sampleImageOptions, onSuccess: {
                         self.spinner.stopAnimating()
                         self.activityIndicatorBackground.alpha = 0
                         self.photoButton.isEnabled = true
