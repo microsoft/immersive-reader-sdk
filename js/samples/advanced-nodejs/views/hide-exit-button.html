@@ -1,0 +1,99 @@
+<!-- Copyright (c) Microsoft Corporation. All rights reserved.
+     Licensed under the MIT License. -->
+
+<!doctype html>
+<html>
+
+<head>
+    <meta charset='utf-8'>
+    <title>Immersive Reader Example: Section</title>
+    <meta name='viewport' content='width=device-width, initial-scale=1'>
+
+    <script type='text/javascript' src='https://code.jquery.com/jquery-3.3.1.min.js'></script>
+    <script type='text/javascript' src='https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.12.1/jquery-ui.min.js'></script>
+    <script type='text/javascript' src='../js/helpers.js'></script>
+
+    <link href='../css/styles.css' rel='stylesheet'>
+    <link href='../css/buttons.css' rel='stylesheet'>
+
+    <style media='screen' type='text/css'>
+        #ContentArea {
+            display: block;
+            margin: 0 20%;
+            padding-top: 50px;
+            width: 60%;
+        }
+
+        .section {
+            border: 1px solid #cccccc;
+            border-radius: 4px;
+            box-sizing: border-box;
+            display: block;
+            margin-bottom: 20px;
+            padding: 20px 20px 10px 20px;
+            position: relative;
+            width: 100%;
+        }
+
+        .section.inner-iframe {
+            margin-top: 30px;
+            height: 400px;
+        }
+
+        #closeButton {
+            margin-top: 10px;
+            padding: 10px;
+        }
+
+        #iframeSample {
+            border: 5px dotted red;
+        }
+
+        @media screen and (min-width: 900px) {
+            #Cols {
+                column-gap: 20px;
+                column-count: 2;
+            }
+        }
+    </style>
+</head>
+
+<body class='body'>
+    <nav>
+        Examples:
+        <a href='/sections'>Sections</a>
+        <a href='/document'>Document</a>
+        <a href='/multilang'>Multilingual Document</a>
+        <a href='/uilangs'>UI Language</a>
+        <a href='/math'>Math</a>
+        <a href='/hideexitbutton' class='active'>Hide Exit Button</a>
+    </nav>
+    <main id='ContentArea'>
+        <h1 id='ir-title'>Sample: Hide Exit Button</h1>
+        <span id='ir-text'>
+            When you launch this sample, you will not see the Immersive Reader's exit button arrow, due to the
+            <code>hideExitButton</code> option being
+            <code>true</code>.
+            <br /> An example of when you may want to use this option, is if you render the Immersive Reader on a mobile device
+            and would prefer to control exits with the device's native back arrow.
+            <br /> You can force the Immersive Reader to close by calling
+            <code>ImmersiveReader.close()</code>
+            <br /><br /> In order to demonstrate this behavior, the following example launches the Immersive Reader iframe inside of a parent iframe (with the dotted red border), so the Immersive Reader will take up the parent iframe's window rather than this screen's full window.
+        </span>
+        <p>
+            <button id='closeButton'>Close Immersive Reader</button>
+        </p>
+        <iframe id='iframeSample' src='inner-hide-exit-button' class='section inner-iframe'>
+        </iframe>
+    </main>
+
+    <script type='text/javascript'>
+        $(document).ready(function() {
+            $('#closeButton').click(function() {
+                document.getElementById('iframeSample').contentWindow.postMessage('CloseImmersiveReader');
+            });
+        });
+    </script>
+</body>
+
+</html>
