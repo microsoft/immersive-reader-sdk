@@ -161,6 +161,6 @@ export function launchAsync(token: string, subdomain: string, content: Content, 
     });
 }
 
-export function close() {
+export function close(): void {
     window.postMessage('ImmersiveReader-Exit', '*');
 }
