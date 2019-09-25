@@ -5,7 +5,7 @@
     <title> - QuickstartSampleWebApp</title>
         <link rel="stylesheet" href="/resources/bootstrap.css" />
         <link rel="stylesheet" href="/resources/site.css" />
-        <script type='text/javascript' src='https://contentstorage.onenote.office.net/onenoteltir/immersivereadersdk/immersive-reader-sdk.0.0.2.js'></script>
+        <script type='text/javascript' src='https://contentstorage.onenote.office.net/onenoteltir/immersivereadersdk/immersive-reader-sdk.0.0.3.js'></script>
 </head>
 <body>
     <nav class="navbar navbar-inverse navbar-fixed-top">
