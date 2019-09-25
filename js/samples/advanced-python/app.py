@@ -33,6 +33,16 @@ def math():
 	'Show the Math page'
 	return render_template('math.html', subdomain=str(os.environ.get('SUBDOMAIN')))
 
+@app.route('/hideexitbutton')
+def hideexitbutton():
+	'Hide Exit Button'
+	return render_template('hide-exit-button.html')
+
+@app.route('/inner-hide-exit-button')
+def innerhideexitbutton():
+	'Inner Hide Exit Button'
+	return render_template('inner-hide-exit-button.html', subdomain=str(os.environ.get('SUBDOMAIN')))
+
 @app.route('/getimmersivereadertoken', methods=['POST'])
 def getimmersivereadertoken():
 	'Get the access token'
