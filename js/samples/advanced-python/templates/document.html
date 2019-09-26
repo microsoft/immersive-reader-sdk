@@ -52,9 +52,17 @@
                 lang: 'en'
             }]
         };
-
         const token = await getImmersiveReaderTokenAsync();
-        ImmersiveReader.launchAsync(token, '{{ subdomain }}', data);
+
+        const options = {
+            'onExit': exitCallback
+        };
+
+        ImmersiveReader.launchAsync(token, '{{ subdomain }}', data, options);
+
+        function exitCallback() {
+            console.log("This is the callback function.");
+        }
     }
 
     const loc = window.location.href;

@@ -20,6 +20,7 @@ You will need some of the values created here when configuring the sample projec
 7. Install virtualenv by running `pip install virtualenv`. It's a tool to create isolated Python environments [Learn more](https://virtualenv.pypa.io/en/latest/).
 8. Install virtualenvwrapper-win by running `pip install virtualenvwrapper-win`. The idea behind virtualenvwrapper is to ease usage of virtualenv [Learn more](https://pypi.org/project/virtualenvwrapper-win/).
 9. Install the [requests module](https://pypi.org/project/requests/2.7.0/) by running `pip install requests`. Requests is an Apache2 Licensed HTTP library, written in Python, for human beings.
+10. Install the [python-dotenv module](https://github.com/theskumar/python-dotenv) by running `pip install python-dotenv`. Reads the key-value pair from .env file and adds them to environment variable.
 
 #### WINDOWS USAGE
 
@@ -72,7 +73,8 @@ Using [Git](https://git-scm.com/), Launch Terminal and run `git clone https://gi
 7. Install virtualenv by running `pip install virtualenv --user`. It's a tool to create isolated Python environments [Learn more](https://virtualenv.pypa.io/en/latest/).
 8. Install virtualenvwrapper by running `pip install virtualenvwrapper --user`. The idea behind virtualenvwrapper is to ease usage of virtualenv [Learn more](https://virtualenvwrapper.readthedocs.io/en/latest/).
 9. Install the [requests module](https://pypi.org/project/requests/2.7.0/) by running `pip install requests --user`. Requests is an Apache2 Licensed HTTP library, written in Python, for human beings.
-10. Choose a place where you would like to keep your virtual environments, e.g. `mkdir ~/.virtualenvs`.
+10. Install the [python-dotenv module](https://github.com/theskumar/python-dotenv) by running `pip install python-dotenv --user`. Reads the key-value pair from .env file and adds them to environment variable.
+11. Choose a place where you would like to keep your virtual environments, e.g. `mkdir ~/.virtualenvs`.
 
 #### OSX USAGE
 

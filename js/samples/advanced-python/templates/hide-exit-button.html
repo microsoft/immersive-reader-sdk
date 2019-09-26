@@ -1,0 +1,76 @@
+<!-- Copyright (c) Microsoft Corporation. All rights reserved.
+     Licensed under the MIT License. -->
+
+     {% extends "layout.html" %}
+
+     {% block title %}
+         Immersive Reader Example: Hide Exit Button
+     {% endblock %}
+     
+     {% block styles %}
+     <style type='text/css'>
+         #ContentArea {
+             margin: 0 auto;
+             position: relative;
+             width: 100%;
+         }
+         #CloseButton {
+             margin-top: 10px;
+             padding: 10px;
+         }
+         #IframeSample {
+             border: 5px dotted red;
+         }
+         #IRContent {
+             margin: 0 100px;
+         }
+         .section {
+             border: 1px solid #cccccc;
+             border-radius: 4px;
+             box-sizing: border-box;
+             display: block;
+             margin-bottom: 20px;
+             padding: 20px 20px 10px 20px;
+             position: relative;
+             width: 100%;
+         }
+         .section.inner-iframe {
+            margin-top: 30px;
+            height: 400px;
+         }
+     </style>
+     {% endblock %}
+     
+     {% block main %}
+     <article id='IRContent'>
+         <h1 id='ir-title'>Sample: Hide Exit Button</h1>
+         <span id='ir-text'>
+             When you launch this sample, you will not see the Immersive Reader's exit button arrow, due to the <code>hideExitButton</code> option being <code>true</code>.
+             <br /> An example of when you may want to use this option, is if you render the Immersive Reader on a mobile device and would prefer to control exits with the device's native back arrow.
+             <br /> You can force the Immersive Reader to close by calling <code>ImmersiveReader.close()</code>
+             <br /><br /> In order to demonstrate this behavior, the following example launches the Immersive Reader iframe inside of a parent iframe (with the dotted red border), so the Immersive Reader will take up the parent iframe's window rather than this screen's full window.
+         </span>
+         <p>
+             <button id='CloseButton'>Close Immersive Reader</button>
+         </p>
+         <iframe id='IframeSample' src='inner-hide-exit-button' class='section inner-iframe'></iframe>
+     </article>
+     {% endblock %}
+     
+     {% block scripts %}
+     <script type='text/javascript'>
+         /* global $ */
+
+         $(document).ready(function() {
+             $('#CloseButton').click(function() {
+                 document.getElementById('IframeSample').contentWindow.postMessage('CloseImmersiveReader');
+             });
+         });
+     
+         const loc = window.location.href;
+         $('.navlink').removeClass('active');
+         if (/document/.test(loc)) {
+             $('.document-route').addClass('active');
+         }
+     </script>
+     {% endblock %}
