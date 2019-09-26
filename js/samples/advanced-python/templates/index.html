@@ -86,6 +86,7 @@
         };
 
         const token = await getImmersiveReaderTokenAsync();
+
         ImmersiveReader.launchAsync(token, '{{ subdomain }}', data);
     }
 

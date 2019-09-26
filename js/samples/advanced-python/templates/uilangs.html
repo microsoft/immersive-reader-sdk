@@ -92,10 +92,11 @@
         var uiLangEl = $('#lang' + sampleId);
         var uiLang = uiLangEl.val() || uiLangEl.text();
         const options = {
-            uiLang: uiLang
+            'uiLang': uiLang
         }
 
         const token = await getImmersiveReaderTokenAsync();
+
         ImmersiveReader.launchAsync(token, '{{ subdomain }}', data, options);
     }
 

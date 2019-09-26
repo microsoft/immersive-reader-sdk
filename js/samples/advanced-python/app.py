@@ -1,7 +1,11 @@
 import os
 import requests
+import json
+from dotenv import load_dotenv
 from flask import Flask, redirect, render_template, request
 app = Flask(__name__)
+
+load_dotenv()
 
 @app.route('/')
 def index():
@@ -55,4 +59,6 @@ def getimmersivereadertoken():
 			'grant_type': 'client_credentials'
 		}
 		resp = requests.post('https://login.windows.net/' + str(os.environ.get('TENANT_ID')) + '/oauth2/token', data=data, headers=headers)
-		return resp.text
+		jsonResp = json.loads(resp.text)
+		print(jsonResp)
+		return jsonResp['access_token']
