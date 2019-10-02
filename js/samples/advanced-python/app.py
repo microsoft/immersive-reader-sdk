@@ -60,5 +60,4 @@ def getimmersivereadertoken():
 		}
 		resp = requests.post('https://login.windows.net/' + str(os.environ.get('TENANT_ID')) + '/oauth2/token', data=data, headers=headers)
 		jsonResp = json.loads(resp.text)
-		print(jsonResp)
 		return jsonResp['access_token']
