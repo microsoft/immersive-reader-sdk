@@ -42,6 +42,11 @@ export function launchAsync(token: string, subdomain: string, content: Content, 
             return;
         }
 
+        if (!isValidSubdomain(subdomain)) {
+            reject({ code: ErrorCode.BadArgument, message: 'The subdomain provided was invalid.' });
+            return;
+        }
+
         const startTime = Date.now();
         options = {
             uiZIndex: 1000,
@@ -116,6 +121,9 @@ export function launchAsync(token: string, subdomain: string, content: Content, 
             } else if (e.data === 'ImmersiveReader-Throttled') {
                 reset();
                 reject({ code: ErrorCode.Throttled, message: 'You have exceeded your quota.' });
+            } else if (e.data === 'ImmersiveReader-InvalidCognitiveServicesSubdomain') {
+                reset();
+                reject({ code: ErrorCode.BadArgument, message: 'The subdomain provided was invalid.' });
             }
         };
         window.addEventListener('message', messageHandler);
@@ -163,4 +171,21 @@ export function launchAsync(token: string, subdomain: string, content: Content, 
 
 export function close(): void {
     window.postMessage('ImmersiveReader-Exit', '*');
+}
+
+// The subdomain must be at least one character long, alphanumeric, and may contain '-',
+// as long as the '-' does not start or end the subdomain.
+export function isValidSubdomain(subdomain: string): boolean {
+    if (subdomain === null) {
+        return true;
+    }
+
+    if (subdomain.length === 0) {
+        return false;
+    }
+
+    const validRegex = '^([a-zA-Z0-9]|[a-zA-Z0-9][a-zA-Z0-9\\-]{0,61}[a-zA-Z0-9])$';
+    const regExp = new RegExp(validRegex);
+
+    return regExp.test(subdomain);
 }
