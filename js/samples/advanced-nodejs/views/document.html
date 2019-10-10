@@ -72,7 +72,10 @@
                 'onExit': exitCallback
             };
 
-            ImmersiveReader.launchAsync(token, subdomain, data, options);
+            ImmersiveReader.launchAsync(token, subdomain, data, options)
+                .catch ((error) => {
+                    console.log('there was an error', error);
+                });
 
             function exitCallback() {
                 console.log("This is the callback function.");
