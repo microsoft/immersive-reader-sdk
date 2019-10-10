@@ -43,7 +43,7 @@ export function launchAsync(token: string, subdomain: string, content: Content, 
         }
 
         if (!isValidSubdomain(subdomain)) {
-            reject({ code: ErrorCode.BadArgument, message: 'The subdomain provided was invalid.' });
+            reject({ code: ErrorCode.BadArgument, message: 'The subdomain supplied is invalid.' });
             return;
         }
 
@@ -123,7 +123,7 @@ export function launchAsync(token: string, subdomain: string, content: Content, 
                 reject({ code: ErrorCode.Throttled, message: 'You have exceeded your quota.' });
             } else if (e.data === 'ImmersiveReader-InvalidCognitiveServicesSubdomain') {
                 reset();
-                reject({ code: ErrorCode.BadArgument, message: 'The subdomain provided was invalid.' });
+                reject({ code: ErrorCode.BadArgument, message: 'The subdomain supplied is invalid.' });
             }
         };
         window.addEventListener('message', messageHandler);
