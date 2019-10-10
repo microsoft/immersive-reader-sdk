@@ -153,6 +153,7 @@ describe('launchAsync tests', () => {
             expect(isValidSubdomain('É')).toBe(false);
             expect(isValidSubdomain('Ã')).toBe(false);
             expect(isValidSubdomain('has space')).toBe(false);
+            expect(isValidSubdomain('has.period')).toBe(false);
             expect(isValidSubdomain(' startswithspace')).toBe(false);
             expect(isValidSubdomain('endswithspace ')).toBe(false);
             expect(isValidSubdomain('-startswithdash')).toBe(false);
@@ -161,6 +162,7 @@ describe('launchAsync tests', () => {
 
         it('should return true', () => {
             expect(isValidSubdomain(null)).toBe(true); // For legacy token authentication
+            expect(isValidSubdomain(undefined)).toBe(true); // For legacy token authentication
             expect(isValidSubdomain('valid')).toBe(true);
             expect(isValidSubdomain('valid10with2numbers')).toBe(true);
             expect(isValidSubdomain('1234')).toBe(true);

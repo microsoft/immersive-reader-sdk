@@ -43,7 +43,7 @@ export function launchAsync(token: string, subdomain: string, content: Content, 
         }
 
         if (!isValidSubdomain(subdomain)) {
-            reject({ code: ErrorCode.BadArgument, message: 'The subdomain provided was invalid.' });
+            reject({ code: ErrorCode.BadArgument, message: 'The subdomain provided was invalid.X' });
             return;
         }
 
@@ -176,7 +176,7 @@ export function close(): void {
 // The subdomain must be at least one character long, alphanumeric, and may contain '-',
 // as long as the '-' does not start or end the subdomain.
 export function isValidSubdomain(subdomain: string): boolean {
-    if (subdomain === null) {
+    if (subdomain === null || subdomain === undefined) {
         return true;
     }
 
