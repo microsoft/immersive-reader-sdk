@@ -13,6 +13,7 @@ import android.webkit.WebViewClient
 import android.widget.LinearLayout
 import android.widget.TextView
 import com.google.gson.*
+import io.github.cdimascio.dotenv.dotenv
 import java.io.IOException
 import java.io.*
 import java.net.HttpURLConnection
@@ -22,10 +23,20 @@ import kotlinx.coroutines.*
 import org.json.JSONObject
 
 
-// Be sure to add a Constants class (Constants.kt)
+// This sample app uses the Dotenv is a module that loads environment variables from a .env file to better manage secrets.
+// https://github.com/cdimascio/java-dotenv
+// Be sure to add a "env" file to the /assets folder
+// instead of '.env', use 'env'
 
 
 class MainActivity : AppCompatActivity() {
+
+    private val dotEnv = dotenv {
+        directory = "/assets"
+        filename = "env"
+        ignoreIfMalformed = true
+        ignoreIfMissing = true
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -37,7 +48,7 @@ class MainActivity : AppCompatActivity() {
 
     private suspend fun handleLoadImmersiveReaderWebView() {
         val exampleActivity = this
-        val subdomain = Constants.SUBDOMAIN
+        val subdomain = dotEnv["SUBDOMAIN"]
         val irTitle = findViewById<TextView>(R.id.Title)
         val irText = findViewById<TextView>(R.id.Content)
         val chunk = Chunk(irText.text.toString(), "en", "text/plain")
@@ -60,9 +71,9 @@ class MainActivity : AppCompatActivity() {
 
     @Throws(IOException::class)
     fun getToken(): String {
-        val clientId = Constants.CLIENT_ID
-        val clientSecret = Constants.CLIENT_SECRET
-        val tenantId = Constants.TENANT_ID
+        val clientId = dotEnv["CLIENT_ID"]
+        val clientSecret = dotEnv["CLIENT_SECRET"]
+        val tenantId = dotEnv["TENANT_ID"]
         val tokenUrl = URL("https://login.windows.net/$tenantId/oauth2/token")
         val form = "grant_type=client_credentials&resource=https://cognitiveservices.azure.com/&client_id=$clientId&client_secret=$clientSecret"
 
@@ -113,7 +124,7 @@ class MainActivity : AppCompatActivity() {
                      var message: String)
 
     data class Message(var cogSvcsAccessToken: String?,
-                       var cogSvcsSubdomain: String,
+                       var cogSvcsSubdomain: String?,
                        var resourceName: String?,
                        var request: Content,
                        var launchToPostMessageSentDurationInMs: Int,
@@ -123,7 +134,7 @@ class MainActivity : AppCompatActivity() {
     fun loadImmersiveReaderWebView(
         exampleActivity: Activity,
         token: String?,
-        subdomain: String,
+        subdomain: String?,
         content: Content,
         options: Options) {
         if (token === "") {
