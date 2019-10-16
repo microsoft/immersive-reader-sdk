@@ -21,6 +21,7 @@ import java.net.HttpURLConnection.HTTP_OK
 import java.net.URL
 import kotlinx.coroutines.*
 import org.json.JSONObject
+import java.util.*
 
 
 // This sample app uses the Dotenv is a module that loads environment variables from a .env file to better manage secrets.
@@ -125,7 +126,6 @@ class MainActivity : AppCompatActivity() {
 
     data class Message(var cogSvcsAccessToken: String?,
                        var cogSvcsSubdomain: String?,
-                       var resourceName: String?,
                        var request: Content,
                        var launchToPostMessageSentDurationInMs: Int,
                        var options: Options)
@@ -150,12 +150,7 @@ class MainActivity : AppCompatActivity() {
             throw IOException(badArgumentError.toString())
         }
 
-        // Create the message variable
-        val messageData = Message(token, subdomain, null, content, 0, options)
-
-        // Deserialize message data class to JSON
-        val gson = Gson()
-        val message = gson.toJson(messageData)
+        val startPostMessageSentDurationInMs = Date()
 
         GlobalScope.launch {
             withContext(Dispatchers.Main) {
@@ -195,6 +190,16 @@ class MainActivity : AppCompatActivity() {
 
                     // Send message JSON object to Immersive Reader html
                     override fun onPageFinished(view: WebView, url: String) {
+                        val endPostMessageSentDurationInMs = Date()
+                        val postMessageSentDurationInMs = (endPostMessageSentDurationInMs.time - startPostMessageSentDurationInMs.time).toInt()
+
+                        // Create the message variable
+                        val messageData = Message(token, subdomain, content, postMessageSentDurationInMs, options)
+
+                        // Deserialize message data class to JSON
+                        val gson = Gson()
+                        val message = gson.toJson(messageData)
+
                         if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.KITKAT) {
                             view.evaluateJavascript("handleLaunchImmersiveReader($message)", null)
                         } else {
