@@ -196,10 +196,11 @@ class MainActivity : AppCompatActivity() {
                         // Create the message variable
                         val messageData = Message(token, subdomain, content, postMessageSentDurationInMs, options)
 
-                        // Deserialize message data class to JSON
+                        // Serializes message data class to JSON
                         val gson = Gson()
                         val message = gson.toJson(messageData)
 
+                        // Calls the handleLaunchImmersiveReader function in HTML
                         if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.KITKAT) {
                             view.evaluateJavascript("handleLaunchImmersiveReader($message)", null)
                         } else {
