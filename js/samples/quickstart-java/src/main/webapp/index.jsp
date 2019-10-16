@@ -1,4 +1,3 @@
-<%@ page import="io.github.cdimascio.dotenv.Dotenv"%>
 <html>
 <head>
     <meta charset="utf-8" />
