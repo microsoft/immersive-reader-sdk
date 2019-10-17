@@ -50,8 +50,6 @@ CLIENT_ID=<YOUR_CLIENT_ID>
 CLIENT_SECRET<YOUR_CLIENT_SECRET>
 SUBDOMAIN=<YOUR_SUBDOMAIN>
 ```
-    * This should resolve the errors in the GetAuthTokenServlet.java file.
-
    You need property values from the Azure AD authentication configuration step above for this part. Refer back to the text file you saved of that session. See the details section below.  
 
    Property value details:
