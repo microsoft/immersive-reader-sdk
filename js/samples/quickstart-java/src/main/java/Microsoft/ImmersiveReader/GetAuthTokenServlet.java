@@ -1,16 +1,19 @@
 package Microsoft.ImmersiveReader;
 
+import io.github.cdimascio.dotenv.Dotenv;
 import javax.servlet.http.*;
 import java.io.*;
 import java.net.HttpURLConnection;
 import java.net.URL;
 
-import static Microsoft.ImmersiveReader.Constants.TENANT_ID;
-import static Microsoft.ImmersiveReader.Constants.CLIENT_ID;
-import static Microsoft.ImmersiveReader.Constants.CLIENT_SECRET;
-import static Microsoft.ImmersiveReader.Constants.SUBDOMAIN;
-
 public class GetAuthTokenServlet extends HttpServlet {
+
+    public static Dotenv dotenv = Dotenv.load();
+
+    public static String CLIENT_ID = dotenv.get("CLIENT_ID");
+    public static String CLIENT_SECRET = dotenv.get("CLIENT_SECRET");
+    public static String TENANT_ID = dotenv.get("TENANT_ID");
+    public static String SUBDOMAIN = dotenv.get("SUBDOMAIN");
 
     public void doGet(HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse)
             throws IOException {

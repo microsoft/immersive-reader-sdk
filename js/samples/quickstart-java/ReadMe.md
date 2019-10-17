@@ -43,14 +43,13 @@ Using [Git](https://git-scm.com/), Launch Terminal and run `git clone https://gi
     * In the **Command line** field enter **clean**. Click OK.
     * Click Apply, then click OK to close the window.
 
-3. In the JavaSample/src/main/Java/Microsoft.ImmersiveReader folder create a new Java Class called Constants.
-    * Add the following public static final Strings:
-        * TENANT_ID
-        * CLIENT_ID
-        * CLIENT_SECRET
-        * SUBDOMAIN
-    * This should resolve the errors in the GetAuthTokenServlet.java file.
-
+3. Add a file named `.env` to the root folder. Supply your custom property values from step one. Keep this file as a local file that only exists on your machine and be sure not to commit this file into source control, as it contains secrets that should not be made public.
+```env
+TENANT_ID=<YOUR_TENANT_ID>
+CLIENT_ID=<YOUR_CLIENT_ID>
+CLIENT_SECRET<YOUR_CLIENT_SECRET>
+SUBDOMAIN=<YOUR_SUBDOMAIN>
+```
    You need property values from the Azure AD authentication configuration step above for this part. Refer back to the text file you saved of that session. See the details section below.  
 
    Property value details:
