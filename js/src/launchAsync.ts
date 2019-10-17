@@ -173,15 +173,13 @@ export function close(): void {
     window.postMessage('ImmersiveReader-Exit', '*');
 }
 
-// The subdomain must be at least one character long, alphanumeric, and may contain '-',
+// The subdomain must be alphanumeric, and may contain '-',
 // as long as the '-' does not start or end the subdomain.
+// The subdomain can also be falsy (null/undefined/'') in order to support our legacy token format,
+// though in the future the legacy token will not be supported.
 export function isValidSubdomain(subdomain: string): boolean {
-    if (subdomain === null || subdomain === undefined) {
+    if (!subdomain) {
         return true;
-    }
-
-    if (subdomain.length === 0) {
-        return false;
     }
 
     const validRegex = '^([a-zA-Z0-9]|[a-zA-Z0-9][a-zA-Z0-9\\-]{0,61}[a-zA-Z0-9])$';
