@@ -175,7 +175,8 @@ export function close(): void {
 
 // The subdomain must be alphanumeric, and may contain '-',
 // as long as the '-' does not start or end the subdomain.
-// The subdomain can also be falsy (null/undefined/'') in order to support our legacy token format.
+// The subdomain can also be falsy (null/undefined/'') in order to support our legacy token format,
+// though in the future the legacy token will not be supported.
 export function isValidSubdomain(subdomain: string): boolean {
     if (!subdomain) {
         return true;
