@@ -75,7 +75,7 @@
 
             const token = await getImmersiveReaderTokenAsync();
 
-            ImmersiveReader.launchAsync(token, '<%= Microsoft.ImmersiveReader.GetAuthTokenServlet.dotenv.get("SUBDOMAIN") %>', data, options)
+            ImmersiveReader.launchAsync(token, '<%= Microsoft.ImmersiveReader.GetAuthTokenServlet.SUBDOMAIN %>', data, options)
                 .then(() => {
                     console.log('success');
                 }, (error) => {

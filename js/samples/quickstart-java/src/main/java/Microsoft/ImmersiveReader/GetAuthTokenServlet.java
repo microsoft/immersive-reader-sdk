@@ -10,10 +10,10 @@ public class GetAuthTokenServlet extends HttpServlet {
 
     public static Dotenv dotenv = Dotenv.load();
 
-    private String CLIENT_ID = dotenv.get("CLIENT_ID");
-    private String CLIENT_SECRET = dotenv.get("CLIENT_SECRET");
-    private String TENANT_ID = dotenv.get("TENANT_ID");
-    private String SUBDOMAIN = dotenv.get("SUBDOMAIN");
+    public static String CLIENT_ID = dotenv.get("CLIENT_ID");
+    public static String CLIENT_SECRET = dotenv.get("CLIENT_SECRET");
+    public static String TENANT_ID = dotenv.get("TENANT_ID");
+    public static String SUBDOMAIN = dotenv.get("SUBDOMAIN");
 
     public void doGet(HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse)
             throws IOException {
