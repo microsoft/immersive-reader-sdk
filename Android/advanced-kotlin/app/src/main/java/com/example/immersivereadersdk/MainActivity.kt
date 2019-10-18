@@ -22,13 +22,12 @@ import java.net.URL
 import kotlinx.coroutines.*
 import org.json.JSONObject
 import java.util.*
-
+import kotlin.collections.ArrayList
 
 // This sample app uses the Dotenv is a module that loads environment variables from a .env file to better manage secrets.
 // https://github.com/cdimascio/java-dotenv
 // Be sure to add a "env" file to the /assets folder
 // instead of '.env', use 'env'
-
 
 class MainActivity : AppCompatActivity() {
 
@@ -54,11 +53,20 @@ class MainActivity : AppCompatActivity() {
         val exampleActivity = this
         val subdomain = dotEnv["SUBDOMAIN"]
         val irTitle = findViewById<TextView>(R.id.Title)
-        val irText = findViewById<TextView>(R.id.Content)
-        val chunk = Chunk(irText.text.toString(), "en", "text/plain")
-        val chunks = listOf(chunk)
-        val data = Content(irTitle.text.toString(), chunks)
+        val irText1 = findViewById<TextView>(R.id.Content1)
+        val irText2 = findViewById<TextView>(R.id.Content2)
         val appUtilities = AppUtilities(exampleActivity)
+
+        // The content of the request that's shown in the Immersive Reader.
+        // This basic example contains chunks of two different languages.
+        val chunk1 = Chunk(irText1.text.toString(), "en", "text/plain")
+        val chunk2 = Chunk(irText2.text.toString(), "fr", "text/plain")
+
+        val chunks = ArrayList<Chunk>()
+        chunks.add(chunk1)
+        chunks.add(chunk2)
+
+        val data = Content(irTitle.text.toString(), chunks)
 
         // Options passed to the Immersive Reader
         val allowFullscreen = true

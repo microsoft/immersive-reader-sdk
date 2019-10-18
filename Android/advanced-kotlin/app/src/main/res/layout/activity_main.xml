@@ -49,13 +49,29 @@
             android:visibility="visible"
             tools:visibility="visible">
 
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical">
+
             <TextView
-                android:id="@+id/Content"
+                android:id="@+id/Content1"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:background="#00FFFFFF"
-                android:text="@string/geographyText"
+                android:text="@string/geographyTextEn"
                 android:textSize="18sp" />
+
+            <TextView
+                android:id="@+id/Content2"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="#00FFFFFF"
+                android:text="@string/geographyTextFr"
+                android:textSize="18sp" />
+
+            </LinearLayout>
+
         </ScrollView>
 
         <Button
