@@ -10,7 +10,7 @@ import android.widget.LinearLayout
 import android.widget.Toast
 
 
-class WebAppInterface(private val mContext: Context, var parentLayout: LinearLayout, var webView: WebView) {
+class WebAppInterface(private val mContext: Context, var parentLayout: LinearLayout, var webView: WebView, var messageData: MainActivity.Message) {
 
     // Show a toast from html.
     @JavascriptInterface
@@ -38,5 +38,11 @@ class WebAppInterface(private val mContext: Context, var parentLayout: LinearLay
         webView.removeAllViews()
         webView.pauseTimers()
         webView.destroy()
+
+        // After the WebView is destroyed, do stuff.
+        if (messageData.options.onExit != null) {
+            val appUtilities = AppUtilities(mContext)
+            appUtilities.exitCallback()
+        }
     }
 }

@@ -39,6 +39,9 @@ class MainActivity : AppCompatActivity() {
         ignoreIfMissing = true
     }
 
+    private lateinit var contextualWebView: WebView
+    private lateinit var messageData: Message
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         this.supportActionBar!!.hide()
@@ -55,7 +58,18 @@ class MainActivity : AppCompatActivity() {
         val chunk = Chunk(irText.text.toString(), "en", "text/plain")
         val chunks = listOf(chunk)
         val data = Content(irTitle.text.toString(), chunks)
-        val options = Options("ImmersiveReader-Exit","en", 0)
+        val appUtilities = AppUtilities(exampleActivity)
+
+        // Options passed to the Immersive Reader
+        val allowFullscreen = true
+        val customDomain = ""
+        val hideExitButton = false
+        val onExit = appUtilities::exitCallback
+        val uiLang = "en"
+        val uiZIndex = 0
+        val timeoutInMilliseconds = 15000
+        val options = Options(uiLang, timeoutInMilliseconds, uiZIndex, onExit, customDomain, allowFullscreen, hideExitButton)
+
         var token: String
 
         runBlocking{
@@ -108,8 +122,8 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-    private lateinit var contextualWebView: WebView
-
+    // TODO: Move data classes and loadImmersiveReaderWebView to imported SDK package
+    //   Once the data classes are imported users need only deserialize them for use in their projects.
     data class Content(var title: String,
                        var chunks: List<Chunk>)
 
@@ -117,9 +131,16 @@ class MainActivity : AppCompatActivity() {
                      var lang: String,
                      var mimeType: String)
 
-    data class Options(var exitCallback: String,
-                       var uiLang: String,
-                       var timeout: Int)
+    // Only includes Immersive Reader options relevant to Android apps.
+    // For a complete list see https://github.com/microsoft/immersive-reader-sdk/blob/master/js/src/options.ts
+    data class Options(var uiLang: String, // Language of the UI, e.g. en, es-ES (optional). Defaults to browser language if not specified.
+                       var timeout: Int, // Duration (in milliseconds) before launchAsync fails with a timeout error (default is 15000 ms).
+                       var uiZIndex: Int, // Z-index of the iframe that will be created (default is 1000)
+                       var onExit: (() -> Any)?, // Executes when the Immersive Reader exits
+                       var customDomain: String, // Reserved for internal use. Custom domain where the Immersive Reader webapp is hosted (default is null).
+                       var allowFullscreen: Boolean, // The ability to toggle fullscreen (default is true).
+                       var hideExitButton: Boolean // Whether or not to hide the Immersive Reader's exit button arrow (default is false). This should only be true if there is an alternative mechanism provided to exit the Immersive Reader (e.g a mobile toolbar's back arrow).
+    )
 
     data class Error(var code: String,
                      var message: String)
@@ -151,6 +172,9 @@ class MainActivity : AppCompatActivity() {
         }
 
         val startPostMessageSentDurationInMs = Date()
+
+        // Create the message variable
+        messageData = Message(token, subdomain, content, 0, options)
 
         GlobalScope.launch {
             withContext(Dispatchers.Main) {
@@ -193,8 +217,8 @@ class MainActivity : AppCompatActivity() {
                         val endPostMessageSentDurationInMs = Date()
                         val postMessageSentDurationInMs = (endPostMessageSentDurationInMs.time - startPostMessageSentDurationInMs.time).toInt()
 
-                        // Create the message variable
-                        val messageData = Message(token, subdomain, content, postMessageSentDurationInMs, options)
+                        // Updates launchToPostMessageSentDurationInMs
+                        messageData.launchToPostMessageSentDurationInMs = postMessageSentDurationInMs
 
                         // Serializes message data class to JSON
                         val gson = Gson()
@@ -212,7 +236,7 @@ class MainActivity : AppCompatActivity() {
                     }
                 }
 
-                val jsInterface = WebAppInterface(exampleActivity, parentLayout, contextualWebView)
+                val jsInterface = WebAppInterface(exampleActivity, parentLayout, contextualWebView, messageData)
                 contextualWebView.addJavascriptInterface(jsInterface, "Android")
                 contextualWebView.loadUrl("file:///android_asset/immersiveReader.html")
             }

@@ -14,21 +14,19 @@ Licensed under the MIT License. -->
             if (!message) {
                 Android.showToast('Message is null or undefined!');
             } else {
-                var data = {
-                    title: message.request.title,
-                    chunks: [{
-                        content: message.request.chunks[0].content,
-                        lang: message.request.chunks[0].lang,
-                        mimeType: message.request.chunks[0].mimeType
-                    }]
-                };
-                var options = {
-                    'onExit': exitCallback
-                };
-                ImmersiveReader.launchAsync(message.cogSvcsAccessToken, message.cogSvcsSubdomain, data, options);
-                function exitCallback() {
+
+                // A simple declarative function used to close the Immersive Reader WebView via @JavaScriptInterface
+                const exitCallback = function() {
                     Android.immersiveReaderExit();
                 }
+
+                // A method cannot be passed into the message JSON, so we assign it here as there's
+                // no need to post a message to the parent of the Immersive Reader iframe because
+                // the host application uses a WebView.
+                message.options.onExit = exitCallback;
+
+                // Use the JavaScript SDK to launch the Immersive Reader.
+                ImmersiveReader.launchAsync(message.cogSvcsAccessToken, message.cogSvcsSubdomain, message.request, message.options);
             }
         }
     </script>
