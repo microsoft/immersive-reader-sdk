@@ -129,10 +129,7 @@ class MainActivity : AppCompatActivity() {
             throw IOException(responseError.toString())
         }
     }
-
-    // TODO: Move data classes to be consumed via @JavaScriptInterface.
-    //   Once the data classes are used in this way users need only deserialize them for use in their projects.
-    //   This will make things easier to read and maintain.
+    
     data class Content(var title: String,
                        var chunks: List<Chunk>)
 
