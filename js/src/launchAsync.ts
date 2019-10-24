@@ -12,6 +12,9 @@ type Message = {
     launchToPostMessageSentDurationInMs: number;
 };
 
+const sdkPlatform = 'js';
+const sdkVersion = '0.0.3'; // Must be kept in sync with the package version.
+
 /**
  * Launch the Immersive Reader within an iframe.
  * @param token The authentication token.
@@ -148,7 +151,7 @@ export function launchAsync(token: string, subdomain: string, content: Content, 
         }
 
         const domain = options.customDomain ? options.customDomain : 'https://learningtools.onenote.com/learningtoolsapp/cognitive/';
-        let src = domain + 'reader?exitCallback=ImmersiveReader-Exit';
+        let src = domain + 'reader?exitCallback=ImmersiveReader-Exit&sdkPlatform=' + sdkPlatform + '&sdkVersion=' + sdkVersion;
 
         if (options.hideExitButton) {
             src += '&hideExitButton=true';
