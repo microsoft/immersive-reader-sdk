@@ -4,6 +4,7 @@
 import { Content } from './content';
 import { Options } from './options';
 import { Error, ErrorCode } from './error';
+declare const VERSION: string;
 
 type Message = {
     cogSvcsAccessToken: string;
@@ -13,7 +14,7 @@ type Message = {
 };
 
 const sdkPlatform = 'js';
-const sdkVersion = '0.0.3'; // Must be kept in sync with the package version.
+const sdkVersion = VERSION;
 
 /**
  * Launch the Immersive Reader within an iframe.
