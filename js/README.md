@@ -12,9 +12,7 @@ Once you have completed that configuration, you will have a subdomain and will b
 
 You can find examples of how to acquire an Azure AD token in the [samples](./samples).
 
-Include the library in your web application:
-
-* Stable build
+Include the library of the stable build in your web application:
 
 ```html
 <script type='text/javascript' src='https://contentstorage.onenote.office.net/onenoteltir/immersivereadersdk/immersive-reader-sdk.0.0.3.js'></script>
@@ -26,20 +24,6 @@ npm install @microsoft/immersive-reader-sdk
 
 ```bash
 yarn add @microsoft/immersive-reader-sdk
-```
-
-* Canary build (use at your own risk!)
-
-```html
-<script type='text/javascript' src='https://contentstorage.onenote.office.net/onenoteltir/immersivereadersdk/immersive-reader-sdk.preview.js'></script>
-```
-
-```bash
-npm install @microsoft/immersive-reader-sdk@next
-```
-
-```bash
-yarn add @microsoft/immersive-reader-sdk@next
 ```
 
 Add an HTML element to your webpage with the `immersive-reader-button` class attribute.
