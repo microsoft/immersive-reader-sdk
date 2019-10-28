@@ -1,6 +1,9 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // Licensed under the MIT License.
 
+// launchAsync.ts needs to read VERSION (which is passed in from package.json via webpack)
+(window as any).VERSION = '000.000.000';
+
 import { launchAsync } from '../src/immersive-reader-sdk';
 import { isValidSubdomain } from '../src/launchAsync';
 import { Content } from '../src/content';
