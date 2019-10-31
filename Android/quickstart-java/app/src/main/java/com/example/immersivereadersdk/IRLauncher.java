@@ -15,6 +15,7 @@ import com.google.gson.GsonBuilder;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.concurrent.Callable;
 
 import io.github.cdimascio.dotenv.Dotenv;
 
@@ -69,7 +70,12 @@ public class IRLauncher {
                     chunkList.add(new Chunk(textChunk.mText, textChunk.mLocale, "text/plain"));
                 }
                 Content content = new Content(IRDataHolder.getInstance().getContentToRead().getTitle(), chunkList);
-                Options options = new Options("ImmersiveReader-Exit", "en", 0);
+                Options options = new Options(new Callable<Void>() {
+                    public Void call() {
+                        launchListener.onExit();
+                        return null;
+                    }
+                }, "en", 0);
 
                 // Prepare the webview
                 prepareWebView(accessToken, content, options, launchListener);
@@ -104,7 +110,7 @@ public class IRLauncher {
         final Date startPostMessageSentDurationInMs = new Date();
 
         // Create the Message
-        final Message messageData = new Message(accessToken, SUBDOMAIN, null, content, 0, options);
+        final Message messageData = new Message(accessToken, SUBDOMAIN, content, 0, options);
 
         // Set WebView Client
         mWebView.setWebViewClient(new WebViewClient() {
