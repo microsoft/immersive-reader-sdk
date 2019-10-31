@@ -9,8 +9,8 @@ import java.lang.ref.WeakReference;
 /**
  * This is the client facing class for invoking the new Immersive Reader functionality.
  * Usage:
- * ImmersiveReader immersiveReader = new ImmersiveReader(Activity, ImmersiveReaderAuthenticator);
- * immersiveReader.speak(ReadableTextChunk);
+ * ImmersiveReader immersiveReader = new ImmersiveReader(Activity, IRAuthenticator);
+ * immersiveReader.read(ReadableTextChunk);
  */
 
 
@@ -49,7 +49,7 @@ public class ImmersiveReader {
      * d) Error.INVALID_CONTENT in case of empty list of text chunks
      */
 
-    public IRError speak(ReadableContent dataToRead) {
+    public IRError read(ReadableContent dataToRead) {
 
         Activity activity = mActivityWR.get();
         if (activity == null) {

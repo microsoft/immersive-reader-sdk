@@ -29,7 +29,7 @@ public class MainActivity extends Activity {
                 ReadableContent readableContent = new ReadableContent(irTitle.getText().toString(), readableTextChunks);
 
                 ImmersiveReader immersiveReader = new ImmersiveReader(MainActivity.this, new IRAuthenticator());
-                immersiveReader.speak(readableContent);
+                immersiveReader.read(readableContent);
             }
         });
     }
