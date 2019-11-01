@@ -156,7 +156,15 @@ extension ImmersiveReaderViewController: WKScriptMessageHandler {
                         self.onError!("Error evaluating JavaScript \(String(describing: error))")
                     }
                 }
-            } catch { print(error)}
+            } catch {
+                // Logs error to console.
+                print("Immersive Reader failed to load with error: \(error)")
+
+                // Displays error alert message in the UI
+                let alert = UIAlertController(title: "Immersive Reader failed to load", message: error.localizedDescription, preferredStyle: .alert)
+                alert.addAction(UIAlertAction(title: "OK", style: .cancel, handler: nil))
+                self.present(alert, animated: true)
+            }
         }
         
         if message.name == "launchSuccessful" {
