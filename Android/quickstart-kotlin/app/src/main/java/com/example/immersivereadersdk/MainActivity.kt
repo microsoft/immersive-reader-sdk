@@ -22,7 +22,8 @@ import java.net.URL
 import kotlinx.coroutines.*
 import org.json.JSONObject
 import java.util.*
-import kotlin.collections.ArrayList
+import kotlin.collections.HashMap
+import kotlin.reflect.KFunction0
 
 // This sample app uses the Dotenv is a module that loads environment variables from a .env file to better manage secrets.
 // https://github.com/cdimascio/java-dotenv
@@ -39,7 +40,6 @@ class MainActivity : AppCompatActivity() {
     }
 
     private lateinit var contextualWebView: WebView
-    private lateinit var messageData: Message
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -59,24 +59,17 @@ class MainActivity : AppCompatActivity() {
 
         // The content of the request that's shown in the Immersive Reader.
         // This basic example contains chunks of two different languages.
-        val chunk1 = Chunk(irText1.text.toString(), "en", "text/plain")
-        val chunk2 = Chunk(irText2.text.toString(), "fr", "text/plain")
+        val chunk1 = hashMapOf("content" to irText1.text.toString(), "lang" to "en", "mimeType" to "text/plain")
+        val chunk2 = hashMapOf("content" to irText2.text.toString(), "lang" to "fr", "mimeType" to "text/plain")
 
-        val chunks = ArrayList<Chunk>()
+        val chunks = arrayListOf(HashMap<String, String>())
         chunks.add(chunk1)
         chunks.add(chunk2)
 
-        val data = Content(irTitle.text.toString(), chunks)
+        val content = hashMapOf("title" to irTitle.text, "chunks" to chunks)
 
-        // Options passed to the Immersive Reader
-        val allowFullscreen = true
-        val customDomain = ""
-        val hideExitButton = false
-        val onExit = appUtilities::exitCallback
-        val uiLang = "en"
-        val uiZIndex = 0
-        val timeoutInMilliseconds = 15000
-        val options = Options(uiLang, timeoutInMilliseconds, uiZIndex, onExit, customDomain, allowFullscreen, hideExitButton)
+        // Executes when the Immersive Reader exits, leave empty if not used in code (See usage on lines 43 - 46 of WebAppInterface class).
+        val options = hashMapOf("onExit" to appUtilities::exitCallback)
 
         var token: String
 
@@ -84,7 +77,7 @@ class MainActivity : AppCompatActivity() {
             val resp = async { getImmersiveReaderTokenAsync() }
             token = resp.await()
             val jsonResp = JSONObject(token)
-            loadImmersiveReaderWebView(exampleActivity, jsonResp.getString("access_token"), subdomain, data, options)
+            loadImmersiveReaderWebView(exampleActivity, jsonResp.getString("access_token"), subdomain, content, options)
         }
     }
 
@@ -129,41 +122,18 @@ class MainActivity : AppCompatActivity() {
             throw IOException(responseError.toString())
         }
     }
-    
-    data class Content(var title: String,
-                       var chunks: List<Chunk>)
-
-    data class Chunk(var content: String,
-                     var lang: String,
-                     var mimeType: String)
-
-    // Only includes Immersive Reader options relevant to Android apps.
-    // For a complete list see https://github.com/microsoft/immersive-reader-sdk/blob/master/js/src/options.ts
-    data class Options(var uiLang: String, // Language of the UI, e.g. en, es-ES (optional). Defaults to browser language if not specified.
-                       var timeout: Int, // Duration (in milliseconds) before launchAsync fails with a timeout error (default is 15000 ms).
-                       var uiZIndex: Int, // Z-index of the iframe that will be created (default is 1000)
-                       var onExit: (() -> Any)?, // Executes when the Immersive Reader exits
-                       var customDomain: String, // Reserved for internal use. Custom domain where the Immersive Reader webapp is hosted (default is null).
-                       var allowFullscreen: Boolean, // The ability to toggle fullscreen (default is true).
-                       var hideExitButton: Boolean // Whether or not to hide the Immersive Reader's exit button arrow (default is false). This should only be true if there is an alternative mechanism provided to exit the Immersive Reader (e.g a mobile toolbar's back arrow).
-    )
 
     data class Error(var code: String,
                      var message: String)
-
-    data class Message(var cogSvcsAccessToken: String?,
-                       var cogSvcsSubdomain: String?,
-                       var request: Content,
-                       var launchToPostMessageSentDurationInMs: Int,
-                       var options: Options)
 
     @Throws(IOException::class)
     fun loadImmersiveReaderWebView(
         exampleActivity: Activity,
         token: String?,
         subdomain: String?,
-        content: Content,
-        options: Options) {
+        content: HashMap<String, Any>,
+        options: HashMap<String, KFunction0<Unit>>
+    ) {
         if (token === "") {
             val badArgumentError = Error(code = "BadArgument", message = "Token must not be empty.")
             throw IOException(badArgumentError.toString())
@@ -172,15 +142,15 @@ class MainActivity : AppCompatActivity() {
             val badArgumentError = Error(code = "BadArgument", message = "Subdomain must not be empty.")
             throw IOException(badArgumentError.toString())
         }
-        if (content.chunks.isEmpty()) {
+        if (content["chunks"] === "") {
             val badArgumentError = Error(code = "BadArgument", message = "Chunks must not be empty.")
             throw IOException(badArgumentError.toString())
         }
 
         val startPostMessageSentDurationInMs = Date()
 
-        // Create the message variable
-        messageData = Message(token, subdomain, content, 0, options)
+        // Populate the message
+        val messageData = hashMapOf("cogSvcsAccessToken" to token.toString(), "cogSvcsSubdomain" to subdomain.toString(), "content" to content, "launchToPostMessageSentDurationInMs" to 0, "options" to options)
 
         GlobalScope.launch {
             withContext(Dispatchers.Main) {
@@ -224,7 +194,7 @@ class MainActivity : AppCompatActivity() {
                         val postMessageSentDurationInMs = (endPostMessageSentDurationInMs.time - startPostMessageSentDurationInMs.time).toInt()
 
                         // Updates launchToPostMessageSentDurationInMs
-                        messageData.launchToPostMessageSentDurationInMs = postMessageSentDurationInMs
+                        messageData["launchToPostMessageSentDurationInMs"] = postMessageSentDurationInMs
 
                         // Serializes message data class to JSON
                         val gson = Gson()
@@ -242,7 +212,7 @@ class MainActivity : AppCompatActivity() {
                     }
                 }
 
-                val jsInterface = WebAppInterface(exampleActivity, parentLayout, contextualWebView, messageData)
+                val jsInterface = WebAppInterface(exampleActivity, parentLayout, contextualWebView, options)
                 contextualWebView.addJavascriptInterface(jsInterface, "Android")
                 contextualWebView.loadUrl("file:///android_asset/immersiveReader.html")
             }

@@ -8,9 +8,10 @@ import android.webkit.JavascriptInterface
 import android.webkit.WebView
 import android.widget.LinearLayout
 import android.widget.Toast
+import kotlin.reflect.KFunction0
 
 
-class WebAppInterface(private val mContext: Context, var parentLayout: LinearLayout, var webView: WebView, var messageData: MainActivity.Message) {
+class WebAppInterface(private val mContext: Context, var parentLayout: LinearLayout, var webView: WebView, var options: HashMap<String, KFunction0<Unit>>) {
 
     // Show a toast from html.
     @JavascriptInterface
@@ -40,7 +41,7 @@ class WebAppInterface(private val mContext: Context, var parentLayout: LinearLay
         webView.destroy()
 
         // After the WebView is destroyed, do stuff.
-        if (messageData.options.onExit != null) {
+        if (options["onExit"] != null) {
             val appUtilities = AppUtilities(mContext)
             appUtilities.exitCallback()
         }
