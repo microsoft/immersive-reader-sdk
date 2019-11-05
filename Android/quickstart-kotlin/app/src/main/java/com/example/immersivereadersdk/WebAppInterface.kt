@@ -8,10 +8,8 @@ import android.webkit.JavascriptInterface
 import android.webkit.WebView
 import android.widget.LinearLayout
 import android.widget.Toast
-import kotlin.reflect.KFunction0
 
-
-class WebAppInterface(private val mContext: Context, var parentLayout: LinearLayout, var webView: WebView, var options: HashMap<String, KFunction0<Unit>>) {
+class WebAppInterface(private val mContext: Context, var parentLayout: LinearLayout, var webView: WebView) {
 
     // Show a toast from html.
     @JavascriptInterface
@@ -23,6 +21,9 @@ class WebAppInterface(private val mContext: Context, var parentLayout: LinearLay
     @JavascriptInterface
     fun immersiveReaderExit() {
         webView.post(Runnable { destroyWebView(parentLayout, webView) })
+
+        // Any additional functionality may be added here.
+        Toast.makeText(mContext, "The Immersive Reader has been closed!", Toast.LENGTH_SHORT).show()
     }
 
     // Disposes of the WebView when the back arrow is tapped.
@@ -39,11 +40,5 @@ class WebAppInterface(private val mContext: Context, var parentLayout: LinearLay
         webView.removeAllViews()
         webView.pauseTimers()
         webView.destroy()
-
-        // After the WebView is destroyed, do stuff.
-        if (options["onExit"] != null) {
-            val appUtilities = AppUtilities(mContext)
-            appUtilities.exitCallback()
-        }
     }
 }
