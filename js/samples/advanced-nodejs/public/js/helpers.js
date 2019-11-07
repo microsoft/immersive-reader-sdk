@@ -27,3 +27,13 @@ function getSubdomainAsync() {
         });
     });
 }
+
+function launchImmersiveReader(data, options) {
+    getImmersiveReaderTokenAsync().then(function (token) {
+        getSubdomainAsync().then(function (subdomain) {
+            ImmersiveReader.launchAsync(token, subdomain, data, options).catch(function (error) {
+                console.log('there was an error', error);
+            });
+        });
+    });
+}
