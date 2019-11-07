@@ -2,14 +2,14 @@
 // Licensed under the MIT License.
 
 function getImmersiveReaderTokenAsync() {
-    return new Promise((resolve, reject) => {
+    return new Promise(function (resolve, reject) {
         $.ajax({
             url: '/getimmersivereadertoken',
             type: 'GET',
-            success: token => {
+            success: function (token) {
                 resolve(token);
             },
-            error: err => {
+            error: function (err) {
                 console.log('Error in getting token!', err);
                 reject(err);
             }
@@ -18,12 +18,12 @@ function getImmersiveReaderTokenAsync() {
 }
 
 function getSubdomainAsync() {
-    return new Promise((resolve, reject) => {
+    return new Promise(function (resolve, reject) {
         $.ajax({
             url: '/subdomain',
             type: 'GET',
-            success: subdomain => { resolve(subdomain); },
-            error: err => { reject(err); }
+            success: function (subdomain) { resolve(subdomain); },
+            error: function (err) { reject(err); }
         });
     });
 }

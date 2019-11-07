@@ -11,6 +11,8 @@
     <script type='text/javascript' src='https://code.jquery.com/jquery-3.3.1.min.js'></script>
     <script type='text/javascript' src='https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.12.1/jquery-ui.min.js'></script>
     <script type='text/javascript' src='https://contentstorage.onenote.office.net/onenoteltir/immersivereadersdk/immersive-reader-sdk.0.0.3.js'></script>
+    <!-- Promise polyfill is needed for IE11 support -->
+    <!-- <script type='text/javascript' src='https://cdn.jsdelivr.net/npm/promise-polyfill@8/dist/polyfill.min.js'></script> -->
     <script type='text/javascript' src='../js/helpers.js'></script>
 
     <link href='../css/styles.css' rel='stylesheet'>
@@ -108,6 +110,24 @@
 
             ImmersiveReader.launchAsync(token, subdomain, data);
         }
+
+        // IE11 doesn't support the async/await syntax. The code below is equivalent to the code above but works
+        // in IE11 with a Promise polyfill.
+        // function handleLaunchImmersiveReader(sampleId) {
+        //     var data = {
+        //         title: $('#title' + sampleId).text().trim(),
+        //         chunks: [{
+        //             content: $('#text' + sampleId).text().trim(),
+        //             lang: 'en'
+        //         }]
+        //     };
+        //
+        //     var token = getImmersiveReaderTokenAsync().then(function (token) {
+        //         getSubdomainAsync().then(function (subdomain) {
+        //             ImmersiveReader.launchAsync(token, subdomain, data);
+        //         });
+        //     });
+        // }
     </script>
 </body>
 </html>
