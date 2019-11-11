@@ -15,7 +15,6 @@ window.addEventListener('load', () => {
 function dynamicallyLoadScript(scriptUrl: string) {
     const script = document.createElement('script');
     script.src = scriptUrl;
-    script.async = true;
     document.head.appendChild(script);
 }
 
