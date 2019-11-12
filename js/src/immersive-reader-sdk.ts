@@ -5,7 +5,7 @@ import { renderButtons } from './renderButtons';
 import { close, launchAsync } from './launchAsync';
 
 window.addEventListener('load', () => {
-    if (!('Promise' in window)) {
+    if (!(window.hasOwnProperty('Promise'))) {
         dynamicallyLoadScript('https://contentstorage.onenote.office.net/onenoteltir/permanent-static-resources/promise-polyfill.min.js');
     }
 
