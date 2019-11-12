@@ -11,6 +11,8 @@
     <script type='text/javascript' src='https://code.jquery.com/jquery-3.3.1.min.js'></script>
     <script type='text/javascript' src='https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.12.1/jquery-ui.min.js'></script>
     <script type='text/javascript' src='https://contentstorage.onenote.office.net/onenoteltir/immersivereadersdk/immersive-reader-sdk.0.0.3.js'></script>
+    <!-- A polyfill for Promise is needed for IE11 support -->
+    <script type='text/javascript' src='https://cdn.jsdelivr.net/npm/promise-polyfill@8/dist/polyfill.min.js'></script>
     <script type='text/javascript' src='../js/helpers.js'></script>
 
     <link href='../css/styles.css' rel='stylesheet'>
@@ -57,25 +59,22 @@
     </main>
 
     <script type='text/javascript'>
-        async function handleLaunchImmersiveReader() {
-            const data = {
+        function handleLaunchImmersiveReader() {
+            var data = {
                 title: $('#ir-title').text().trim(),
                 chunks: [{
                     content: $('#ir-text').text().trim(),
                     lang: 'en'
                 }]
             };
-            const token = await getImmersiveReaderTokenAsync();
-            const subdomain = await getSubdomainAsync();
-
-            const options = {
+            
+            var options = {
                 'onExit': exitCallback
             };
 
-            ImmersiveReader.launchAsync(token, subdomain, data, options)
-                .catch ((error) => {
-                    console.log('there was an error', error);
-                });
+            // Refer to the launchImmersiveReader() function in helpers.js for more information. It covers how to retrieve
+            // the Cognitive Services token, the subdomain, and usage of the launchAsync function of the Immersive Reader SDK
+            launchImmersiveReader(data, options);
 
             function exitCallback() {
                 console.log("This is the callback function.");

@@ -12,6 +12,8 @@
     <script type='text/javascript' src='https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.12.1/jquery-ui.min.js'></script>
     <script type='text/javascript' async src='https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-MML-AM_CHTML'></script>
     <script type='text/javascript' src='https://contentstorage.onenote.office.net/onenoteltir/immersivereadersdk/immersive-reader-sdk.0.0.3.js'></script>
+    <!-- A polyfill for Promise is needed for IE11 support -->
+    <script type='text/javascript' src='https://cdn.jsdelivr.net/npm/promise-polyfill@8/dist/polyfill.min.js'></script>
     <script type='text/javascript' src='../js/helpers.js'></script>
 
     <link href='../css/styles.css' rel='stylesheet'>
@@ -151,7 +153,7 @@
     </main>
 
     <script type='text/javascript'>
-        async function handleLaunchImmersiveReader() {
+        function handleLaunchImmersiveReader() {
             var title = $('#IrTitle').text().trim();
 
             // Populate math chunks
@@ -178,10 +180,9 @@
                 chunks: chunks
             };
 
-            const token = await getImmersiveReaderTokenAsync();
-            const subdomain = await getSubdomainAsync();
-
-            ImmersiveReader.launchAsync(token, subdomain, data);
+            // Refer to the launchImmersiveReader() function in helpers.js for more information. It covers how to retrieve
+            // the Cognitive Services token, the subdomain, and usage of the launchAsync function of the Immersive Reader SDK
+            launchImmersiveReader(data);
         }
 
         // Display math preview with MathJax
