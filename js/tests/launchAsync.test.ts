@@ -149,7 +149,7 @@ describe('launchAsync tests', () => {
         it('should return false', () => {
             expect(isValidSubdomain(null)).toBe(false);
             expect(isValidSubdomain(undefined)).toBe(false);
-            expect(isValidSubdomain('')).toBe(false);            
+            expect(isValidSubdomain('')).toBe(false);
             expect(isValidSubdomain('é')).toBe(false);
             expect(isValidSubdomain('hasaccént')).toBe(false);
             expect(isValidSubdomain('1é2')).toBe(false);
