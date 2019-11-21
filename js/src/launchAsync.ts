@@ -54,7 +54,7 @@ export function launchAsync(token: string, subdomain: string, content: Content, 
         const startTime = Date.now();
         options = {
             uiZIndex: 1000,
-            timeout: 15000,  // Default to 15 seconds
+            timeout: 75000,  // Default to 15 seconds
             useWebview: false,
             allowFullscreen: true,
             hideExitButton: false,
@@ -151,7 +151,7 @@ export function launchAsync(token: string, subdomain: string, content: Content, 
             });
         }
 
-        const domain = options.customDomain ? options.customDomain : 'https://learningtools.onenote.com/learningtoolsapp/cognitive/';
+        const domain = options.customDomain ? options.customDomain : `https://${subdomain}.cognitiveservices.azure.com/immersivereader/webapp/v1.0/`;
         let src = domain + 'reader?exitCallback=ImmersiveReader-Exit&sdkPlatform=' + sdkPlatform + '&sdkVersion=' + sdkVersion;
 
         if (options.hideExitButton) {
