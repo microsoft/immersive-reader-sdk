@@ -54,7 +54,7 @@ export function launchAsync(token: string, subdomain: string, content: Content, 
         const startTime = Date.now();
         options = {
             uiZIndex: 1000,
-            timeout: 75000,  // Default to 15 seconds
+            timeout: 15000,  // Default to 15 seconds
             useWebview: false,
             allowFullscreen: true,
             hideExitButton: false,
