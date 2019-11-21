@@ -19,7 +19,7 @@ const sdkVersion = VERSION;
 /**
  * Launch the Immersive Reader within an iframe.
  * @param token The authentication token.
- * @param subdomain The Immersive Reader Cognitive Service subdomain.
+ * @param subdomain The Immersive Reader Cognitive Service subdomain. This is a required parameter for Azure AD authentication in this and future versions of this SDK. Use of the Cognitive Services issueToken endpoint-based authentication tokens is deprecated and no longer supported.
  * @param content The content that should be shown in the Immersive Reader.
  * @param options Options for configuring the look and feel of the Immersive Reader.
  * @return A promise that resolves when the Immersive Reader is launched. The promise resolves with the div that contains an iframe which contains the Immersive Reader.
@@ -46,7 +46,7 @@ export function launchAsync(token: string, subdomain: string, content: Content, 
             return;
         }
 
-        if (!isValidSubdomain(subdomain)) {
+        if (!isValidSubdomain(subdomain) && (!options || !options.customDomain)) {
             reject({ code: ErrorCode.BadArgument, message: 'The subdomain supplied is invalid.' });
             return;
         }
@@ -151,7 +151,7 @@ export function launchAsync(token: string, subdomain: string, content: Content, 
             });
         }
 
-        const domain = options.customDomain ? options.customDomain : 'https://learningtools.onenote.com/learningtoolsapp/cognitive/';
+        const domain = options.customDomain ? options.customDomain : `https://${subdomain}.cognitiveservices.azure.com/immersivereader/webapp/v1.0/`;
         let src = domain + 'reader?exitCallback=ImmersiveReader-Exit&sdkPlatform=' + sdkPlatform + '&sdkVersion=' + sdkVersion;
 
         if (options.hideExitButton) {
@@ -179,11 +179,9 @@ export function close(): void {
 
 // The subdomain must be alphanumeric, and may contain '-',
 // as long as the '-' does not start or end the subdomain.
-// The subdomain can also be falsy (null/undefined/'') in order to support our legacy token format,
-// though in the future the legacy token will not be supported.
 export function isValidSubdomain(subdomain: string): boolean {
     if (!subdomain) {
-        return true;
+        return false;
     }
 
     const validRegex = '^([a-zA-Z0-9]|[a-zA-Z0-9][a-zA-Z0-9\\-]{0,61}[a-zA-Z0-9])$';
