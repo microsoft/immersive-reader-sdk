@@ -147,6 +147,9 @@ describe('launchAsync tests', () => {
 
     describe('Utility method isValidSubdomain', () => {
         it('should return false', () => {
+            expect(isValidSubdomain(null)).toBe(false);
+            expect(isValidSubdomain(undefined)).toBe(false);
+            expect(isValidSubdomain('')).toBe(false);            
             expect(isValidSubdomain('é')).toBe(false);
             expect(isValidSubdomain('hasaccént')).toBe(false);
             expect(isValidSubdomain('1é2')).toBe(false);
@@ -161,9 +164,6 @@ describe('launchAsync tests', () => {
         });
 
         it('should return true', () => {
-            expect(isValidSubdomain(null)).toBe(false);
-            expect(isValidSubdomain(undefined)).toBe(false);
-            expect(isValidSubdomain('')).toBe(false);
             expect(isValidSubdomain('valid')).toBe(true);
             expect(isValidSubdomain('valid10with2numbers')).toBe(true);
             expect(isValidSubdomain('1234')).toBe(true);
