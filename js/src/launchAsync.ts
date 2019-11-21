@@ -46,7 +46,7 @@ export function launchAsync(token: string, subdomain: string, content: Content, 
             return;
         }
 
-        if (!isValidSubdomain(subdomain)) {
+        if (!isValidSubdomain(subdomain) && (!options || !options.customDomain)) {
             reject({ code: ErrorCode.BadArgument, message: 'The subdomain supplied is invalid.' });
             return;
         }
