@@ -7,7 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		4496DF2022BC249B0024E543 /* Resources in Resources */ = {isa = PBXBuildFile; fileRef = 4496DF1F22BC249B0024E543 /* Resources */; };
+		4496DF2022BC249B0024E543 /* Resources in Resources */ = {isa = PBXBuildFile; fileRef = 4496DF1F22BC249B0024E543 /* Resources */; platformFilter = ios; };
 		44A450BE22A7046700511254 /* immersive_reader_sdk.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 44A450B422A7046700511254 /* immersive_reader_sdk.framework */; };
 		44A450C322A7046700511254 /* immersive_reader_sdkTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 44A450C222A7046700511254 /* immersive_reader_sdkTests.swift */; };
 		44A450C522A7046700511254 /* immersive_reader_sdk.h in Headers */ = {isa = PBXBuildFile; fileRef = 44A450B722A7046700511254 /* immersive_reader_sdk.h */; settings = {ATTRIBUTES = (Public, ); }; };
