@@ -5,19 +5,25 @@ import UIKit
 import WebKit
 
 public class ImmersiveReaderViewController: UIViewController {
+
+    private enum ScriptHandlers: String {
+        case readyForContent
+        case launchSuccessful
+        case tokenExpired
+        case throttled
+        case invalidMessagePassed
+        case onExit
+    }
     
-    private let accessToken: String
+    private let token: String
     private let subdomain: String
     private let content: Content
     private let completionHandler: ((_ error: Error?) -> Void)?
     private let startTime: TimeInterval
 
-    private var src = "https://learningtools.onenote.com/learningtoolsapp/cognitive/reader"
     private var webView: WKWebView!
-    private var timer: Timer!
-    private var timeoutValue: TimeInterval = 15
     
-    public init?(accessToken: String, subdomain: String, content: Content, options: Options?, completionHandler: @escaping (_ error: Error?) -> Void) {
+    public init?(token: String, subdomain: String, content: Content, options: Options?, completionHandler: @escaping (_ error: Error?) -> Void) {
 
         if (content.chunks.count == 0) {
             let badArgumentError = Error(code: "BadArgument", message: "Chunks must not be empty.")
@@ -25,27 +31,11 @@ public class ImmersiveReaderViewController: UIViewController {
             return nil
         }
 
-        self.accessToken = accessToken
+        self.token = token
         self.subdomain = subdomain
         self.content = content
         self.completionHandler = completionHandler
         self.startTime = Date().timeIntervalSince1970*1000
-
-        // If uiLang options are set update src to reflect this.
-        switch options?.uiLang {
-        case .none: break
-            // Leave src as is.
-        case .some(let value):
-            src = src + "?omkt=" + value
-        }
-
-        // Set timeout to default or value user specifies.
-        switch options?.timeout {
-        case .none: break
-            // Default to 15 seconds.
-        case .some(let value):
-            timeoutValue = value
-        }
 
         super.init(nibName: nil, bundle: nil)
     }
@@ -59,15 +49,12 @@ public class ImmersiveReaderViewController: UIViewController {
         view.backgroundColor = .white
 
         webView = createAndConfigureWebView()
+        webView.navigationDelegate = self
         view.addSubview(webView)
         addConstrainstsToWebView()
-        injectJavaScript(webView: webView)
 
-        // Start the timer.
-        timer = Timer.scheduledTimer(timeInterval: timeoutValue, target: self, selector: #selector(self.timedOut), userInfo: nil, repeats: false)
-        
-        // Load the iframe from HTML.
-        webView.loadHTMLString("<!DOCTYPE html><html style='width: 100%; height: 100%; margin: 0; padding: 0;'><head><meta name='viewport' content='width=device-width, initial-scale=1, shrink-to-fit=no'></head><body style='width: 100%; height: 100%; margin: 0; padding: 0;'><iframe id='immersiveReaderIframe' src = '\(src)' width='100%' height='100%' style='border: 0'></iframe></body></html>", baseURL: URL(string: "test://learningtools.onenote.com/learningtoolsapp/cognitive/reader"))
+        // Load the main HTML in the WebView.
+        loadMainHTML()
     }
 
     private func createAndConfigureWebView() -> WKWebView {
@@ -78,12 +65,36 @@ public class ImmersiveReaderViewController: UIViewController {
         }
         configuration.userContentController = contentController
 
-        contentController.add(self, name: "readyForContent")
-        contentController.add(self, name: "launchSuccessful")
-        contentController.add(self, name: "tokenExpired")
-        contentController.add(self, name: "throttled")
+        contentController.add(self, name: ScriptHandlers.readyForContent.rawValue)
+        contentController.add(self, name: ScriptHandlers.launchSuccessful.rawValue)
+        contentController.add(self, name: ScriptHandlers.tokenExpired.rawValue)
+        contentController.add(self, name: ScriptHandlers.throttled.rawValue)
+        contentController.add(self, name: ScriptHandlers.invalidMessagePassed.rawValue)
+        contentController.add(self, name: ScriptHandlers.onExit.rawValue)
 
         return WKWebView(frame: .zero, configuration: configuration)
+    }
+
+
+    func loadMainHTML() {
+        guard let htmlContents = getFileContentsFor(filename: "ImmersiveReader", type: "html")  else {
+            completionHandler?(Error(code: "Internal Error", message: "Could not get the contents of html file"))
+            return
+        }
+        webView.loadHTMLString(htmlContents, baseURL: nil)
+    }
+
+    func getFileContentsFor(filename: String, type: String) -> String? {
+        let frameworkBundle = Bundle(for: ImmersiveReaderViewController.self)
+        guard let filePath = frameworkBundle.path(forResource: filename, ofType: type) else {
+            return nil
+        }
+        do {
+            let contents = try String(contentsOfFile: filePath)
+            return contents
+        } catch {
+            return nil
+        }
     }
 
     private func addConstrainstsToWebView() {
@@ -102,78 +113,61 @@ public class ImmersiveReaderViewController: UIViewController {
             webView.bottomAnchor.constraint(equalTo: view.bottomAnchor).isActive = true
         }
     }
+}
 
-    private func injectJavaScript(webView: WKWebView) {
-        // Create framework bundle.
-        let frameworkBundle = Bundle(for: ImmersiveReaderViewController.self)
+extension ImmersiveReaderViewController: WKNavigationDelegate {
 
-        guard let bundleURL = frameworkBundle.resourceURL?.appendingPathComponent("immersive-reader-sdk.bundle") else {
-            completionHandler?(Error(code: "Internal Error", message: "Could not create bundle."))
-            return
-        }
-        let resourceBundle = Bundle(url: bundleURL)
-        // Get path to java script file.
-        guard let scriptPath = resourceBundle?.path(forResource: "iFrameMessaging", ofType: "js") else {
-            completionHandler?(Error(code: "Internal Error", message: "Could not create script path from resource."))
-            return
-        }
+    public func webView(_ webView: WKWebView, didFinish navigation: WKNavigation!) {
+        // Create the message variable
+        let message = Message(cogSvcsAccessToken: token, cogSvcsSubdomain: subdomain, content: content)
         do {
-            let scriptSource = try String(contentsOfFile: scriptPath)
-            let userScript = WKUserScript(source: scriptSource, injectionTime: .atDocumentStart, forMainFrameOnly: true)
-            webView.configuration.userContentController.addUserScript(userScript)
+            let jsonData = try JSONEncoder().encode(message)
+            guard let jsonString = String(data: jsonData, encoding: .utf8) else {
+                print("Immersive Reader failed convert message to json string")
+                return
+            }
+            self.webView.evaluateJavaScript("launchImmersiveReader(\(jsonString))") { (result, error) in
+                if error != nil {
+                    self.completionHandler?(Error(code: "Internal Error", message: "Error in executing JavaScript in WkWebView."))
+                }
+            }
         } catch {
-            completionHandler?(Error(code: "Internal Error", message: "Could not parse JavaScript file."))
-            return
+            // Logs error to console.
+            print("Immersive Reader failed to load with error: \(error)")
         }
-    }
-
-    @objc func timedOut(_ timer: AnyObject) {
-        let timeoutError = Error(code: "Timeout", message: "Page failed to load after timeout \(String(describing: timeoutValue)) ms.")
-        completionHandler?(timeoutError)
     }
 }
 
 extension ImmersiveReaderViewController: WKScriptMessageHandler {
     
     public func userContentController(_ userContentController: WKUserContentController, didReceive message: WKScriptMessage) {
-        if message.name == "readyForContent" {
-            // Stop the timer.
-            timer.invalidate()
-            
-            // Create the message variable
-            let message = Message(cogSvcsAccessToken: accessToken, cogSvcsSubdomain: subdomain, resourceName: nil, request: content, launchToPostMessageSentDurationInMs: Int(Date().timeIntervalSince1970*1000 - startTime))
-            do {
-                let jsonData = try JSONEncoder().encode(message)
-                let jsonString = String(data: jsonData, encoding: .utf8)
-                self.webView.evaluateJavaScript("sendContentToReader(\(jsonString!))") { (result, error) in
-                    if error != nil {
-                        self.completionHandler?(Error(code: "Internal Error", message: "Could not parse JavaScript file."))
-                    }
-                }
-            } catch {
-                // Logs error to console.
-                print("Immersive Reader failed to load with error: \(error)")
+        if message.name == ScriptHandlers.readyForContent.rawValue {
 
-                // Displays error alert message in the UI
-                let alert = UIAlertController(title: "Immersive Reader failed to load", message: error.localizedDescription, preferredStyle: .alert)
-                alert.addAction(UIAlertAction(title: "OK", style: .cancel, handler: nil))
-                self.present(alert, animated: true)
-            }
         }
         
-        if message.name == "launchSuccessful" {
+        if message.name == ScriptHandlers.launchSuccessful.rawValue {
             completionHandler?(nil)
         }
         
-        if message.name == "tokenExpired" {
+        if message.name == ScriptHandlers.tokenExpired.rawValue {
             let tokenExpiredError = Error(code: "TokenExpired", message: "The access token supplied is expired.")
             completionHandler?(tokenExpiredError)
         }
         
-        if message.name == "throttled" {
+        if message.name == ScriptHandlers.throttled.rawValue {
             let throttledError = Error(code: "Throttled", message: "You have exceeded the call rate limit.")
             completionHandler?(throttledError)
         }
-        
+
+        if message.name == ScriptHandlers.invalidMessagePassed.rawValue {
+            let invalidMessageError = Error(code: "Invalid message passed to Immersive Reader", message: "Please check if the message value passed is valid")
+            completionHandler?(invalidMessageError)
+        }
+
+        if message.name == ScriptHandlers.onExit.rawValue {
+            dismiss(animated: true, completion: nil)
+        }
     }
 }
+
+

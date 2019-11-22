@@ -1,5 +1,9 @@
-// Copyright (c) Microsoft Corporation. All rights reserved.
-// Licensed under the MIT License.
+//
+//  ImmersiveReader.swift
+//  immersive-reader-sdk
+//
+//  Created by Dilip Patidar on 19/11/19.
+//
 
 import Foundation
 
@@ -48,16 +52,12 @@ public struct Error {
 struct Message: Encodable {
     let cogSvcsAccessToken: String
     let cogSvcsSubdomain: String
-    let resourceName: String?
-    let request: Content
-    let launchToPostMessageSentDurationInMs: Int
+    let content: Content
 
-    init(cogSvcsAccessToken: String, cogSvcsSubdomain: String, resourceName: String?, request: Content, launchToPostMessageSentDurationInMs: Int) {
+    init(cogSvcsAccessToken: String, cogSvcsSubdomain: String, content: Content) {
         self.cogSvcsAccessToken = cogSvcsAccessToken
         self.cogSvcsSubdomain = cogSvcsSubdomain
-        self.resourceName = resourceName
-        self.request = request
-        self.launchToPostMessageSentDurationInMs = launchToPostMessageSentDurationInMs
+        self.content = content
     }
 }
 

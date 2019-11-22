@@ -3,7 +3,7 @@
 	archiveVersion = 1;
 	classes = {
 	};
-	objectVersion = 50;
+	objectVersion = 52;
 	objects = {
 
 /* Begin PBXBuildFile section */
@@ -11,9 +11,9 @@
 		44A450BE22A7046700511254 /* immersive_reader_sdk.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 44A450B422A7046700511254 /* immersive_reader_sdk.framework */; };
 		44A450C322A7046700511254 /* immersive_reader_sdkTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 44A450C222A7046700511254 /* immersive_reader_sdkTests.swift */; };
 		44A450C522A7046700511254 /* immersive_reader_sdk.h in Headers */ = {isa = PBXBuildFile; fileRef = 44A450B722A7046700511254 /* immersive_reader_sdk.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		44A450FF22B4674B00511254 /* ImmersiveReaderViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 44A450FE22B4674B00511254 /* ImmersiveReaderViewController.swift */; };
-		DA84F9E22386AC6100D3002A /* TestingHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = DA84F9E12386AC6100D3002A /* TestingHandler.swift */; };
-		DA84F9E42386ACBC00D3002A /* ImmersiveReader.swift in Sources */ = {isa = PBXBuildFile; fileRef = DA84F9E32386ACBC00D3002A /* ImmersiveReader.swift */; };
+		44A450FF22B4674B00511254 /* ImmersiveReaderViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 44A450FE22B4674B00511254 /* ImmersiveReaderViewController.swift */; platformFilter = ios; };
+		DA84F9E22386AC6100D3002A /* TestingHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = DA84F9E12386AC6100D3002A /* TestingHandler.swift */; platformFilter = ios; };
+		DA84F9E42386ACBC00D3002A /* ImmersiveReader.swift in Sources */ = {isa = PBXBuildFile; fileRef = DA84F9E32386ACBC00D3002A /* ImmersiveReader.swift */; platformFilter = ios; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -81,10 +81,10 @@
 			children = (
 				DA84F9E32386ACBC00D3002A /* ImmersiveReader.swift */,
 				DA84F9E12386AC6100D3002A /* TestingHandler.swift */,
+				44A450FE22B4674B00511254 /* ImmersiveReaderViewController.swift */,
 				4496DF1F22BC249B0024E543 /* Resources */,
 				44A450B722A7046700511254 /* immersive_reader_sdk.h */,
 				44A450B822A7046700511254 /* Info.plist */,
-				44A450FE22B4674B00511254 /* ImmersiveReaderViewController.swift */,
 			);
 			path = "immersive-reader-sdk";
 			sourceTree = "<group>";
