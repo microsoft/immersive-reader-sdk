@@ -154,3 +154,6 @@ iOSInjectionProject/
 
 # Java project files
 .project
+
+# Python cache
+*.pyc
