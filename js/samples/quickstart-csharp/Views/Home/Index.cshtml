@@ -15,11 +15,8 @@
     <link href='~/css/styles.css' rel='stylesheet'>
 </head>
 <body>
-    <header class='ir-button-area'>
-        <button class='ir-button ir-button-wide' role='button' title='Immersive Reader' aria-label='Immersive Reader' onclick='handleLaunchImmersiveReader()'>
-            <img class='ir-button-icon' src='~/images/icon.svg' />
-            <span class='ir-button-text' aria-hidden='true'>Immersive Reader</span>
-        </button>
+    <header id='ir-button-area'>
+        <button class='immersive-reader-button' data-button-style='iconAndText' onclick='handleLaunchImmersiveReader()'></button>
     </header>
     <main id='content-area'>
         <article id='ir-content'>
