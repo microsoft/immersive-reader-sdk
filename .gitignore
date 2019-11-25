@@ -154,3 +154,5 @@ iOSInjectionProject/
 
 # Java project files
 .project
+.idea
+target/
