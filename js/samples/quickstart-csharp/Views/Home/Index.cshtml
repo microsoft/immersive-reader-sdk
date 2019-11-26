@@ -57,14 +57,15 @@
                         $('#message').text('Error in launching the Immersive Reader. Check the console.').show();
                         console.log(error);
                     });
-                function exitCallback() {
-                    console.log('This is the callback function.');
-                }
             })
             .catch(function (err) {
                 $('#message').text('Error in getting the Immersive Reader token and subdomain. Check the console.').show();
                 console.log(err);
             });
+        }
+
+        function exitCallback() {
+            console.log('This is the callback function.');
         }
 
         function getTokenAndSubdomainAsync() {

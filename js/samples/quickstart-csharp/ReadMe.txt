@@ -7,7 +7,7 @@ Follow these steps to get the sample up and running:
    You will need some of the values created here when configuring the sample project properties. Save the output of your session into a text file for future reference.
 
 
-2. Open QuickStartSampleWebApp.sln in Visual Studio.
+2. Open QuickStartSampleWebApp.sln in Visual Studio 2019.
 
 
 3. Right-click on the project in the Solution Explorer and choose "Manage User Secrets". This will open a file called secrets.json. Replace the contents of that file with the following, supplying your custom property values as appropriate (remove "<" and ">")::
