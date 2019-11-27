@@ -11,6 +11,6 @@ if (outPathIndex == -1) {
     return;
 }
 
-const outPath = String(process.argv[outPathIndex + 1]);
+const outPath = process.argv[outPathIndex + 1];
 
 fs.copyFileSync('lib/immersive-reader-sdk.js', outPath);
