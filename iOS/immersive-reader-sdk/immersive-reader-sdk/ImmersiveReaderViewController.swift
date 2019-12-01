@@ -18,24 +18,23 @@ public class ImmersiveReaderViewController: UIViewController {
     private let token: String
     private let subdomain: String
     private let content: Content
-    private let completionHandler: ((_ error: Error?) -> Void)?
     private let startTime: TimeInterval
     private let options: Options?
+    private let delegate: ImmersiveReaderDelegate?
 
     private var webView: WKWebView!
     
-    public init?(token: String, subdomain: String, content: Content, options: Options?, completionHandler: @escaping (_ error: Error?) -> Void) {
+    public init?(token: String, subdomain: String, content: Content, options: Options?, delegate: ImmersiveReaderDelegate?) {
 
         if (content.chunks.count == 0) {
             let badArgumentError = Error(code: "BadArgument", message: "Chunks must not be empty.")
-            completionHandler(badArgumentError)
+            delegate?.didFinishLaunching(badArgumentError)
             return nil
         }
-
         self.token = token
         self.subdomain = subdomain
         self.content = content
-        self.completionHandler = completionHandler
+        self.delegate = delegate
         self.startTime = Date().timeIntervalSince1970*1000
         self.options = options
 
@@ -80,7 +79,7 @@ public class ImmersiveReaderViewController: UIViewController {
 
     func loadMainHTML() {
         guard let htmlContents = getFileContentsFor(filename: "ImmersiveReader", type: "html")  else {
-            completionHandler?(Error(code: "Internal Error", message: "Could not get the contents of html file"))
+            self.delegate?.didFinishLaunching(Error(code: "Internal Error", message: "Could not get the contents of html file"))
             return
         }
         webView.loadHTMLString(htmlContents, baseURL: nil)
@@ -130,12 +129,11 @@ extension ImmersiveReaderViewController: WKNavigationDelegate {
             }
             self.webView.evaluateJavaScript("launchImmersiveReader(\(jsonString))") { (result, error) in
                 if error != nil {
-                    self.completionHandler?(Error(code: "Internal Error", message: "Error in executing JavaScript in WkWebView."))
+                    self.delegate?.didFinishLaunching(Error(code: "Internal Error", message: "Error in executing JavaScript in WkWebView."))
                 }
             }
-        } catch {
-            // Logs error to console.
-            print("Immersive Reader failed to load with error: \(error)")
+        } catch let error {
+            self.delegate?.didFinishLaunching(Error(code: "Internal Error", message: error.localizedDescription))
         }
     }
 }
@@ -148,25 +146,26 @@ extension ImmersiveReaderViewController: WKScriptMessageHandler {
         }
         
         if message.name == ScriptHandlers.launchSuccessful.rawValue {
-            completionHandler?(nil)
+             self.delegate?.didFinishLaunching(nil)
         }
         
         if message.name == ScriptHandlers.tokenExpired.rawValue {
             let tokenExpiredError = Error(code: "TokenExpired", message: "The access token supplied is expired.")
-            completionHandler?(tokenExpiredError)
+             self.delegate?.didFinishLaunching(tokenExpiredError)
         }
         
         if message.name == ScriptHandlers.throttled.rawValue {
             let throttledError = Error(code: "Throttled", message: "You have exceeded the call rate limit.")
-            completionHandler?(throttledError)
+            self.delegate?.didFinishLaunching(throttledError)
         }
 
         if message.name == ScriptHandlers.invalidMessagePassed.rawValue {
             let invalidMessageError = Error(code: "Invalid message passed to Immersive Reader", message: "Please check if the message value passed is valid")
-            completionHandler?(invalidMessageError)
+            self.delegate?.didFinishLaunching(invalidMessageError)
         }
 
         if message.name == ScriptHandlers.onExit.rawValue {
+            self.delegate?.didExitImmersiveReader()
             dismiss(animated: true, completion: nil)
         }
     }

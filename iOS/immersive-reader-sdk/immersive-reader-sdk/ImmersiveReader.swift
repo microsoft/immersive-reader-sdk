@@ -63,3 +63,8 @@ struct Message: Encodable {
         self.options = options
     }
 }
+
+public protocol ImmersiveReaderDelegate {
+    func didExitImmersiveReader()
+    func didFinishLaunching(_ error: Error?)
+}
