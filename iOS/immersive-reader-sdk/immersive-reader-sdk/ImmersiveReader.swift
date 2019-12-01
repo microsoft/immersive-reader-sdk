@@ -1,9 +1,5 @@
-//
-//  ImmersiveReader.swift
-//  immersive-reader-sdk
-//
-//  Created by Dilip Patidar on 19/11/19.
-//
+// Copyright (c) Microsoft Corporation. All rights reserved.
+// Licensed under the MIT License.
 
 import Foundation
 
@@ -32,6 +28,11 @@ public struct Chunk: Encodable {
 public struct Options {
     var uiLang: String?
     var timeout: TimeInterval?
+    var uiZIndex: Int?
+    var useWebview: Bool?
+    var customDomain: String?
+    var allowFullscreen: Bool?
+    var hideExitButton: Bool?
 
     public init(uiLang: String?, timeout: TimeInterval?, uiZIndex: NSNumber?) {
         self.uiLang = uiLang
@@ -60,7 +61,3 @@ struct Message: Encodable {
         self.content = content
     }
 }
-
-
-
-
