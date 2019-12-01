@@ -25,7 +25,7 @@ public struct Chunk: Encodable {
     }
 }
 
-public struct Options {
+public struct Options: Encodable {
     var uiLang: String?
     var timeout: TimeInterval?
     var uiZIndex: Int?
@@ -54,10 +54,12 @@ struct Message: Encodable {
     let cogSvcsAccessToken: String
     let cogSvcsSubdomain: String
     let content: Content
+    let options: Options?
 
-    init(cogSvcsAccessToken: String, cogSvcsSubdomain: String, content: Content) {
+    init(cogSvcsAccessToken: String, cogSvcsSubdomain: String, content: Content, options: Options? = nil) {
         self.cogSvcsAccessToken = cogSvcsAccessToken
         self.cogSvcsSubdomain = cogSvcsSubdomain
         self.content = content
+        self.options = options
     }
 }

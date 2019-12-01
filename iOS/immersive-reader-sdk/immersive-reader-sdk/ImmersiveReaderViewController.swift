@@ -20,6 +20,7 @@ public class ImmersiveReaderViewController: UIViewController {
     private let content: Content
     private let completionHandler: ((_ error: Error?) -> Void)?
     private let startTime: TimeInterval
+    private let options: Options?
 
     private var webView: WKWebView!
     
@@ -36,6 +37,7 @@ public class ImmersiveReaderViewController: UIViewController {
         self.content = content
         self.completionHandler = completionHandler
         self.startTime = Date().timeIntervalSince1970*1000
+        self.options = options
 
         super.init(nibName: nil, bundle: nil)
     }
@@ -119,7 +121,7 @@ extension ImmersiveReaderViewController: WKNavigationDelegate {
 
     public func webView(_ webView: WKWebView, didFinish navigation: WKNavigation!) {
         // Create the message variable
-        let message = Message(cogSvcsAccessToken: token, cogSvcsSubdomain: subdomain, content: content)
+        let message = Message(cogSvcsAccessToken: token, cogSvcsSubdomain: subdomain, content: content, options: options)
         do {
             let jsonData = try JSONEncoder().encode(message)
             guard let jsonString = String(data: jsonData, encoding: .utf8) else {
