@@ -26,8 +26,5 @@
   },
   "jest": {
     "preset": "ts-jest"
-  },
-  "dependencies": {
-    "@types/node": "^12.12.14"
   }
 }
