@@ -112,7 +112,7 @@ export function launchAsync(token: string, subdomain: string, content: Content, 
             if (!e || !e.data) { return; }
 
             if (e.data === 'ImmersiveReader-ReadyForContent') {
-                resetTimeout(); // reset the timeout once the reader page loads successfully. The Reader page will report further errors through PostMessage if there is an issue obtaining the ConentModel from the server
+                resetTimeout(); // Reset the timeout once the reader page loads successfully. The Reader page will report further errors through PostMessage if there is an issue obtaining the ContentModel from the server
                 const message: Message = {
                     cogSvcsAccessToken: token,
                     cogSvcsSubdomain: subdomain,

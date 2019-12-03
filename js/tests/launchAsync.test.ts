@@ -173,7 +173,6 @@ describe('Utility method isValidSubdomain', () => {
 
 const fs = require('fs');
 describe('Verify SDK version is valid', () => {
-
     it('check version', () => {
         const packageJson: string = fs.readFileSync("package.json", "utf8");
         const sdkVersion: string = JSON.parse(packageJson).version;
