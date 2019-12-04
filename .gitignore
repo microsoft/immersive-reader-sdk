@@ -159,6 +159,10 @@ iOSInjectionProject/
 # Java project files
 .project
 
+# Python cache
+*.pyc
+
 @ custom ignores
 /js/package-lock.json
 /js/yarn.lock
+
