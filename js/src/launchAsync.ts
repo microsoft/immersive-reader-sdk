@@ -85,6 +85,8 @@ export function launchAsync(token: string, subdomain: string, content: Content, 
                 document.body.removeChild(iframeContainer);
             }
 
+            window.removeEventListener('message', messageHandler);
+
             // Clear the timeout timer
             resetTimeout();
 
@@ -94,21 +96,23 @@ export function launchAsync(token: string, subdomain: string, content: Content, 
             }
         };
 
+        const exit = (): void => {
+            reset();
+
+            // Execute exit callback if we have one
+            if (options.onExit) {
+                options.onExit();
+            }
+        }
+
         // Reset variables
         reset();
 
         const messageHandler = (e: any): void => {
             if (!e || !e.data) { return; }
 
-            if (e.data === 'ImmersiveReader-Exit') {
-                reset();
-                window.removeEventListener('message', messageHandler);
-
-                // Execute exit callback if we have one
-                if (options.onExit) {
-                    options.onExit();
-                }
-            } else if (e.data === 'ImmersiveReader-ReadyForContent') {
+            if (e.data === 'ImmersiveReader-ReadyForContent') {
+                resetTimeout(); // Reset the timeout once the reader page loads successfully. The Reader page will report further errors through PostMessage if there is an issue obtaining the ContentModel from the server
                 const message: Message = {
                     cogSvcsAccessToken: token,
                     cogSvcsSubdomain: subdomain,
@@ -120,14 +124,19 @@ export function launchAsync(token: string, subdomain: string, content: Content, 
                 resetTimeout();
                 resolve(iframeContainer);
             } else if (e.data === 'ImmersiveReader-TokenExpired') {
-                reset();
+                exit();
                 reject({ code: ErrorCode.TokenExpired, message: 'The access token supplied is expired.' });
             } else if (e.data === 'ImmersiveReader-Throttled') {
-                reset();
+                exit();
                 reject({ code: ErrorCode.Throttled, message: 'You have exceeded your quota.' });
             } else if (e.data === 'ImmersiveReader-InvalidCognitiveServicesSubdomain') {
-                reset();
+                exit();
                 reject({ code: ErrorCode.BadArgument, message: 'The subdomain supplied is invalid.' });
+            } else if (e.data === 'ImmersiveReader-ServerError') {
+                exit();
+                reject({ code: ErrorCode.ServerError, message: 'An error occurred when calling the server to process the text.' });
+            }  else if (e.data === 'ImmersiveReader-Exit') {
+                exit();
             }
         };
         window.addEventListener('message', messageHandler);
