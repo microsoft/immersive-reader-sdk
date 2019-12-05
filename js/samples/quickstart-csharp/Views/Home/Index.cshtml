@@ -3,76 +3,143 @@
 <!doctype html>
 <html>
 <head>
-    <meta charset='utf-8'>
+    <meta charset="utf-8">
     <title>Immersive Reader C# Quickstart</title>
-    <meta name='viewport' content='width=device-width, initial-scale=1'>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
 
-    <script type='text/javascript' src='https://code.jquery.com/jquery-3.3.1.min.js'></script>
-    <script type='text/javascript' src='https://contentstorage.onenote.office.net/onenoteltir/immersivereadersdk/immersive-reader-sdk.0.0.3.js'></script>
+    <script type="text/javascript" src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
+    <script type="text/javascript" src="https://contentstorage.onenote.office.net/onenoteltir/immersivereadersdk/immersive-reader-sdk.0.0.3.js"></script>
     <!-- A polyfill for Promise is needed for IE11 support -->
-    <script type='text/javascript' src='https://cdn.jsdelivr.net/npm/promise-polyfill@8/dist/polyfill.min.js'></script>
+    <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/promise-polyfill@8/dist/polyfill.min.js"></script>
 
-    <link href='~/css/styles.css' rel='stylesheet'>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" />
+    <link href="~/css/styles.css" rel="stylesheet">
 </head>
 <body>
-    <header id='ir-button-area'>
-        <button class='immersive-reader-button' data-button-style='iconAndText' onclick='handleLaunchImmersiveReader()'></button>
-    </header>
-    <main id='content-area'>
-        <article id='ir-content'>
-            <h1 id='ir-title'>Geography</h1>
-            <div id='ir-text'>
-                <p>The study of Earth’s landforms is called physical geography. Landforms can be mountains and valleys. They can also be glaciers, lakes or rivers. Landforms are sometimes called physical features. It is important for students to know about the physical geography of Earth. The seasons, the atmosphere and all the natural processes of Earth affect where people are able to live. Geography is one of a combination of factors that people use to decide where they want to live.</p>
-                <p>The physical features of a region are often rich in resources. Within a nation, mountain ranges become natural borders for settlement areas. In the U.S., major mountain ranges are the Sierra Nevada, the Rocky Mountains, and the Appalachians.</p>
-                <p>Fresh water sources also influence where people settle. People need water to drink. They also need it for washing. Throughout history, people have settled near fresh water. Living near a water source helps ensure that people have the water they need. There was an added bonus, too. Water could be used as a travel route for people and goods. Many Americans live near popular water sources, such as the Mississippi River, the Colorado River and the Great Lakes.</p>
-                <p>Mountains and deserts have been settled by fewer people than the plains areas. However, they have valuable resources of their own.</p>
+
+    <main>
+        <div class="container">
+            <div class="row border border-dark rounded" sample-id="1">
+                <div class="col-lg">
+                    <button class="immersive-reader-button float-right" data-button-style="iconAndText" data-locale="en" onclick="handleLaunchImmersiveReader(1)"></button>
+
+                    <h2 class="ir-title">What is Immersive Reader?</h2>
+                    <div class="ir-content" lang="en-us">
+                        <p>The Immersive Reader is an inclusively designed tool that implements proven techniques to improve reading comprehension for emerging readers, language learners, and people with learning differences such as dyslexia.</p>
+                        <p>You can use Immersive Reader in your web application by using the Immersive Reader SDK.</p>
+                        <p>Click on the Immersive Reader buttons on this page to open the Immersive Reader.</p>
+                        <h3>What does Immersive Reader do?</h3>
+                        <p>The Immersive Reader is designed to make reading more accessible for everyone.</p>
+                        <ul>
+                            <li>Shows content in a minimal reading view</li>
+                            <li>Displays pictures of commonly used words</li>
+                            <li>Highlights nouns, verbs, adjectives, and adverbs</li>
+                            <li>Reads your content out loud to you</li>
+                            <li>Translates your content into another language</li>
+                            <li>Breaks down words into syllables</li>
+                        </ul>
+                        <h3>How does Immersive Reader work?</h3>
+                        <p>
+                            The Immersive Reader is a standalone web app that, when invoked using the Immersive Reader JavaScript SDK, is displayed on top of your existing web app via an iframe. 
+                            When you call the API to launch the Immersive Reader, you specify the content you wish to show in the Immersive Reader. 
+                            Our SDK handles the creation and styling of the iframe and communication with the Immersive Reader backend service, which processes the content for parts of speech, text to speech, translation, and so on.
+                        </p>
+                    </div>
+                </div>
             </div>
-        </article>
+            <div class="row">
+                <div class="col-lg mr-1 border border-dark rounded" sample-id="2">
+                    <button class="immersive-reader-button float-right" data-button-style="icon" data-locale="en" onclick="handleLaunchImmersiveReader(2)"></button>
+
+                    <h2 class="ir-title">Multilingual Text</h2>
+
+                    <div class="ir-content">
+                        <p lang="en-en">
+                            The Immersive Reader is available in many languages.
+                        </p>
+                        <p lang="es-es">
+                            El Lector inmersivo está disponible en varios idiomas.
+                        </p>
+                        <p lang="fr-fr">
+                            Le lecteur immersif est disponible dans de nombreuses langues.
+                        </p>
+                        <p lang="de-de">
+                            Der plastische Reader ist in vielen Sprachen verfügbar.
+                        </p>
+                    </div>
+                </div>
+                <div class="col-lg ml-1 col-md-offset-2 border border-dark rounded" sample-id="3">
+                    <h2 class="ir-title">Button Customization</h2>
+                    <div class="row">
+                        <span class="col-sm">
+                            <button class="immersive-reader-button" data-button-style="icon" data-locale="en" onclick="handleLaunchImmersiveReader(3)"></button>
+                        </span>
+                        <span class="col-sm">
+                            <button class="immersive-reader-button" data-button-style="icon" data-icon-px-size="50" data-locale="en" onclick="handleLaunchImmersiveReader(3)"></button>
+                        </span>
+                        <span class="col-sm">
+                            <button class="immersive-reader-button" data-button-style="text" data-locale="en" onclick="handleLaunchImmersiveReader(3)"></button>
+                        </span>
+                    </div>
+                    <div class="row">
+                        <span class="col-sm">
+                            <button class="immersive-reader-button" data-button-style="iconAndText" data-locale="en" onclick="handleLaunchImmersiveReader(3)"></button>
+                        </span>
+                        <span class="col-sm">
+                            <button class="immersive-reader-button" data-button-style="iconAndText" data-locale="fr-fr" onclick="handleLaunchImmersiveReader(3)"></button>
+                        </span>
+                        <span class="col-sm">
+                            <button class="immersive-reader-button" data-button-style="iconAndText" data-locale="de-de" onclick="handleLaunchImmersiveReader(3)"></button>
+                        </span>
+                    </div>
+
+                    <div class="ir-content">You can render the Immersive Reader button in a variety of styles and languages.</div>
+                </div>
+            </div>
+        </div>
     </main>
 
-    <div id='message'></div>
-
-    <script type='text/javascript'>
-        function handleLaunchImmersiveReader() {
-            $('#message').hide();
+    <script type="text/javascript">
+        function handleLaunchImmersiveReader(sampleId) {
             getTokenAndSubdomainAsync().then(function (response) {
-                const token = response['token'];
-                const subdomain = response['subdomain'];
+                const token = response["token"];
+                const subdomain = response["subdomain"];
+
+                const sampleDiv = $(`div[sample-id=${sampleId}]`);
 
                 const data = {
-                    title: $('#ir-title').text().trim(),
+                    title: sampleDiv.find(".ir-title").text(),
                     chunks: [{
-                        content: $('#ir-text').text().trim(),
-                        lang: 'en',
-                        mimeType: 'text/plain'
+                        content: sampleDiv.find(".ir-content").html(),
+                        mimeType: "text/html"
                     }]
                 };
 
                 const options = {
-                    'onExit': exitCallback
+                    "onExit": exitCallback
                 };
 
                 ImmersiveReader.launchAsync(token, subdomain, data, options)
                     .catch((error) => {
-                        $('#message').text('Error in launching the Immersive Reader. Check the console.').show();
+                        alert("Error in launching the Immersive Reader. Check the console.");
                         console.log(error);
                     });
             })
             .catch(function (err) {
-                $('#message').text('Error in getting the Immersive Reader token and subdomain. Check the console.').show();
+                alert("Error in getting the Immersive Reader token and subdomain. Check the console.");
                 console.log(err);
             });
         }
 
         function exitCallback() {
-            console.log('This is the callback function.');
+            console.log("This is the callback function.");
         }
 
         function getTokenAndSubdomainAsync() {
             return new Promise(function (resolve, reject) {
                 $.ajax({
-                    url: '@Url.Action("GetTokenAndSubdomain", "Home")',
-                    type: 'GET',
+                    url: "@Url.Action("GetTokenAndSubdomain", "Home")",
+                    type: "GET",
                     success: function (data) {
                         if (data.error) {
                             reject(data.error);
