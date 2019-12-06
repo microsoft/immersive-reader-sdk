@@ -1,9 +1,13 @@
 ﻿/* Copyright (c) Microsoft Corporation. All rights reserved.
  Licensed under the MIT License. */
 
-.row, col {
+body {
+    padding-top: 5px;
+    padding-bottom: 5px;
+}
+
+.row {
     margin-top: 10px;
-    padding: 3px;
 }
 
 .immersive-reader-button {

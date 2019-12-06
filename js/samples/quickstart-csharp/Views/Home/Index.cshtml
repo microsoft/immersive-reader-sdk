@@ -19,15 +19,17 @@
 
     <main>
         <div class="container">
-            <div class="row border border-dark rounded" sample-id="1">
+            <p><b>Click on the Immersive Reader buttons on this page to open the Immersive Reader.</b></p>
+
+            <div class="row border border-secondary rounded" sample-id="1">
                 <div class="col-lg">
                     <button class="immersive-reader-button float-right" data-button-style="iconAndText" data-locale="en" onclick="handleLaunchImmersiveReader(1)"></button>
 
                     <h2 class="ir-title">What is Immersive Reader?</h2>
+
                     <div class="ir-content" lang="en-us">
                         <p>The Immersive Reader is an inclusively designed tool that implements proven techniques to improve reading comprehension for emerging readers, language learners, and people with learning differences such as dyslexia.</p>
                         <p>You can integrate Immersive Reader in your web application by using the Immersive Reader SDK.</p>
-                        <p>Click on the Immersive Reader buttons on this page to open the Immersive Reader.</p>
                         <h3>What does Immersive Reader do?</h3>
                         <p>The Immersive Reader is designed to make reading more accessible for everyone.</p>
                         <ul>
@@ -40,15 +42,15 @@
                         </ul>
                         <h3>How does Immersive Reader work?</h3>
                         <p>
-                            The Immersive Reader is a standalone web app that, when invoked using the Immersive Reader JavaScript SDK, is displayed on top of your existing web app in an iframe. 
-                            When you call the API to launch the Immersive Reader, you specify the content you wish to show in the Immersive Reader. 
+                            The Immersive Reader is a standalone web app that, when invoked using the Immersive Reader JavaScript SDK, is displayed on top of your existing web app in an iframe.
+                            When you call the API to launch the Immersive Reader, you specify the content you wish to show in the Immersive Reader.
                             Our SDK handles the creation and styling of the iframe and communication with the Immersive Reader service, which processes the content for parts of speech, text to speech, translation, and so on.
                         </p>
                     </div>
                 </div>
             </div>
-            <div class="row">
-                <div class="col-lg mr-1 border border-dark rounded" sample-id="2">
+            <div class="row border border-secondary rounded">
+                <div class="col-lg" sample-id="2">
                     <button class="immersive-reader-button float-right" data-button-style="icon" data-locale="en" onclick="handleLaunchImmersiveReader(2)"></button>
 
                     <h2 class="ir-title">Multilingual Text</h2>
@@ -72,10 +74,10 @@
                     </div>
                 </div>
             </div>
-            <div class="row">
-
-                <div class="col-lg ml-1 col-md-offset-2 border border-dark rounded" sample-id="3">
+            <div class="row border border-secondary rounded">
+                <div class="col-lg" sample-id="3">
                     <h2 class="ir-title">Button Customization</h2>
+
                     <div class="row">
                         <span class="col-sm">
                             <button class="immersive-reader-button" data-button-style="icon" data-locale="en" onclick="handleLaunchImmersiveReader(3)"></button>
@@ -99,7 +101,7 @@
                         </span>
                     </div>
 
-                    <div class="ir-content">You can render the Immersive Reader button in a variety of styles and languages.</div>
+                    <div class="ir-content" lang="en-us">You can render the Immersive Reader button in a variety of styles and languages.</div>
                 </div>
             </div>
         </div>
