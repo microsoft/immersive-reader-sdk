@@ -141,6 +141,7 @@ extension ImmersiveReaderViewController: WKNavigationDelegate {
 extension ImmersiveReaderViewController: WKScriptMessageHandler {
     
     public func userContentController(_ userContentController: WKUserContentController, didReceive message: WKScriptMessage) {
+
         if message.name == ScriptHandlers.readyForContent.rawValue {
 
         }

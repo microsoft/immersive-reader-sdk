@@ -15,6 +15,8 @@ We welcome [contributions](CONTRIBUTING.md) to this project.
 * Submit and review [source code changes](https://github.com/Microsoft/immersive-reader-sdk/pulls).
 * Join the discussion on [StackOverflow](https://stackoverflow.com/questions/tagged/immersive-reader) and [Twitter](https://twitter.com/hashtag/ImmersiveReader).
 
+Please submit pull requests to the [dev](https://github.com/microsoft/immersive-reader-sdk/tree/dev) branch.
+
 ## Reporting Security Issues
 
 Security issues and bugs should be reported privately, via email, to the Microsoft Security Response Center (MSRC) at

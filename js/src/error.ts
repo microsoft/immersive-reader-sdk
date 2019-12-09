@@ -10,5 +10,6 @@ export enum ErrorCode {
     BadArgument = 'BadArgument',
     Timeout = 'Timeout',
     TokenExpired = 'TokenExpired',
-    Throttled = 'Throttled'
+    Throttled = 'Throttled',
+    ServerError = 'ServerError'
 }

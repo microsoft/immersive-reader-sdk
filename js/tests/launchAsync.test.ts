@@ -11,12 +11,22 @@ import { Options } from '../src/options';
 
 describe('launchAsync tests', () => {
     const SampleToken: string = 'not-a-real-token';
+    const SampleSubdomain: string = 'not-a-real-subdomain';
     const SampleContent: Content = { chunks: [ { content: 'Hello, world' } ] };
 
     it('fails due to missing token', async () => {
         expect.assertions(1);
         try {
-            await launchAsync(null, null, { chunks: [] });
+            await launchAsync(null, SampleSubdomain, SampleContent);
+        } catch (error) {
+            expect(error.code).toBe('BadArgument');
+        }
+    });
+
+    it('fails due to missing subdomain', async () => {
+        expect.assertions(1);
+        try {
+            await launchAsync(SampleToken, null, SampleContent);
         } catch (error) {
             expect(error.code).toBe('BadArgument');
         }
@@ -25,7 +35,7 @@ describe('launchAsync tests', () => {
     it('fails due to missing content', async () => {
         expect.assertions(1);
         try {
-            await launchAsync(SampleToken, null, null);
+            await launchAsync(SampleToken, SampleSubdomain, null);
         } catch (error) {
             expect(error.code).toBe('BadArgument');
         }
@@ -34,7 +44,7 @@ describe('launchAsync tests', () => {
     it('fails due to missing chunks', async () => {
         expect.assertions(1);
         try {
-            await launchAsync(SampleToken, null, { chunks: null });
+            await launchAsync(SampleToken, SampleSubdomain, { chunks: null });
         } catch (error) {
             expect(error.code).toBe('BadArgument');
         }
@@ -43,7 +53,7 @@ describe('launchAsync tests', () => {
     it('fails due to empty chunks', async () => {
         expect.assertions(1);
         try {
-            await launchAsync(SampleToken, null, { chunks: [] });
+            await launchAsync(SampleToken, SampleSubdomain, { chunks: [] });
         } catch (error) {
             expect(error.code).toBe('BadArgument');
         }
@@ -51,7 +61,7 @@ describe('launchAsync tests', () => {
 
     it('succeeds', () => {
         expect.assertions(1);
-        const launchPromise = launchAsync(SampleToken, null, SampleContent)
+        const launchPromise = launchAsync(SampleToken, SampleSubdomain, SampleContent)
             .then(iframe => {
                 expect(iframe).not.toBeNull();
             });
@@ -67,7 +77,7 @@ describe('launchAsync tests', () => {
     it('sets the display language', async () => {
         expect.assertions(1);
         const options: Options = { uiLang: 'zh-Hans' };
-        const launchPromise = launchAsync(SampleToken, null, SampleContent, options);
+        const launchPromise = launchAsync(SampleToken, SampleSubdomain, SampleContent, options);
         window.postMessage('ImmersiveReader-LaunchSuccessful', '*');
 
         const container = await launchPromise;
@@ -79,7 +89,7 @@ describe('launchAsync tests', () => {
         const zIndex = 12345;
         expect.assertions(1);
         const options: Options = { uiZIndex: zIndex };
-        const launchPromise = launchAsync(SampleToken, null, SampleContent, options);
+        const launchPromise = launchAsync(SampleToken, SampleSubdomain, SampleContent, options);
         window.postMessage('ImmersiveReader-LaunchSuccessful', '*');
 
         const container = await launchPromise;
@@ -88,7 +98,7 @@ describe('launchAsync tests', () => {
 
     it('launches with default z-index', async () => {
         expect.assertions(1);
-        const launchPromise = launchAsync(SampleToken, null, SampleContent);
+        const launchPromise = launchAsync(SampleToken, SampleSubdomain, SampleContent);
         window.postMessage('ImmersiveReader-LaunchSuccessful', '*');
 
         const container = await launchPromise;
@@ -99,7 +109,7 @@ describe('launchAsync tests', () => {
         jest.useFakeTimers();
 
         expect.assertions(1);
-        const launchPromise = launchAsync(SampleToken, null, SampleContent);
+        const launchPromise = launchAsync(SampleToken, SampleSubdomain, SampleContent);
 
         // Skip forward in time to trigger timeout logic
         jest.runAllTimers();
@@ -113,7 +123,7 @@ describe('launchAsync tests', () => {
 
     it('fails to launch due to expired token', async () => {
         expect.assertions(1);
-        const launchPromise = launchAsync(SampleToken, null, SampleContent);
+        const launchPromise = launchAsync(SampleToken, SampleSubdomain, SampleContent);
 
         window.postMessage('ImmersiveReader-TokenExpired', '*');
 
@@ -134,42 +144,50 @@ describe('launchAsync tests', () => {
         const iframe = <HTMLIFrameElement>container.firstElementChild;
         expect(iframe.src.toLowerCase()).toMatch('https://foo.com/');
     });
-
-    it('launches with a custom subdomain 2', async () => {
-        expect.assertions(1);
-        const options: Options = { customDomain: '' };
-        const launchPromise = launchAsync(SampleToken, null, SampleContent, options);
-        window.postMessage('ImmersiveReader-LaunchSuccessful', '*');
-
-        const container = await launchPromise;
-        const iframe = <HTMLIFrameElement>container.firstElementChild;
-        expect(iframe.src.toLowerCase()).toMatch('https://learningtools.onenote.com/learningtoolsapp/cognitive/reader?exitcallback=immersivereader-exit');
-    });
-    
-
-    describe('Utility method isValidSubdomain', () => {
-        it('should return false', () => {
-            expect(isValidSubdomain('é')).toBe(false);
-            expect(isValidSubdomain('hasaccént')).toBe(false);
-            expect(isValidSubdomain('1é2')).toBe(false);
-            expect(isValidSubdomain('É')).toBe(false);
-            expect(isValidSubdomain('Ã')).toBe(false);
-            expect(isValidSubdomain('has space')).toBe(false);
-            expect(isValidSubdomain('has.period')).toBe(false);
-            expect(isValidSubdomain(' startswithspace')).toBe(false);
-            expect(isValidSubdomain('endswithspace ')).toBe(false);
-            expect(isValidSubdomain('-startswithdash')).toBe(false);
-            expect(isValidSubdomain('endswithdash-')).toBe(false);
-        });
-
-        it('should return true', () => {
-            expect(isValidSubdomain(null)).toBe(true); // For legacy token authentication
-            expect(isValidSubdomain(undefined)).toBe(true); // For legacy token authentication
-            expect(isValidSubdomain('')).toBe(true); // For legacy token authentication
-            expect(isValidSubdomain('valid')).toBe(true);
-            expect(isValidSubdomain('valid10with2numbers')).toBe(true);
-            expect(isValidSubdomain('1234')).toBe(true);
-        });
-    });
-
 });
+
+describe('Utility method isValidSubdomain', () => {
+    it('should return false', () => {
+        expect(isValidSubdomain(null)).toBe(false);
+        expect(isValidSubdomain(undefined)).toBe(false);
+        expect(isValidSubdomain('')).toBe(false);
+        expect(isValidSubdomain('é')).toBe(false);
+        expect(isValidSubdomain('hasaccént')).toBe(false);
+        expect(isValidSubdomain('1é2')).toBe(false);
+        expect(isValidSubdomain('É')).toBe(false);
+        expect(isValidSubdomain('Ã')).toBe(false);
+        expect(isValidSubdomain('has space')).toBe(false);
+        expect(isValidSubdomain('has.period')).toBe(false);
+        expect(isValidSubdomain(' startswithspace')).toBe(false);
+        expect(isValidSubdomain('endswithspace ')).toBe(false);
+        expect(isValidSubdomain('-startswithdash')).toBe(false);
+        expect(isValidSubdomain('endswithdash-')).toBe(false);
+    });
+
+    it('should return true', () => {
+        expect(isValidSubdomain('valid')).toBe(true);
+        expect(isValidSubdomain('valid10with2numbers')).toBe(true);
+        expect(isValidSubdomain('1234')).toBe(true);
+    });
+});
+
+const fs = require('fs');
+describe('Verify SDK version is valid', () => {
+    it('check version', () => {
+        const packageJson: string = fs.readFileSync("package.json", "utf8");
+        const sdkVersion: string = JSON.parse(packageJson).version;
+        console.log(`SDK version: ${sdkVersion}`);
+
+        expect(isValidSDKVersion(sdkVersion)).toBe(true);
+    });
+});
+
+// sdk version must be in format xxx.xxx.xxx (each version segment between 1 and 3 digits)
+function isValidSDKVersion(sdkVersion: string): boolean {
+    if (!sdkVersion) {
+        return false;
+    }
+
+    const regExp = /^[0-9]{1,3}.[0-9]{1,3}.[0-9]{1,3}$/;
+    return regExp.test(sdkVersion);
+}
