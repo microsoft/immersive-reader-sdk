@@ -23,18 +23,36 @@
                 <div class="col-lg">
                     <button class="immersive-reader-button float-right" data-button-style="iconAndText" data-locale="en"></button>
 
-                    <h2 id="ir-title">Geography</h2>
+                    <h2 id="ir-title">About Immersive Reader</h2>
 
                     <div id="ir-content" lang="en-us">
                         <p>
-                            The study of Earth's landforms is called physical geography. Landforms can be mountains and valleys. They can also be
+                            Immersive Reader is a tool that implements proven techniques to improve reading comprehension for emerging readers, language learners, and people with learning differences.
+                            The Immersive Reader is designed to make reading more accessible for everyone. The Immersive Reader
                             <ul>
-                                <li>glaciers</li>
-                                <li>lakes</li>
-                                <li>rivers</li>
+                                <li>
+                                    Shows content in a minimal reading view
+                                </li>
+                                <li>
+                                    Displays pictures of commonly used words
+                                </li>
+                                <li>
+                                    Highlights nouns, verbs, adjectives, and adverbs
+                                </li>
+                                <li>
+                                    Reads your content out loud to you
+                                </li>
+                                <li>
+                                    Translates your content into another language
+                                </li>
+                                <li>
+                                    Breaks down words into syllables
+                                </li>
                             </ul>
                         </p>
-                        <h5>The Immersive Reader is available in many languages.</h5>
+                        <p>
+                            <h5>The Immersive Reader is available in many languages.</h5>
+                        </p>
                         <p lang="es-es">
                             El Lector inmersivo está disponible en varios idiomas.
                         </p>
@@ -84,36 +102,37 @@
         });
 
         function handleLaunchImmersiveReader() {
-            getTokenAndSubdomainAsync().then(function (response) {
-                const token = response["token"];
-                const subdomain = response["subdomain"];
+            getTokenAndSubdomainAsync()
+                .then(function (response) {
+                    const token = response["token"];
+                    const subdomain = response["subdomain"];
 
-                const data = {
-                    title: $("#ir-title").text(),
-                    chunks: [{
-                        content: $("#ir-content").html(),
-                        mimeType: "text/html"
-                    }]
-                };
+                    const data = {
+                        title: $("#ir-title").text(),
+                        chunks: [{
+                            content: $("#ir-content").html(),
+                            mimeType: "text/html"
+                        }]
+                    };
 
-                const options = {
-                    "onExit": exitCallback
-                };
+                    const options = {
+                        "onExit": exitCallback
+                    };
 
-                ImmersiveReader.launchAsync(token, subdomain, data, options)
-                    .catch((error) => {
-                        alert("Error in launching the Immersive Reader. Check the console.");
-                        console.log(error);
-                    });
-            })
-            .catch(function (err) {
-                alert("Error in getting the Immersive Reader token and subdomain. Check the console.");
-                console.log(err);
-            });
+                    ImmersiveReader.launchAsync(token, subdomain, data, options)
+                        .catch(function (error) {
+                            alert("Error in launching the Immersive Reader. Check the console.");
+                            console.log(error);
+                        });
+                })
+                .catch(function (error) {
+                    alert("Error in getting the Immersive Reader token and subdomain. Check the console.");
+                    console.log(error);
+                });
         }
 
         function exitCallback() {
-            console.log("This is the callback function.");
+            console.log("This is the callback function. It is executed when the Immersive Reader closes.");
         }
 
         function getTokenAndSubdomainAsync() {
