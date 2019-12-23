@@ -95,6 +95,18 @@ describe('launchAsync tests', () => {
         expect(container.style.zIndex).toEqual('1000'); // Default is 1000;
     });
 
+    it('launches with a webview tag instead of an iframe', async () => {
+        expect.assertions(1);
+        const options: Options = { useWebview: true };
+        const launchPromise = launchAsync(SampleToken, null, SampleContent, options);
+        window.postMessage('ImmersiveReader-LaunchSuccessful', '*');
+
+        const container = await launchPromise;
+        const firstElementTagName = container.firstElementChild.tagName;
+
+        expect(firstElementTagName.toLowerCase()).toBe("webview");
+    });
+
     it('fails to launch due to timeout', async () => {
         jest.useFakeTimers();
 
