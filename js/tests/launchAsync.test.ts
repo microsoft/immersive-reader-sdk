@@ -104,7 +104,7 @@ describe('launchAsync tests', () => {
         const container = await launchPromise;
         const firstElementTagName = container.firstElementChild.tagName;
 
-        expect(firstElementTagName.toUpperCase()).toBe("WEBVIEW");
+        expect(firstElementTagName.toLowerCase()).toBe("webview");
     });
 
     it('fails to launch due to timeout', async () => {
