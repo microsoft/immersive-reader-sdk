@@ -48,6 +48,8 @@ function launchImmersiveReader() {
 
 Take a look at the [samples](./samples) for examples of a full end-to-end integration.
 
+The Immersive Reader may use persistent cookies to maintain user preferences and track feature usage. When embedding the Immersive Reader into applications, please consider the requirements of EU Cookie Compliance Policy. Setting the [enableCookies option](./src/options.ts) to **true** will enable the Immersive Reader to use cookies. It is the responsibility of the host application to obtain any necessary user consent in accordance with EU Cookie Compliance Policy.
+
 ## Building
 
 In order to build the SDK, ensure that you have [Git](https://git-scm.com/downloads), [Node.js](https://nodejs.org/), and [Yarn](https://yarnpkg.com/) installed.
