@@ -2,7 +2,7 @@
 // Licensed under the MIT License.
 
 import { Content } from './content';
-import { Options } from './options';
+import { CookiePolicy, Options } from './options';
 import { Error, ErrorCode } from './error';
 declare const VERSION: string;
 
@@ -58,7 +58,7 @@ export function launchAsync(token: string, subdomain: string, content: Content, 
             useWebview: false,
             allowFullscreen: true,
             hideExitButton: false,
-            enableCookies: false,
+            cookiePolicy: CookiePolicy.Disable,
             ...options
         };
 
@@ -104,7 +104,7 @@ export function launchAsync(token: string, subdomain: string, content: Content, 
             if (options.onExit) {
                 options.onExit();
             }
-        }
+        };
 
         // Reset variables
         reset();
@@ -164,7 +164,7 @@ export function launchAsync(token: string, subdomain: string, content: Content, 
         const domain = options.customDomain ? options.customDomain : `https://${subdomain}.cognitiveservices.azure.com/immersivereader/webapp/v1.0/`;
         let src = domain + 'reader?exitCallback=ImmersiveReader-Exit&sdkPlatform=' + sdkPlatform + '&sdkVersion=' + sdkVersion;
 
-        src += '&useCookies=' + (options.enableCookies === true ? 'true' : 'false');
+        src += '&cookiePolicy=' + ((options.cookiePolicy === CookiePolicy.Enable) ? 'enable' : 'disable');
 
         if (options.hideExitButton) {
             src += '&hideExitButton=true';
