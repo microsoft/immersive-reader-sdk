@@ -2,7 +2,7 @@
 // Licensed under the MIT License.
 
 import { Content } from './content';
-import { Options } from './options';
+import { CookiePolicy, Options } from './options';
 import { Error, ErrorCode } from './error';
 declare const VERSION: string;
 
@@ -58,6 +58,7 @@ export function launchAsync(token: string, subdomain: string, content: Content, 
             useWebview: false,
             allowFullscreen: true,
             hideExitButton: false,
+            cookiePolicy: CookiePolicy.Disable,
             ...options
         };
 
@@ -103,7 +104,7 @@ export function launchAsync(token: string, subdomain: string, content: Content, 
             if (options.onExit) {
                 options.onExit();
             }
-        }
+        };
 
         // Reset variables
         reset();
@@ -163,6 +164,8 @@ export function launchAsync(token: string, subdomain: string, content: Content, 
         const domain = options.customDomain ? options.customDomain : `https://${subdomain}.cognitiveservices.azure.com/immersivereader/webapp/v1.0/`;
         let src = domain + 'reader?exitCallback=ImmersiveReader-Exit&sdkPlatform=' + sdkPlatform + '&sdkVersion=' + sdkVersion;
 
+        src += '&cookiePolicy=' + ((options.cookiePolicy === CookiePolicy.Enable) ? 'enable' : 'disable');
+
         if (options.hideExitButton) {
             src += '&hideExitButton=true';
         }
@@ -170,6 +173,7 @@ export function launchAsync(token: string, subdomain: string, content: Content, 
         if (options.uiLang) {
             src += '&omkt=' + options.uiLang;
         }
+
         iframe.src = src;
 
         iframeContainer.style.cssText = `position: fixed; width: 100vw; height: 100vh; left: 0; top: 0; border-width: 0; -webkit-perspective: 1px; z-index: ${options.uiZIndex}; background: white; overflow: hidden`;

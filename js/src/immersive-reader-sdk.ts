@@ -3,6 +3,7 @@
 
 import { renderButtons } from './renderButtons';
 import { close, launchAsync } from './launchAsync';
+import { CookiePolicy } from './options';
 
 window.addEventListener('load', () => {
     if (!(window.hasOwnProperty('Promise'))) {
@@ -18,4 +19,4 @@ function dynamicallyLoadScript(scriptUrl: string) {
     document.head.appendChild(script);
 }
 
-export { renderButtons, close, launchAsync };
+export { renderButtons, close, launchAsync, CookiePolicy };
