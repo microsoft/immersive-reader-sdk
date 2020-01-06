@@ -122,7 +122,7 @@ describe('launchAsync tests', () => {
     });
 
     it('fails to launch due to expired token', async () => {
-        expect.assertions(1);
+        expect.assertions(2);
         const launchPromise = launchAsync(SampleToken, SampleSubdomain, SampleContent);
 
         window.postMessage('ImmersiveReader-LaunchResponse:{"success":false, "errorCode":"TokenExpired"}', '*');
@@ -131,6 +131,7 @@ describe('launchAsync tests', () => {
             await launchPromise;
         } catch (error) {
             expect(error.code).toBe('TokenExpired');
+            expect(error.message).toBe('The access token supplied is expired.');
         }
     });
 
