@@ -80,8 +80,8 @@ describe('launchAsync tests', () => {
         const launchPromise = launchAsync(SampleToken, SampleSubdomain, SampleContent, options);
         window.postMessage('ImmersiveReader-LaunchSuccessful', '*');
 
-        const container = await launchPromise;
-        const iframe = <HTMLIFrameElement>container.firstElementChild;
+        const response = await launchPromise;
+        const iframe = <HTMLIFrameElement>response.container.firstElementChild;
         expect(iframe.src.toLowerCase()).toMatch('omkt=zh-hans');
     });
 
@@ -92,8 +92,8 @@ describe('launchAsync tests', () => {
         const launchPromise = launchAsync(SampleToken, SampleSubdomain, SampleContent, options);
         window.postMessage('ImmersiveReader-LaunchSuccessful', '*');
 
-        const container = await launchPromise;
-        expect(container.style.zIndex).toEqual('' + zIndex);
+        const response = await launchPromise;
+        expect(response.container.style.zIndex).toEqual('' + zIndex);
     });
 
     it('launches with default z-index', async () => {
@@ -101,8 +101,8 @@ describe('launchAsync tests', () => {
         const launchPromise = launchAsync(SampleToken, SampleSubdomain, SampleContent);
         window.postMessage('ImmersiveReader-LaunchSuccessful', '*');
 
-        const container = await launchPromise;
-        expect(container.style.zIndex).toEqual('1000'); // Default is 1000;
+        const response = await launchPromise;
+        expect(response.container.style.zIndex).toEqual('1000'); // Default is 1000;
     });
 
     it('fails to launch due to timeout', async () => {
@@ -140,8 +140,8 @@ describe('launchAsync tests', () => {
         const launchPromise = launchAsync(SampleToken, null, SampleContent, options);
         window.postMessage('ImmersiveReader-LaunchSuccessful', '*');
 
-        const container = await launchPromise;
-        const iframe = <HTMLIFrameElement>container.firstElementChild;
+        const response = await launchPromise;
+        const iframe = <HTMLIFrameElement>response.container.firstElementChild;
         expect(iframe.src.toLowerCase()).toMatch('https://foo.com/');
     });
 });
