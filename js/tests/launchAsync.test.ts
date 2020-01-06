@@ -75,6 +75,17 @@ describe('launchAsync tests', () => {
         expect(iframe.src.toLowerCase()).toMatch('omkt=zh-hans');
     });
 
+    it('without setting the display language', async () => {
+        expect.assertions(1);
+        const options: Options = { uiLang: '' };
+        const launchPromise = launchAsync(SampleToken, null, SampleContent, options);
+        window.postMessage('ImmersiveReader-LaunchSuccessful', '*');
+
+        const container = await launchPromise;
+        const iframe = <HTMLIFrameElement>container.firstElementChild;
+        expect(iframe.src).not.toContain('&omkt=');
+    });
+
     it('sets the z-index of the iframe', async () => {
         const zIndex = 12345;
         expect.assertions(1);
@@ -156,18 +167,6 @@ describe('launchAsync tests', () => {
         const container = await launchPromise;
         const iframe = <HTMLIFrameElement>container.firstElementChild;
         expect(iframe.src.toLowerCase()).toMatch('https://learningtools.onenote.com/learningtoolsapp/cognitive/reader?exitcallback=immersivereader-exit');
-    });
-    
-    it('launches with a specified ui language', async () => {
-        expect.assertions(1);
-        const options: Options = { uiLang: 'es-ES' };
-        const launchPromise = launchAsync(SampleToken, null, SampleContent, options);
-        window.postMessage('ImmersiveReader-LaunchSuccessful', '*');
-
-        const container = await launchPromise;
-        const iframe = <HTMLIFrameElement>container.firstElementChild;
-
-        expect(iframe.src).toContain('&omkt=es-ES');
     });
 
     it('launches with exit button hidden', async () => {
