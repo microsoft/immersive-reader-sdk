@@ -75,6 +75,17 @@ describe('launchAsync tests', () => {
         expect(iframe.src.toLowerCase()).toMatch('omkt=zh-hans');
     });
 
+    it('without setting the display language', async () => {
+        expect.assertions(1);
+        const options: Options = { uiLang: '' };
+        const launchPromise = launchAsync(SampleToken, null, SampleContent, options);
+        window.postMessage('ImmersiveReader-LaunchSuccessful', '*');
+
+        const container = await launchPromise;
+        const iframe = <HTMLIFrameElement>container.firstElementChild;
+        expect(iframe.src).not.toContain('&omkt=');
+    });
+
     it('sets the z-index of the iframe', async () => {
         const zIndex = 12345;
         expect.assertions(1);
@@ -157,7 +168,54 @@ describe('launchAsync tests', () => {
         const iframe = <HTMLIFrameElement>container.firstElementChild;
         expect(iframe.src.toLowerCase()).toMatch('https://learningtools.onenote.com/learningtoolsapp/cognitive/reader?exitcallback=immersivereader-exit');
     });
-    
+
+    it('launches with exit button hidden', async () => {
+        expect.assertions(1);
+        const options: Options = { hideExitButton: true };
+        const launchPromise = launchAsync(SampleToken, null, SampleContent, options);
+        window.postMessage('ImmersiveReader-LaunchSuccessful', '*');
+
+        const container = await launchPromise;
+        const iframe = <HTMLIFrameElement>container.firstElementChild;
+
+        expect(iframe.src).toContain('&hideExitButton=true');
+    });
+
+    it('launches with exit button displayed', async () => {
+        expect.assertions(1);
+        const options: Options = { hideExitButton: false };
+        const launchPromise = launchAsync(SampleToken, null, SampleContent, options);
+        window.postMessage('ImmersiveReader-LaunchSuccessful', '*');
+
+        const container = await launchPromise;
+        const iframe = <HTMLIFrameElement>container.firstElementChild;
+
+        expect(iframe.src).not.toContain('&hideExitButton=true');
+    });
+
+    it('launches with full screen button displayed', async () => {
+        expect.assertions(1);
+        const options: Options = { allowFullscreen: true };
+        const launchPromise = launchAsync(SampleToken, null, SampleContent, options);
+        window.postMessage('ImmersiveReader-LaunchSuccessful', '*');
+
+        const container = await launchPromise;
+        const iframe = <HTMLIFrameElement>container.firstElementChild;
+
+        expect(iframe.getAttribute('allowfullscreen')).not.toBeNull();
+    });
+
+    it('launches with full screen button hidden', async () => {
+        expect.assertions(1);
+        const options: Options = { allowFullscreen: false };
+        const launchPromise = launchAsync(SampleToken, null, SampleContent, options);
+        window.postMessage('ImmersiveReader-LaunchSuccessful', '*');
+
+        const container = await launchPromise;
+        const iframe = <HTMLIFrameElement>container.firstElementChild;
+
+        expect(iframe.getAttribute('allowfullscreen')).toBeNull();
+    });
 
     describe('Utility method isValidSubdomain', () => {
         it('should return false', () => {
