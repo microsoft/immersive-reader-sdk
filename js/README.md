@@ -15,7 +15,7 @@ You can find examples of how to acquire an Azure AD token in the [samples](./sam
 Include the library of the stable build in your web application:
 
 ```html
-<script type='text/javascript' src='https://contentstorage.onenote.office.net/onenoteltir/immersivereadersdk/immersive-reader-sdk.0.0.3.js'></script>
+<script type='text/javascript' src='https://contentstorage.onenote.office.net/onenoteltir/immersivereadersdk/immersive-reader-sdk.1.0.0.js'></script>
 ```
 
 ```bash
