@@ -9,8 +9,6 @@ import { isValidSubdomain } from '../src/launchAsync';
 import { Content } from '../src/content';
 import { Options } from '../src/options';
 
-jest.setTimeout(15000) 
-
 describe('launchAsync tests', () => {
     const SampleToken: string = 'not-a-real-token';
     const SampleContent: Content = { chunks: [ { content: 'Hello, world' } ] };
