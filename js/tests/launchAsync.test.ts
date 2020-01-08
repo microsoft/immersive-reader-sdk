@@ -232,9 +232,9 @@ describe('launchAsync tests', () => {
         window.postMessage('ImmersiveReader-Exit', '*');
 
         // this is to yield this thread of execution to allow the exit message to get processed
-        await new Promise(resolve => { setTimeout(resolve, 500); });
+        await new Promise(resolve => { setTimeout(resolve, 1); });
 
-        expect(cbOnExit.mock.calls.length).toBe(1);
+        expect(cbOnExit).toHaveBeenCalledTimes(1);
     });
 
     describe('Utility method isValidSubdomain', () => {
