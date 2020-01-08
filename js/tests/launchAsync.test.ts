@@ -12,7 +12,7 @@ import { Options } from '../src/options';
 describe('launchAsync tests', () => {
     const SampleToken: string = 'not-a-real-token';
     const SampleSubdomain: string = 'not-a-real-subdomain';
-    const SampleContent: Content = { chunks: [{ content: 'Hello, world' }] };
+    const SampleContent: Content = { chunks: [ { content: 'Hello, world' } ] };
 
     it('fails due to missing token', async () => {
         expect.assertions(1);
@@ -88,7 +88,7 @@ describe('launchAsync tests', () => {
     it('without setting the display language', async () => {
         expect.assertions(1);
         const options: Options = { uiLang: '' };
-		const launchPromise = launchAsync(SampleToken, SampleSubdomain, SampleContent, options);
+        const launchPromise = launchAsync(SampleToken, SampleSubdomain, SampleContent, options);
         window.postMessage('ImmersiveReader-LaunchSuccessful', '*');
 
         const container = await launchPromise;
@@ -119,7 +119,7 @@ describe('launchAsync tests', () => {
     it('launches with a webview tag instead of an iframe', async () => {
         expect.assertions(1);
         const options: Options = { useWebview: true };
-		const launchPromise = launchAsync(SampleToken, SampleSubdomain, SampleContent, options);
+        const launchPromise = launchAsync(SampleToken, SampleSubdomain, SampleContent, options);
         window.postMessage('ImmersiveReader-LaunchSuccessful', '*');
 
         const container = await launchPromise;
@@ -171,7 +171,7 @@ describe('launchAsync tests', () => {
     it('launches with a custom subdomain 2', async () => {
         expect.assertions(1);
         const options: Options = { customDomain: '' };
-		const launchPromise = launchAsync(SampleToken, SampleSubdomain, SampleContent, options);
+        const launchPromise = launchAsync(SampleToken, SampleSubdomain, SampleContent, options);
         window.postMessage('ImmersiveReader-LaunchSuccessful', '*');
 
         const container = await launchPromise;
@@ -182,7 +182,7 @@ describe('launchAsync tests', () => {
     it('launches with exit button hidden', async () => {
         expect.assertions(1);
         const options: Options = { hideExitButton: true };
-		const launchPromise = launchAsync(SampleToken, SampleSubdomain, SampleContent, options);
+        const launchPromise = launchAsync(SampleToken, SampleSubdomain, SampleContent, options);
         window.postMessage('ImmersiveReader-LaunchSuccessful', '*');
 
         const container = await launchPromise;
@@ -194,7 +194,7 @@ describe('launchAsync tests', () => {
     it('launches with exit button displayed', async () => {
         expect.assertions(1);
         const options: Options = { hideExitButton: false };
-		const launchPromise = launchAsync(SampleToken, SampleSubdomain, SampleContent, options);
+        const launchPromise = launchAsync(SampleToken, SampleSubdomain, SampleContent, options);
         window.postMessage('ImmersiveReader-LaunchSuccessful', '*');
 
         const container = await launchPromise;
@@ -206,7 +206,7 @@ describe('launchAsync tests', () => {
     it('launches with full screen button displayed', async () => {
         expect.assertions(1);
         const options: Options = { allowFullscreen: true };
-		const launchPromise = launchAsync(SampleToken, SampleSubdomain, SampleContent, options);
+        const launchPromise = launchAsync(SampleToken, SampleSubdomain, SampleContent, options);
         window.postMessage('ImmersiveReader-LaunchSuccessful', '*');
 
         const container = await launchPromise;
@@ -218,7 +218,7 @@ describe('launchAsync tests', () => {
     it('launches with full screen button hidden', async () => {
         expect.assertions(1);
         const options: Options = { allowFullscreen: false };
-		const launchPromise = launchAsync(SampleToken, SampleSubdomain, SampleContent, options);
+        const launchPromise = launchAsync(SampleToken, SampleSubdomain, SampleContent, options);
         window.postMessage('ImmersiveReader-LaunchSuccessful', '*');
 
         const container = await launchPromise;
@@ -234,7 +234,7 @@ describe('launchAsync tests', () => {
         const cbOnExit = jest.fn(() => { });
 
         const options: Options = { onExit: () => { cbOnExit(); } };
-		const launchPromise = launchAsync(SampleToken, SampleSubdomain, SampleContent, options);
+        const launchPromise = launchAsync(SampleToken, SampleSubdomain, SampleContent, options);
         window.postMessage('ImmersiveReader-LaunchSuccessful', '*');
 
         await launchPromise;
