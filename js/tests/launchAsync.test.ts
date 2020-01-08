@@ -231,13 +231,8 @@ describe('launchAsync tests', () => {
 
         window.postMessage('ImmersiveReader-Exit', '*');
 
-        const timeout = (ms: number) => new Promise(resolve => { setTimeout(resolve, ms); });
-
-        const waitFor500MilliSeconds = async () => {
-          await timeout(500);
-        };
-        
-        await waitFor500MilliSeconds();
+        // this is to yield this thread of execution to allow the exit message to get processed
+        await new Promise(resolve => { setTimeout(resolve, 500); });
 
         expect(cbOnExit.mock.calls.length).toBe(1);
     });
