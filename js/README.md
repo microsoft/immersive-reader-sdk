@@ -15,7 +15,7 @@ You can find examples of how to acquire an Azure AD token in the [samples](./sam
 Include the library of the stable build in your web application:
 
 ```html
-<script type='text/javascript' src='https://contentstorage.onenote.office.net/onenoteltir/immersivereadersdk/immersive-reader-sdk.0.0.3.js'></script>
+<script type='text/javascript' src='https://contentstorage.onenote.office.net/onenoteltir/immersivereadersdk/immersive-reader-sdk.1.0.0.js'></script>
 ```
 
 ```bash
@@ -47,6 +47,8 @@ function launchImmersiveReader() {
 ```
 
 Take a look at the [samples](./samples) for examples of a full end-to-end integration.
+
+The Immersive Reader may use persistent cookies to maintain user preferences and track feature usage. When embedding the Immersive Reader into applications, please consider the requirements of EU Cookie Compliance Policy. Setting the [cookiePolicy option](./src/options.ts) to **CookiePolicy.Enable** will enable the Immersive Reader to use cookies. It is the responsibility of the host application to obtain any necessary user consent in accordance with EU Cookie Compliance Policy.
 
 ## Building
 

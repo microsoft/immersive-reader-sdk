@@ -2,8 +2,9 @@
 // Licensed under the MIT License.
 
 import { Content } from './content';
-import { Options } from './options';
+import { CookiePolicy, Options } from './options';
 import { Error, ErrorCode } from './error';
+import { LaunchResponse } from './launchResponse';
 declare const VERSION: string;
 
 type Message = {
@@ -13,18 +14,30 @@ type Message = {
     launchToPostMessageSentDurationInMs: number;
 };
 
+type LaunchResponseMessage = {
+    success: boolean;
+    errorCode?: ErrorCode;
+    sessionId: string;
+};
+
 const sdkPlatform = 'js';
 const sdkVersion = VERSION;
+
+const errorMessageMap: { [errorCode: string]: string } = {};
+errorMessageMap[ErrorCode.TokenExpired] = 'The access token supplied is expired.';
+errorMessageMap[ErrorCode.Throttled] = 'You have exceeded your quota.';
+errorMessageMap[ErrorCode.ServerError] = 'An error occurred when calling the server to process the text.';
+errorMessageMap[ErrorCode.InvalidSubdomain] = 'The subdomain supplied is invalid.';
 
 /**
  * Launch the Immersive Reader within an iframe.
  * @param token The authentication token.
- * @param subdomain The Immersive Reader Cognitive Service subdomain.
+ * @param subdomain The Immersive Reader Cognitive Service subdomain. This is a required parameter for Azure AD authentication in this and future versions of this SDK. Use of the Cognitive Services issueToken endpoint-based authentication tokens is deprecated and no longer supported.
  * @param content The content that should be shown in the Immersive Reader.
  * @param options Options for configuring the look and feel of the Immersive Reader.
- * @return A promise that resolves when the Immersive Reader is launched. The promise resolves with the div that contains an iframe which contains the Immersive Reader.
+ * @return A promise that resolves with a LaunchResponse when the Immersive Reader is launched.
  */
-export function launchAsync(token: string, subdomain: string, content: Content, options?: Options): Promise<HTMLDivElement> {
+export function launchAsync(token: string, subdomain: string, content: Content, options?: Options): Promise<LaunchResponse> {
     return new Promise((resolve, reject: (reason: Error) => void): void => {
         if (!token) {
             reject({ code: ErrorCode.BadArgument, message: 'Token must not be null' });
@@ -46,8 +59,8 @@ export function launchAsync(token: string, subdomain: string, content: Content, 
             return;
         }
 
-        if (!isValidSubdomain(subdomain)) {
-            reject({ code: ErrorCode.BadArgument, message: 'The subdomain supplied is invalid.' });
+        if (!isValidSubdomain(subdomain) && (!options || !options.customDomain)) {
+            reject({ code: ErrorCode.InvalidSubdomain, message: errorMessageMap[ErrorCode.InvalidSubdomain] });
             return;
         }
 
@@ -58,6 +71,7 @@ export function launchAsync(token: string, subdomain: string, content: Content, 
             useWebview: false,
             allowFullscreen: true,
             hideExitButton: false,
+            cookiePolicy: CookiePolicy.Disable,
             ...options
         };
 
@@ -85,6 +99,8 @@ export function launchAsync(token: string, subdomain: string, content: Content, 
                 document.body.removeChild(iframeContainer);
             }
 
+            window.removeEventListener('message', messageHandler);
+
             // Clear the timeout timer
             resetTimeout();
 
@@ -94,21 +110,23 @@ export function launchAsync(token: string, subdomain: string, content: Content, 
             }
         };
 
+        const exit = (): void => {
+            reset();
+
+            // Execute exit callback if we have one
+            if (options.onExit) {
+                options.onExit();
+            }
+        };
+
         // Reset variables
         reset();
 
         const messageHandler = (e: any): void => {
             if (!e || !e.data) { return; }
 
-            if (e.data === 'ImmersiveReader-Exit') {
-                reset();
-                window.removeEventListener('message', messageHandler);
-
-                // Execute exit callback if we have one
-                if (options.onExit) {
-                    options.onExit();
-                }
-            } else if (e.data === 'ImmersiveReader-ReadyForContent') {
+            if (e.data === 'ImmersiveReader-ReadyForContent') {
+                resetTimeout(); // Reset the timeout once the reader page loads successfully. The Reader page will report further errors through PostMessage if there is an issue obtaining the ContentModel from the server
                 const message: Message = {
                     cogSvcsAccessToken: token,
                     cogSvcsSubdomain: subdomain,
@@ -116,18 +134,44 @@ export function launchAsync(token: string, subdomain: string, content: Content, 
                     launchToPostMessageSentDurationInMs: Date.now() - startTime
                 };
                 iframe.contentWindow!.postMessage(JSON.stringify({ messageType: 'Content', messageValue: message }), '*');
-            } else if (e.data === 'ImmersiveReader-LaunchSuccessful') {
-                resetTimeout();
-                resolve(iframeContainer);
-            } else if (e.data === 'ImmersiveReader-TokenExpired') {
-                reset();
-                reject({ code: ErrorCode.TokenExpired, message: 'The access token supplied is expired.' });
-            } else if (e.data === 'ImmersiveReader-Throttled') {
-                reset();
-                reject({ code: ErrorCode.Throttled, message: 'You have exceeded your quota.' });
-            } else if (e.data === 'ImmersiveReader-InvalidCognitiveServicesSubdomain') {
-                reset();
-                reject({ code: ErrorCode.BadArgument, message: 'The subdomain supplied is invalid.' });
+            } else if (e.data === 'ImmersiveReader-Exit') {
+                exit();
+            } else if (e.data.startsWith('ImmersiveReader-LaunchResponse:')) {
+                let launchResponse: LaunchResponse = null;
+                let error: Error = null;
+
+                let response: LaunchResponseMessage = null;
+                try {
+                    response = JSON.parse(e.data.substring('ImmersiveReader-LaunchResponse:'.length));
+                } catch {
+                    // No-op
+                }
+
+                if (response && response.success) {
+                    launchResponse = {
+                        container: iframeContainer,
+                        sessionId: response.sessionId
+                    };
+                } else if (response && !response.success) {
+                    error = {
+                        code: response.errorCode,
+                        message: errorMessageMap[response.errorCode],
+                        sessionId: response.sessionId
+                    };
+                } else {
+                    error = {
+                        code: ErrorCode.ServerError,
+                        message: errorMessageMap[ErrorCode.ServerError]
+                    };
+                }
+
+                if (launchResponse) {
+                    resetTimeout();
+                    resolve(launchResponse);
+                } else if (error) {
+                    exit();
+                    reject(error);
+                }
             }
         };
         window.addEventListener('message', messageHandler);
@@ -151,8 +195,10 @@ export function launchAsync(token: string, subdomain: string, content: Content, 
             });
         }
 
-        const domain = options.customDomain ? options.customDomain : 'https://learningtools.onenote.com/learningtoolsapp/cognitive/';
+        const domain = options.customDomain ? options.customDomain : `https://${subdomain}.cognitiveservices.azure.com/immersivereader/webapp/v1.0/`;
         let src = domain + 'reader?exitCallback=ImmersiveReader-Exit&sdkPlatform=' + sdkPlatform + '&sdkVersion=' + sdkVersion;
+
+        src += '&cookiePolicy=' + ((options.cookiePolicy === CookiePolicy.Enable) ? 'enable' : 'disable');
 
         if (options.hideExitButton) {
             src += '&hideExitButton=true';
@@ -161,6 +207,7 @@ export function launchAsync(token: string, subdomain: string, content: Content, 
         if (options.uiLang) {
             src += '&omkt=' + options.uiLang;
         }
+
         iframe.src = src;
 
         iframeContainer.style.cssText = `position: fixed; width: 100vw; height: 100vh; left: 0; top: 0; border-width: 0; -webkit-perspective: 1px; z-index: ${options.uiZIndex}; background: white; overflow: hidden`;
@@ -179,11 +226,9 @@ export function close(): void {
 
 // The subdomain must be alphanumeric, and may contain '-',
 // as long as the '-' does not start or end the subdomain.
-// The subdomain can also be falsy (null/undefined/'') in order to support our legacy token format,
-// though in the future the legacy token will not be supported.
 export function isValidSubdomain(subdomain: string): boolean {
     if (!subdomain) {
-        return true;
+        return false;
     }
 
     const validRegex = '^([a-zA-Z0-9]|[a-zA-Z0-9][a-zA-Z0-9\\-]{0,61}[a-zA-Z0-9])$';

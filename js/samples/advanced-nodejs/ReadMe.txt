@@ -31,8 +31,9 @@ Follow these steps to get the sample up and running:
     SUBDOMAIN     => Immersive Reader resource subdomain (resource 'Name' if the resource was created in the Azure portal, or 'CustomSubDomain' option if the resource was created with Azure CLI Powershell. Check the Azure portal for the subdomain on the Endpoint in the resource Overview page, for example, 'https://[SUBDOMAIN].cognitiveservices.azure.com/')
 
 
-4. Run "npm start" (or "nodemon start" if you want to view changes you make after doing a browser refresh)
+3. Run "yarn build:dev" whenever you update the js src code. This script will build and copy the js library into the advanced-nodejs sample's public/js directory.
 
+4. Run "npm start" (or "nodemon start" if you want to view changes you make after doing a browser refresh)
 
 5. View the sample at http://localhost:3000
 

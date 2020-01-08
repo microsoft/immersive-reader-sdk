@@ -1,4 +1,4 @@
-﻿Immersive Reader - Quick Start Sample
+﻿Immersive Reader - C# Quick Start Sample
 ----------------------------------
 
 Follow these steps to get the sample up and running:
@@ -7,16 +7,16 @@ Follow these steps to get the sample up and running:
    You will need some of the values created here when configuring the sample project properties. Save the output of your session into a text file for future reference.
 
 
-2. Open QuickStartSampleWebApp.sln in Visual Studio.
+2. Open QuickStartSampleWebApp.sln in Visual Studio 2019.
 
 
-3. Right-click on the project in the Solution Explorer and choose "Manage User Secrets". This will open a file called secrets.json. Replace the contents of that file with the following, supplying your custom property values as appropriate:
+3. Right-click on the project in the Solution Explorer and choose "Manage User Secrets". This will open a file called secrets.json. Replace the contents of that file with the following, supplying your custom property values as appropriate (remove "<" and ">")::
 
         {
-          "TenantId": YOUR_TENANT_ID,
-          "ClientId": YOUR_CLIENT_ID,
-          "ClientSecret": YOUR_CLIENT_SECRET,
-          "Subdomain": YOUR_SUBDOMAIN
+          "TenantId": "<YOUR_TENANT_ID>",
+          "ClientId": "<YOUR_CLIENT_ID>",
+          "ClientSecret": "<YOUR_CLIENT_SECRET>",
+          "Subdomain": "<YOUR_SUBDOMAIN>"
         }
 
         (end file contents)
