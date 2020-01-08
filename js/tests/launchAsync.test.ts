@@ -7,7 +7,7 @@
 import { launchAsync } from '../src/immersive-reader-sdk';
 import { isValidSubdomain } from '../src/launchAsync';
 import { Content } from '../src/content';
-import { Options } from '../src/options';
+import { CookiePolicy, Options } from '../src/options';
 
 describe('launchAsync tests', () => {
     const SampleToken: string = 'not-a-real-token';
@@ -226,6 +226,30 @@ describe('launchAsync tests', () => {
         const iframe = <HTMLIFrameElement>response.container.firstElementChild;
 
         expect(iframe.getAttribute('allowfullscreen')).toBeNull();
+    });
+
+    it('launches with Cookie Policy enabled', async () => {
+        expect.assertions(1);
+        const options: Options = { cookiePolicy: CookiePolicy.Enable };
+        const launchPromise = launchAsync(SampleToken, SampleSubdomain, SampleContent, options);
+        window.postMessage('ImmersiveReader-LaunchResponse:{"success":true}', '*');
+
+        const response = await launchPromise;
+        const iframe = <HTMLIFrameElement>response.container.firstElementChild;
+
+        expect(iframe.src).toContain('&cookiePolicy=enable');
+    });
+
+    it('launches with Cookie Policy disabled', async () => {
+        expect.assertions(1);
+        const options: Options = { cookiePolicy: CookiePolicy.Disable };
+        const launchPromise = launchAsync(SampleToken, SampleSubdomain, SampleContent, options);
+        window.postMessage('ImmersiveReader-LaunchResponse:{"success":true}', '*');
+
+        const response = await launchPromise;
+        const iframe = <HTMLIFrameElement>response.container.firstElementChild;
+
+        expect(iframe.src).toContain('&cookiePolicy=disable');
     });
 
     it('launches with onExit callback', async () => {
