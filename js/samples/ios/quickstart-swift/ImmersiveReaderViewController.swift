@@ -16,7 +16,7 @@ public class ImmersiveReaderViewController: UIViewController, WKUIDelegate, WKNa
     let onError: ((_ error: String) -> Void)?
 
     let startTime = Date().timeIntervalSince1970*1000
-    let src: String
+    var src: String
     var webView: WKWebView!
     var timer: Timer!
     var timeoutValue: TimeInterval!
@@ -30,7 +30,7 @@ public class ImmersiveReaderViewController: UIViewController, WKUIDelegate, WKNa
         self.onFailureImmersiveReader = onFailureImmersiveReader
         self.onTimeout = onTimeout
         self.onError = onError
-        self.src = "https://" subdomainToPass + ".cognitiveservices.azure.com/immersivereader/webapp/v1.0/reader"
+        self.src = "https://" + subdomainToPass + ".cognitiveservices.azure.com/immersivereader/webapp/v1.0/reader"
         super.init(nibName: nil, bundle: nil)
     }
 
@@ -61,7 +61,7 @@ public class ImmersiveReaderViewController: UIViewController, WKUIDelegate, WKNa
 
         let contentController = WKUserContentController()
         if #available(iOS 11.0, *) {
-            webView = ImmersiveReaderWebView(frame: .zero, contentController: contentController)
+            webView = WKWebView(frame: .zero, contentController: contentController)
         } else {
             // Fallback on earlier versions
             webView = WKWebView()
