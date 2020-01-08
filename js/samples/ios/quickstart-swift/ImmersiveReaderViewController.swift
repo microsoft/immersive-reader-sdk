@@ -5,6 +5,20 @@ import UIKit
 import Foundation
 import WebKit
 
+@available(iOS 11.0, *)
+public class ImmersiveReaderWebView: WKWebView {
+
+    init(frame: CGRect, contentController: WKUserContentController) {
+        let conf = WKWebViewConfiguration()
+        conf.userContentController = contentController
+        super.init(frame: frame, configuration: conf)
+    }
+
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+}
+
 public class ImmersiveReaderViewController: UIViewController, WKUIDelegate, WKNavigationDelegate {
     let tokenToSend: String
     let subdomainToSend: String
@@ -61,7 +75,7 @@ public class ImmersiveReaderViewController: UIViewController, WKUIDelegate, WKNa
 
         let contentController = WKUserContentController()
         if #available(iOS 11.0, *) {
-            webView = WKWebView(frame: .zero, contentController: contentController)
+            webView = ImmersiveReaderWebView(frame: .zero, contentController: contentController)
         } else {
             // Fallback on earlier versions
             webView = WKWebView()
