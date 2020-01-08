@@ -9,6 +9,8 @@ import { isValidSubdomain } from '../src/launchAsync';
 import { Content } from '../src/content';
 import { Options } from '../src/options';
 
+jest.setTimeout(15000) 
+
 describe('launchAsync tests', () => {
     const SampleToken: string = 'not-a-real-token';
     const SampleContent: Content = { chunks: [ { content: 'Hello, world' } ] };
@@ -215,6 +217,31 @@ describe('launchAsync tests', () => {
         const iframe = <HTMLIFrameElement>container.firstElementChild;
 
         expect(iframe.getAttribute('allowfullscreen')).toBeNull();
+    });
+
+    it('launches with onExit callback', async () => {
+        jest.useRealTimers();
+        expect.assertions(1);
+
+        const cbOnExit = jest.fn(() => { });
+
+        const options: Options = { onExit: () => { cbOnExit(); } };
+        const launchPromise = launchAsync(SampleToken, null, SampleContent, options);
+        window.postMessage('ImmersiveReader-LaunchSuccessful', '*');
+
+        await launchPromise;
+
+        window.postMessage('ImmersiveReader-Exit', '*');
+
+        const timeout = (ms: number) => new Promise(resolve => { setTimeout(resolve, ms); });
+
+        const waitFor500MilliSeconds = async () => {
+          await timeout(500);
+        };
+        
+        await waitFor500MilliSeconds();
+
+        expect(cbOnExit.mock.calls.length).toBe(1);
     });
 
     describe('Utility method isValidSubdomain', () => {
