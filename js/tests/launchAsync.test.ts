@@ -217,6 +217,26 @@ describe('launchAsync tests', () => {
         expect(iframe.getAttribute('allowfullscreen')).toBeNull();
     });
 
+    it('launches with onExit callback', async () => {
+        jest.useRealTimers();
+        expect.assertions(1);
+
+        const cbOnExit = jest.fn(() => { });
+
+        const options: Options = { onExit: () => { cbOnExit(); } };
+        const launchPromise = launchAsync(SampleToken, null, SampleContent, options);
+        window.postMessage('ImmersiveReader-LaunchSuccessful', '*');
+
+        await launchPromise;
+
+        window.postMessage('ImmersiveReader-Exit', '*');
+
+        // this is to yield this thread of execution to allow the exit message to get processed
+        await new Promise(resolve => { setTimeout(resolve, 1); });
+
+        expect(cbOnExit).toHaveBeenCalledTimes(1);
+    });
+
     describe('Utility method isValidSubdomain', () => {
         it('should return false', () => {
             expect(isValidSubdomain('é')).toBe(false);
