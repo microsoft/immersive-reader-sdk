@@ -1,19 +1,15 @@
-// Copyright (c) Microsoft Corporation. All rights reserved.
-// Licensed under the MIT License.
-
 var express = require('express');
 var router = express.Router();
 var request = require('request');
-var path = require('path');
 
-var viewRoot = path.join(__dirname, './views');
-
+/* GET home page. */
 router.get('/', function(req, res, next) {
-    res.sendFile('index.html', {root: viewRoot});
+  res.render('index', { title: 'Express' });
 });
 
 router.get('/GetTokenAndSubdomain', function(req, res) {
-    request.post({
+    try {
+        request.post({
             headers: {
                 'content-type': 'application/x-www-form-urlencoded'
             },
@@ -30,19 +26,22 @@ router.get('/GetTokenAndSubdomain', function(req, res) {
                 console.log(err);
                 return res.status(500).send('CogSvcs IssueToken error');
             }
-
+    
             var tokenResultParsed = JSON.parse(tokenResult);
             
             if (tokenResultParsed.error) {
                 console.log(tokenResult);
                 return res.send({error :  "Unable to acquire Azure AD token. Check the debugger for more information."})
             }
-
+    
             var token = tokenResultParsed.access_token;
             var subdomain = process.env.SUBDOMAIN;
             return res.send({token, subdomain});
-        }
-    );
+        });
+    } catch (err) {
+        console.log(err);
+        return res.status(500).send('CogSvcs IssueToken error');
+    }
 });
 
 module.exports = router;
