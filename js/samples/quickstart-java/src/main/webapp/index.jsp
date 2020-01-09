@@ -1,3 +1,4 @@
+<%@ page contentType="text/html; charset=UTF-8" %>
 <html>
 <head>
     <meta charset='utf-8'>
@@ -9,75 +10,64 @@
     <!-- A polyfill for Promise is needed for IE11 support -->
     <script type='text/javascript' src='https://cdn.jsdelivr.net/npm/promise-polyfill@8/dist/polyfill.min.js'></script>
 
-    <link rel="stylesheet" href="/resources/styles.css"/>
+    <style type="text/css">
+        .immersive-reader-button {
+            background-color: white;
+            margin-top: 5px;
+            border: 1px solid black;
+            float: right;
+        }
+    </style>
 </head>
 <body>
-    <header id='ir-button-area'>
-        <button class='immersive-reader-button' data-button-style='iconAndText'
-                onclick='handleLaunchImmersiveReader()'></button>
-    </header>
-    <main id='content-area'>
-        <article id='ir-content'>
-            <h1 id='ir-title'>Geography</h1>
-            <div id='ir-text'>
-                <p>The study of Earth's landforms is called physical geography. Landforms can be mountains and valleys. They
-                    can also be glaciers, lakes or rivers. Landforms are sometimes called physical features. It is important
-                    for students to know about the physical geography of Earth. The seasons, the atmosphere and all the
-                    natural processes of Earth affect where people are able to live. Geography is one of a combination of
-                    factors that people use to decide where they want to live.</p>
-                <p>The physical features of a region are often rich in resources. Within a nation, mountain ranges become
-                    natural borders for settlement areas. In the U.S., major mountain ranges are the Sierra Nevada, the
-                    Rocky Mountains, and the Appalachians.</p>
-                <p>Fresh water sources also influence where people settle. People need water to drink. They also need it for
-                    washing. Throughout history, people have settled near fresh water. Living near a water source helps
-                    ensure that people have the water they need. There was an added bonus, too. Water could be used as a
-                    travel route for people and goods. Many Americans live near popular water sources, such as the
-                    Mississippi River, the Colorado River and the Great Lakes.</p>
-                <p>Mountains and deserts have been settled by fewer people than the plains areas. However, they have
-                    valuable resources of their own.</p>
-            </div>
-        </article>
-    </main>
-
-    <div id='message'></div>
+    <div class="container">
+        <button class="immersive-reader-button" data-button-style="iconAndText" data-locale="en"></button>
+    
+        <h1 id="ir-title">About Immersive Reader</h1>
+        <div id="ir-content" lang="en-us">
+            <p>
+                Immersive Reader is a tool that implements proven techniques to improve reading comprehension for emerging readers, language learners, and people with learning differences.
+                The Immersive Reader is designed to make reading more accessible for everyone. The Immersive Reader
+                <ul>
+                    <li>
+                        Shows content in a minimal reading view
+                    </li>
+                    <li>
+                        Displays pictures of commonly used words
+                    </li>
+                    <li>
+                        Highlights nouns, verbs, adjectives, and adverbs
+                    </li>
+                    <li>
+                        Reads your content out loud to you
+                    </li>
+                    <li>
+                        Translates your content into another language
+                    </li>
+                    <li>
+                        Breaks down words into syllables
+                    </li>
+                </ul>
+            </p>
+            <h3>
+                The Immersive Reader is available in many languages.
+            </h3>
+            <p lang="es-es">
+                El Lector inmersivo está disponible en varios idiomas.
+            </p>
+            <p lang="zh-cn">
+                沉浸式阅读器支持许多语言
+            </p>
+            <p lang="de-de">
+                Der plastische Reader ist in vielen Sprachen verfügbar.
+            </p>
+            <p lang="ar-eg" dir="rtl" style="text-align:right">
+                يتوفر \"القارئ الشامل\" في العديد من اللغات.
+            </p>
+        </div>
+    </div>
 
     <script type='text/javascript'>
-        function handleLaunchImmersiveReader() {
-            $('#message').hide();
-
-            getTokenAndSubdomainAsync().then(function (response) {
-                const token = response['token'];
-                const subdomain = response['subdomain'];
-
-                const data = {
-                    title: $('#ir-title').text().trim(),
-                    chunks: [{
-                        content: $('#ir-text').text().trim(),
-                        lang: 'en',
-                        mimeType: 'text/plain'
-                    }]
-                };
-
-                const options = {
-                    'onExit': exitCallback
-                };
-
-                ImmersiveReader.launchAsync(token, subdomain, data, options)
-                    .catch((error) => {
-                        $('#message').text('Error in launching the Immersive Reader. Check the console.').show();
-                        console.log(error);
-                    });
-            })
-            .catch(function (err) {
-                $('#message').text('Error in getting the Immersive Reader token and subdomain. Check the console.').show();
-                console.log(err);
-            });
-        }
-
-        function exitCallback() {
-            console.log('This is the callback function.');
-        }
-
         function getTokenAndSubdomainAsync() {
             return new Promise(function (resolve, reject) {
                 $.ajax({
@@ -99,6 +89,44 @@
                     }
                 });
             });
+        }
+        
+        $(".immersive-reader-button").click(function () {
+            handleLaunchImmersiveReader();
+        });
+
+        function handleLaunchImmersiveReader() {
+            getTokenAndSubdomainAsync()
+                .then(function (response) {
+                    const token = response["token"];
+                    const subdomain = response["subdomain"];
+                    // Learn more about chunk usage and supported MIME types https://docs.microsoft.com/en-us/azure/cognitive-services/immersive-reader/reference#chunk
+                    const data = {
+                        title: $("#ir-title").text(),
+                        chunks: [{
+                            content: $("#ir-content").html(),
+                            mimeType: "text/html"
+                        }]
+                    };
+                    // Learn more about options https://docs.microsoft.com/en-us/azure/cognitive-services/immersive-reader/reference#options
+                    const options = {
+                        "onExit": exitCallback,
+                        "uiZIndex": 2000
+                    };
+                    ImmersiveReader.launchAsync(token, subdomain, data, options)
+                        .catch(function (error) {
+                            alert("Error in launching the Immersive Reader. Check the console.");
+                            console.log(error);
+                        });
+                })
+                .catch(function (error) {
+                    alert("Error in getting the Immersive Reader token and subdomain. Check the console.");
+                    console.log(error);
+                });
+        }
+
+        function exitCallback() {
+            console.log("This is the callback function. It is executed when the Immersive Reader closes.");
         }
     </script>
 </body>
