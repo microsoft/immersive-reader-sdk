@@ -161,6 +161,7 @@ iOSInjectionProject/
 .project
 .idea
 target/
+*/quickstart-kotlin/.settings
 
 # Python cache
 *.pyc
