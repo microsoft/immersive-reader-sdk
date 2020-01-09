@@ -7,7 +7,7 @@
 import { launchAsync } from '../src/immersive-reader-sdk';
 import { isValidSubdomain } from '../src/launchAsync';
 import { Content } from '../src/content';
-import { Options } from '../src/options';
+import { CookiePolicy, Options } from '../src/options';
 
 describe('launchAsync tests', () => {
     const SampleToken: string = 'not-a-real-token';
@@ -89,10 +89,10 @@ describe('launchAsync tests', () => {
         expect.assertions(1);
         const options: Options = { uiLang: '' };
         const launchPromise = launchAsync(SampleToken, SampleSubdomain, SampleContent, options);
-        window.postMessage('ImmersiveReader-LaunchSuccessful', '*');
+        window.postMessage('ImmersiveReader-LaunchResponse:{"success":true}', '*');
 
-        const container = await launchPromise;
-        const iframe = <HTMLIFrameElement>container.firstElementChild;
+        const response = await launchPromise;
+        const iframe = <HTMLIFrameElement>response.container.firstElementChild;
         expect(iframe.src).not.toContain('&omkt=');
     });
 
@@ -120,10 +120,10 @@ describe('launchAsync tests', () => {
         expect.assertions(1);
         const options: Options = { useWebview: true };
         const launchPromise = launchAsync(SampleToken, SampleSubdomain, SampleContent, options);
-        window.postMessage('ImmersiveReader-LaunchSuccessful', '*');
+        window.postMessage('ImmersiveReader-LaunchResponse:{"success":true}', '*');
 
-        const container = await launchPromise;
-        const firstElementTagName = container.firstElementChild.tagName;
+        const response = await launchPromise;
+        const firstElementTagName = response.container.firstElementChild.tagName;
 
         expect(firstElementTagName.toLowerCase()).toBe("webview");
     });
@@ -173,10 +173,10 @@ describe('launchAsync tests', () => {
         expect.assertions(1);
         const options: Options = { customDomain: '' };
         const launchPromise = launchAsync(SampleToken, SampleSubdomain, SampleContent, options);
-        window.postMessage('ImmersiveReader-LaunchSuccessful', '*');
+        window.postMessage('ImmersiveReader-LaunchResponse:{"success":true}', '*');
 
-        const container = await launchPromise;
-        const iframe = <HTMLIFrameElement>container.firstElementChild;
+        const response = await launchPromise;
+        const iframe = <HTMLIFrameElement>response.container.firstElementChild;
         expect(iframe.src.toLowerCase()).toContain(`https://${SampleSubdomain}.cognitiveservices.azure.com/immersivereader/webapp/v1.0/reader`);
     });
 
@@ -184,10 +184,10 @@ describe('launchAsync tests', () => {
         expect.assertions(1);
         const options: Options = { hideExitButton: true };
         const launchPromise = launchAsync(SampleToken, SampleSubdomain, SampleContent, options);
-        window.postMessage('ImmersiveReader-LaunchSuccessful', '*');
+        window.postMessage('ImmersiveReader-LaunchResponse:{"success":true}', '*');
 
-        const container = await launchPromise;
-        const iframe = <HTMLIFrameElement>container.firstElementChild;
+        const response = await launchPromise;
+        const iframe = <HTMLIFrameElement>response.container.firstElementChild;
 
         expect(iframe.src).toContain('&hideExitButton=true');
     });
@@ -196,10 +196,10 @@ describe('launchAsync tests', () => {
         expect.assertions(1);
         const options: Options = { hideExitButton: false };
         const launchPromise = launchAsync(SampleToken, SampleSubdomain, SampleContent, options);
-        window.postMessage('ImmersiveReader-LaunchSuccessful', '*');
+        window.postMessage('ImmersiveReader-LaunchResponse:{"success":true}', '*');
 
-        const container = await launchPromise;
-        const iframe = <HTMLIFrameElement>container.firstElementChild;
+        const response = await launchPromise;
+        const iframe = <HTMLIFrameElement>response.container.firstElementChild;
 
         expect(iframe.src).not.toContain('&hideExitButton=true');
     });
@@ -208,10 +208,10 @@ describe('launchAsync tests', () => {
         expect.assertions(1);
         const options: Options = { allowFullscreen: true };
         const launchPromise = launchAsync(SampleToken, SampleSubdomain, SampleContent, options);
-        window.postMessage('ImmersiveReader-LaunchSuccessful', '*');
+        window.postMessage('ImmersiveReader-LaunchResponse:{"success":true}', '*');
 
-        const container = await launchPromise;
-        const iframe = <HTMLIFrameElement>container.firstElementChild;
+        const response = await launchPromise;
+        const iframe = <HTMLIFrameElement>response.container.firstElementChild;
 
         expect(iframe.getAttribute('allowfullscreen')).not.toBeNull();
     });
@@ -220,12 +220,36 @@ describe('launchAsync tests', () => {
         expect.assertions(1);
         const options: Options = { allowFullscreen: false };
         const launchPromise = launchAsync(SampleToken, SampleSubdomain, SampleContent, options);
-        window.postMessage('ImmersiveReader-LaunchSuccessful', '*');
+        window.postMessage('ImmersiveReader-LaunchResponse:{"success":true}', '*');
 
-        const container = await launchPromise;
-        const iframe = <HTMLIFrameElement>container.firstElementChild;
+        const response = await launchPromise;
+        const iframe = <HTMLIFrameElement>response.container.firstElementChild;
 
         expect(iframe.getAttribute('allowfullscreen')).toBeNull();
+    });
+
+    it('launches with Cookie Policy enabled', async () => {
+        expect.assertions(1);
+        const options: Options = { cookiePolicy: CookiePolicy.Enable };
+        const launchPromise = launchAsync(SampleToken, SampleSubdomain, SampleContent, options);
+        window.postMessage('ImmersiveReader-LaunchResponse:{"success":true}', '*');
+
+        const response = await launchPromise;
+        const iframe = <HTMLIFrameElement>response.container.firstElementChild;
+
+        expect(iframe.src).toContain('&cookiePolicy=enable');
+    });
+
+    it('launches with Cookie Policy disabled', async () => {
+        expect.assertions(1);
+        const options: Options = { cookiePolicy: CookiePolicy.Disable };
+        const launchPromise = launchAsync(SampleToken, SampleSubdomain, SampleContent, options);
+        window.postMessage('ImmersiveReader-LaunchResponse:{"success":true}', '*');
+
+        const response = await launchPromise;
+        const iframe = <HTMLIFrameElement>response.container.firstElementChild;
+
+        expect(iframe.src).toContain('&cookiePolicy=disable');
     });
 
     it('launches with onExit callback', async () => {
@@ -236,7 +260,7 @@ describe('launchAsync tests', () => {
 
         const options: Options = { onExit: () => { cbOnExit(); } };
         const launchPromise = launchAsync(SampleToken, SampleSubdomain, SampleContent, options);
-        window.postMessage('ImmersiveReader-LaunchSuccessful', '*');
+        window.postMessage('ImmersiveReader-LaunchResponse:{"success":true}', '*');
 
         await launchPromise;
 
