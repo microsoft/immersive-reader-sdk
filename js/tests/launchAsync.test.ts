@@ -85,6 +85,17 @@ describe('launchAsync tests', () => {
         expect(iframe.src.toLowerCase()).toMatch('omkt=zh-hans');
     });
 
+    it('without setting the display language', async () => {
+        expect.assertions(1);
+        const options: Options = { uiLang: '' };
+        const launchPromise = launchAsync(SampleToken, SampleSubdomain, SampleContent, options);
+        window.postMessage('ImmersiveReader-LaunchSuccessful', '*');
+
+        const container = await launchPromise;
+        const iframe = <HTMLIFrameElement>container.firstElementChild;
+        expect(iframe.src).not.toContain('&omkt=');
+    });
+
     it('sets the z-index of the iframe', async () => {
         const zIndex = 12345;
         expect.assertions(1);
@@ -103,6 +114,18 @@ describe('launchAsync tests', () => {
 
         const response = await launchPromise;
         expect(response.container.style.zIndex).toEqual('1000'); // Default is 1000;
+    });
+
+    it('launches with a webview tag instead of an iframe', async () => {
+        expect.assertions(1);
+        const options: Options = { useWebview: true };
+        const launchPromise = launchAsync(SampleToken, SampleSubdomain, SampleContent, options);
+        window.postMessage('ImmersiveReader-LaunchSuccessful', '*');
+
+        const container = await launchPromise;
+        const firstElementTagName = container.firstElementChild.tagName;
+
+        expect(firstElementTagName.toLowerCase()).toBe("webview");
     });
 
     it('fails to launch due to timeout', async () => {
@@ -144,6 +167,85 @@ describe('launchAsync tests', () => {
         const response = await launchPromise;
         const iframe = <HTMLIFrameElement>response.container.firstElementChild;
         expect(iframe.src.toLowerCase()).toMatch('https://foo.com/');
+    });
+
+    it('launches with a custom subdomain 2', async () => {
+        expect.assertions(1);
+        const options: Options = { customDomain: '' };
+        const launchPromise = launchAsync(SampleToken, SampleSubdomain, SampleContent, options);
+        window.postMessage('ImmersiveReader-LaunchSuccessful', '*');
+
+        const container = await launchPromise;
+        const iframe = <HTMLIFrameElement>container.firstElementChild;
+        expect(iframe.src.toLowerCase()).toContain(`https://${SampleSubdomain}.cognitiveservices.azure.com/immersivereader/webapp/v1.0/reader`);
+    });
+
+    it('launches with exit button hidden', async () => {
+        expect.assertions(1);
+        const options: Options = { hideExitButton: true };
+        const launchPromise = launchAsync(SampleToken, SampleSubdomain, SampleContent, options);
+        window.postMessage('ImmersiveReader-LaunchSuccessful', '*');
+
+        const container = await launchPromise;
+        const iframe = <HTMLIFrameElement>container.firstElementChild;
+
+        expect(iframe.src).toContain('&hideExitButton=true');
+    });
+
+    it('launches with exit button displayed', async () => {
+        expect.assertions(1);
+        const options: Options = { hideExitButton: false };
+        const launchPromise = launchAsync(SampleToken, SampleSubdomain, SampleContent, options);
+        window.postMessage('ImmersiveReader-LaunchSuccessful', '*');
+
+        const container = await launchPromise;
+        const iframe = <HTMLIFrameElement>container.firstElementChild;
+
+        expect(iframe.src).not.toContain('&hideExitButton=true');
+    });
+
+    it('launches with full screen button displayed', async () => {
+        expect.assertions(1);
+        const options: Options = { allowFullscreen: true };
+        const launchPromise = launchAsync(SampleToken, SampleSubdomain, SampleContent, options);
+        window.postMessage('ImmersiveReader-LaunchSuccessful', '*');
+
+        const container = await launchPromise;
+        const iframe = <HTMLIFrameElement>container.firstElementChild;
+
+        expect(iframe.getAttribute('allowfullscreen')).not.toBeNull();
+    });
+
+    it('launches with full screen button hidden', async () => {
+        expect.assertions(1);
+        const options: Options = { allowFullscreen: false };
+        const launchPromise = launchAsync(SampleToken, SampleSubdomain, SampleContent, options);
+        window.postMessage('ImmersiveReader-LaunchSuccessful', '*');
+
+        const container = await launchPromise;
+        const iframe = <HTMLIFrameElement>container.firstElementChild;
+
+        expect(iframe.getAttribute('allowfullscreen')).toBeNull();
+    });
+
+    it('launches with onExit callback', async () => {
+        jest.useRealTimers();
+        expect.assertions(1);
+
+        const cbOnExit = jest.fn(() => { });
+
+        const options: Options = { onExit: () => { cbOnExit(); } };
+        const launchPromise = launchAsync(SampleToken, SampleSubdomain, SampleContent, options);
+        window.postMessage('ImmersiveReader-LaunchSuccessful', '*');
+
+        await launchPromise;
+
+        window.postMessage('ImmersiveReader-Exit', '*');
+
+        // this is to yield this thread of execution to allow the exit message to get processed
+        await new Promise(resolve => { setTimeout(resolve, 1); });
+
+        expect(cbOnExit).toHaveBeenCalledTimes(1);
     });
 });
 
