@@ -100,6 +100,7 @@ DerivedData/
 *.perspectivev3
 !default.perspectivev3
 xcuserdata/
+*.xcscheme
 
 ## Other
 *.moved-aside
@@ -160,6 +161,7 @@ iOSInjectionProject/
 .project
 .idea
 target/
+*/quickstart-kotlin/.settings
 
 # Python cache
 *.pyc

@@ -6,16 +6,14 @@ The Immersive Reader JavaScript SDK is a JavaScript library that allows you to e
 
 ## Usage
 
-Usage of this SDK requires an Azure subscription to Immersive Reader. Follow [these instructions](https://docs.microsoft.com/azure/cognitive-services/immersive-reader/azure-active-directory-authentication) to create an Immersive Reader resource with a custom subdomain and configure Azure Active Directory (Azure AD) authentication in your Azure tenant.
+Usage of this SDK requires an Azure subscription to Immersive Reader. Follow [these instructions](https://docs.microsoft.com/azure/cognitive-services/immersive-reader/how-to-create-immersive-reader) to create an Immersive Reader resource and configure Azure Active Directory authentication. Save the output of your session into a text file for future reference.
 
-Once you have completed that configuration, you will have a subdomain and will be able to create an Azure AD authentication token. Both the subdomain and a token are required when calling the SDK to launch the Immersive Reader.
-
-You can find examples of how to acquire an Azure AD token in the [samples](./samples).
+You can find examples of how to acquire an authentication token in the [samples](./samples).
 
 Include the library of the stable build in your web application:
 
 ```html
-<script type='text/javascript' src='https://contentstorage.onenote.office.net/onenoteltir/immersivereadersdk/immersive-reader-sdk.0.0.3.js'></script>
+<script type='text/javascript' src='https://contentstorage.onenote.office.net/onenoteltir/immersivereadersdk/immersive-reader-sdk.1.0.0.js'></script>
 ```
 
 ```bash
@@ -34,7 +32,7 @@ Add an HTML element to your webpage with the `immersive-reader-button` class att
 
 Next, invoke the Immersive Reader when the button is clicked:
 
-```typescript
+```javascript
 function launchImmersiveReader() {
     const content = {
         title: 'Immersive Reader',
@@ -57,7 +55,7 @@ In order to build the SDK, ensure that you have [Git](https://git-scm.com/downlo
 Clone a copy of the repo:
 
 ```bash
-git clone https://github.com/Microsoft/immersive-reader-sdk
+git clone https://github.com/microsoft/immersive-reader-sdk
 ```
 
 Change to the immersive-reader-sdk directory:

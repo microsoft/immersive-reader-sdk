@@ -4,6 +4,7 @@
 import { Content } from './content';
 import { CookiePolicy, Options } from './options';
 import { Error, ErrorCode } from './error';
+import { LaunchResponse } from './launchResponse';
 declare const VERSION: string;
 
 type Message = {
@@ -13,8 +14,20 @@ type Message = {
     launchToPostMessageSentDurationInMs: number;
 };
 
+type LaunchResponseMessage = {
+    success: boolean;
+    errorCode?: ErrorCode;
+    sessionId: string;
+};
+
 const sdkPlatform = 'js';
 const sdkVersion = VERSION;
+
+const errorMessageMap: { [errorCode: string]: string } = {};
+errorMessageMap[ErrorCode.TokenExpired] = 'The access token supplied is expired.';
+errorMessageMap[ErrorCode.Throttled] = 'You have exceeded your quota.';
+errorMessageMap[ErrorCode.ServerError] = 'An error occurred when calling the server to process the text.';
+errorMessageMap[ErrorCode.InvalidSubdomain] = 'The subdomain supplied is invalid.';
 
 /**
  * Launch the Immersive Reader within an iframe.
@@ -22,9 +35,9 @@ const sdkVersion = VERSION;
  * @param subdomain The Immersive Reader Cognitive Service subdomain. This is a required parameter for Azure AD authentication in this and future versions of this SDK. Use of the Cognitive Services issueToken endpoint-based authentication tokens is deprecated and no longer supported.
  * @param content The content that should be shown in the Immersive Reader.
  * @param options Options for configuring the look and feel of the Immersive Reader.
- * @return A promise that resolves when the Immersive Reader is launched. The promise resolves with the div that contains an iframe which contains the Immersive Reader.
+ * @return A promise that resolves with a LaunchResponse when the Immersive Reader is launched.
  */
-export function launchAsync(token: string, subdomain: string, content: Content, options?: Options): Promise<HTMLDivElement> {
+export function launchAsync(token: string, subdomain: string, content: Content, options?: Options): Promise<LaunchResponse> {
     return new Promise((resolve, reject: (reason: Error) => void): void => {
         if (!token) {
             reject({ code: ErrorCode.BadArgument, message: 'Token must not be null' });
@@ -47,7 +60,7 @@ export function launchAsync(token: string, subdomain: string, content: Content, 
         }
 
         if (!isValidSubdomain(subdomain) && (!options || !options.customDomain)) {
-            reject({ code: ErrorCode.BadArgument, message: 'The subdomain supplied is invalid.' });
+            reject({ code: ErrorCode.InvalidSubdomain, message: errorMessageMap[ErrorCode.InvalidSubdomain] });
             return;
         }
 
@@ -121,23 +134,44 @@ export function launchAsync(token: string, subdomain: string, content: Content, 
                     launchToPostMessageSentDurationInMs: Date.now() - startTime
                 };
                 iframe.contentWindow!.postMessage(JSON.stringify({ messageType: 'Content', messageValue: message }), '*');
-            } else if (e.data === 'ImmersiveReader-LaunchSuccessful') {
-                resetTimeout();
-                resolve(iframeContainer);
-            } else if (e.data === 'ImmersiveReader-TokenExpired') {
+            } else if (e.data === 'ImmersiveReader-Exit') {
                 exit();
-                reject({ code: ErrorCode.TokenExpired, message: 'The access token supplied is expired.' });
-            } else if (e.data === 'ImmersiveReader-Throttled') {
-                exit();
-                reject({ code: ErrorCode.Throttled, message: 'You have exceeded your quota.' });
-            } else if (e.data === 'ImmersiveReader-InvalidCognitiveServicesSubdomain') {
-                exit();
-                reject({ code: ErrorCode.BadArgument, message: 'The subdomain supplied is invalid.' });
-            } else if (e.data === 'ImmersiveReader-ServerError') {
-                exit();
-                reject({ code: ErrorCode.ServerError, message: 'An error occurred when calling the server to process the text.' });
-            }  else if (e.data === 'ImmersiveReader-Exit') {
-                exit();
+            } else if (e.data.startsWith('ImmersiveReader-LaunchResponse:')) {
+                let launchResponse: LaunchResponse = null;
+                let error: Error = null;
+
+                let response: LaunchResponseMessage = null;
+                try {
+                    response = JSON.parse(e.data.substring('ImmersiveReader-LaunchResponse:'.length));
+                } catch {
+                    // No-op
+                }
+
+                if (response && response.success) {
+                    launchResponse = {
+                        container: iframeContainer,
+                        sessionId: response.sessionId
+                    };
+                } else if (response && !response.success) {
+                    error = {
+                        code: response.errorCode,
+                        message: errorMessageMap[response.errorCode],
+                        sessionId: response.sessionId
+                    };
+                } else {
+                    error = {
+                        code: ErrorCode.ServerError,
+                        message: errorMessageMap[ErrorCode.ServerError]
+                    };
+                }
+
+                if (launchResponse) {
+                    resetTimeout();
+                    resolve(launchResponse);
+                } else if (error) {
+                    exit();
+                    reject(error);
+                }
             }
         };
         window.addEventListener('message', messageHandler);
