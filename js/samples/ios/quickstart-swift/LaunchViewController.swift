@@ -131,9 +131,8 @@ class LaunchViewController: UIViewController {
                 return
             }
 
-            let responseString = String(data: data, encoding: .utf8)
-
             let jsonResponse = try? JSONSerialization.jsonObject(with: data, options: [])
+            
             guard let jsonDictonary = jsonResponse as? [String: Any] else {
                 onFailure("Error parsing JSON response.")
                 return
