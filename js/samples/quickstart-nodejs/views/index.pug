@@ -2,13 +2,13 @@ doctype html
 html
    head
       title Immersive Reader Quickstart Node.js
-      
+
       link(rel='stylesheet', href='https://stackpath.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css')
 
       // A polyfill for Promise is needed for IE11 support.
       script(src='https://cdn.jsdelivr.net/npm/promise-polyfill@8/dist/polyfill.min.js')
-      
-      script(src='https://contentstorage.onenote.office.net/onenoteltir/immersivereadersdk/immersive-reader-sdk.0.0.3.js')
+
+      script(src='https://contentstorage.onenote.office.net/onenoteltir/immersivereadersdk/immersive-reader-sdk.1.0.0.js')
       script(src='https://code.jquery.com/jquery-3.3.1.min.js')
 
       style(type="text/css").
@@ -21,7 +21,7 @@ html
    body
       div(class="container")
         button(class="immersive-reader-button" data-button-style="iconAndText" data-locale="en")
-    
+
         h1(id="ir-title") About Immersive Reader
         div(id="ir-content" lang="en-us")
           p Immersive Reader is a tool that implements proven techniques to improve reading comprehension for emerging readers, language learners, and people with learning differences. The Immersive Reader is designed to make reading more accessible for everyone. The Immersive Reader
@@ -40,7 +40,7 @@ html
           p(lang="zh-cn") 沉浸式阅读器支持许多语言
           p(lang="de-de") Der plastische Reader ist in vielen Sprachen verfügbar.
           p(lang="ar-eg" dir="rtl" style="text-align:right") يتوفر \"القارئ الشامل\" في العديد من اللغات.
-    
+
 script(type="text/javascript").
   function getTokenAndSubdomainAsync() {
         return new Promise(function (resolve, reject) {
