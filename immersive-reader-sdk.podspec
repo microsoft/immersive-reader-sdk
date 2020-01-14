@@ -11,7 +11,7 @@ Pod::Spec.new do |spec|
   spec.author       = { "Immersive Reader SDK" => "irsdk@microsoft.com" }
   spec.platform     = :ios, "9.0"
 
-  spec.source       = { :git => "https://github.com/microsoft/immersive-reader-sdk.git", :branch => "master", :tag => "1.0.0" }
+  spec.source       = { :git => "https://github.com/microsoft/immersive-reader-sdk.git", :tag => "legacy-ios" }
   spec.source_files = ["iOS/immersive-reader-sdk/immersive-reader-sdk/ImmersiveReaderViewController.swift", "iOS/immersive-reader-sdk/immersive-reader-sdk/LaunchImmersiveReader.swift", "iOS/immersive-reader-sdk/immersive-reader-sdk/TestingHandler.swift", "iOS/immersive-reader-sdk/immersive-reader-sdk/immersive_reader_sdk.h"]
 
  spec.resource_bundles = {

@@ -1,12 +1,13 @@
 {
   "name": "@microsoft/immersive-reader-sdk",
-  "version": "0.0.3",
+  "version": "1.0.0",
   "homepage": "https://github.com/Microsoft/immersive-reader-sdk",
   "license": "MIT",
   "main": "lib/immersive-reader-sdk.js",
   "types": "lib/immersive-reader-sdk.d.ts",
   "devDependencies": {
     "@types/jest": "^24.0.11",
+    "@types/node": "^12.12.14",
     "jest": "^24.9.00",
     "replace-in-file": "^3.4.4",
     "ts-jest": "^24.0.0",

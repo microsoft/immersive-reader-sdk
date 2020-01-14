@@ -11,8 +11,8 @@ fs.copyFileSync('lib/immersive-reader-sdk.js', 'lib/immersive-reader-sdk.local.j
 
 replace.sync({
     files: 'lib/immersive-reader-sdk.edog.js',
-    from: /learningtools\.onenote\.com/g,
-    to: 'learningtools.edog.onenote.com'
+    from: /cognitiveservices\.azure\.com/g,
+    to: 'ppe.cognitiveservices.azure.com'
 });
 
 replace.sync({

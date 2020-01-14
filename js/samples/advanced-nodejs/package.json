@@ -3,6 +3,7 @@
   "version": "0.0.0",
   "private": true,
   "scripts": {
+    "build:dev": "cd ../../ && yarn build && node build/copy-dev.js --outPath ./samples/advanced-nodejs/public/js/immersive-reader-sdk.local.js",
     "start": "node ./bin/www"
   },
   "dependencies": {

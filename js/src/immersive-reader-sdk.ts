@@ -3,9 +3,20 @@
 
 import { renderButtons } from './renderButtons';
 import { close, launchAsync } from './launchAsync';
+import { CookiePolicy } from './options';
 
 window.addEventListener('load', () => {
+    if (!(window.hasOwnProperty('Promise'))) {
+        dynamicallyLoadScript('https://contentstorage.onenote.office.net/onenoteltir/permanent-static-resources/promise-polyfill.min.js');
+    }
+
     renderButtons();
 });
 
-export {renderButtons, close, launchAsync};
+function dynamicallyLoadScript(scriptUrl: string) {
+    const script = document.createElement('script');
+    script.src = scriptUrl;
+    document.head.appendChild(script);
+}
+
+export { renderButtons, close, launchAsync, CookiePolicy };
