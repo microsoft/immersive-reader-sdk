@@ -69,6 +69,7 @@ bin/
 lib/
 # Check in the nodejs express bin
 !samples/nodejs/bin/
+!js/samples/quickstart-csharp/wwwroot/lib/
 obj/
 packages/
 *.csproj.user
