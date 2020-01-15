@@ -97,8 +97,9 @@ namespace ImmersiveReader
             var script = this.GetType().GetTypeInfo().Assembly.GetManifestResourceStream("ImmersiveReader.script.txt");
             if (script == null)
             {
-                throw new Exception("Error loading the immersive reader script from assembly. " +
-                    "Is the script name or path correct?");
+                MainWebView.NavigateToString($"Error loading the immersive reader script from assembly. " +
+                    $"Please contact SDK owners for more help.");
+                return;
             }
 
             string text = "";
@@ -108,6 +109,11 @@ namespace ImmersiveReader
             }
 
             var token = await GetTokenAsync();
+            if (string.IsNullOrWhiteSpace(token))
+            {
+                return;
+            }
+
             text = text.Replace("|TOKEN|", token);
             text = text.Replace("|YOUR_SUB_DOMAIN|", this.Subdomain);
             text = text.Replace("|CONTENT|", this.ReaderContent);
@@ -121,7 +127,12 @@ namespace ImmersiveReader
                 return this.Token;
             }
 
-            ValidateAuthStrings();
+            string errorMessage = ValidateAuthStrings();
+            if (errorMessage != null)
+            {
+                MainWebView.NavigateToString(errorMessage);
+                return null;
+            }
 
             string authority = $"https://login.windows.net/{TenantId}";
             const string resource = "https://cognitiveservices.azure.com/";
@@ -133,28 +144,22 @@ namespace ImmersiveReader
             return authResult.AccessToken;
         }
 
-        private void ValidateAuthStrings()
+        private string ValidateAuthStrings()
         {
             if (string.IsNullOrWhiteSpace(this.TenantId))
             {
-                throw new ArgumentNullException(
-                    nameof(this.TenantId),
-                    "Missing TenantId. Unable to fetch token.");
+                return "Missing TenantId";
+            }
+            else if (string.IsNullOrWhiteSpace(this.ClientId))
+            {
+                return "Missing ClientId";
+            }
+            else if (string.IsNullOrWhiteSpace(this.ClientSecret))
+            {
+                return "Missing ClientSecret";
             }
 
-            if (string.IsNullOrWhiteSpace(this.ClientId))
-            {
-                throw new ArgumentNullException(
-                    nameof(this.ClientId),
-                    "Missing ClientId. Unable to fetch token.");
-            }
-
-            if (string.IsNullOrWhiteSpace(this.ClientSecret))
-            {
-                throw new ArgumentNullException(
-                    nameof(this.ClientSecret),
-                    "Missing ClientSecret. Unable to fetch token.");
-            }
+            return null;
         }
 
         private void MainWebView_NavigationCompleted(WebView sender, WebViewNavigationCompletedEventArgs args)
