@@ -9,7 +9,7 @@
 
 1. Open a command prompt (Windows) or terminal (OSX, Linux)
 
-1. Navigate to the **immersive-reader-sdk/js/samples/quickstart-nodejs** directory
+1. Navigate to the **immersive-reader-sdk/js/samples/advanced-nodejs** directory
 
 1. Run `yarn install`
 
