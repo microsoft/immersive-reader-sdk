@@ -9,7 +9,7 @@
 
 1. Open a command prompt (Windows) or terminal (OSX, Linux)
 
-1. Navigate to the **immersive-reader-sdk/js/samples/quickstart-nodejs** directory
+1. Navigate to the **immersive-reader-sdk/js/samples/advanced-nodejs** directory
 
 1. Run `yarn install`
 
@@ -24,7 +24,7 @@
 
 1. Run `yarn build:dev`
 
-1. Run `npm start` (or `nodemon start` if you want to view changes you make after doing a browser refresh)
+1. Run `yarn run start` (or `nodemon start` if you want to view changes you make after doing a browser refresh)
 
 1. Open a web browser and navigate to [http://localhost:3000](http://localhost:3000) to view the sample
 
