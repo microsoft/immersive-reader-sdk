@@ -143,7 +143,7 @@ class MainActivity : AppCompatActivity() {
                   var options: Options? = null)
 
     // Only includes Immersive Reader options relevant to Android apps.
-    // For a complete list visit https://docs.microsoft.com/en-us/azure/cognitive-services/immersive-reader/reference
+    // For a complete list visit https://docs.microsoft.com/azure/cognitive-services/immersive-reader/reference
     class Options(var uiLang: String? = null, // Language of the UI, e.g. en, es-ES (optional). Defaults to browser language if not specified.
                   var timeout: Int? = null, // Duration (in milliseconds) before launchAsync fails with a timeout error (default is 15000 ms).
                   var uiZIndex: Int? = null, // Z-index of the iframe that will be created (default is 1000)
