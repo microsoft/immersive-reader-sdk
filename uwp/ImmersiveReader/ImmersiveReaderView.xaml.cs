@@ -13,6 +13,7 @@ namespace ImmersiveReader
 {
     public sealed partial class ImmersiveReaderView : UserControl
     {
+        private string _script;
         public event TypedEventHandler<WebView, WebViewNavigationCompletedEventArgs> NavigationCompleted;
 
         public ImmersiveReaderView()
@@ -92,21 +93,27 @@ namespace ImmersiveReader
             typeof(ImmersiveReaderView),
             null);
 
-        public async void Start()
+        public async Task Start(string title)
         {
-            var script = this.GetType().GetTypeInfo().Assembly.GetManifestResourceStream("ImmersiveReader.script.html");
-            if (script == null)
+            if (string.IsNullOrWhiteSpace(_script))
             {
-                MainWebView.NavigateToString($"Error loading the immersive reader script from assembly. " +
-                    $"Please contact SDK owners for more help.");
-                return;
+                var assembly = this.GetType().GetTypeInfo().Assembly;
+                using (Stream scriptStream = assembly.GetManifestResourceStream("ImmersiveReader.script.html"))
+                {
+                    if (scriptStream == null)
+                    {
+                        throw new Exception($"Error loading the immersive reader script from assembly. " +
+                            $"Please contact SDK owners for more help.");
+                    }
+
+                    using (var reader = new StreamReader(scriptStream))
+                    {
+                        _script = reader.ReadToEnd();
+                    }
+                }
             }
 
-            string text = "";
-            using (var reader = new StreamReader(script))
-            {
-                text = reader.ReadToEnd();
-            }
+            string text = _script;
 
             var token = await GetTokenAsync();
             if (string.IsNullOrWhiteSpace(token))
@@ -114,9 +121,10 @@ namespace ImmersiveReader
                 return;
             }
 
+            text = text.Replace("|TITLE", title.Replace("'", "\\\'"));
             text = text.Replace("|TOKEN|", token);
             text = text.Replace("|YOUR_SUB_DOMAIN|", this.Subdomain);
-            text = text.Replace("|CONTENT|", this.ReaderContent);
+            text = text.Replace("|CONTENT|", this.ReaderContent.Replace("'", "\\\'"));
             MainWebView.NavigateToString(text);
         }
 

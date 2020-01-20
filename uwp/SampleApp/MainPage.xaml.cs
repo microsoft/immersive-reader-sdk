@@ -27,14 +27,14 @@ namespace SampleApp
             this.InitializeComponent();
         }
 
-        private void Button_Click(object sender, RoutedEventArgs e)
+        private async void Button_Click(object sender, RoutedEventArgs e)
         {
             immersiveReader.TenantId = TenantId.Text;
             immersiveReader.ClientId = ClientId.Text;
             immersiveReader.ClientSecret = ClientSecret.Password;
             immersiveReader.Subdomain = Subdomain.Text;
             immersiveReader.ReaderContent = ReaderContent.Text;
-            immersiveReader.Start();
+            await immersiveReader.Start("Title");
         }
     }
 }
