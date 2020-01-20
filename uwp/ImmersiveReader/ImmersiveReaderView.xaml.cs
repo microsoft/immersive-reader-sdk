@@ -94,7 +94,7 @@ namespace ImmersiveReader
 
         public async void Start()
         {
-            var script = this.GetType().GetTypeInfo().Assembly.GetManifestResourceStream("ImmersiveReader.script.txt");
+            var script = this.GetType().GetTypeInfo().Assembly.GetManifestResourceStream("ImmersiveReader.script.html");
             if (script == null)
             {
                 MainWebView.NavigateToString($"Error loading the immersive reader script from assembly. " +
