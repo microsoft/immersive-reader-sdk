@@ -9,6 +9,6 @@
     d:DesignHeight="300"
     d:DesignWidth="400">
 
-    <WebView x:Name="MainWebView" NavigationCompleted="MainWebView_NavigationCompleted"/>
+    <WebView x:Name="MainWebView"/>
 
 </UserControl>

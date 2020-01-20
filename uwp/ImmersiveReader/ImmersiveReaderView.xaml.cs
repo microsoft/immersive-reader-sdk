@@ -14,7 +14,6 @@ namespace ImmersiveReader
     public sealed partial class ImmersiveReaderView : UserControl
     {
         private string _script;
-        public event TypedEventHandler<WebView, WebViewNavigationCompletedEventArgs> NavigationCompleted;
 
         public ImmersiveReaderView()
         {
@@ -121,7 +120,7 @@ namespace ImmersiveReader
                 return;
             }
 
-            text = text.Replace("|TITLE", title.Replace("'", "\\\'"));
+            text = text.Replace("|TITLE", title);
             text = text.Replace("|TOKEN|", token);
             text = text.Replace("|YOUR_SUB_DOMAIN|", this.Subdomain);
             text = text.Replace("|CONTENT|", this.ReaderContent.Replace("'", "\\\'"));
@@ -168,11 +167,6 @@ namespace ImmersiveReader
             }
 
             return null;
-        }
-
-        private void MainWebView_NavigationCompleted(WebView sender, WebViewNavigationCompletedEventArgs args)
-        {
-            NavigationCompleted?.Invoke(sender, args);
         }
     }
 }
