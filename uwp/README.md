@@ -9,8 +9,4 @@ Usage of this SDK requires an Azure subscription to Immersive Reader. Follow [th
 
 For sample usage, launch the `ImmersiveReader.sln` file in Visual Studio 2019. Ensure that you have the UWP development tooling installed. Note that this Immersive Reader.
 
-Press `F5` to run the sample application. Enter your azure information into the sample app and click the `Start immersive reader` button.
-
-## Nuget
-
-TODO: use the nuspec file to publish this component in Nuget to optimize the developer workflow.
+Press `F5` to run the sample application. Enter your Azure information into the sample app and click the `Start immersive reader` button.
