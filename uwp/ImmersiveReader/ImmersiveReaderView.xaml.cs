@@ -108,7 +108,7 @@ namespace ImmersiveReader
 
                     using (var reader = new StreamReader(scriptStream))
                     {
-                        _script = reader.ReadToEnd();
+                        _script = await reader.ReadToEndAsync();
                     }
                 }
             }
