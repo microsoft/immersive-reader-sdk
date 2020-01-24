@@ -33,8 +33,7 @@ namespace SampleApp
             immersiveReader.ClientId = ClientId.Text;
             immersiveReader.ClientSecret = ClientSecret.Password;
             immersiveReader.Subdomain = Subdomain.Text;
-            immersiveReader.ReaderContent = ReaderContent.Text;
-            await immersiveReader.Start("Title");
+            await immersiveReader.Start("Title", ReaderContent.Text);
         }
     }
 }
