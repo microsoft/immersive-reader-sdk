@@ -14,35 +14,12 @@ namespace ImmersiveReader
     public sealed partial class ImmersiveReaderView : UserControl
     {
         private string _script;
+        private AuthenticationResult _authResult;
 
         public ImmersiveReaderView()
         {
             this.InitializeComponent();
         }
-
-        public string Token
-        {
-            get => (string)GetValue(TokenProperty);
-            set => SetValue(TokenProperty, value);
-        }
-
-        private static DependencyProperty TokenProperty = DependencyProperty.Register(
-            "Token",
-            typeof(string),
-            typeof(ImmersiveReaderView),
-            null);
-
-        public string ReaderContent
-        {
-            get => (string)GetValue(ReaderContentProperty);
-            set => SetValue(ReaderContentProperty, value);
-        }
-
-        private static DependencyProperty ReaderContentProperty = DependencyProperty.Register(
-            "ReaderContent",
-            typeof(string),
-            typeof(ImmersiveReaderView),
-            null);
 
         public string Subdomain
         {
@@ -92,7 +69,12 @@ namespace ImmersiveReader
             typeof(ImmersiveReaderView),
             null);
 
-        public async Task Start(string title)
+        public IAsyncAction Start(string title, string content)
+        {
+            return StartAsync(title, content).AsAsyncAction();
+        }
+
+        private async Task StartAsync(string title, string content)
         {
             if (string.IsNullOrWhiteSpace(_script))
             {
@@ -113,60 +95,48 @@ namespace ImmersiveReader
             }
 
             string text = _script;
-
             var token = await GetTokenAsync();
-            if (string.IsNullOrWhiteSpace(token))
-            {
-                return;
-            }
 
             text = text.Replace("|TITLE", title);
             text = text.Replace("|TOKEN|", token);
             text = text.Replace("|YOUR_SUB_DOMAIN|", this.Subdomain);
-            text = text.Replace("|CONTENT|", this.ReaderContent.Replace("'", "\\\'"));
+            text = text.Replace("|CONTENT|", content.Replace("'", "\\\'"));
             MainWebView.NavigateToString(text);
         }
 
         private async Task<string> GetTokenAsync()
         {
-            if (!string.IsNullOrWhiteSpace(this.Token))
+            if (_authResult != null && _authResult.ExpiresOn > DateTimeOffset.Now)
             {
-                return this.Token;
+                return _authResult.AccessToken;
             }
 
-            string errorMessage = ValidateAuthStrings();
-            if (errorMessage != null)
-            {
-                MainWebView.NavigateToString(errorMessage);
-                return null;
-            }
-
+            ValidateAuthStrings();
+ 
             string authority = $"https://login.windows.net/{TenantId}";
             const string resource = "https://cognitiveservices.azure.com/";
 
             AuthenticationContext authContext = new AuthenticationContext(authority);
             ClientCredential clientCredential = new ClientCredential(ClientId, ClientSecret);
-            AuthenticationResult authResult = await authContext.AcquireTokenAsync(resource, clientCredential);
+            _authResult = await authContext.AcquireTokenAsync(resource, clientCredential);
 
-            return authResult.AccessToken;
+            return _authResult.AccessToken;
         }
 
-        private string ValidateAuthStrings()
+        private void ValidateAuthStrings()
         {
             if (string.IsNullOrWhiteSpace(this.TenantId))
             {
-                return "Missing TenantId";
+                throw new ArgumentNullException("TenantId");
             }
             else if (string.IsNullOrWhiteSpace(this.ClientId))
             {
-                return "Missing ClientId";
+                throw new ArgumentNullException("ClientId");
             }
             else if (string.IsNullOrWhiteSpace(this.ClientSecret))
             {
-                return "Missing ClientSecret";
+                throw new ArgumentNullException("ClientSecret");
             }
-
-            return null;
         }
     }
 }
