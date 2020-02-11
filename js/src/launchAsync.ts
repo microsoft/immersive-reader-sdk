@@ -12,6 +12,7 @@ type Message = {
     cogSvcsSubdomain: string;
     request: Content;
     launchToPostMessageSentDurationInMs: number;
+    disableFirstRun?: boolean;
 };
 
 type LaunchResponseMessage = {
@@ -131,7 +132,8 @@ export function launchAsync(token: string, subdomain: string, content: Content, 
                     cogSvcsAccessToken: token,
                     cogSvcsSubdomain: subdomain,
                     request: content,
-                    launchToPostMessageSentDurationInMs: Date.now() - startTime
+                    launchToPostMessageSentDurationInMs: Date.now() - startTime,
+                    disableFirstRun: options.disableFirstRun
                 };
                 iframe.contentWindow!.postMessage(JSON.stringify({ messageType: 'Content', messageValue: message }), '*');
             } else if (e.data === 'ImmersiveReader-Exit') {
