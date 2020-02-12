@@ -19,6 +19,7 @@ type LaunchResponseMessage = {
     success: boolean;
     errorCode?: ErrorCode;
     sessionId: string;
+    meteredContentSize?: number;
 };
 
 const sdkPlatform = 'js';
@@ -152,7 +153,8 @@ export function launchAsync(token: string, subdomain: string, content: Content, 
                 if (response && response.success) {
                     launchResponse = {
                         container: iframeContainer,
-                        sessionId: response.sessionId
+                        sessionId: response.sessionId,
+                        charactersProcessed: response.meteredContentSize
                     };
                 } else if (response && !response.success) {
                     error = {
