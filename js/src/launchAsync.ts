@@ -125,7 +125,8 @@ export function launchAsync(token: string, subdomain: string, content: Content, 
         reset();
 
         const messageHandler = (e: any): void => {
-            if (!e || !e.data) { return; }
+            // Don't process the message if the data is not a string
+            if (!e || !e.data || typeof e.data !== 'string') { return; }
 
             if (e.data === 'ImmersiveReader-ReadyForContent') {
                 resetTimeout(); // Reset the timeout once the reader page loads successfully. The Reader page will report further errors through PostMessage if there is an issue obtaining the ContentModel from the server
