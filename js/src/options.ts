@@ -18,9 +18,7 @@ export type Options = {
 export enum CookiePolicy { Disable, Enable }
 
 export type ReadAloudOptions = {
-    voice?: Gender;      // Voice, either 'male' or 'female'. Note that not all languages support both genders.
+    voice?: string;      // Voice, either 'male' or 'female'. Note that not all languages support both genders.
     speed?: number;      // Playback speed, must be between 0.5 and 2.5, inclusive.
     autoplay?: boolean;  // Automatically start Read Aloud when the Immersive Reader loads.
 };
-
-export enum Gender { Female = 'female', Male = 'male' }
