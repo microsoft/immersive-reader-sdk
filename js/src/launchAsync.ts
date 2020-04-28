@@ -2,7 +2,7 @@
 // Licensed under the MIT License.
 
 import { Content } from './content';
-import { CookiePolicy, Options } from './options';
+import { CookiePolicy, Options, ReadAloudOptions } from './options';
 import { Error, ErrorCode } from './error';
 import { LaunchResponse } from './launchResponse';
 declare const VERSION: string;
@@ -13,6 +13,7 @@ type Message = {
     request: Content;
     launchToPostMessageSentDurationInMs: number;
     disableFirstRun?: boolean;
+    readAloudOptions?: ReadAloudOptions;
 };
 
 type LaunchResponseMessage = {
@@ -85,6 +86,7 @@ export function launchAsync(token: string, subdomain: string, content: Content, 
         let timeoutId: number | null = null;
         const iframeContainer: HTMLDivElement = document.createElement('div');
         const iframe: HTMLIFrameElement = options.useWebview ? <HTMLIFrameElement>document.createElement('webview') : document.createElement('iframe');
+        iframe.allow = 'autoplay';
         const noscroll: HTMLStyleElement = document.createElement('style');
         noscroll.innerHTML = 'body{height:100%;overflow:hidden;}';
 
@@ -135,7 +137,8 @@ export function launchAsync(token: string, subdomain: string, content: Content, 
                     cogSvcsSubdomain: subdomain,
                     request: content,
                     launchToPostMessageSentDurationInMs: Date.now() - startTime,
-                    disableFirstRun: options.disableFirstRun
+                    disableFirstRun: options.disableFirstRun,
+                    readAloudOptions: options.readAloudOptions
                 };
                 iframe.contentWindow!.postMessage(JSON.stringify({ messageType: 'Content', messageValue: message }), '*');
             } else if (e.data === 'ImmersiveReader-Exit') {
