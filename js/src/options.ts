@@ -13,6 +13,7 @@ export type Options = {
     cookiePolicy?: CookiePolicy; // Setting for the Immersive Reader's cookie usage (default is CookiePolicy.Disable). It's the responsibility of the host application to obtain any necessary user consent in accordance with EU Cookie Compliance Policy.
     disableFirstRun?: boolean; // Disable the first run experience
     readAloudOptions?: ReadAloudOptions; // Options to configure Read Aloud
+    translationOptions?: TranslationOptions; // Options to configure Translation
 };
 
 export enum CookiePolicy { Disable, Enable }
@@ -21,4 +22,10 @@ export type ReadAloudOptions = {
     voice?: string;      // Voice, either 'male' or 'female'. Note that not all languages support both genders.
     speed?: number;      // Playback speed, must be between 0.5 and 2.5, inclusive.
     autoplay?: boolean;  // Automatically start Read Aloud when the Immersive Reader loads.
+};
+
+export type TranslationOptions = {
+    language: string;                       // Set the translation language, e.g. fr-FR, es-MX, zh-Hans-CN. Required to automatically enable word or document translation.
+    enableDocumentTranslation?: boolean;    // Automatically translate the entire document
+    enableWordTranslation?: boolean;        // Automatically enable word translation
 };

@@ -2,7 +2,7 @@
 // Licensed under the MIT License.
 
 import { Content } from './content';
-import { CookiePolicy, Options, ReadAloudOptions } from './options';
+import { CookiePolicy, Options, ReadAloudOptions, TranslationOptions } from './options';
 import { Error, ErrorCode } from './error';
 import { LaunchResponse } from './launchResponse';
 declare const VERSION: string;
@@ -14,6 +14,7 @@ type Message = {
     launchToPostMessageSentDurationInMs: number;
     disableFirstRun?: boolean;
     readAloudOptions?: ReadAloudOptions;
+    translationOptions?: TranslationOptions;
 };
 
 type LaunchResponseMessage = {
@@ -138,7 +139,8 @@ export function launchAsync(token: string, subdomain: string, content: Content, 
                     request: content,
                     launchToPostMessageSentDurationInMs: Date.now() - startTime,
                     disableFirstRun: options.disableFirstRun,
-                    readAloudOptions: options.readAloudOptions
+                    readAloudOptions: options.readAloudOptions,
+                    translationOptions: options.translationOptions
                 };
                 iframe.contentWindow!.postMessage(JSON.stringify({ messageType: 'Content', messageValue: message }), '*');
             } else if (e.data === 'ImmersiveReader-Exit') {
