@@ -2,7 +2,7 @@
 // Licensed under the MIT License.
 
 import { Content } from './content';
-import { CookiePolicy, Options, ReadAloudOptions } from './options';
+import { CookiePolicy, InternalOptions, Options, ReadAloudOptions } from './options';
 import { Error, ErrorCode } from './error';
 import { LaunchResponse } from './launchResponse';
 declare const VERSION: string;
@@ -14,6 +14,7 @@ type Message = {
     launchToPostMessageSentDurationInMs: number;
     disableFirstRun?: boolean;
     readAloudOptions?: ReadAloudOptions;
+    internalOptions?: InternalOptions;
 };
 
 type LaunchResponseMessage = {
@@ -123,6 +124,14 @@ export function launchAsync(token: string, subdomain: string, content: Content, 
             }
         };
 
+        const getInternalOptions = (): InternalOptions => {
+            if (options.internalOptions?.messageOptions) {
+                return { messageOptions: options.internalOptions.messageOptions };
+            }
+
+            return undefined;
+        };
+
         // Reset variables
         reset();
 
@@ -138,7 +147,8 @@ export function launchAsync(token: string, subdomain: string, content: Content, 
                     request: content,
                     launchToPostMessageSentDurationInMs: Date.now() - startTime,
                     disableFirstRun: options.disableFirstRun,
-                    readAloudOptions: options.readAloudOptions
+                    readAloudOptions: options.readAloudOptions,
+                    internalOptions: getInternalOptions()
                 };
                 iframe.contentWindow!.postMessage(JSON.stringify({ messageType: 'Content', messageValue: message }), '*');
             } else if (e.data === 'ImmersiveReader-Exit') {
@@ -214,6 +224,11 @@ export function launchAsync(token: string, subdomain: string, content: Content, 
 
         if (options.uiLang) {
             src += '&omkt=' + options.uiLang;
+        }
+
+        const queryParameters = options.internalOptions?.queryParameters;
+        for (let i = 0; i < queryParameters?.length; i++) {
+            src += '&' + queryParameters[i].option + '=' + queryParameters[i].value;
         }
 
         iframe.src = src;
