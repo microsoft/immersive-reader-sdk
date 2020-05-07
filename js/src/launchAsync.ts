@@ -2,7 +2,7 @@
 // Licensed under the MIT License.
 
 import { Content } from './content';
-import { CookiePolicy, InternalOptions, Options, ReadAloudOptions } from './options';
+import { CookiePolicy, InternalOptions, Options, ReadAloudOptions, TranslationOptions } from './options';
 import { Error, ErrorCode } from './error';
 import { LaunchResponse } from './launchResponse';
 declare const VERSION: string;
@@ -14,6 +14,7 @@ type Message = {
     launchToPostMessageSentDurationInMs: number;
     disableFirstRun?: boolean;
     readAloudOptions?: ReadAloudOptions;
+    translationOptions?: TranslationOptions;
     internalOptions?: InternalOptions;
 };
 
@@ -148,6 +149,7 @@ export function launchAsync(token: string, subdomain: string, content: Content, 
                     launchToPostMessageSentDurationInMs: Date.now() - startTime,
                     disableFirstRun: options.disableFirstRun,
                     readAloudOptions: options.readAloudOptions,
+                    translationOptions: options.translationOptions,
                     internalOptions: getInternalOptions()
                 };
                 iframe.contentWindow!.postMessage(JSON.stringify({ messageType: 'Content', messageValue: message }), '*');
