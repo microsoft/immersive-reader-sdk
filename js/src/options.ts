@@ -13,7 +13,7 @@ export type Options = {
     cookiePolicy?: CookiePolicy;         // Setting for the Immersive Reader's cookie usage (default is CookiePolicy.Disable). It's the responsibility of the host application to obtain any necessary user consent in accordance with EU Cookie Compliance Policy.
     disableFirstRun?: boolean;           // Disable the first run experience.
     readAloudOptions?: ReadAloudOptions; // Options to configure Read Aloud.
-    internalOptions?: InternalOptions;   // Options reserved for internal.
+    internalOptions?: InternalOptions;   // Options reserved for internal use.
 };
 
 export enum CookiePolicy { Disable, Enable }
@@ -25,7 +25,7 @@ export type ReadAloudOptions = {
 };
 
 export type InternalOptions = {
-    messageOptions?: [Option],  // Reserved for internal use. Additional options to be sent through Content Message.
+    messageOptions?: [Option],  // Reserved for internal use. Additional options to be sent through Content message.
     queryParameters?: [Option]  // Reserved for internal use. Additional query parameters.
 };
 
