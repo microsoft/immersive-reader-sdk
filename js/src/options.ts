@@ -25,7 +25,7 @@ export type ReadAloudOptions = {
 };
 
 export type TranslationOptions = {
-    language: string;                       // Set the translation language, e.g. fr-FR, es-MX, zh-Hans-CN. Required to automatically enable word or document translation.
-    enableDocumentTranslation?: boolean;    // Automatically translate the entire document
-    enableWordTranslation?: boolean;        // Automatically enable word translation
+    language: string;                         // Set the translation language, e.g. fr-FR, es-MX, zh-Hans-CN. Required to automatically enable word or document translation.
+    autoEnableDocumentTranslation?: boolean;  // Automatically translate the entire document
+    autoEnableWordTranslation?: boolean;      // Automatically enable word translation
 };
