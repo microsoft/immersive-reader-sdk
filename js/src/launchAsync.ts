@@ -220,7 +220,7 @@ export function launchAsync(token: string, subdomain: string, content: Content, 
             src += '&omkt=' + options.uiLang;
         }
 
-        const queryParameters = options.internalOptions?.queryParameters;
+        const queryParameters: InternalOptionDictionary = options.internalOptions?.queryParameters;
         for (const parameterName in queryParameters) {
             src += '&' + parameterName + '=' + queryParameters[parameterName];
         }
