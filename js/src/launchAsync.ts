@@ -2,7 +2,7 @@
 // Licensed under the MIT License.
 
 import { Content } from './content';
-import { CookiePolicy, InternalOptions, Options, ReadAloudOptions, TranslationOptions } from './options';
+import { CookiePolicy, InternalOptionDictionary, Options, ReadAloudOptions, TranslationOptions } from './options';
 import { Error, ErrorCode } from './error';
 import { LaunchResponse } from './launchResponse';
 declare const VERSION: string;
@@ -15,7 +15,7 @@ type Message = {
     disableFirstRun?: boolean;
     readAloudOptions?: ReadAloudOptions;
     translationOptions?: TranslationOptions;
-    internalOptions?: InternalOptions;
+    internalContentMessageOptions?: InternalOptionDictionary;
 };
 
 type LaunchResponseMessage = {
@@ -125,14 +125,6 @@ export function launchAsync(token: string, subdomain: string, content: Content, 
             }
         };
 
-        const getInternalOptions = (): InternalOptions => {
-            if (options.internalOptions?.messageOptions) {
-                return { messageOptions: options.internalOptions.messageOptions };
-            }
-
-            return undefined;
-        };
-
         // Reset variables
         reset();
 
@@ -150,7 +142,7 @@ export function launchAsync(token: string, subdomain: string, content: Content, 
                     disableFirstRun: options.disableFirstRun,
                     readAloudOptions: options.readAloudOptions,
                     translationOptions: options.translationOptions,
-                    internalOptions: getInternalOptions()
+                    internalContentMessageOptions: options.internalOptions?.messageOptions
                 };
                 iframe.contentWindow!.postMessage(JSON.stringify({ messageType: 'Content', messageValue: message }), '*');
             } else if (e.data === 'ImmersiveReader-Exit') {
@@ -229,8 +221,8 @@ export function launchAsync(token: string, subdomain: string, content: Content, 
         }
 
         const queryParameters = options.internalOptions?.queryParameters;
-        for (let i = 0; i < queryParameters?.length; i++) {
-            src += '&' + queryParameters[i].option + '=' + queryParameters[i].value;
+        for (const parameterName in queryParameters) {
+            src += '&' + parameterName + '=' + queryParameters[parameterName];
         }
 
         iframe.src = src;

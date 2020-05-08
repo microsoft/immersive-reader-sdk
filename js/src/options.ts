@@ -32,11 +32,10 @@ export type TranslationOptions = {
 };
 
 export type InternalOptions = {
-    messageOptions?: [Option],  // Reserved for internal use. Additional options to be sent through Content message.
-    queryParameters?: [Option]  // Reserved for internal use. Additional query parameters.
+    messageOptions?: InternalOptionDictionary   // Reserved for internal use. Additional options to be sent through Content message.
+    queryParameters?: InternalOptionDictionary  // Reserved for internal use. Additional query parameters.
 };
 
-export type Option = {
-    option: string, // Reserved for internal use. Option key word.
-    value: boolean | string // Reserved for internal use. Option value.
+export type InternalOptionDictionary = {
+    [option: string]: boolean | string  // Reserved for internal use. Option dictionary.
 };
