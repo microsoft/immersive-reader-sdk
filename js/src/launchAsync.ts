@@ -15,7 +15,7 @@ type Message = {
     disableFirstRun?: boolean;
     readAloudOptions?: ReadAloudOptions;
     translationOptions?: TranslationOptions;
-    internalContentMessageOptions?: InternalOptionDictionary;
+    internalOptions?: InternalOptionDictionary;
 };
 
 type LaunchResponseMessage = {
@@ -142,7 +142,7 @@ export function launchAsync(token: string, subdomain: string, content: Content, 
                     disableFirstRun: options.disableFirstRun,
                     readAloudOptions: options.readAloudOptions,
                     translationOptions: options.translationOptions,
-                    internalContentMessageOptions: options.internalOptions?.messageOptions
+                    internalOptions: options.internalOptions?.messageOptions
                 };
                 iframe.contentWindow!.postMessage(JSON.stringify({ messageType: 'Content', messageValue: message }), '*');
             } else if (e.data === 'ImmersiveReader-Exit') {
