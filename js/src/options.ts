@@ -14,6 +14,7 @@ export type Options = {
     disableFirstRun?: boolean;               // Disable the first run experience.
     readAloudOptions?: ReadAloudOptions;     // Options to configure Read Aloud.
     translationOptions?: TranslationOptions; // Options to configure Translation.
+    displayOptions?: DisplayOptions;         // Options to configure text size, font, etc.
     internalOptions?: InternalOptions;       // Options reserved for internal use.
 };
 
@@ -29,6 +30,12 @@ export type TranslationOptions = {
     language: string;                         // Set the translation language, e.g. fr-FR, es-MX, zh-Hans-CN. Required to automatically enable word or document translation.
     autoEnableDocumentTranslation?: boolean;  // Automatically translate the entire document
     autoEnableWordTranslation?: boolean;      // Automatically enable word translation
+};
+
+export type DisplayOptions = {
+    textSize?: number;          // Valid values are 14, 20, 28, 36, 42, 48, 56, 64, 72, 84, 96
+    increaseSpacing?: boolean;
+    fontFamily?: string;
 };
 
 export type InternalOptions = {
