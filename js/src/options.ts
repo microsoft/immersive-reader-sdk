@@ -4,9 +4,9 @@
 export type Options = {
     uiLang?: string;           // Language of the UI, e.g. en, es-ES (optional). Defaults to browser language if not specified.
     timeout?: number;          // Duration (in milliseconds) before launchAsync fails with a timeout error (default is 15000 ms).
-    uiZIndex?: number;         // Z-index of the iframe that will be created (default is 1000).
+    uiZIndex?: number;         // Z-index of the iframe that will be created (default is 1000)
     useWebview?: boolean;      // Use a webview tag instead of an iframe, for compatibility with Chrome Apps (default is false).
-    onExit?: () => any;        // Executes when the Immersive Reader exits.
+    onExit?: () => any;        // Executes when the Immersive Reader exits
     customDomain?: string;     // Reserved for internal use. Custom domain where the Immersive Reader webapp is hosted (default is null).
     allowFullscreen?: boolean; // The ability to toggle fullscreen (default is true).
     hideExitButton?: boolean;  // Whether or not to hide the Immersive Reader's exit button arrow (default is false). This should only be true if there is an alternative mechanism provided to exit the Immersive Reader (e.g a mobile toolbar's back arrow).
@@ -15,7 +15,6 @@ export type Options = {
     readAloudOptions?: ReadAloudOptions;     // Options to configure Read Aloud.
     translationOptions?: TranslationOptions; // Options to configure Translation.
     displayOptions?: DisplayOptions;         // Options to configure text size, font, etc.
-    internalOptions?: InternalOptions;       // Options reserved for internal use.
 };
 
 export enum CookiePolicy { Disable, Enable }
@@ -36,13 +35,4 @@ export type DisplayOptions = {
     textSize?: number;          // Valid values are 14, 20, 28, 36, 42, 48, 56, 64, 72, 84, 96.
     increaseSpacing?: boolean;  // Set whether increased spacing is enabled.
     fontFamily?: string;        // Valid values are 'Calibri', 'ComicSans', and 'Sitka'
-};
-
-export type InternalOptions = {
-    messageOptions?: InternalOptionDictionary   // Reserved for internal use. Additional options to be sent through Content message.
-    queryParameters?: InternalOptionDictionary  // Reserved for internal use. Additional query parameters.
-};
-
-export type InternalOptionDictionary = {
-    [option: string]: boolean | string  // Reserved for internal use. Option dictionary.
 };

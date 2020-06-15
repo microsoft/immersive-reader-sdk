@@ -2,7 +2,7 @@
 // Licensed under the MIT License.
 
 import { Content } from './content';
-import { CookiePolicy, DisplayOptions, InternalOptionDictionary, Options, ReadAloudOptions, TranslationOptions } from './options';
+import { CookiePolicy, DisplayOptions, Options, ReadAloudOptions, TranslationOptions } from './options';
 import { Error, ErrorCode } from './error';
 import { LaunchResponse } from './launchResponse';
 declare const VERSION: string;
@@ -16,7 +16,6 @@ type Message = {
     readAloudOptions?: ReadAloudOptions;
     translationOptions?: TranslationOptions;
     displayOptions?: DisplayOptions;
-    internalOptions?: InternalOptionDictionary;
 };
 
 type LaunchResponseMessage = {
@@ -35,6 +34,8 @@ errorMessageMap[ErrorCode.Throttled] = 'You have exceeded your quota.';
 errorMessageMap[ErrorCode.ServerError] = 'An error occurred when calling the server to process the text.';
 errorMessageMap[ErrorCode.InvalidSubdomain] = 'The subdomain supplied is invalid.';
 
+let isLoading: boolean = false;
+
 /**
  * Launch the Immersive Reader within an iframe.
  * @param token The authentication token.
@@ -44,6 +45,10 @@ errorMessageMap[ErrorCode.InvalidSubdomain] = 'The subdomain supplied is invalid
  * @return A promise that resolves with a LaunchResponse when the Immersive Reader is launched.
  */
 export function launchAsync(token: string, subdomain: string, content: Content, options?: Options): Promise<LaunchResponse> {
+    if (isLoading) {
+        return Promise.reject('Immersive Reader is already launching');
+    }
+
     return new Promise((resolve, reject: (reason: Error) => void): void => {
         if (!token) {
             reject({ code: ErrorCode.BadArgument, message: 'Token must not be null' });
@@ -70,6 +75,7 @@ export function launchAsync(token: string, subdomain: string, content: Content, 
             return;
         }
 
+        isLoading = true;
         const startTime = Date.now();
         options = {
             uiZIndex: 1000,
@@ -143,8 +149,7 @@ export function launchAsync(token: string, subdomain: string, content: Content, 
                     disableFirstRun: options.disableFirstRun,
                     readAloudOptions: options.readAloudOptions,
                     translationOptions: options.translationOptions,
-                    displayOptions: options.displayOptions,
-                    internalOptions: options.internalOptions?.messageOptions
+                    displayOptions: options.displayOptions
                 };
                 iframe.contentWindow!.postMessage(JSON.stringify({ messageType: 'Content', messageValue: message }), '*');
             } else if (e.data === 'ImmersiveReader-Exit') {
@@ -179,6 +184,7 @@ export function launchAsync(token: string, subdomain: string, content: Content, 
                     };
                 }
 
+                isLoading = false;
                 if (launchResponse) {
                     resetTimeout();
                     resolve(launchResponse);
@@ -193,6 +199,7 @@ export function launchAsync(token: string, subdomain: string, content: Content, 
         // Reject the promise if the Immersive Reader page fails to load.
         timeoutId = window.setTimeout((): void => {
             reset();
+            isLoading = false;
             reject({ code: ErrorCode.Timeout, message: `Page failed to load after timeout (${options.timeout} ms)` });
         }, options.timeout);
 
@@ -220,11 +227,6 @@ export function launchAsync(token: string, subdomain: string, content: Content, 
 
         if (options.uiLang) {
             src += '&omkt=' + options.uiLang;
-        }
-
-        const queryParameters: InternalOptionDictionary = options.internalOptions?.queryParameters;
-        for (const parameterName in queryParameters) {
-            src += '&' + parameterName + '=' + queryParameters[parameterName];
         }
 
         iframe.src = src;
