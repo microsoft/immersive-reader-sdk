@@ -16,6 +16,8 @@ type Message = {
     readAloudOptions?: ReadAloudOptions;
     translationOptions?: TranslationOptions;
     displayOptions?: DisplayOptions;
+    sendPreferences?: boolean;
+    preferences?: string;
 };
 
 type LaunchResponseMessage = {
@@ -149,7 +151,9 @@ export function launchAsync(token: string, subdomain: string, content: Content, 
                     disableFirstRun: options.disableFirstRun,
                     readAloudOptions: options.readAloudOptions,
                     translationOptions: options.translationOptions,
-                    displayOptions: options.displayOptions
+                    displayOptions: options.displayOptions,
+                    sendPreferences: !!options.onPreferencesChanged,
+                    preferences: options.preferences
                 };
                 iframe.contentWindow!.postMessage(JSON.stringify({ messageType: 'Content', messageValue: message }), '*');
             } else if (e.data === 'ImmersiveReader-Exit') {
@@ -191,6 +195,10 @@ export function launchAsync(token: string, subdomain: string, content: Content, 
                 } else if (error) {
                     exit();
                     reject(error);
+                }
+            } else if (e.data.startsWith('ImmersiveReader-Preferences:')) {
+                if (options.onPreferencesChanged && typeof options.onPreferencesChanged === 'function') {
+                    options.onPreferencesChanged(e.data.substring('ImmersiveReader-Preferences:'.length));
                 }
             }
         };
