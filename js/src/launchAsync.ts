@@ -16,6 +16,8 @@ type Message = {
     readAloudOptions?: ReadAloudOptions;
     translationOptions?: TranslationOptions;
     displayOptions?: DisplayOptions;
+    sendPreferences?: boolean;
+    preferences?: string;
 };
 
 type LaunchResponseMessage = {
@@ -27,6 +29,9 @@ type LaunchResponseMessage = {
 
 const sdkPlatform = 'js';
 const sdkVersion = VERSION;
+
+const PostMessagePreferences = 'ImmersiveReader-Preferences:';
+const PostMessageLaunchResponse = 'ImmersiveReader-LaunchResponse:';
 
 const errorMessageMap: { [errorCode: string]: string } = {};
 errorMessageMap[ErrorCode.TokenExpired] = 'The access token supplied is expired.';
@@ -128,7 +133,9 @@ export function launchAsync(token: string, subdomain: string, content: Content, 
 
             // Execute exit callback if we have one
             if (options.onExit) {
-                options.onExit();
+                try {
+                    options.onExit();
+                } catch { }
             }
         };
 
@@ -149,18 +156,20 @@ export function launchAsync(token: string, subdomain: string, content: Content, 
                     disableFirstRun: options.disableFirstRun,
                     readAloudOptions: options.readAloudOptions,
                     translationOptions: options.translationOptions,
-                    displayOptions: options.displayOptions
+                    displayOptions: options.displayOptions,
+                    sendPreferences: !!options.onPreferencesChanged,
+                    preferences: options.preferences
                 };
                 iframe.contentWindow!.postMessage(JSON.stringify({ messageType: 'Content', messageValue: message }), '*');
             } else if (e.data === 'ImmersiveReader-Exit') {
                 exit();
-            } else if (e.data.startsWith('ImmersiveReader-LaunchResponse:')) {
+            } else if (e.data.startsWith(PostMessageLaunchResponse)) {
                 let launchResponse: LaunchResponse = null;
                 let error: Error = null;
 
                 let response: LaunchResponseMessage = null;
                 try {
-                    response = JSON.parse(e.data.substring('ImmersiveReader-LaunchResponse:'.length));
+                    response = JSON.parse(e.data.substring(PostMessageLaunchResponse.length));
                 } catch {
                     // No-op
                 }
@@ -191,6 +200,12 @@ export function launchAsync(token: string, subdomain: string, content: Content, 
                 } else if (error) {
                     exit();
                     reject(error);
+                }
+            } else if (e.data.startsWith(PostMessagePreferences)) {
+                if (options.onPreferencesChanged && typeof options.onPreferencesChanged === 'function') {
+                    try {
+                        options.onPreferencesChanged(e.data.substring(PostMessagePreferences.length));
+                    } catch { }
                 }
             }
         };

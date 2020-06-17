@@ -271,6 +271,47 @@ describe('launchAsync tests', () => {
 
         expect(cbOnExit).toHaveBeenCalledTimes(1);
     });
+    
+    it('launches with preferences not set', async () => {
+        expect.assertions(1);
+        const options: Options = { preferences: null };
+        const launchPromise = launchAsync(SampleToken, SampleSubdomain, SampleContent, options)
+            .then(iframe => {
+                expect(iframe).not.toBeNull();
+            });
+        window.postMessage('ImmersiveReader-LaunchResponse:{"success":true}', '*');
+
+        return launchPromise;
+    });
+    
+    it('launches with preferences set', async () => {
+        expect.assertions(1);
+        const options: Options = { preferences: 'foo' };
+        const launchPromise = launchAsync(SampleToken, SampleSubdomain, SampleContent, options)
+            .then(iframe => {
+                expect(iframe).not.toBeNull();
+            });
+        window.postMessage('ImmersiveReader-LaunchResponse:{"success":true}', '*');
+
+        return launchPromise;
+    });
+    
+    it('launches with onPreferencesChanged set', async () => {
+        jest.useRealTimers();
+        expect.assertions(1);
+        const options: Options = { onPreferencesChanged: (value) => { 
+            expect(value).toBe('hello world');
+        } };
+        const launchPromise = launchAsync(SampleToken, SampleSubdomain, SampleContent, options);
+        window.postMessage('ImmersiveReader-LaunchResponse:{"success":true}', '*');
+
+        await launchPromise;
+
+        window.postMessage('ImmersiveReader-Preferences:hello world', '*');
+
+        // this is to yield this thread of execution to allow the exit message to get processed
+        await new Promise(resolve => { setTimeout(resolve, 1); });
+    });
 });
 
 describe('Utility method isValidSubdomain', () => {
