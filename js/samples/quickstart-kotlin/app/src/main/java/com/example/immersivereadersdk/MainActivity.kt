@@ -22,7 +22,6 @@ import java.net.URL
 import kotlinx.coroutines.*
 import org.json.JSONObject
 import java.util.*
-import kotlin.collections.HashMap
 
 // This sample app uses the Dotenv is a module that loads environment variables from a .env file to better manage secrets.
 // https://github.com/cdimascio/java-dotenv

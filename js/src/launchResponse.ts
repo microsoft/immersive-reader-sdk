@@ -4,4 +4,5 @@
 export type LaunchResponse = {
     container: HTMLDivElement;
     sessionId: string;
+    charactersProcessed: number;
 };
