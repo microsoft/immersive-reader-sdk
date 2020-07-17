@@ -5,7 +5,6 @@ The Immersive Reader SDK is a set of libraries that allow you to easily and quic
 ## Usage
 
 * [JavaScript](./js)
-* [Reference](https://docs.microsoft.com/en-us/azure/cognitive-services/immersive-reader/reference)
 
 ## Contributing
 
