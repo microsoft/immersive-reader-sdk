@@ -268,6 +268,22 @@ export function launchWithoutContentAsync(options?: Options): Promise<LaunchWith
     const launchWithoutContentResponse: LaunchWithoutContentResponse = {
         cancelAndCloseReader: exit,
         provideApiResponse: (apiResponse: ApiResponseSuccessMessage): Promise<LaunchResponse> => {
+            if (!apiResponse) {
+                return Promise.reject('No Api Response');
+            }
+
+            if (apiResponse.status !== 200) {
+                return Promise.reject('Unsuccessful Api Response');
+            }
+
+            if (!apiResponse.data) {
+                return Promise.reject('No data in Api Response');
+            }
+
+            if (!apiResponse.meta) {
+                return Promise.reject('No meta in Api Response');
+            }
+
             apiResponseMessage = apiResponse;
             sendContentIfReady();
 
@@ -275,10 +291,12 @@ export function launchWithoutContentAsync(options?: Options): Promise<LaunchWith
                 launchResponseResolve = resolve;
                 launchResponseReject = reject;
 
+                // Errored before host provided an api response
                 if (launchResponseError) {
-                    // Errored before host provided an api response
                     reject(launchResponseError);
-                    launchResponseError = null; // Make sure we only reject once
+
+                    // Make sure we only reject once
+                    launchResponseError = null;
                 }
             });
         }
