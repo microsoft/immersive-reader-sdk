@@ -145,32 +145,6 @@ export function launchWithoutContentAsync(options?: Options): Promise<LaunchWith
         }
     };
 
-    const launchWithoutContentResponse: LaunchWithoutContentResponse = {
-        cancelAndCloseReader: exit,
-        provideApiResponse: (apiResponse: ApiResponseSuccessMessage): Promise<LaunchResponse> => {
-            apiResponseMessage = apiResponse;
-            sendContentIfReady();
-
-            return new Promise((resolve: LaunchResponseResolve, reject: LaunchReject) => {
-                launchResponseResolve = resolve;
-                launchResponseReject = reject;
-
-                if (launchResponseError) {
-                    // Errored before host provided an api response
-                    reject(launchResponseError);
-                    launchResponseError = null; // Make sure we only reject once
-                }
-            });
-        }
-    };
-
-    const launchWithoutContentPromise: Promise<LaunchWithoutContentResponse> = new Promise((resolve: LaunchWithoutContentResolve, reject: LaunchReject) => {
-        resolve(launchWithoutContentResponse);
-    });
-
-    // Reset variables
-    reset();
-
     const messageHandler = (e: any): void => {
         // Don't process the message if the data is not a string
         if (!e || !e.data || typeof e.data !== 'string') { return; }
@@ -232,6 +206,9 @@ export function launchWithoutContentAsync(options?: Options): Promise<LaunchWith
         }
     };
 
+    // Reset variables
+    reset();
+
     window.addEventListener('message', messageHandler);
 
     // Reject the promise if the Immersive Reader page fails to load.
@@ -262,9 +239,7 @@ export function launchWithoutContentAsync(options?: Options): Promise<LaunchWith
         });
     }
 
-    const domain = options.customDomain ? options.customDomain : `https://${subdomain}.cognitiveservices.azure.com/immersivereader/webapp/v1.0/`;
-    let src = domain + 'reader?exitCallback=ImmersiveReader-Exit&sdkPlatform=' + sdkPlatform + '&sdkVersion=' + sdkVersion;
-
+    let src = 'https://learningtools.onenote.com/learningtoolsapp/cognitive/reader?exitCallback=ImmersiveReader-Exit&sdkPlatform=' + sdkPlatform + '&sdkVersion=' + sdkVersion;
     src += '&cookiePolicy=' + ((options.cookiePolicy === CookiePolicy.Enable) ? 'enable' : 'disable');
 
     if (options.hideExitButton) {
@@ -284,7 +259,31 @@ export function launchWithoutContentAsync(options?: Options): Promise<LaunchWith
 
     // Disable body scrolling
     document.head.appendChild(noscroll);
-    }
+
+    const launchWithoutContentResponse: LaunchWithoutContentResponse = {
+        cancelAndCloseReader: exit,
+        provideApiResponse: (apiResponse: ApiResponseSuccessMessage): Promise<LaunchResponse> => {
+            apiResponseMessage = apiResponse;
+            sendContentIfReady();
+
+            return new Promise((resolve: LaunchResponseResolve, reject: LaunchReject) => {
+                launchResponseResolve = resolve;
+                launchResponseReject = reject;
+
+                if (launchResponseError) {
+                    // Errored before host provided an api response
+                    reject(launchResponseError);
+                    launchResponseError = null; // Make sure we only reject once
+                }
+            });
+        }
+    };
+
+    const launchWithoutContentPromise: Promise<LaunchWithoutContentResponse> = new Promise((resolve: LaunchWithoutContentResolve, _reject: LaunchReject) => {
+        resolve(launchWithoutContentResponse);
+    });
+
+    return launchWithoutContentPromise;
 }
 
 export function close(): void {
