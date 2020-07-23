@@ -63,6 +63,11 @@ let launchResponseResolve: LaunchResponseResolve;
 let launchResponseReject: LaunchReject;
 let launchResponseError: Error;
 
+/**
+ * Launch the Immersive Reader within an iframe.
+ * @param options Options for configuring the look and feel of the Immersive Reader.
+ * @return A promise that resolves with a LaunchWithoutContentResponse to provide the S2S response
+ */
 export function launchWithoutContentAsync(options?: Options): Promise<LaunchWithoutContentResponse> {
     if (isLoading) {
         return Promise.reject('Immersive Reader is already launching');
