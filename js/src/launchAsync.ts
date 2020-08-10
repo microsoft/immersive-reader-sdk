@@ -269,19 +269,19 @@ export function launchWithoutContentAsync(options?: Options): Promise<LaunchWith
         cancelAndCloseReader: exit,
         provideApiResponse: (apiResponse: ApiResponseSuccessMessage): Promise<LaunchResponse> => {
             if (!apiResponse) {
-                return Promise.reject('No Api Response');
+                return Promise.reject({ code: ErrorCode.BadArgument, message: 'No Api Response' });
             }
 
             if (apiResponse.status !== 200) {
-                return Promise.reject('Unsuccessful Api Response');
+                return Promise.reject({ code: ErrorCode.BadArgument, message: 'Unsuccessful Api Response' });
             }
 
             if (!apiResponse.data) {
-                return Promise.reject('No data in Api Response');
+                return Promise.reject({ code: ErrorCode.BadArgument, message: 'No data in Api Response' });
             }
 
             if (!apiResponse.meta) {
-                return Promise.reject('No meta in Api Response');
+                return Promise.reject({ code: ErrorCode.BadArgument, message: 'No meta in Api Response' });
             }
 
             apiResponseMessage = apiResponse;
@@ -324,4 +324,8 @@ export function isValidSubdomain(subdomain: string): boolean {
     const regExp = new RegExp(validRegex);
 
     return regExp.test(subdomain);
+}
+
+export function resetLoadingForTest(): void {
+    isLoading = false;
 }
