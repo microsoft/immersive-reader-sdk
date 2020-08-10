@@ -8,11 +8,11 @@ import { LaunchResponse } from './launchResponse';
 declare const VERSION: string;
 
 type Message = {
+    launchToPostMessageSentDurationInMs: number;
     request?: Content;
     apiResponse?: ApiResponseSuccessMessage;
     cogSvcsAccessToken?: string;
     cogSvcsSubdomain?: string;
-    launchToPostMessageSentDurationInMs: number;
     disableFirstRun?: boolean;
     readAloudOptions?: ReadAloudOptions;
     translationOptions?: TranslationOptions;
@@ -23,8 +23,8 @@ type Message = {
 
 type LaunchResponseMessage = {
     success: boolean;
-    errorCode?: ErrorCode;
     sessionId: string;
+    errorCode?: ErrorCode;
     meteredContentSize?: number;
 };
 
