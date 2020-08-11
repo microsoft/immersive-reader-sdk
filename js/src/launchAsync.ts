@@ -244,7 +244,7 @@ export function launchWithoutContentAsync(options?: Options): Promise<LaunchWith
         });
     }
 
-    let src = 'https://learningtools.onenote.com/learningtoolsapp/cognitive/reader?exitCallback=ImmersiveReader-Exit&sdkPlatform=' + sdkPlatform + '&sdkVersion=' + sdkVersion;
+    let src = 'https://learningtools.onenote.com/learningtoolsapp/cognitive/reader?exitCallback=ImmersiveReader-Exit&skipearlygcm=true&sdkPlatform=' + sdkPlatform + '&sdkVersion=' + sdkVersion;
     src += '&cookiePolicy=' + ((options.cookiePolicy === CookiePolicy.Enable) ? 'enable' : 'disable');
 
     if (options.hideExitButton) {
