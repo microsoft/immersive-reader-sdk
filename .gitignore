@@ -170,4 +170,3 @@ target/
 
 @ custom ignores
 /js/package-lock.json
-/js/yarn.lock
