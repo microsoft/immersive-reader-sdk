@@ -202,7 +202,8 @@ class PictureLaunchViewController: UIViewController, UINavigationControllerDeleg
                 
                 DispatchQueue.main.async {
                     
-                    immersiveReaderInstance.launchImmersiveReader(navController: self.navigationController!, token: cognitiveToken, content: sampleImageContent, options: sampleImageOptions, onSuccess: {
+                    // 
+                    immersiveReaderInstance.launchImmersiveReader(navController: self.navigationController!, token: cognitiveToken, nil, content: sampleImageContent, options: sampleImageOptions, onSuccess: {
                         self.spinner.stopAnimating()
                         self.activityIndicatorBackground.alpha = 0
                         self.photoButton.isEnabled = true
@@ -237,17 +238,17 @@ class PictureLaunchViewController: UIViewController, UINavigationControllerDeleg
         
     }
     
-    /// Retrieves the token for the Immersive Reader using Azure Active Directory authentication
+    /// Retrieves the token for the Immersive Reader
     ///
     /// - Parameters:
-    ///     -onSuccess: A closure that gets called when the token is successfully recieved using Azure Active Directory authentication.
-    ///     -theToken: The token for the Immersive Reader recieved using Azure Active Directory authentication.
-    ///     -onFailure: A closure that gets called when the token fails to be obtained from the Azure Active Directory Authentication.
-    ///     -theError: The error that occured when the token fails to be obtained from the Azure Active Directory Authentication.
+    ///     -onSuccess: A closure that gets called when the token is successfully recieved.
+    ///     -theToken: The token for the Immersive Reader recieved.
+    ///     -onFailure: A closure that gets called when the token fails to be obtained.
+    ///     -theError: The error that occured when the token fails to be obtained.
     func getToken(onSuccess: @escaping (_ theToken: String) -> Void, onFailure: @escaping ( _ theError: String) -> Void) {
         
-        let tokenForm = "grant_type=client_credentials&resource=https://cognitiveservices.azure.com/&client_id=" + Constants.clientId + "&client_secret=" + Constants.clientSecret
-        let tokenUrl = "https://login.windows.net/" + Constants.tenantId + "/oauth2/token"
+        let tokenForm = "Ocp-Apim-Subscription-Key=" + Constants.SubscriptionKey
+        let tokenUrl = "https://" + Constants.Region + ".api.cognitive.microsoft.com/sts/v1.0/issueToken"
         
         var responseTokenString: String = "0"
         

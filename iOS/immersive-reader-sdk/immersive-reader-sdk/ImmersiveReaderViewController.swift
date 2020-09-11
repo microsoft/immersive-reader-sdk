@@ -7,7 +7,6 @@ import WebKit
 public class ImmersiveReaderViewController: UIViewController, WKUIDelegate, WKNavigationDelegate {
     
     let tokenToSend: String
-    let subdomainToSend: String
     let contentToSend: Content
     let optionsToSend: Options?
     let onSuccessImmersiveReader: (() -> Void)?
@@ -21,9 +20,8 @@ public class ImmersiveReaderViewController: UIViewController, WKUIDelegate, WKNa
     var timer: Timer!
     var timeoutValue: TimeInterval!
     
-    public init(tokenToPass: String, subdomainToPass: String, contentToPass: Content, optionsToPass: Options?, onSuccessImmersiveReader: @escaping () -> Void, onFailureImmersiveReader: @escaping (_ status: Error) -> Void, onTimeout: @escaping (_ timeoutValue: TimeInterval) -> Void, onError: @escaping (_ error: String) -> Void) {
+    public init(tokenToPass: String, contentToPass: Content, optionsToPass: Options?, onSuccessImmersiveReader: @escaping () -> Void, onFailureImmersiveReader: @escaping (_ status: Error) -> Void, onTimeout: @escaping (_ timeoutValue: TimeInterval) -> Void, onError: @escaping (_ error: String) -> Void) {
         self.tokenToSend = tokenToPass
-        self.subdomainToSend = subdomainToPass
         self.contentToSend = contentToPass
         self.optionsToSend = optionsToPass
         self.onSuccessImmersiveReader = onSuccessImmersiveReader
@@ -147,7 +145,7 @@ extension ImmersiveReaderViewController: WKScriptMessageHandler {
             timer.invalidate()
             
             // Create the message variable
-            let message = Message(cogSvcsAccessToken: tokenToSend, cogSvcsSubdomain: subdomainToSend, resourceName: nil, request: contentToSend, launchToPostMessageSentDurationInMs: Int(Date().timeIntervalSince1970*1000 - startTime))
+            let message = Message(cogSvcsAccessToken: tokenToSend, nil, resourceName: nil, request: contentToSend, launchToPostMessageSentDurationInMs: Int(Date().timeIntervalSince1970*1000 - startTime))
             do {
                 let jsonData = try JSONEncoder().encode(message)
                 let jsonString = String(data: jsonData, encoding: .utf8)

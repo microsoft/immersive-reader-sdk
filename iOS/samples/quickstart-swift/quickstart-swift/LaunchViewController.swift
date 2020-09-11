@@ -115,8 +115,8 @@ class LaunchViewController: UIViewController {
     ///     -theError: The error that occured when the token fails to be obtained from the Azure Active Directory Authentication.
     func getToken(onSuccess: @escaping (_ theToken: String) -> Void, onFailure: @escaping ( _ theError: String) -> Void) {
         
-        let tokenForm = "grant_type=client_credentials&resource=https://cognitiveservices.azure.com/&client_id=" + Constants.clientId + "&client_secret=" + Constants.clientSecret
-        let tokenUrl = "https://login.windows.net/" + Constants.tenantId + "/oauth2/token"
+        let tokenForm = "Ocp-Apim-Subscription-Key=" + Constants.SubscriptionKey
+        let tokenUrl = "https://" + Constants.Region + ".api.cognitive.microsoft.com/sts/v1.0/issueToken"
         print("token url: \(tokenUrl)")
         
         var responseTokenString: String = "0"
