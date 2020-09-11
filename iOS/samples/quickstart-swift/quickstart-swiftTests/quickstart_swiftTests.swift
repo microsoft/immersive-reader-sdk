@@ -8,7 +8,6 @@ import immersive_reader_sdk
 class quickstart_swiftTests: XCTestCase {
     
     var navigationController: UINavigationController = UINavigationController(rootViewController: LaunchViewController())
-    let testSubdomain: String = Constants.subdomain
 
     override func setUp() {
         
@@ -35,7 +34,7 @@ class quickstart_swiftTests: XCTestCase {
 
         getToken(onSuccess: { responseToken in
             DispatchQueue.main.async {
-                launchImmersiveReader(navController: self.navigationController, token: responseToken, subdomain: self.testSubdomain, content: testContent, options: testOptions, onSuccess: {
+                launchImmersiveReader(navController: self.navigationController, token: responseToken, content: testContent, options: testOptions, onSuccess: {
                     expectation.fulfill()
                     
                 }, onFailure: { error in
@@ -60,7 +59,7 @@ class quickstart_swiftTests: XCTestCase {
         
         getToken(onSuccess: { responseToken in
             DispatchQueue.main.async {
-                launchImmersiveReader(navController: self.navigationController, token: responseToken, subdomain: self.testSubdomain, content: testContent, options: testOptions, onSuccess: {
+                launchImmersiveReader(navController: self.navigationController, token: responseToken, content: testContent, options: testOptions, onSuccess: {
                     
                 }, onFailure: { error in
                     print("Test testTimeout returned onFailure with the following error: \(error)")
@@ -87,7 +86,7 @@ class quickstart_swiftTests: XCTestCase {
         let testContent = Content(title: "title", chunks: [testChunk])
         let testOptions = Options(uiLang: nil, timeout: nil, uiZIndex: nil)
         
-        launchImmersiveReader(navController: self.navigationController, token: expiredToken, subdomain: self.testSubdomain, content: testContent, options: testOptions, onSuccess: {
+        launchImmersiveReader(navController: self.navigationController, token: expiredToken, content: testContent, options: testOptions, onSuccess: {
             
             }, onFailure: { error in
                 print("Test testExpiredToken returned onFailure with the following error: \(error)")
@@ -110,7 +109,7 @@ class quickstart_swiftTests: XCTestCase {
         
         getToken(onSuccess: { responseToken in
             DispatchQueue.main.async {
-                launchImmersiveReader(navController: self.navigationController, token: responseToken, subdomain: self.testSubdomain, content: testContent, options: testOptions, onSuccess: {
+                launchImmersiveReader(navController: self.navigationController, token: responseToken, content: testContent, options: testOptions, onSuccess: {
                       expectation.fulfill()
                     
                 }, onFailure: { error in
@@ -134,7 +133,7 @@ class quickstart_swiftTests: XCTestCase {
         
         getToken(onSuccess: { responseToken in
             DispatchQueue.main.async {
-                launchImmersiveReader(navController: self.navigationController, token: responseToken, subdomain: self.testSubdomain, content: testContent, options: testOptions, onSuccess: {
+                launchImmersiveReader(navController: self.navigationController, token: responseToken, content: testContent, options: testOptions, onSuccess: {
                     
                 }, onFailure: { error in
                     print("Test testEmptyChunks returned onFailure with the following error: \(error)")
@@ -161,7 +160,7 @@ class quickstart_swiftTests: XCTestCase {
         
         getToken(onSuccess: { responseToken in
             DispatchQueue.main.async {
-                launchImmersiveReader(navController: self.navigationController, token: responseToken, subdomain: self.testSubdomain, content: testContent, options: testOptions, onSuccess: {
+                launchImmersiveReader(navController: self.navigationController, token: responseToken, content: testContent, options: testOptions, onSuccess: {
                     expectation.fulfill()
                     
                 }, onFailure: { error in
@@ -186,7 +185,7 @@ class quickstart_swiftTests: XCTestCase {
         
         getToken(onSuccess: { responseToken in
             DispatchQueue.main.async {
-                launchImmersiveReader(navController: self.navigationController, token: responseToken, subdomain: self.testSubdomain, content: testContent, options: testOptions, onSuccess: {
+                launchImmersiveReader(navController: self.navigationController, token: responseToken, content: testContent, options: testOptions, onSuccess: {
                     expectation.fulfill()
                     
                 }, onFailure: { error in
@@ -211,7 +210,7 @@ class quickstart_swiftTests: XCTestCase {
         
         getToken(onSuccess: { responseToken in
             DispatchQueue.main.async {
-                launchImmersiveReader(navController: self.navigationController, token: responseToken, subdomain: self.testSubdomain, content: testContent, options: testOptions, onSuccess: {
+                launchImmersiveReader(navController: self.navigationController, token: responseToken, content: testContent, options: testOptions, onSuccess: {
                     expectation.fulfill()
                     
                 }, onFailure: { error in
@@ -236,7 +235,7 @@ class quickstart_swiftTests: XCTestCase {
         
         getToken(onSuccess: { responseToken in
             DispatchQueue.main.async {
-                launchImmersiveReader(navController: self.navigationController, token: responseToken, subdomain: self.testSubdomain, content: testContent, options: testOptions, onSuccess: {
+                launchImmersiveReader(navController: self.navigationController, token: responseToken, content: testContent, options: testOptions, onSuccess: {
                     expectation.fulfill()
                     
                 }, onFailure: { error in
@@ -261,7 +260,7 @@ class quickstart_swiftTests: XCTestCase {
         
         getToken(onSuccess: { responseToken in
             DispatchQueue.main.async {
-                launchImmersiveReader(navController: self.navigationController, token: responseToken, subdomain: self.testSubdomain, content: testContent, options: testOptions, onSuccess: {
+                launchImmersiveReader(navController: self.navigationController, token: responseToken, content: testContent, options: testOptions, onSuccess: {
                     expectation.fulfill()
                     
                 }, onFailure: { error in

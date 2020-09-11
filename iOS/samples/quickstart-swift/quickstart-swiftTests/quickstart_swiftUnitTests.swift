@@ -31,9 +31,9 @@ class quickstart_swiftUnitTests: XCTestCase {
         let testContent = Content(title: "emptychunks", chunks: [])
         let testOptions = Options(uiLang: nil, timeout: nil, uiZIndex: nil)
         let sampleToken = "SampleToken"
-        let sampleSubdomain = "SampleSubdomain"
     
-        launchImmersiveReader(navController: self.navigationController, token: sampleToken, subdomain: sampleSubdomain, content: testContent, options: testOptions, onSuccess: {
+        // Internal customers do not need to pass in a cogSvcsSubdomain
+        launchImmersiveReader(navController: self.navigationController, token: sampleToken, nil, content: testContent, options: testOptions, onSuccess: {
                 XCTAssert(false)
         }, onFailure: { error in
             print("Test testEmptyChunks returned onFailure with the following error: \(error)")
@@ -53,10 +53,9 @@ class quickstart_swiftUnitTests: XCTestCase {
         let testContent = Content(title: "title", chunks: [])
         let testOptions = Options(uiLang: nil, timeout: nil, uiZIndex: nil)
         let sampleToken = "ExpiredToken"
-        let sampleSubdomain = "SampleSubdomain"
         
         //Call the view controller
-        let immersiveReaderViewController = ImmersiveReaderViewController(tokenToPass: sampleToken, subdomainToPass: sampleSubdomain, contentToPass: testContent, optionsToPass: testOptions, onSuccessImmersiveReader: {
+        let immersiveReaderViewController = ImmersiveReaderViewController(tokenToPass: sampleToken, contentToPass: testContent, optionsToPass: testOptions, onSuccessImmersiveReader: {
             XCTAssert(false)
             
         }, onFailureImmersiveReader: { error in
@@ -87,10 +86,9 @@ class quickstart_swiftUnitTests: XCTestCase {
         let testContent = Content(title: "throttled", chunks: [])
         let testOptions = Options(uiLang: nil, timeout: nil, uiZIndex: nil)
         let sampleToken = "SampleToken"
-        let sampleSubdomain = "SampleSubdomain"
 
         //Call the view controller
-        let immersiveReaderViewController = ImmersiveReaderViewController(tokenToPass: sampleToken, subdomainToPass: sampleSubdomain, contentToPass: testContent, optionsToPass: testOptions, onSuccessImmersiveReader: {
+        let immersiveReaderViewController = ImmersiveReaderViewController(tokenToPass: sampleToken, contentToPass: testContent, optionsToPass: testOptions, onSuccessImmersiveReader: {
             XCTAssert(false)
             
         }, onFailureImmersiveReader: { error in
@@ -120,10 +118,9 @@ class quickstart_swiftUnitTests: XCTestCase {
         let testContent = Content(title: "timeout", chunks: [])
         let testOptions = Options(uiLang: nil, timeout: 0.1, uiZIndex: nil)
         let sampleToken = "SampleToken"
-        let sampleSubdomain = "SampleSubdomain"
         
         //Call the view controller
-        let immersiveReaderViewController = ImmersiveReaderViewController(tokenToPass: sampleToken, subdomainToPass: sampleSubdomain, contentToPass: testContent, optionsToPass: testOptions, onSuccessImmersiveReader: {
+        let immersiveReaderViewController = ImmersiveReaderViewController(tokenToPass: sampleToken, contentToPass: testContent, optionsToPass: testOptions, onSuccessImmersiveReader: {
             XCTAssert(false)
             
         }, onFailureImmersiveReader: { error in
@@ -151,10 +148,9 @@ class quickstart_swiftUnitTests: XCTestCase {
         let testContent = Content(title: "title", chunks: [])
         let testOptions = Options(uiLang: nil, timeout: nil, uiZIndex: nil)
         let sampleToken = "SampleToken"
-        let sampleSubdomain = "SampleSubdomain"
         
         //Call the view controller
-        let immersiveReaderViewController = ImmersiveReaderViewController(tokenToPass: sampleToken, subdomainToPass: sampleSubdomain, contentToPass: testContent, optionsToPass: testOptions, onSuccessImmersiveReader: {
+        let immersiveReaderViewController = ImmersiveReaderViewController(tokenToPass: sampleToken, contentToPass: testContent, optionsToPass: testOptions, onSuccessImmersiveReader: {
             expectation.fulfill()
             
         }, onFailureImmersiveReader: { error in

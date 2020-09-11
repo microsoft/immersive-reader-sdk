@@ -13,6 +13,8 @@
 		44A450C522A7046700511254 /* immersive_reader_sdk.h in Headers */ = {isa = PBXBuildFile; fileRef = 44A450B722A7046700511254 /* immersive_reader_sdk.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		44A450FD22B4655B00511254 /* LaunchImmersiveReader.swift in Sources */ = {isa = PBXBuildFile; fileRef = 44A450FC22B4655B00511254 /* LaunchImmersiveReader.swift */; };
 		44A450FF22B4674B00511254 /* ImmersiveReaderViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 44A450FE22B4674B00511254 /* ImmersiveReaderViewController.swift */; };
+		4655B8982330AF3A00C76A20 /* TestingHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4655B8972330AF3A00C76A20 /* TestingHandler.swift */; };
+		46F51BC42355B89E0056F49A /* PrefixHeader.pch in Headers */ = {isa = PBXBuildFile; fileRef = 46F51BC32355B89E0056F49A /* PrefixHeader.pch */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -35,6 +37,8 @@
 		44A450C422A7046700511254 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		44A450FC22B4655B00511254 /* LaunchImmersiveReader.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LaunchImmersiveReader.swift; sourceTree = "<group>"; };
 		44A450FE22B4674B00511254 /* ImmersiveReaderViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImmersiveReaderViewController.swift; sourceTree = "<group>"; };
+		4655B8972330AF3A00C76A20 /* TestingHandler.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TestingHandler.swift; sourceTree = "<group>"; };
+		46F51BC32355B89E0056F49A /* PrefixHeader.pch */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = PrefixHeader.pch; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -79,9 +83,11 @@
 			children = (
 				4496DF1F22BC249B0024E543 /* Resources */,
 				44A450B722A7046700511254 /* immersive_reader_sdk.h */,
+				4655B8972330AF3A00C76A20 /* TestingHandler.swift */,
 				44A450B822A7046700511254 /* Info.plist */,
 				44A450FC22B4655B00511254 /* LaunchImmersiveReader.swift */,
 				44A450FE22B4674B00511254 /* ImmersiveReaderViewController.swift */,
+				46F51BC32355B89E0056F49A /* PrefixHeader.pch */,
 			);
 			path = "immersive-reader-sdk";
 			sourceTree = "<group>";
@@ -102,6 +108,7 @@
 			isa = PBXHeadersBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				46F51BC42355B89E0056F49A /* PrefixHeader.pch in Headers */,
 				44A450C522A7046700511254 /* immersive_reader_sdk.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -205,6 +212,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				4655B8982330AF3A00C76A20 /* TestingHandler.swift in Sources */,
 				44A450FD22B4655B00511254 /* LaunchImmersiveReader.swift in Sources */,
 				44A450FF22B4674B00511254 /* ImmersiveReaderViewController.swift in Sources */,
 			);
@@ -361,6 +369,7 @@
 				DYLIB_COMPATIBILITY_VERSION = 1;
 				DYLIB_CURRENT_VERSION = 1;
 				DYLIB_INSTALL_NAME_BASE = "@rpath";
+				GCC_PREFIX_HEADER = "immersive-reader-sdk/PrefixHeader.pch";
 				INFOPLIST_FILE = "immersive-reader-sdk/Info.plist";
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
 				LD_RUNPATH_SEARCH_PATHS = (
@@ -387,6 +396,7 @@
 				DYLIB_COMPATIBILITY_VERSION = 1;
 				DYLIB_CURRENT_VERSION = 1;
 				DYLIB_INSTALL_NAME_BASE = "@rpath";
+				GCC_PREFIX_HEADER = "immersive-reader-sdk/PrefixHeader.pch";
 				INFOPLIST_FILE = "immersive-reader-sdk/Info.plist";
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
 				LD_RUNPATH_SEARCH_PATHS = (
