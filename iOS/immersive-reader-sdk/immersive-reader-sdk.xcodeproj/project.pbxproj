@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		110840CE78EB367AA7924B4F /* Pods_immersive_reader_sdk.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F9062E81174FD47A369D56B2 /* Pods_immersive_reader_sdk.framework */; };
 		4496DF2022BC249B0024E543 /* Resources in Resources */ = {isa = PBXBuildFile; fileRef = 4496DF1F22BC249B0024E543 /* Resources */; };
 		44A450BE22A7046700511254 /* immersive_reader_sdk.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 44A450B422A7046700511254 /* immersive_reader_sdk.framework */; };
 		44A450C322A7046700511254 /* immersive_reader_sdkTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 44A450C222A7046700511254 /* immersive_reader_sdkTests.swift */; };
@@ -15,6 +16,7 @@
 		44A450FF22B4674B00511254 /* ImmersiveReaderViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 44A450FE22B4674B00511254 /* ImmersiveReaderViewController.swift */; };
 		4655B8982330AF3A00C76A20 /* TestingHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4655B8972330AF3A00C76A20 /* TestingHandler.swift */; };
 		46F51BC42355B89E0056F49A /* PrefixHeader.pch in Headers */ = {isa = PBXBuildFile; fileRef = 46F51BC32355B89E0056F49A /* PrefixHeader.pch */; };
+		E928C441E998BAAFB0267799 /* Pods_immersive_reader_sdk_immersive_reader_sdkTests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CFB792110617323953DAD247 /* Pods_immersive_reader_sdk_immersive_reader_sdkTests.framework */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -28,6 +30,7 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		0363DECA147FCFEA701DCB13 /* Pods-immersive-reader-sdk-immersive-reader-sdkTests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-immersive-reader-sdk-immersive-reader-sdkTests.debug.xcconfig"; path = "Target Support Files/Pods-immersive-reader-sdk-immersive-reader-sdkTests/Pods-immersive-reader-sdk-immersive-reader-sdkTests.debug.xcconfig"; sourceTree = "<group>"; };
 		4496DF1F22BC249B0024E543 /* Resources */ = {isa = PBXFileReference; lastKnownFileType = folder; path = Resources; sourceTree = "<group>"; };
 		44A450B422A7046700511254 /* immersive_reader_sdk.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = immersive_reader_sdk.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		44A450B722A7046700511254 /* immersive_reader_sdk.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = immersive_reader_sdk.h; sourceTree = "<group>"; };
@@ -39,6 +42,11 @@
 		44A450FE22B4674B00511254 /* ImmersiveReaderViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImmersiveReaderViewController.swift; sourceTree = "<group>"; };
 		4655B8972330AF3A00C76A20 /* TestingHandler.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TestingHandler.swift; sourceTree = "<group>"; };
 		46F51BC32355B89E0056F49A /* PrefixHeader.pch */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = PrefixHeader.pch; sourceTree = "<group>"; };
+		9AC119D45F2370B3BD328FB8 /* Pods-immersive-reader-sdk.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-immersive-reader-sdk.release.xcconfig"; path = "Target Support Files/Pods-immersive-reader-sdk/Pods-immersive-reader-sdk.release.xcconfig"; sourceTree = "<group>"; };
+		CFB792110617323953DAD247 /* Pods_immersive_reader_sdk_immersive_reader_sdkTests.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_immersive_reader_sdk_immersive_reader_sdkTests.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		D6FF3D3369037EB5882B2774 /* Pods-immersive-reader-sdk.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-immersive-reader-sdk.debug.xcconfig"; path = "Target Support Files/Pods-immersive-reader-sdk/Pods-immersive-reader-sdk.debug.xcconfig"; sourceTree = "<group>"; };
+		EB7F4F5B124AC29C67BD0590 /* Pods-immersive-reader-sdk-immersive-reader-sdkTests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-immersive-reader-sdk-immersive-reader-sdkTests.release.xcconfig"; path = "Target Support Files/Pods-immersive-reader-sdk-immersive-reader-sdkTests/Pods-immersive-reader-sdk-immersive-reader-sdkTests.release.xcconfig"; sourceTree = "<group>"; };
+		F9062E81174FD47A369D56B2 /* Pods_immersive_reader_sdk.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_immersive_reader_sdk.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -46,6 +54,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				110840CE78EB367AA7924B4F /* Pods_immersive_reader_sdk.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -54,18 +63,30 @@
 			buildActionMask = 2147483647;
 			files = (
 				44A450BE22A7046700511254 /* immersive_reader_sdk.framework in Frameworks */,
+				E928C441E998BAAFB0267799 /* Pods_immersive_reader_sdk_immersive_reader_sdkTests.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		0285AA166912A52C94BA1F52 /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				F9062E81174FD47A369D56B2 /* Pods_immersive_reader_sdk.framework */,
+				CFB792110617323953DAD247 /* Pods_immersive_reader_sdk_immersive_reader_sdkTests.framework */,
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
 		44A450AA22A7046700511254 = {
 			isa = PBXGroup;
 			children = (
 				44A450B622A7046700511254 /* immersive-reader-sdk */,
 				44A450C122A7046700511254 /* immersive-reader-sdkTests */,
 				44A450B522A7046700511254 /* Products */,
+				C7DD6CDF9FF2AD7C6CEC6FD4 /* Pods */,
+				0285AA166912A52C94BA1F52 /* Frameworks */,
 			);
 			sourceTree = "<group>";
 		};
@@ -101,6 +122,18 @@
 			path = "immersive-reader-sdkTests";
 			sourceTree = "<group>";
 		};
+		C7DD6CDF9FF2AD7C6CEC6FD4 /* Pods */ = {
+			isa = PBXGroup;
+			children = (
+				D6FF3D3369037EB5882B2774 /* Pods-immersive-reader-sdk.debug.xcconfig */,
+				9AC119D45F2370B3BD328FB8 /* Pods-immersive-reader-sdk.release.xcconfig */,
+				0363DECA147FCFEA701DCB13 /* Pods-immersive-reader-sdk-immersive-reader-sdkTests.debug.xcconfig */,
+				EB7F4F5B124AC29C67BD0590 /* Pods-immersive-reader-sdk-immersive-reader-sdkTests.release.xcconfig */,
+			);
+			name = Pods;
+			path = Pods;
+			sourceTree = "<group>";
+		};
 /* End PBXGroup section */
 
 /* Begin PBXHeadersBuildPhase section */
@@ -120,6 +153,7 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = 44A450C822A7046700511254 /* Build configuration list for PBXNativeTarget "immersive-reader-sdk" */;
 			buildPhases = (
+				CA5CA079295FD78193250396 /* [CP] Check Pods Manifest.lock */,
 				44A450AF22A7046700511254 /* Headers */,
 				44A450B022A7046700511254 /* Sources */,
 				44A450B122A7046700511254 /* Frameworks */,
@@ -138,6 +172,7 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = 44A450CB22A7046700511254 /* Build configuration list for PBXNativeTarget "immersive-reader-sdkTests" */;
 			buildPhases = (
+				DEF4E7ED5FB4ECFA6ECEBE95 /* [CP] Check Pods Manifest.lock */,
 				44A450B922A7046700511254 /* Sources */,
 				44A450BA22A7046700511254 /* Frameworks */,
 				44A450BB22A7046700511254 /* Resources */,
@@ -206,6 +241,53 @@
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXResourcesBuildPhase section */
+
+/* Begin PBXShellScriptBuildPhase section */
+		CA5CA079295FD78193250396 /* [CP] Check Pods Manifest.lock */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+				"${PODS_PODFILE_DIR_PATH}/Podfile.lock",
+				"${PODS_ROOT}/Manifest.lock",
+			);
+			name = "[CP] Check Pods Manifest.lock";
+			outputFileListPaths = (
+			);
+			outputPaths = (
+				"$(DERIVED_FILE_DIR)/Pods-immersive-reader-sdk-checkManifestLockResult.txt",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
+			showEnvVarsInLog = 0;
+		};
+		DEF4E7ED5FB4ECFA6ECEBE95 /* [CP] Check Pods Manifest.lock */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+				"${PODS_PODFILE_DIR_PATH}/Podfile.lock",
+				"${PODS_ROOT}/Manifest.lock",
+			);
+			name = "[CP] Check Pods Manifest.lock";
+			outputFileListPaths = (
+			);
+			outputPaths = (
+				"$(DERIVED_FILE_DIR)/Pods-immersive-reader-sdk-immersive-reader-sdkTests-checkManifestLockResult.txt",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
+			showEnvVarsInLog = 0;
+		};
+/* End PBXShellScriptBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
 		44A450B022A7046700511254 /* Sources */ = {
@@ -361,6 +443,7 @@
 		};
 		44A450C922A7046700511254 /* Debug */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = D6FF3D3369037EB5882B2774 /* Pods-immersive-reader-sdk.debug.xcconfig */;
 			buildSettings = {
 				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_IDENTITY = "";
@@ -388,6 +471,7 @@
 		};
 		44A450CA22A7046700511254 /* Release */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = 9AC119D45F2370B3BD328FB8 /* Pods-immersive-reader-sdk.release.xcconfig */;
 			buildSettings = {
 				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_IDENTITY = "";
@@ -414,6 +498,7 @@
 		};
 		44A450CC22A7046700511254 /* Debug */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = 0363DECA147FCFEA701DCB13 /* Pods-immersive-reader-sdk-immersive-reader-sdkTests.debug.xcconfig */;
 			buildSettings = {
 				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				CODE_SIGN_STYLE = Automatic;
@@ -433,6 +518,7 @@
 		};
 		44A450CD22A7046700511254 /* Release */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = EB7F4F5B124AC29C67BD0590 /* Pods-immersive-reader-sdk-immersive-reader-sdkTests.release.xcconfig */;
 			buildSettings = {
 				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				CODE_SIGN_STYLE = Automatic;

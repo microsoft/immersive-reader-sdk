@@ -7,6 +7,7 @@ import WebKit
 public class ImmersiveReaderViewController: UIViewController, WKUIDelegate, WKNavigationDelegate {
     
     let tokenToSend: String
+    let subdomainToSend: String
     let contentToSend: Content
     let optionsToSend: Options?
     let onSuccessImmersiveReader: (() -> Void)?
@@ -20,8 +21,9 @@ public class ImmersiveReaderViewController: UIViewController, WKUIDelegate, WKNa
     var timer: Timer!
     var timeoutValue: TimeInterval!
     
-    public init(tokenToPass: String, contentToPass: Content, optionsToPass: Options?, onSuccessImmersiveReader: @escaping () -> Void, onFailureImmersiveReader: @escaping (_ status: Error) -> Void, onTimeout: @escaping (_ timeoutValue: TimeInterval) -> Void, onError: @escaping (_ error: String) -> Void) {
+    public init(tokenToPass: String, subdomainToPass: String, contentToPass: Content, optionsToPass: Options?, onSuccessImmersiveReader: @escaping () -> Void, onFailureImmersiveReader: @escaping (_ status: Error) -> Void, onTimeout: @escaping (_ timeoutValue: TimeInterval) -> Void, onError: @escaping (_ error: String) -> Void) {
         self.tokenToSend = tokenToPass
+        self.subdomainToSend = subdomainToPass
         self.contentToSend = contentToPass
         self.optionsToSend = optionsToPass
         self.onSuccessImmersiveReader = onSuccessImmersiveReader
@@ -119,8 +121,7 @@ public class ImmersiveReaderViewController: UIViewController, WKUIDelegate, WKNa
         timer = Timer.scheduledTimer(timeInterval: timeoutValue, target: self, selector: #selector(self.timedOut), userInfo: nil, repeats: false)
         
         // Load the iframe from HTML.
-        webView.loadHTMLString("<!DOCTYPE html><html><head><meta name='viewport' content='width=device-width, initial-scale=1, shrink-to-fit=no'></head><body><iframe id='immersiveReaderIframe' src = '\(src)' width='100%' height='100%' style='border: 0'></iframe></body></html>", baseURL: URL(string: "test://learningtools.onenote.com/learningtoolsapp/cognitive/reader"))
-
+        webView.loadHTMLString("<!DOCTYPE html><html style='width: 100%; height: 100%; margin: 0; padding: 0;'><head><meta name='viewport' content='width=device-width, initial-scale=1, shrink-to-fit=no'></head><body style='width: 100%; height: 100%; margin: 0; padding: 0;'><iframe id='immersiveReaderIframe' src = '\(src)' width='100%' height='100%' style='border: 0'></iframe></body></html>", baseURL: URL(string: "test://learningtools.onenote.com/learningtoolsapp/cognitive/reader"))
     }
 
     @objc func timedOut(_ timer: AnyObject) {
@@ -145,7 +146,7 @@ extension ImmersiveReaderViewController: WKScriptMessageHandler {
             timer.invalidate()
             
             // Create the message variable
-            let message = Message(cogSvcsAccessToken: tokenToSend, nil, resourceName: nil, request: contentToSend, launchToPostMessageSentDurationInMs: Int(Date().timeIntervalSince1970*1000 - startTime))
+            let message = Message(cogSvcsAccessToken: tokenToSend, resourceName: nil, request: contentToSend, launchToPostMessageSentDurationInMs: Int(Date().timeIntervalSince1970*1000 - startTime))
             do {
                 let jsonData = try JSONEncoder().encode(message)
                 let jsonString = String(data: jsonData, encoding: .utf8)

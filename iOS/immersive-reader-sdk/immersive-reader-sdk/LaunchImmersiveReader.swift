@@ -70,7 +70,7 @@ struct Message: Encodable {
         }
         DispatchQueue.main.async {
             navigationController = navController
-            let immersiveReaderViewController = ImmersiveReaderViewController(tokenToPass: token, contentToPass: content, optionsToPass: options, onSuccessImmersiveReader: {
+            let immersiveReaderViewController = ImmersiveReaderViewController(tokenToPass: token, subdomainToPass: "", contentToPass: content, optionsToPass: options, onSuccessImmersiveReader: {
                 onSuccess()
             }, onFailureImmersiveReader: { error in
                 onFailure(error)
