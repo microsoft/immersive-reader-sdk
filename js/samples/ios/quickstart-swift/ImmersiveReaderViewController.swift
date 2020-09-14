@@ -135,6 +135,7 @@ public class ImmersiveReaderViewController: UIViewController, WKUIDelegate, WKNa
     override public func viewDidDisappear(_ animated: Bool) {
         super.viewDidDisappear(animated)
         webView.load(NSURLRequest(url: NSURL(string: "about:blank")! as URL) as URLRequest)
+        webView.removeFromSuperview()
         print("viewDidDisappear")
     }
 
