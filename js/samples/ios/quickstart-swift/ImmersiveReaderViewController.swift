@@ -21,13 +21,13 @@ public class ImmersiveReaderWebView: WKWebView {
 
 public class ImmersiveReaderViewController: UIViewController, WKUIDelegate, WKNavigationDelegate {
     let tokenToSend: String
-    let subdomainToSend: String
     let contentToSend: Content
     let optionsToSend: Options?
     let onSuccessImmersiveReader: (() -> Void)?
     let onFailureImmersiveReader: ((_ error: Error) -> Void)?
     let onTimeout: ((_ timeoutValue: TimeInterval) -> Void)?
     let onError: ((_ error: String) -> Void)?
+    let onExit: (() -> Void)? // Only ever used if the back arrow isn't hidden in the IR web app
 
     let startTime = Date().timeIntervalSince1970*1000
     var src: String
@@ -35,16 +35,16 @@ public class ImmersiveReaderViewController: UIViewController, WKUIDelegate, WKNa
     var timer: Timer!
     var timeoutValue: TimeInterval!
 
-    public init(tokenToPass: String, subdomainToPass: String, contentToPass: Content, optionsToPass: Options?, onSuccessImmersiveReader: @escaping () -> Void, onFailureImmersiveReader: @escaping (_ status: Error) -> Void, onTimeout: @escaping (_ timeoutValue: TimeInterval) -> Void, onError: @escaping (_ error: String) -> Void) {
+    public init(tokenToPass: String, contentToPass: Content, optionsToPass: Options?, onSuccessImmersiveReader: @escaping () -> Void, onFailureImmersiveReader: @escaping (_ status: Error) -> Void, onTimeout: @escaping (_ timeoutValue: TimeInterval) -> Void, onError: @escaping (_ error: String) -> Void, onExitImmersiveReader: @escaping () -> Void) {
         self.tokenToSend = tokenToPass
-        self.subdomainToSend = subdomainToPass
         self.contentToSend = contentToPass
         self.optionsToSend = optionsToPass
         self.onSuccessImmersiveReader = onSuccessImmersiveReader
         self.onFailureImmersiveReader = onFailureImmersiveReader
         self.onTimeout = onTimeout
         self.onError = onError
-        self.src = "https://" + subdomainToPass + ".cognitiveservices.azure.com/immersivereader/webapp/v1.0/reader"
+        self.onExit = onExitImmersiveReader
+        self.src = "https://learningtools.onenote.com/learningtoolsapp/cognitive/reader"
         super.init(nibName: nil, bundle: nil)
     }
 
@@ -85,7 +85,9 @@ public class ImmersiveReaderViewController: UIViewController, WKUIDelegate, WKNa
         }
         webView.navigationDelegate = self
         webView.uiDelegate = self
+        webView.tag = 100
 
+        contentController.add(self, name: "exitCallback")
         contentController.add(self, name: "readyForContent")
         contentController.add(self, name: "launchSuccessful")
         contentController.add(self, name: "tokenExpired")
@@ -127,6 +129,14 @@ public class ImmersiveReaderViewController: UIViewController, WKUIDelegate, WKNa
         // Load the iframe from HTML.
         webView.loadHTMLString("<!DOCTYPE html><html style='width: 100%; height: 100%; margin: 0; padding: 0;'><head><meta name='viewport' content='width=device-width, initial-scale=1, shrink-to-fit=no'></head><body style='width: 100%; height: 100%; margin: 0; padding: 0;'><iframe id='immersiveReaderIframe' src = '\(src)' width='100%' height='100%' style='border: 0'></iframe></body></html>", baseURL: URL(string: "test://learningtools.onenote.com/learningtoolsapp/cognitive/reader"))
     }
+    
+    // Called when iOS Back Bar Button is tapped.
+    // Loads a blank url forcing the web application to close
+    override public func viewDidDisappear(_ animated: Bool) {
+        super.viewDidDisappear(animated)
+        webView.load(NSURLRequest(url: NSURL(string: "about:blank")! as URL) as URLRequest)
+        print("viewDidDisappear")
+    }
 
     @objc func timedOut(_ timer: AnyObject) {
         onTimeout!(timeoutValue)
@@ -148,7 +158,7 @@ extension ImmersiveReaderViewController: WKScriptMessageHandler {
             timer.invalidate()
 
             // Create the message variable
-            let message = Message(cogSvcsAccessToken: tokenToSend, cogSvcsSubdomain: subdomainToSend, resourceName: nil, request: contentToSend, launchToPostMessageSentDurationInMs: Int(Date().timeIntervalSince1970*1000 - startTime))
+            let message = Message(cogSvcsAccessToken: tokenToSend, resourceName: nil, request: contentToSend, launchToPostMessageSentDurationInMs: Int(Date().timeIntervalSince1970*1000 - startTime))
             do {
                 let jsonData = try JSONEncoder().encode(message)
                 let jsonString = String(data: jsonData, encoding: .utf8)
@@ -158,6 +168,10 @@ extension ImmersiveReaderViewController: WKScriptMessageHandler {
                     }
                 }
             } catch { print(error)}
+        }
+
+        if message.name == "exitCallback" {
+            onExit!()
         }
 
         if message.name == "launchSuccessful" {

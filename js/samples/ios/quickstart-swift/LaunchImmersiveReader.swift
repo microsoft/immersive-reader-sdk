@@ -6,42 +6,42 @@ import Foundation
 
 var navigationController: UINavigationController?
 
-public struct Content: Encodable {
+@objc public class Content: NSObject, Encodable {
     var title: String
     var chunks: [Chunk]
-
-    public init(title: String, chunks: [Chunk]) {
+    
+    @objc public init(title: String, chunks: [Chunk]) {
         self.title = title
         self.chunks = chunks
     }
 }
 
-public struct Chunk: Encodable {
+@objc public class Chunk: NSObject, Encodable {
     var content: String
     var lang: String?
     var mimeType: String?
-
-    public init(content: String, lang: String?, mimeType: String?) {
+    
+    @objc public init(content: String, lang: String?, mimeType: String?) {
         self.content = content
         self.lang = lang
         self.mimeType = mimeType
     }
 }
 
-public struct Options {
+@objc public class Options: NSObject {
     var uiLang: String?
     var timeout: TimeInterval?
-
+    
     public init(uiLang: String?, timeout: TimeInterval?, uiZIndex: NSNumber?) {
         self.uiLang = uiLang
         self.timeout = timeout
     }
 }
 
-public struct Error {
+@objc public class Error: NSObject {
     public var code: String
     public var message: String
-
+    
     public init(code: String, message: String) {
         self.code = code
         self.message = message
@@ -50,40 +50,43 @@ public struct Error {
 
 struct Message: Encodable {
     let cogSvcsAccessToken: String
-    let cogSvcsSubdomain: String
     let resourceName: String?
     let request: Content
     let launchToPostMessageSentDurationInMs: Int
-
-    init(cogSvcsAccessToken: String, cogSvcsSubdomain: String, resourceName: String?, request: Content, launchToPostMessageSentDurationInMs: Int) {
+    
+    init(cogSvcsAccessToken: String, resourceName: String?, request: Content, launchToPostMessageSentDurationInMs: Int) {
         self.cogSvcsAccessToken = cogSvcsAccessToken
-        self.cogSvcsSubdomain = cogSvcsSubdomain
         self.resourceName = resourceName
         self.request = request
         self.launchToPostMessageSentDurationInMs = launchToPostMessageSentDurationInMs
     }
 }
 
-public func launchImmersiveReader(navController: UINavigationController, token: String, subdomain: String, content: Content, options: Options?, onSuccess: @escaping () -> Void, onFailure: @escaping (_ error: Error) -> Void) {
+public func launchImmersiveReader(navController: UINavigationController, token: String, content: Content, options: Options?, onSuccess: @escaping () -> Void, onFailure: @escaping (_ error: Error) -> Void, onExit: @escaping () -> Void) {
+    
     if (content.chunks.count == 0) {
         let badArgumentError = Error(code: "BadArgument", message: "Chunks must not be empty.")
         onFailure(badArgumentError)
     }
-
-    navigationController = navController
-    let immersiveReaderViewController = ImmersiveReaderViewController(tokenToPass: token, subdomainToPass: subdomain, contentToPass: content, optionsToPass: options, onSuccessImmersiveReader: {
-        onSuccess()
-    }, onFailureImmersiveReader: { error in
-        onFailure(error)
-    }, onTimeout: { timeout in
-        navigationController?.popViewController(animated: true)
-        let timeoutError = Error(code: "Timeout", message: "Page failed to load after timeout \(timeout) ms.")
-        onFailure(timeoutError)
-    }, onError: { error in
-        navigationController?.popViewController(animated: true)
-        let errorMessage = Error(code: "Internal Error", message: error)
-        onFailure(errorMessage)
-    })
-    navigationController!.pushViewController(immersiveReaderViewController, animated: true)
-
+    DispatchQueue.main.async {
+        navigationController = navController
+        // The Office compliant v0.0.1 token endpoint does not require a subdomain, pass in an empty string instead.
+        let immersiveReaderViewController = ImmersiveReaderViewController(tokenToPass: token, contentToPass: content, optionsToPass: options, onSuccessImmersiveReader: {
+            onSuccess()
+        }, onFailureImmersiveReader: { error in
+            onFailure(error)
+        }, onTimeout: { timeout in
+            navigationController?.popViewController(animated: true)
+            let timeoutError = Error(code: "Timeout", message: "Page failed to load after timeout \(timeout) ms.")
+            onFailure(timeoutError)
+        }, onError: { error in
+            navigationController?.popViewController(animated: true)
+            let errorMessage = Error(code: "Internal Error", message: error)
+            onFailure(errorMessage);
+        }, onExitImmersiveReader: {
+            navigationController?.popViewController(animated: true)
+            onExit()
+        })
+        navigationController!.pushViewController(immersiveReaderViewController, animated: true)
+    }
 }

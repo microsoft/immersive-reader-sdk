@@ -2,6 +2,10 @@
 // Licensed under the MIT License.
 
 window.addEventListener("message", function(message) {
+    if(message.data == "ImmersiveReader-Exit") {
+        window.webkit.messageHandlers.exitCallback.postMessage(null);
+    }
+    
     if(message.data == "ImmersiveReader-ReadyForContent") {
         window.webkit.messageHandlers.readyForContent.postMessage(null);
     }
