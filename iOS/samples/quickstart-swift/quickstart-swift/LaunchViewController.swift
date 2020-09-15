@@ -97,6 +97,8 @@ class LaunchViewController: UIViewController {
             
                 }, onFailure: { error in
                     self.launchButton.isEnabled = true
+                }, onExit: {
+                    self.onExit()
                 })
             }
             
@@ -151,4 +153,8 @@ class LaunchViewController: UIViewController {
         task.resume()
     }
 
+    // Function called upon exiting the Immersive Reader using the web app exit icon button if it isn't hidden.
+    func onExit() {
+        print("Immersive Reader web application back button tapped")
+    }
 }

@@ -62,7 +62,7 @@ struct Message: Encodable {
 }
 
 @objc public class LaunchImmersiveReader: NSObject {
-    @objc public func launchImmersiveReader(navController: UINavigationController, token: String, content: Content, options: Options?, onSuccess: @escaping () -> Void, onFailure: @escaping (_ error: Error) -> Void) {
+    @objc public func launchImmersiveReader(navController: UINavigationController, token: String, content: Content, options: Options?, onSuccess: @escaping () -> Void, onFailure: @escaping (_ error: Error) -> Void, onExit: @escaping () -> Void) {
         
         if (content.chunks.count == 0) {
             let badArgumentError = Error(code: "BadArgument", message: "Chunks must not be empty.")
@@ -70,7 +70,7 @@ struct Message: Encodable {
         }
         DispatchQueue.main.async {
             navigationController = navController
-            let immersiveReaderViewController = ImmersiveReaderViewController(tokenToPass: token, subdomainToPass: "", contentToPass: content, optionsToPass: options, onSuccessImmersiveReader: {
+            let immersiveReaderViewController = ImmersiveReaderViewController(tokenToPass: token, contentToPass: content, optionsToPass: options, onSuccessImmersiveReader: {
                 onSuccess()
             }, onFailureImmersiveReader: { error in
                 onFailure(error)
@@ -82,6 +82,8 @@ struct Message: Encodable {
                 navigationController?.popViewController(animated: true)
                 let errorMessage = Error(code: "Internal Error", message: error)
                 onFailure(errorMessage);
+            }, onExitImmersiveReader: {
+                onExit()
             })
             navigationController!.pushViewController(immersiveReaderViewController, animated: true)
         }

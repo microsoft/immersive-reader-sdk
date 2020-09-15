@@ -1,7 +1,9 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // Licensed under the MIT License.
 
+#import <Foundation/Foundation.h>
 #import <UIKit/UIKit.h>
+#import <WebKit/WebKit.h>
 
 //! Project version number for immersive_reader_sdk.
 FOUNDATION_EXPORT double immersive_reader_sdkVersionNumber;

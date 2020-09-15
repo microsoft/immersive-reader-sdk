@@ -7,13 +7,13 @@ import WebKit
 public class ImmersiveReaderViewController: UIViewController, WKUIDelegate, WKNavigationDelegate {
     
     let tokenToSend: String
-    let subdomainToSend: String
     let contentToSend: Content
     let optionsToSend: Options?
     let onSuccessImmersiveReader: (() -> Void)?
     let onFailureImmersiveReader: ((_ error: Error) -> Void)?
     let onTimeout: ((_ timeoutValue: TimeInterval) -> Void)?
     let onError: ((_ error: String) -> Void)?
+    let onExitImmersiveReader: (() -> Void)?
     
     let startTime = Date().timeIntervalSince1970*1000
     public var src = "https://learningtools.onenote.com/learningtoolsapp/cognitive/reader"
@@ -21,15 +21,15 @@ public class ImmersiveReaderViewController: UIViewController, WKUIDelegate, WKNa
     var timer: Timer!
     var timeoutValue: TimeInterval!
     
-    public init(tokenToPass: String, subdomainToPass: String, contentToPass: Content, optionsToPass: Options?, onSuccessImmersiveReader: @escaping () -> Void, onFailureImmersiveReader: @escaping (_ status: Error) -> Void, onTimeout: @escaping (_ timeoutValue: TimeInterval) -> Void, onError: @escaping (_ error: String) -> Void) {
+    public init(tokenToPass: String, contentToPass: Content, optionsToPass: Options?, onSuccessImmersiveReader: @escaping () -> Void, onFailureImmersiveReader: @escaping (_ status: Error) -> Void, onTimeout: @escaping (_ timeoutValue: TimeInterval) -> Void, onError: @escaping (_ error: String) -> Void, onExitImmersiveReader: @escaping () -> Void) {
         self.tokenToSend = tokenToPass
-        self.subdomainToSend = subdomainToPass
         self.contentToSend = contentToPass
         self.optionsToSend = optionsToPass
         self.onSuccessImmersiveReader = onSuccessImmersiveReader
         self.onFailureImmersiveReader = onFailureImmersiveReader
         self.onTimeout = onTimeout
         self.onError = onError
+        self.onExitImmersiveReader = onExitImmersiveReader
         super.init(nibName: nil, bundle: nil)
     }
     
@@ -73,6 +73,7 @@ public class ImmersiveReaderViewController: UIViewController, WKUIDelegate, WKNa
         webView.navigationDelegate = self
         webView.uiDelegate = self
 
+        contentController.add(self, name: "exitCallback")
         contentController.add(self, name: "readyForContent")
         contentController.add(self, name: "launchSuccessful")
         contentController.add(self, name: "tokenExpired")
@@ -124,6 +125,15 @@ public class ImmersiveReaderViewController: UIViewController, WKUIDelegate, WKNa
         webView.loadHTMLString("<!DOCTYPE html><html style='width: 100%; height: 100%; margin: 0; padding: 0;'><head><meta name='viewport' content='width=device-width, initial-scale=1, shrink-to-fit=no'></head><body style='width: 100%; height: 100%; margin: 0; padding: 0;'><iframe id='immersiveReaderIframe' src = '\(src)' width='100%' height='100%' style='border: 0'></iframe></body></html>", baseURL: URL(string: "test://learningtools.onenote.com/learningtoolsapp/cognitive/reader"))
     }
 
+    // Called when iOS Back Bar Button is tapped.
+    // Loads a blank url forcing the web application to close
+    override public func viewDidDisappear(_ animated: Bool) {
+        super.viewDidDisappear(animated)
+        webView.load(NSURLRequest(url: NSURL(string: "about:blank")! as URL) as URLRequest)
+        webView.removeFromSuperview()
+        print("viewDidDisappear")
+    }
+
     @objc func timedOut(_ timer: AnyObject) {
         onTimeout!(timeoutValue)
     }
@@ -156,6 +166,10 @@ extension ImmersiveReaderViewController: WKScriptMessageHandler {
                     }
                 }
             } catch { print(error)}
+        }
+
+        if message.name == "exitCallback" {
+            onExitImmersiveReader!()
         }
         
         if message.name == "launchSuccessful" {
