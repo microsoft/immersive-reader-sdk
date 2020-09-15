@@ -14,7 +14,7 @@
     <script type='text/javascript' src='https://code.jquery.com/jquery-3.3.1.min.js'></script>
     <script type='text/javascript' src='https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.12.1/jquery-ui.min.js'></script>
     <script type='text/javascript' async src='https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-MML-AM_CHTML'></script>
-    <script type='text/javascript' src='https://contentstorage.onenote.office.net/onenoteltir/immersivereadersdk/immersive-reader-sdk.1.0.0.js'></script>
+    <script type='text/javascript' src='https://contentstorage.onenote.office.net/onenoteltir/immersivereadersdk/immersive-reader-sdk.0.0.3.js'></script>
     <script type='text/javascript' src='~/js/helpers.js'></script>
 
     <link href='~/css/styles.css' rel='stylesheet'>
@@ -178,9 +178,9 @@
             };
 
             const token = await getImmersiveReaderTokenAsync(Canary);
-            const subdomain = await getImmersiveReaderSubdomainAsync();
-
-            ImmersiveReader.launchAsync(token, subdomain, data);
+            
+            // The Office compliant v0.0.1 token does not require a subdomain, use null instead.
+            ImmersiveReader.launchAsync(token, null, data);
         }
 
         // Display math preview with MathJax
