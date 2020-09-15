@@ -238,7 +238,7 @@ class PictureLaunchViewController: UIViewController, UINavigationControllerDeleg
         
     }
     
-    /// Retrieves the token for the Immersive Reader
+    /// Retrieves the token for the Immersive Reader using Azure Active Directory authentication
     ///
     /// - Parameters:
     ///     -onSuccess: A closure that gets called when the token is successfully recieved.
@@ -247,15 +247,14 @@ class PictureLaunchViewController: UIViewController, UINavigationControllerDeleg
     ///     -theError: The error that occured when the token fails to be obtained.
     func getToken(onSuccess: @escaping (_ theToken: String) -> Void, onFailure: @escaping ( _ theError: String) -> Void) {
         
-        let tokenForm = "Ocp-Apim-Subscription-Key=" + Constants.SubscriptionKey
         let tokenUrl = "https://" + Constants.Region + ".api.cognitive.microsoft.com/sts/v1.0/issueToken"
-        
-        var responseTokenString: String = "0"
-        
+        print("token url: \(tokenUrl)")
+                
         let url = URL(string: tokenUrl)!
         var request = URLRequest(url: url)
-        request.httpBody = tokenForm.data(using: .utf8)
+        /// request.httpBody = tokenForm.data(using: .utf8)
         request.httpMethod = "POST"
+        request.setValue(Constants.SubscriptionKey, forHTTPHeaderField: "Ocp-Apim-Subscription-Key")
         
         let task = URLSession.shared.dataTask(with: request) { data, response, error in
             guard let data = data,
@@ -278,17 +277,7 @@ class PictureLaunchViewController: UIViewController, UINavigationControllerDeleg
             let responseString = String(data: data, encoding: .utf8)
             print("responseString = \(String(describing: responseString!))")
             
-            let jsonResponse = try? JSONSerialization.jsonObject(with: data, options: [])
-            guard let jsonDictonary = jsonResponse as? [String: Any] else {
-                onFailure("Error parsing JSON response.")
-                return
-            }
-            guard let responseToken = jsonDictonary["access_token"] as? String else {
-                onFailure("Error retrieving token from JSON response.")
-                return
-            }
-            responseTokenString = responseToken
-            onSuccess(responseTokenString)
+            onSuccess(responseString!)
         }
         
         task.resume()
