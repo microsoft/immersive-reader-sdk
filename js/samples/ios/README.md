@@ -21,15 +21,14 @@ Here are the steps:
 1. Once deployed, click the `Go to resource` button.
 1. Click on the `Keys and Endpoint` button in the side menu.
 1. These are your secrets. `KEY 1` is the `SubscriptionKey`, `LOCATION` is the `Region`.
-1. Open terminal and navigate to the iOS/samples/quickstart-swift directory. Run the following command: `pod install`.
 1. Open Xcode and open **immersive-reader-sdk/js/samples/ios/quickstart-swift/quickstart-swift.xcodeproj**.
 1. In the top menu, click on **Product > Scheme > Edit Scheme...**
 1. In the **Run** view, click on the **Arguments** tab.
 1. In the **Environment Variables** section, add the following names and values, supplying the values given when you created your Immersive Reader resource.
 
       ```text
-      SUBSCRIPTION_KEY=<YOUR_SUBSCRIPTION_KEY>
-+     REGION=<YOUR_REGION>
+        SUBSCRIPTION_KEY=<YOUR_SUBSCRIPTION_KEY>
+        REGION=<YOUR_REGION>
       ```
 
 > [!IMPORTANT]

@@ -62,12 +62,12 @@
 
 @section Scripts
 {
-    <script src="https://contentstorage.onenote.office.net/onenoteltir/immersivereadersdk/immersive-reader-sdk.1.0.0.js"></script>
+    <script src="https://contentstorage.onenote.office.net/onenoteltir/immersivereadersdk/immersive-reader-sdk.0.0.3.js"></script>
     <script>
-        function getTokenAndSubdomainAsync() {
+        function getTokenAsync() {
             return new Promise(function (resolve, reject) {
                 $.ajax({
-                    url: "@Url.Action("GetTokenAndSubdomain", "Home")",
+                    url: "@Url.Action("GetToken", "Home")",
                     type: "GET",
                     success: function (data) {
                         if (data.error) {
@@ -88,10 +88,9 @@
         });
 
         function handleLaunchImmersiveReader() {
-            getTokenAndSubdomainAsync()
+            getTokenAsync()
                 .then(function (response) {
-                    const token = response["token"];
-                    const subdomain = response["subdomain"];
+                    const token = response;
 
                     // Learn more about chunk usage and supported MIME types https://docs.microsoft.com/azure/cognitive-services/immersive-reader/reference#chunk
                     const data = {
@@ -108,7 +107,7 @@
                         "uiZIndex": 2000
                     };
 
-                    ImmersiveReader.launchAsync(token, subdomain, data, options)
+                    ImmersiveReader.launchAsync(token, null, data, options)
                         .catch(function (error) {
                             alert("Error in launching the Immersive Reader. Check the console.");
                             console.log(error);
