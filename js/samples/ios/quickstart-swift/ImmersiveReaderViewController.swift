@@ -27,7 +27,7 @@ public class ImmersiveReaderViewController: UIViewController, WKUIDelegate, WKNa
     let onFailureImmersiveReader: ((_ error: Error) -> Void)?
     let onTimeout: ((_ timeoutValue: TimeInterval) -> Void)?
     let onError: ((_ error: String) -> Void)?
-    let onExit: (() -> Void)? // Only ever used if the back arrow isn't hidden in the IR web app
+    let onExitImmersiveReader: (() -> Void)? // Only ever used if the back arrow isn't hidden in the IR web app
 
     let startTime = Date().timeIntervalSince1970*1000
     var src: String
@@ -43,7 +43,7 @@ public class ImmersiveReaderViewController: UIViewController, WKUIDelegate, WKNa
         self.onFailureImmersiveReader = onFailureImmersiveReader
         self.onTimeout = onTimeout
         self.onError = onError
-        self.onExit = onExitImmersiveReader
+        self.onExitImmersiveReader = onExitImmersiveReader
         self.src = "https://learningtools.onenote.com/learningtoolsapp/cognitive/reader"
         super.init(nibName: nil, bundle: nil)
     }
@@ -172,7 +172,7 @@ extension ImmersiveReaderViewController: WKScriptMessageHandler {
         }
 
         if message.name == "exitCallback" {
-            onExit!()
+            onExitImmersiveReader!()
         }
 
         if message.name == "launchSuccessful" {
