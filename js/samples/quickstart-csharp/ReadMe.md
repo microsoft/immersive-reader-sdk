@@ -21,9 +21,7 @@ Here are the steps:
 1. Once deployed, click the `Go to resource` button.
 1. Click on the `Keys and Endpoint` button in the side menu.
 1. These are your secrets. `KEY 1` is the `SubscriptionKey`, `LOCATION` is the `Region`.
-
 1. Open **QuickstartSampleWebApp.sln** in Visual Studio.
-
 1. Right-click on the project in the Solution Explorer and choose **Manage User Secrets**. This will open a file called **secrets.json**. Replace the contents of that file with the following, supplying your values as appropriate:
 
     ```json
