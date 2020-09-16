@@ -106,7 +106,7 @@
                         "onExit": exitCallback,
                         "uiZIndex": 2000
                     };
-
+                    // The Office compliant v0.0.1 token does not require a subdomain, use null instead.
                     ImmersiveReader.launchAsync(token, null, data, options)
                         .catch(function (error) {
                             alert("Error in launching the Immersive Reader. Check the console.");
