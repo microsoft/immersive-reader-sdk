@@ -48,7 +48,6 @@ class MainActivity : AppCompatActivity() {
 
     private suspend fun handleLoadImmersiveReaderWebView() {
         val exampleActivity = this
-        val subdomain = dotEnv["SUBDOMAIN"]
         val irTitle = findViewById<TextView>(R.id.Title)
         val irText1 = findViewById<TextView>(R.id.Content1)
         val irText2 = findViewById<TextView>(R.id.Content2)
@@ -81,8 +80,7 @@ class MainActivity : AppCompatActivity() {
         runBlocking{
             val resp = async { getImmersiveReaderTokenAsync() }
             token = resp.await()
-            val jsonResp = JSONObject(token)
-            loadImmersiveReaderWebView(exampleActivity, jsonResp.getString("access_token"), subdomain, content, options)
+            loadImmersiveReaderWebView(exampleActivity, token, content, options)
         }
     }
 
@@ -92,19 +90,18 @@ class MainActivity : AppCompatActivity() {
 
     @Throws(IOException::class)
     fun getToken(): String {
-        val clientId = dotEnv["CLIENT_ID"]
-        val clientSecret = dotEnv["CLIENT_SECRET"]
-        val tenantId = dotEnv["TENANT_ID"]
-        val tokenUrl = URL("https://login.windows.net/$tenantId/oauth2/token")
-        val form = "grant_type=client_credentials&resource=https://cognitiveservices.azure.com/&client_id=$clientId&client_secret=$clientSecret"
+        val subscriptionKey = dotEnv["SUBSCRIPTION_KEY"]
+        val region = dotEnv["REGION"]
+        val tokenUrl = URL("https://$region.api.cognitive.microsoft.com/sts/v1.0/issueToken")
 
         val connection = tokenUrl.openConnection() as HttpURLConnection
         connection.requestMethod = "POST"
-        connection.setRequestProperty("content-type", "application/x-www-form-urlencoded")
+        connection.setRequestProperty("Content-type", "application/x-www-form-urlencoded");
+        connection.setRequestProperty("Content-length", "0");
+        connection.setRequestProperty("Ocp-Apim-Subscription-Key", subscriptionKey);
         connection.doOutput = true
 
         val writer = DataOutputStream(connection.outputStream)
-        writer.writeBytes(form)
         writer.flush()
         writer.close()
 
@@ -136,7 +133,6 @@ class MainActivity : AppCompatActivity() {
                   var chunks: List<Chunk>? = null)
 
     class Message(var cogSvcsAccessToken: String? = null,
-                  var cogSvcsSubdomain: String? = null,
                   var content: Content? = null,
                   var launchToPostMessageSentDurationInMs: Int? = null,
                   var options: Options? = null)
@@ -159,7 +155,6 @@ class MainActivity : AppCompatActivity() {
     fun loadImmersiveReaderWebView(
         exampleActivity: Activity,
         token: String,
-        subdomain: String?,
         content: Content,
         options: Options
     ) {
@@ -168,7 +163,6 @@ class MainActivity : AppCompatActivity() {
         // Populate the message
         val messageData = Message()
         messageData.cogSvcsAccessToken = token
-        messageData.cogSvcsSubdomain = subdomain
         messageData.content = content
         messageData.options = options
 
