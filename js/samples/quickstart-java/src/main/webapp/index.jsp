@@ -5,8 +5,11 @@
     <title>Immersive Reader Java Quickstart</title>
     <meta name='viewport' content='width=device-width, initial-scale=1'>
 
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="/resources/site.css" />
+
     <script type='text/javascript' src='https://code.jquery.com/jquery-3.3.1.min.js'></script>
-    <script type='text/javascript' src='https://contentstorage.onenote.office.net/onenoteltir/immersivereadersdk/immersive-reader-sdk.1.0.0.js'></script>
+    <script type='text/javascript' src='https://contentstorage.onenote.office.net/onenoteltir/immersivereadersdk/immersive-reader-sdk.0.0.3.js'></script>
     <!-- A polyfill for Promise is needed for IE11 support -->
     <script type='text/javascript' src='https://cdn.jsdelivr.net/npm/promise-polyfill@8/dist/polyfill.min.js'></script>
 
@@ -68,38 +71,33 @@
     </div>
 
     <script type='text/javascript'>
-        function getTokenAndSubdomainAsync() {
-            return new Promise(function (resolve, reject) {
-                $.ajax({
-                    url: '/getAuthTokenServlet',
-                    type: 'GET',
-                    success: function (response) {
-                        const data = JSON.parse(response);
-
-                        if (data.error) {
-                            reject(data.error);
-                        } else {
-                            const token = data['access_token'];
-                            const subdomain = '<%= Microsoft.ImmersiveReader.GetAuthTokenServlet.SUBDOMAIN %>';
-                            resolve({token, subdomain});
+        function getTokenAsync() {
+                return new Promise(function (resolve, reject) {
+                    $.ajax({
+                        url: "/getAuthTokenServlet",
+                        type: "GET",
+                        success: function (data) {
+                            if (data.error) {
+                                reject(data.error);
+                            } else {
+                                resolve(data);
+                            }
+                        },
+                        error: function (err) {
+                            reject(err);
                         }
-                    },
-                    error: function (err) {
-                        reject(err);
-                    }
+                    });
                 });
-            });
-        }
+            }
         
         $(".immersive-reader-button").click(function () {
             handleLaunchImmersiveReader();
         });
 
         function handleLaunchImmersiveReader() {
-            getTokenAndSubdomainAsync()
+            getTokenAsync()
                 .then(function (response) {
-                    const token = response["token"];
-                    const subdomain = response["subdomain"];
+                    const token = response;
                     // Learn more about chunk usage and supported MIME types https://docs.microsoft.com/azure/cognitive-services/immersive-reader/reference#chunk
                     const data = {
                         title: $("#ir-title").text(),
@@ -113,14 +111,15 @@
                         "onExit": exitCallback,
                         "uiZIndex": 2000
                     };
-                    ImmersiveReader.launchAsync(token, subdomain, data, options)
+                    // The Office compliant v0.0.1 token does not require a subdomain, use null instead.
+                    ImmersiveReader.launchAsync(token, null, data, options)
                         .catch(function (error) {
                             alert("Error in launching the Immersive Reader. Check the console.");
                             console.log(error);
                         });
                 })
                 .catch(function (error) {
-                    alert("Error in getting the Immersive Reader token and subdomain. Check the console.");
+                    alert("Error in getting the Immersive Reader. Check the console.");
                     console.log(error);
                 });
         }
