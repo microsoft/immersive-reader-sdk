@@ -1,28 +1,39 @@
 # Cognitive Services - Immersive Reader JavaScript SDK (preview)
 
-[![Build status](https://dev.azure.com/ms/immersive-reader-sdk/_apis/build/status/96)](https://dev.azure.com/ms/immersive-reader-sdk/_build?definitionId=96)
-
-The Immersive Reader JavaScript SDK is a JavaScript library that allows you to easily and quickly integrate the [Immersive Reader](https://azure.microsoft.com/services/cognitive-services/immersive-reader/) into your web application.
+The Immersive Reader JavaScript SDK is a JavaScript library that allows you to easily and quickly integrate the Immersive Reader into your web application.
 
 ## Usage
 
-Usage of this SDK requires an Azure subscription to Immersive Reader. Follow [these instructions](https://docs.microsoft.com/azure/cognitive-services/immersive-reader/how-to-create-immersive-reader) to create an Immersive Reader resource and configure Azure Active Directory authentication. Save the output of your session into a text file for future reference.
+Microsoft 1st Party Office applications should use the `v0.0.3` Immersive Reader JavaScript SDK and the `v0.0.1` SDK's authentication token retrieved by providing a `SubscriptionKey` and `Region`. This will ensure the Immersive Reader uses Office compliant APIs deployed to OSI.
 
-You can find examples of how to acquire an authentication token in the [samples](./samples).
+Here are the steps:
 
-Include the library of the stable build in your web application:
+1. Create a Microsoft Internal billable App Service Subscription via the AIRS portal: https://aka.ms/airs and be sure to add more than one owner.
+1. Once you have access to the Subscription created via AIRS in the Azure portal https://portal.azure.com - use it to create the Immersive Reader Resource.
+1. From the Subscription go to Resources and click the `Add` button.
+1. Search for "Immersive Reader" and click the `Create` button.
+1. Provide the project details, ensuring one of the following regions is selected: `eastus`, `westus`, `northeurope`, `westeurope`, `centralindia`, `japaneast`, `japanwest`, `australiaeast` (the Learning tools Service on OSI only supports these regions) and click next.
+1. (optional) Add any tags and click next.
+1. Review the terms and click the `Create` button (it’ll take a moment to deploy).
+1. Once deployed, click the `Go to resource` button.
+1. Click on the `Keys and Endpoint` button in the side menu.
+1. These are your secrets. `KEY 1` is the `SubscriptionKey`, `LOCATION` is the `Region`.
+
+Include the library of the v0.0.3 stable build in your web application:
 
 ```html
-<script type='text/javascript' src='https://contentstorage.onenote.office.net/onenoteltir/immersivereadersdk/immersive-reader-sdk.1.0.0.js'></script>
+<script type='text/javascript' src='https://contentstorage.onenote.office.net/onenoteltir/immersivereadersdk/immersive-reader-sdk.0.0.3.js'></script>
 ```
 
 ```bash
-npm install @microsoft/immersive-reader-sdk
+npm install @microsoft/immersive-reader-sdk@0.0.3
 ```
 
 ```bash
-yarn add @microsoft/immersive-reader-sdk
+yarn add @microsoft/immersive-reader-sdk@0.0.3
 ```
+
+You can find examples of how to acquire a v0.0.1 authentication token in the [samples](./samples).
 
 Add an HTML element to your webpage with the `immersive-reader-button` class attribute.
 
@@ -40,7 +51,8 @@ function launchImmersiveReader() {
             content: 'Hello, world!'
         } ]
     };
-    ImmersiveReader.launchAsync(YOUR_TOKEN, YOUR_SUBDOMAIN, content);
+    // The Office compliant v0.0.1 token does not require a subdomain, use null instead.
+    ImmersiveReader.launchAsync(YOUR_TOKEN, null, content);
 }
 ```
 
@@ -50,7 +62,7 @@ The Immersive Reader may use persistent cookies to maintain user preferences and
 
 ## Building
 
-In order to build the SDK, ensure that you have [Git](https://git-scm.com/downloads), [Node.js](https://nodejs.org/), and [Yarn](https://yarnpkg.com/) installed.
+In order to build the backfix branch v0.0.3 SDK, ensure that you have [Git](https://git-scm.com/downloads), [Node.js](https://nodejs.org/), and [Yarn](https://yarnpkg.com/) installed.
 
 Clone a copy of the repo:
 
@@ -58,10 +70,21 @@ Clone a copy of the repo:
 git clone https://github.com/microsoft/immersive-reader-sdk
 ```
 
-Change to the immersive-reader-sdk directory:
+Fetch the v1.1.0-backfix branch (a modified version of v1.1.0 that retains the same overall structure of the v1.1.0 SDK but uses the v0.0.3 SDK and Office Compliant v0.0.1 authentication token)
+```bash
+git fetch origin v1.1.0-backfix
+```
+
+Checkout the v1.1.0-backfix branch
 
 ```bash
-cd immersive-reader-sdk
+git checkout v1.1.0-backfix
+```
+
+Change to the immersive-reader-sdk/js directory:
+
+```bash
+cd immersive-reader-sdk/js
 ```
 
 Install dependencies:

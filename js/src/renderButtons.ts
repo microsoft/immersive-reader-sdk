@@ -127,6 +127,7 @@ export function renderButtons(options?: RenderButtonsOptions): void {
         iconElements = options.elements;
     }
     for (const div of iconElements) {
+        div.setAttribute('type', 'button');
         div.setAttribute('role', 'button');
         const locale = div.getAttribute(attributeLocale) || 'en';
         div.setAttribute('aria-label', getLocalizedString(locale));
