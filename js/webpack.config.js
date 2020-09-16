@@ -1,4 +1,5 @@
 const path = require('path');
+const webpack = require('webpack');
 
 module.exports = {
     mode: 'production',
@@ -23,5 +24,10 @@ module.exports = {
         library: 'ImmersiveReader',
         filename: 'immersive-reader-sdk.js',
         libraryTarget: 'umd'
-    }
+    },
+    plugins: [
+        new webpack.DefinePlugin({
+          VERSION: JSON.stringify(require("./package.json").version)
+        })
+    ]
 };

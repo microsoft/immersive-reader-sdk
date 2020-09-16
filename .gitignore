@@ -1,3 +1,6 @@
+# Locally built library
+immersive-reader-sdk.local.js
+
 # Logs
 logs
 *.log
@@ -56,6 +59,7 @@ typings/
 
 # dotenv environment variables file
 .env
+env*
 
 # next.js build output
 .next
@@ -65,6 +69,8 @@ bin/
 lib/
 # Check in the nodejs express bin
 !samples/nodejs/bin/
+!js/samples/quickstart-csharp/wwwroot/lib/
+!js/samples/advanced-csharp-multiple-resources/wwwroot/lib/
 obj/
 packages/
 *.csproj.user
@@ -81,8 +87,9 @@ packages/
 ### Swift ###
 # Xcode
 
-## Build generated
+## iOS Build generated
 build/
+!js/build/
 DerivedData/
 
 ## Various settings
@@ -95,6 +102,7 @@ DerivedData/
 *.perspectivev3
 !default.perspectivev3
 xcuserdata/
+*.xcscheme
 
 ## Other
 *.moved-aside
@@ -150,3 +158,15 @@ iOSInjectionProject/
 *.xcworkspace/contents.xcworkspacedata
 /*.gcno
 **/xcshareddata/WorkspaceSettings.xcsettings
+
+# Java project files
+.project
+.idea
+target/
+*/quickstart-kotlin/.settings
+
+# Python cache
+*.pyc
+
+@ custom ignores
+/js/package-lock.json

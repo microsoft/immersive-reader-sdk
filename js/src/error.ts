@@ -4,11 +4,14 @@
 export type Error = {
     code: ErrorCode;
     message: string; // Human-readable representation of the error
+    sessionId?: string; // Session ID which can be used for debugging
 };
 
 export enum ErrorCode {
     BadArgument = 'BadArgument',
     Timeout = 'Timeout',
     TokenExpired = 'TokenExpired',
-    Throttled = 'Throttled'
+    Throttled = 'Throttled',
+    ServerError = 'ServerError',
+    InvalidSubdomain = 'InvalidSubdomain'
 }
