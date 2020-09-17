@@ -97,7 +97,7 @@ namespace ImmersiveReader
             string text = _script;
             var token = await GetTokenAsync();
 
-            text = text.Replace("|TITLE", title);
+            text = text.Replace("|TITLE|", title);
             text = text.Replace("|TOKEN|", token);
             text = text.Replace("|YOUR_SUB_DOMAIN|", this.Subdomain);
             text = text.Replace("|CONTENT|", content.Replace("'", "\\\'"));
