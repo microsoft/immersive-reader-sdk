@@ -1,34 +1,27 @@
 package Microsoft.ImmersiveReader;
 
+import io.github.cdimascio.dotenv.Dotenv;
 import javax.servlet.http.*;
 import java.io.*;
 import java.net.HttpURLConnection;
 import java.net.URL;
 
-import static Microsoft.ImmersiveReader.Constants.TENANT_ID;
-import static Microsoft.ImmersiveReader.Constants.CLIENT_ID;
-import static Microsoft.ImmersiveReader.Constants.CLIENT_SECRET;
-import static Microsoft.ImmersiveReader.Constants.SUBDOMAIN;
-
 public class GetAuthTokenServlet extends HttpServlet {
+
+    private static Dotenv dotenv = Dotenv.load();
+
+    private static String TENANT_ID = dotenv.get("TENANT_ID");
+    private static String CLIENT_ID = dotenv.get("CLIENT_ID");
+    private static String CLIENT_SECRET = dotenv.get("CLIENT_SECRET");
+    public static String SUBDOMAIN = dotenv.get("SUBDOMAIN");
 
     public void doGet(HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse)
             throws IOException {
 
-        if (TENANT_ID.isEmpty() || TENANT_ID == null) {
-            throw new IllegalArgumentException();
-        }
-
-        if (CLIENT_ID.isEmpty() || CLIENT_ID == null) {
-            throw new IllegalArgumentException();
-        }
-
-        if (CLIENT_SECRET.isEmpty() || CLIENT_SECRET == null) {
-            throw new IllegalArgumentException();
-        }
-
-        if (SUBDOMAIN.isEmpty() || SUBDOMAIN == null) {
-            throw new IllegalArgumentException();
+        if (isNullOrEmpty(TENANT_ID) || isNullOrEmpty(CLIENT_ID) ||
+                isNullOrEmpty(CLIENT_SECRET) || isNullOrEmpty(SUBDOMAIN)) {
+            throw new IllegalArgumentException("Azure Authentication information missing. Did you add " +
+                    "TENANT_ID, CLIENT_ID, CLIENT_SECRET and SUBDOMAIN to .env? See ReadMe.md");
         }
 
         String token = getToken();
@@ -77,5 +70,9 @@ public class GetAuthTokenServlet extends HttpServlet {
         } else {
             throw new IOException();
         }
+    }
+
+    private static boolean isNullOrEmpty(String s) {
+        return (s == null || s.isEmpty());
     }
 }

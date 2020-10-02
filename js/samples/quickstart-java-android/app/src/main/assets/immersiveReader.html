@@ -1,0 +1,48 @@
+<!-- Copyright (c) Microsoft Corporation. All rights reserved.
+Licensed under the MIT License. -->
+
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <script type="text/javascript" src="https://contentstorage.onenote.office.net/onenoteltir/immersivereadersdk/immersive-reader-sdk.1.1.0.js"></script>
+</head>
+<body>
+    <script type="text/javascript">
+        function handleLaunchImmersiveReader(message) {
+            if (!message) {
+                Android.showToast('Message is null or undefined!');
+            } else {
+                // Learn more about chunk usage and supported MIME types https://docs.microsoft.com/azure/cognitive-services/immersive-reader/reference#chunk
+                var data = {
+                    title: message.request.title,
+                    chunks: []
+                };
+
+                for (var chunkIndex = 0; chunkIndex < message.request.chunks.length; chunkIndex++) {
+                    data.chunks.push({
+                        content: message.request.chunks[chunkIndex].content,
+                        lang: message.request.chunks[chunkIndex].lang,
+                        mimeType: message.request.chunks[chunkIndex].mimeType
+                    });
+                }
+
+                // Learn more about options https://docs.microsoft.com/azure/cognitive-services/immersive-reader/reference#options
+                var options = {
+                    onExit: exitCallback,
+                    uiZIndex: 2000
+                };
+
+                // Use the JavaScript SDK to launch the Immersive Reader.
+                ImmersiveReader.launchAsync(message.cogSvcsAccessToken, message.cogSvcsSubdomain, data, options);
+
+                // A simple declarative function used to close the Immersive Reader WebView via @JavaScriptInterface
+                function exitCallback() {
+                    Android.immersiveReaderExit();
+                }
+            }
+        }
+    </script>
+</body>
+</html>

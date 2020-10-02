@@ -1,0 +1,31 @@
+﻿<html>
+<head>
+    <meta charset='utf-8'>
+    <script type='text/javascript' src='https://contentstorage.onenote.office.net/onenoteltir/immersivereadersdk/immersive-reader-sdk.1.1.0.js'></script>
+    <meta name='viewport' content='width=device-width, initial-scale=1'>
+</head>
+
+<body onload="handleLaunchImmersiveReader()">
+
+    <script type='text/javascript'>
+
+        async function handleLaunchImmersiveReader() {
+            const data = {
+                title: '|TITLE|',
+                chunks: [ {
+                    content: '|CONTENT|',
+                    lang: 'en'
+                } ]
+            };
+
+            const options = {
+                uiZIndex: 1000000,
+                hideExitButton: true,
+                allowFullscreen: false
+            }
+
+            ImmersiveReader.launchAsync('|TOKEN|', '|YOUR_SUB_DOMAIN|', data, options);
+        }
+    </script>
+</body>
+</html>
