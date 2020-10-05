@@ -100,6 +100,7 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = B245606023BBDD18003FFE9B /* Build configuration list for PBXNativeTarget "quickstart-swift" */;
 			buildPhases = (
+				44A450AF22A7046700511254 /* Headers */,
 				B245604823BBDD16003FFE9B /* Sources */,
 				B245604923BBDD16003FFE9B /* Frameworks */,
 				B245604A23BBDD16003FFE9B /* Resources */,

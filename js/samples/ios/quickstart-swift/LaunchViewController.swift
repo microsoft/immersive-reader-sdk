@@ -86,6 +86,8 @@ class LaunchViewController: UIViewController {
     @IBAction func launchImmersiveReaderButton(sender: AnyObject) {
         launchButton.isEnabled = false
 
+        let immersiveReaderInstance = LaunchImmersiveReader()
+
         // Callback to get token.
         getToken(onSuccess: {cognitiveToken in
             DispatchQueue.main.async {
