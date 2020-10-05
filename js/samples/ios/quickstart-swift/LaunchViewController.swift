@@ -12,7 +12,7 @@ class LaunchViewController: UIViewController {
     private var sampleContent: Content!
     private var sampleChunk: Chunk!
     private var sampleOptions: Options!
-
+    private var immersiveReaderInstance: LaunchViewController!
     override func viewDidLoad() {
         super.viewDidLoad()
 
@@ -86,10 +86,12 @@ class LaunchViewController: UIViewController {
     @IBAction func launchImmersiveReaderButton(sender: AnyObject) {
         launchButton.isEnabled = false
 
+        let immersiveReaderInstance = LaunchImmersiveReader()
+
         // Callback to get token.
         getToken(onSuccess: {cognitiveToken in
             DispatchQueue.main.async {
-                launchImmersiveReader(navController: self.navigationController!, token: cognitiveToken, subdomain: self.subdomain!, content: self.sampleContent, options: self.sampleOptions, onSuccess: {
+                immersiveReaderInstance.launchImmersiveReader(navController: self.navigationController!, token: cognitiveToken, subdomain: self.subdomain!, content: self.sampleContent, options: self.sampleOptions, onSuccess: {
                     self.launchButton.isEnabled = true
                 }, onFailure: { error in
                     self.launchButton.isEnabled = true
