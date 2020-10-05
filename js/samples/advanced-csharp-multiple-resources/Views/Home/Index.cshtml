@@ -1,0 +1,85 @@
+﻿<html>
+<head>
+    <meta charset='utf-8'>
+    <title>Immersive Reader Example: Document</title>
+    <script type='text/javascript' src='https://contentstorage.onenote.office.net/onenoteltir/immersivereadersdk/immersive-reader-sdk.1.1.0.js'></script>
+    <meta name='viewport' content='width=device-width, initial-scale=1'>
+</head>
+<body>
+	<h1 id='title'>Geography</h1>
+	<span id='content'>
+		<p>The study of Earth’s landforms is called physical geography. Landforms can be mountains and valleys. They can also be glaciers, lakes or rivers. Landforms are sometimes called physical features. It is important for students to know about the physical geography of Earth. The seasons, the atmosphere and all the natural processes of Earth affect where people are able to live. Geography is one of a combination of factors that people use to decide where they want to live.</p>
+		<p>The physical features of a region are often rich in resources. Within a nation, mountain ranges become natural borders for settlement areas. In the U.S., major mountain ranges are the Sierra Nevada, the Rocky Mountains, and the Appalachians.</p>
+		<p>Fresh water sources also influence where people settle. People need water to drink. They also need it for washing. Throughout history, people have settled near fresh water. Living near a water source helps ensure that people have the water they need. There was an added bonus, too. Water could be used as a travel route for people and goods. Many Americans live near popular water sources, such as the Mississippi River, the Colorado River and the Great Lakes.</p>
+		<p>Mountains and deserts have been settled by fewer people than the plains areas. However, they have valuable resources of their own.</p>
+	</span>
+
+	<button onclick='handleLaunchImmersiveReader("ImmersiveReaderResourceOne")'>
+		Launch Immersive Reader With Resource One
+	</button>
+	<button onclick='handleLaunchImmersiveReader("ImmersiveReaderResourceTwo")'>
+		Launch Immersive Reader With Resource Two
+	</button>
+
+	<div id="error"></div>
+
+	<script type='text/javascript'>
+		function getImmersiveReaderLaunchConfigAsync(resourceId) {
+			return new Promise((resolve, reject) => {
+				$.ajax({
+					url: '/getLaunchParameters/' + resourceId,
+					type: 'GET',
+					success: launchParams => {
+						resolve(launchParams);
+					},
+					error: err => {
+						reject(err);
+					}
+				});
+			});
+		}
+
+		async function handleLaunchImmersiveReader(resourceId) {
+			$("#error").text(""); // Clear error
+
+			const data = {
+				title: document.getElementById('title').innerText,
+				chunks: [{
+					content: document.getElementById('content').innerText,
+					lang: 'en'
+				}]
+			};
+
+			const options = {
+				uiZIndex: 1000000
+			}
+
+			getImmersiveReaderLaunchConfigAsync(resourceId)
+				.then((launchParams) => {
+
+					const token = launchParams.token;
+					const subdomain = launchParams.subdomain;
+
+					ImmersiveReader.launchAsync(token, subdomain, data, options)
+						.then(() => {
+							console.log('Successful launch.');
+						})
+						.catch ((error) => {
+							handleError('Error in launching.', error);
+						});
+				})
+				.catch((error) => {
+					handleError('Error in receiving launch parameters.', error);
+				});
+		}
+
+		function handleError(logMessage, error) {
+			console.log(logMessage, error);
+
+			if (error && error.responseJSON) {
+				$("#error").text(error.responseJSON.message);
+			}
+		}
+	</script>
+</body>
+</html>

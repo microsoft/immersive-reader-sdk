@@ -1,0 +1,118 @@
+<!-- Copyright (c) Microsoft Corporation. All rights reserved.
+     Licensed under the MIT License. -->
+
+<!doctype html>
+<html>
+
+<head>
+    <meta charset='utf-8'>
+    <title>Immersive Reader Example: Section</title>
+    <meta name='viewport' content='width=device-width, initial-scale=1'>
+
+    <script type='text/javascript' src='https://code.jquery.com/jquery-3.3.1.min.js'></script>
+    <script type='text/javascript' src='https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.12.1/jquery-ui.min.js'></script>
+    
+    <!-- Use the local library built through 'yarn build:dev'. In production, use the library available on the cdn. -->
+    <script type='text/javascript' src='../js/immersive-reader-sdk.local.js'></script>
+
+    <!-- A polyfill for Promise is needed for IE11 support -->
+    <script type='text/javascript' src='https://cdn.jsdelivr.net/npm/promise-polyfill@8/dist/polyfill.min.js'></script>
+    <script type='text/javascript' src='../js/helpers.js'></script>
+
+    <link href='../css/styles.css' rel='stylesheet'>
+    <link href='../css/buttons.css' rel='stylesheet'>
+
+    <style media='screen' type='text/css'>
+        #ContentArea {
+            display: block;
+            margin: 0 20%;
+            padding-top: 50px;
+            width: 60%;
+        }
+
+        .section {
+            border: 1px solid #cccccc;
+            border-radius: 4px;
+            box-sizing: border-box;
+            display: block;
+            margin-bottom: 20px;
+            padding: 20px 20px 10px 20px;
+            position: relative;
+            width: 100%;
+        }
+
+        #Cols {
+            box-sizing: inherit;
+            column-count: 1;
+            column-gap: 0;
+        }
+
+        h3 {
+            margin: 0;
+            margin-top: 10px;
+            padding: 0;
+        }
+
+        p {
+            line-height: 25px;
+        }
+
+        @media screen and (min-width: 900px) {
+            #Cols {
+                column-gap: 20px;
+                column-count: 2;
+            }
+        }
+    </style>
+</head>
+
+<body class='body'>
+    <header class='ir-button-area'>
+        <button class='ir-button ir-button-wide' role='button' title='Immersive Reader' aria-label='Immersive Reader' onclick='handleLaunchImmersiveReader()'>
+            <img class='ir-button-icon' src='../images/icon.svg' />
+            <span class='ir-button-text' aria-hidden='true'>Immersive Reader</span>
+        </button>
+    </header>
+    <main id='ContentArea'>
+        <article id='IRContent'>
+            <h1 id='ir-title'>Geography</h1>
+            <span id='ir-text'>
+                <p>The study of Earth’s landforms is called physical geography. Landforms can be mountains and valleys. They can also be glaciers, lakes or rivers.</p>
+                <p>The physical features of a region are often rich in resources. Within a nation, mountain ranges become natural borders for settlement areas.</p>
+            </span>
+        </article>
+    </main>
+
+    <script type='text/javascript'>
+        function handleLaunchImmersiveReader(sampleId) {
+            const data = {
+                title: $('#ir-title').text().trim(),
+                chunks: [{
+                    content: $('#ir-text').text().trim(),
+                    lang: 'en'
+                }]
+            };
+
+            const options = {
+                'hideExitButton': true,
+                'onExit': function () { console.log("You can still have a callback function on exit."); }
+            }
+
+            // Refer to the launchImmersiveReader() function in helpers.js for more information. It covers how to retrieve
+            // the Cognitive Services token, the subdomain, and usage of the launchAsync function of the Immersive Reader SDK
+            launchImmersiveReader(data, options);
+        }
+
+        function messageHandler(e) {
+            if (!e || !e.data) { return; }
+
+            if (e.data === 'CloseImmersiveReader') {
+                ImmersiveReader.close();
+            }
+        };
+
+        window.addEventListener('message', messageHandler);
+    </script>
+</body>
+
+</html>
