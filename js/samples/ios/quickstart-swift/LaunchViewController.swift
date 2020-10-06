@@ -12,7 +12,7 @@ class LaunchViewController: UIViewController {
     private var sampleContent: Content!
     private var sampleChunk: Chunk!
     private var sampleOptions: Options!
-
+    private var immersiveReaderInstance: LaunchViewController!
     override func viewDidLoad() {
         super.viewDidLoad()
 

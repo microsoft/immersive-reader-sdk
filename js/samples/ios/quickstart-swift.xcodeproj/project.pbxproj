@@ -17,6 +17,8 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		B23B1AD0251D49B40091DB93 /* PrefixHeader.pch */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PrefixHeader.pch; sourceTree = "<group>"; };
+		B23B1AD1251D4D550091DB93 /* immersive_reader_sdk.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = immersive_reader_sdk.h; sourceTree = "<group>"; };
 		B245604C23BBDD16003FFE9B /* quickstart-swift.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "quickstart-swift.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		B245604F23BBDD16003FFE9B /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		B245605323BBDD16003FFE9B /* LaunchViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LaunchViewController.swift; sourceTree = "<group>"; };
@@ -59,6 +61,7 @@
 		B245604E23BBDD16003FFE9B /* quickstart-swift */ = {
 			isa = PBXGroup;
 			children = (
+				B23B1AD0251D49B40091DB93 /* PrefixHeader.pch */,
 				B245604F23BBDD16003FFE9B /* AppDelegate.swift */,
 				B29F634F23BBE35E0061FFC7 /* iFrameMessaging.js */,
 				B29F634D23BBE32A0061FFC7 /* Resources */,
@@ -67,6 +70,7 @@
 				B245605D23BBDD18003FFE9B /* Info.plist */,
 				B245605723BBDD18003FFE9B /* Preview Content */,
 				B29F634723BBE0930061FFC7 /* ImmersiveReaderViewController.swift */,
+				B23B1AD1251D4D550091DB93 /* immersive_reader_sdk.h */,
 			);
 			path = "quickstart-swift";
 			sourceTree = "<group>";
@@ -93,6 +97,7 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = B245606023BBDD18003FFE9B /* Build configuration list for PBXNativeTarget "quickstart-swift" */;
 			buildPhases = (
+				44A450AF22A7046700511254 /* Headers */,
 				B245604823BBDD16003FFE9B /* Sources */,
 				B245604923BBDD16003FFE9B /* Frameworks */,
 				B245604A23BBDD16003FFE9B /* Resources */,
@@ -289,6 +294,7 @@
 				DEVELOPMENT_ASSET_PATHS = "\"quickstart-swift/Preview Content\"";
 				DEVELOPMENT_TEAM = UBF8T346G9;
 				ENABLE_PREVIEWS = YES;
+				GCC_PREFIX_HEADER = "quickstart-swift/PrefixHeader.pch";
 				INFOPLIST_FILE = "quickstart-swift/Info.plist";
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
@@ -309,6 +315,7 @@
 				DEVELOPMENT_ASSET_PATHS = "\"quickstart-swift/Preview Content\"";
 				DEVELOPMENT_TEAM = UBF8T346G9;
 				ENABLE_PREVIEWS = YES;
+				GCC_PREFIX_HEADER = "quickstart-swift/PrefixHeader.pch";
 				INFOPLIST_FILE = "quickstart-swift/Info.plist";
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
