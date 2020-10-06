@@ -69,6 +69,8 @@ bin/
 lib/
 # Check in the nodejs express bin
 !samples/nodejs/bin/
+!js/samples/quickstart-csharp/wwwroot/lib/
+!js/samples/advanced-csharp-multiple-resources/wwwroot/lib/
 obj/
 packages/
 *.csproj.user
@@ -100,6 +102,7 @@ DerivedData/
 *.perspectivev3
 !default.perspectivev3
 xcuserdata/
+*.xcscheme
 
 ## Other
 *.moved-aside
@@ -160,10 +163,10 @@ iOSInjectionProject/
 .project
 .idea
 target/
+*/quickstart-kotlin/.settings
 
 # Python cache
 *.pyc
 
 @ custom ignores
 /js/package-lock.json
-/js/yarn.lock
