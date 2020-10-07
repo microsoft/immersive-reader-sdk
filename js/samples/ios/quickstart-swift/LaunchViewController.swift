@@ -86,16 +86,11 @@ class LaunchViewController: UIViewController {
     @IBAction func launchImmersiveReaderButton(sender: AnyObject) {
         launchButton.isEnabled = false
 
-        let immersiveReaderInstance = LaunchImmersiveReader()
-
         // Callback to get token.
         getToken(onSuccess: {cognitiveToken in
             DispatchQueue.main.async {
-                immersiveReaderInstance.launchImmersiveReader(navController: self.navigationController!, token: cognitiveToken, subdomain: self.subdomain!, content: self.sampleContent, options: self.sampleOptions, onSuccess: {
-                    self.launchButton.isEnabled = true
-                }, onFailure: { error in
-                    self.launchButton.isEnabled = true
-                })
+                let immersiveReaderViewController = ImmersiveReaderViewController(token: cognitiveToken, subdomain: self.subdomain!, content: self.sampleContent, options: self.sampleOptions, delegate: self)
+                self.navigationController?.pushViewController(immersiveReaderViewController!, animated: true)
             }
         }, onFailure: { error in
             print("an error occured: \(error)")
@@ -149,5 +144,28 @@ class LaunchViewController: UIViewController {
 
         task.resume()
     }
+}
 
+extension  LaunchViewController: ImmersiveReaderDelegate {
+    func didExitImmersiveReader() {
+        self.launchButton.isEnabled = true
+        print("Exited from Immersive reader")
+    }
+
+    func didFinishLaunching(_ error: Error?) {
+        guard let _ = error else {
+            //failure
+            print("Failed to launch Immersive reader, due to error: \(error!)")
+            DispatchQueue.main.async {
+                self.launchButton.isEnabled = true
+                self.navigationController?.popViewController(animated: true)
+            }
+            return
+        }
+        //success
+        print("successfully launched Immersive reader")
+        DispatchQueue.main.async {
+            self.launchButton.isEnabled = false
+        }
+    }
 }

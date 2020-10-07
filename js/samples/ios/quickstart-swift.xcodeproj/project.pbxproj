@@ -12,8 +12,8 @@
 		B245605623BBDD18003FFE9B /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = B245605523BBDD18003FFE9B /* Assets.xcassets */; };
 		B245605923BBDD18003FFE9B /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = B245605823BBDD18003FFE9B /* Preview Assets.xcassets */; };
 		B29F634823BBE0930061FFC7 /* ImmersiveReaderViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B29F634723BBE0930061FFC7 /* ImmersiveReaderViewController.swift */; };
-		B29F634A23BBE0E50061FFC7 /* LaunchImmersiveReader.swift in Sources */ = {isa = PBXBuildFile; fileRef = B29F634923BBE0E50061FFC7 /* LaunchImmersiveReader.swift */; };
 		B29F635123BBE35E0061FFC7 /* iFrameMessaging.js in Resources */ = {isa = PBXBuildFile; fileRef = B29F634F23BBE35E0061FFC7 /* iFrameMessaging.js */; };
+		DADC8ADC252CE4250070CD34 /* ImmersiveReader.swift in Sources */ = {isa = PBXBuildFile; fileRef = DADC8ADB252CE4250070CD34 /* ImmersiveReader.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -26,8 +26,8 @@
 		B245605823BBDD18003FFE9B /* Preview Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = "Preview Assets.xcassets"; sourceTree = "<group>"; };
 		B245605D23BBDD18003FFE9B /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		B29F634723BBE0930061FFC7 /* ImmersiveReaderViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImmersiveReaderViewController.swift; sourceTree = "<group>"; };
-		B29F634923BBE0E50061FFC7 /* LaunchImmersiveReader.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LaunchImmersiveReader.swift; sourceTree = "<group>"; };
 		B29F634F23BBE35E0061FFC7 /* iFrameMessaging.js */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.javascript; name = iFrameMessaging.js; path = Resources/iFrameMessaging.js; sourceTree = "<group>"; };
+		DADC8ADB252CE4250070CD34 /* ImmersiveReader.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = ImmersiveReader.swift; path = "quickstart-swift/ImmersiveReader.swift"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -44,6 +44,7 @@
 		B245604323BBDD16003FFE9B = {
 			isa = PBXGroup;
 			children = (
+				DADC8ADB252CE4250070CD34 /* ImmersiveReader.swift */,
 				B245604E23BBDD16003FFE9B /* quickstart-swift */,
 				B245604D23BBDD16003FFE9B /* Products */,
 			);
@@ -65,7 +66,6 @@
 				B29F634F23BBE35E0061FFC7 /* iFrameMessaging.js */,
 				B29F634D23BBE32A0061FFC7 /* Resources */,
 				B245605323BBDD16003FFE9B /* LaunchViewController.swift */,
-				B29F634923BBE0E50061FFC7 /* LaunchImmersiveReader.swift */,
 				B245605523BBDD18003FFE9B /* Assets.xcassets */,
 				B245605D23BBDD18003FFE9B /* Info.plist */,
 				B245605723BBDD18003FFE9B /* Preview Content */,
@@ -162,9 +162,9 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				DADC8ADC252CE4250070CD34 /* ImmersiveReader.swift in Sources */,
 				B245605023BBDD16003FFE9B /* AppDelegate.swift in Sources */,
 				B29F634823BBE0930061FFC7 /* ImmersiveReaderViewController.swift in Sources */,
-				B29F634A23BBE0E50061FFC7 /* LaunchImmersiveReader.swift in Sources */,
 				B245605423BBDD16003FFE9B /* LaunchViewController.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
