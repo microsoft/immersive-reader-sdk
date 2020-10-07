@@ -6,7 +6,7 @@ Licensed under the MIT License. -->
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-    <script type="text/javascript" src="https://contentstorage.onenote.office.net/onenoteltir/immersivereadersdk/immersive-reader-sdk.0.0.3.js"></script>
+    <script type="text/javascript" src="https://contentstorage.onenote.office.net/onenoteltir/immersivereadersdk/immersive-reader-sdk.1.1.0.js"></script>
     <script type="text/javascript">
         function launchImmersiveReader(message) {
             if (!message) {
@@ -19,28 +19,27 @@ Licensed under the MIT License. -->
                 message.options.onExit = function() {
                     window.webkit.messageHandlers.onExit.postMessage(null);
                 }
+                message.options.onPreferencesChanged = function(value) {
+                    window.webkit.messageHandlers.onPreferencesChanged.postMessage(value);
+                }
                 // Use the JavaScript SDK to launch the Immersive Reader.
                 ImmersiveReader.launchAsync(message.cogSvcsAccessToken, message.cogSvcsSubdomain, message.content, message.options);
             }
         }
         window.addEventListener("message",
             function(message) {
-
-                    if(message.data == "ImmersiveReader-ReadyForContent") {
-                        window.webkit.messageHandlers.readyForContent.postMessage(null);
-                    }
-
-                    if(message.data == "ImmersiveReader-LaunchSuccessful") {
-                        window.webkit.messageHandlers.launchSuccessful.postMessage(null);
-                    }
-
-                    if(message.data == "ImmersiveReader-TokenExpired") {
-                        window.webkit.messageHandlers.tokenExpired.postMessage(null);
-                    }
-
-                    if(message.data == "ImmersiveReader-Throttled") {
-                        window.webkit.messageHandlers.throttled.postMessage(null);
-                    }
+                if (message.data == "ImmersiveReader-ReadyForContent") {
+                    window.webkit.messageHandlers.readyForContent.postMessage(null);
+                }
+                if (message.data == "ImmersiveReader-LaunchSuccessful") {
+                    window.webkit.messageHandlers.launchSuccessful.postMessage(null);
+                }
+                if (message.data == "ImmersiveReader-TokenExpired") {
+                    window.webkit.messageHandlers.tokenExpired.postMessage(null);
+                }
+                if (message.data == "ImmersiveReader-Throttled") {
+                    window.webkit.messageHandlers.throttled.postMessage(null);
+                }
         });
     </script>
 </head>

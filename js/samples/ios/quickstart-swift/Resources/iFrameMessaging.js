@@ -2,19 +2,16 @@
 // Licensed under the MIT License.
 
 window.addEventListener("message", function(message) {
-    if(message.data == "ImmersiveReader-ReadyForContent") {
+    if (message.data == "ImmersiveReader-ReadyForContent") {
         window.webkit.messageHandlers.readyForContent.postMessage(null);
     }
-
-    if(message.data == "ImmersiveReader-LaunchSuccessful") {
+    if (message.data == "ImmersiveReader-LaunchSuccessful") {
         window.webkit.messageHandlers.launchSuccessful.postMessage(null);
     }
-
-    if(message.data == "ImmersiveReader-TokenExpired") {
+    if (message.data == "ImmersiveReader-TokenExpired") {
         window.webkit.messageHandlers.tokenExpired.postMessage(null);
     }
-
-    if(message.data == "ImmersiveReader-Throttled") {
+    if (message.data == "ImmersiveReader-Throttled") {
         window.webkit.messageHandlers.throttled.postMessage(null);
     }
 });
