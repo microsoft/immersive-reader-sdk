@@ -80,7 +80,7 @@ class LaunchViewController: UIViewController {
         // Create content and options.
         sampleChunk = Chunk(content: bodyText.text!, lang: nil, mimeType: nil)
         sampleContent = Content(title: titleText.text!, chunks: [sampleChunk])
-        sampleOptions = Options(uiLang: nil, timeout: nil, uiZIndex: nil)
+        sampleOptions = Options(uiLang: nil, timeout: nil, uiZIndex: nil, hideExitButton: true, preferences: nil)
     }
 
     @IBAction func launchImmersiveReaderButton(sender: AnyObject) {
@@ -147,15 +147,17 @@ class LaunchViewController: UIViewController {
 }
 
 extension  LaunchViewController: ImmersiveReaderDelegate {
+    // Called by Immersive Reader application back button tap when not hidden.
+    // Not called when iOS Back Bar Button is tapped.
     func didExitImmersiveReader() {
         self.launchButton.isEnabled = true
         print("Exited from Immersive reader")
     }
 
     func didFinishLaunching(_ error: Error?) {
-        guard let _ = error else {
+        if let error = error {
             //failure
-            print("Failed to launch Immersive reader, due to error: \(error!)")
+            print("Failed to launch Immersive reader, due to error: \(String(describing: error))")
             DispatchQueue.main.async {
                 self.launchButton.isEnabled = true
                 self.navigationController?.popViewController(animated: true)

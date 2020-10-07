@@ -28,6 +28,7 @@ public class ImmersiveReaderViewController: UIViewController {
         case throttled
         case invalidMessagePassed
         case onExit
+        case onPreferencesChanged
     }
     
     private let token: String
@@ -36,8 +37,10 @@ public class ImmersiveReaderViewController: UIViewController {
     private let startTime: TimeInterval
     private let options: Options?
     private let delegate: ImmersiveReaderDelegate?
+    private let userDefaults = UserDefaults.standard
 
     private var webView: WKWebView!
+    private var didExit: Bool = false
     
     public init?(token: String, subdomain: String, content: Content, options: Options?, delegate: ImmersiveReaderDelegate?) {
 
@@ -52,6 +55,8 @@ public class ImmersiveReaderViewController: UIViewController {
         self.delegate = delegate
         self.startTime = Date().timeIntervalSince1970*1000
         self.options = options
+        
+        self.options?.preferences = userDefaults.object(forKey: "userPreferences") as? String
 
         super.init(nibName: nil, bundle: nil)
     }
@@ -72,6 +77,16 @@ public class ImmersiveReaderViewController: UIViewController {
         // Load the main HTML in the WebView.
         loadMainHTML()
     }
+    
+    // Called when iOS Back Bar Button is tapped.
+    // Loads a blank url forcing the web application to close
+    override public func viewDidDisappear(_ animated: Bool) {
+        super.viewDidDisappear(animated)
+        self.didExit = true
+        self.delegate?.didExitImmersiveReader()
+        webView.load(NSURLRequest(url: NSURL(string: "about:blank")! as URL) as URLRequest)
+        webView.removeFromSuperview()
+    }
 
     private func createAndConfigureWebView() -> WKWebView {
 
@@ -85,6 +100,7 @@ public class ImmersiveReaderViewController: UIViewController {
         contentController.add(self, name: ScriptHandlers.throttled.rawValue)
         contentController.add(self, name: ScriptHandlers.invalidMessagePassed.rawValue)
         contentController.add(self, name: ScriptHandlers.onExit.rawValue)
+        contentController.add(self, name: ScriptHandlers.onPreferencesChanged.rawValue)
 
         return WKWebView(frame: .zero, configuration: configuration)
     }
@@ -130,8 +146,11 @@ public class ImmersiveReaderViewController: UIViewController {
 }
 
 extension ImmersiveReaderViewController: WKNavigationDelegate {
-
     public func webView(_ webView: WKWebView, didFinish navigation: WKNavigation!) {
+        if (self.didExit) {
+            self.didExit = false
+            return;
+        }
         // Create the message variable
         let message = Message(cogSvcsAccessToken: token, cogSvcsSubdomain: subdomain, content: content, options: options)
         do {
@@ -158,13 +177,19 @@ extension ImmersiveReaderViewController: WKScriptMessageHandler {
 
         }
         
+        if message.name == ScriptHandlers.onPreferencesChanged.rawValue {
+            // Print the updated user preferences string
+            print("Message from webView: \(message.body)")
+            userDefaults.set("\(message.body)", forKey: "userPreferences")
+        }
+        
         if message.name == ScriptHandlers.launchSuccessful.rawValue {
-             self.delegate?.didFinishLaunching(nil)
+            self.delegate?.didFinishLaunching(nil)
         }
         
         if message.name == ScriptHandlers.tokenExpired.rawValue {
             let tokenExpiredError = Error(code: "TokenExpired", message: "The access token supplied is expired.")
-             self.delegate?.didFinishLaunching(tokenExpiredError)
+            self.delegate?.didFinishLaunching(tokenExpiredError)
         }
         
         if message.name == ScriptHandlers.throttled.rawValue {
@@ -177,11 +202,11 @@ extension ImmersiveReaderViewController: WKScriptMessageHandler {
             self.delegate?.didFinishLaunching(invalidMessageError)
         }
 
+        // Message broadcast by Immersive Reader application back button tap when not hidden.
+        // Not called when iOS Back Bar Button is tapped.
         if message.name == ScriptHandlers.onExit.rawValue {
             self.delegate?.didExitImmersiveReader()
             dismiss(animated: true, completion: nil)
         }
     }
 }
-
-
