@@ -32,7 +32,6 @@ import Foundation
     var useWebview: Bool?
     var customDomain: String?
     var allowFullscreen: Bool?
-    var parent: String?
     var hideExitButton: Bool?
     var cookiePolicy: CookiePolicy?
     var disableFirstRun: Bool?
