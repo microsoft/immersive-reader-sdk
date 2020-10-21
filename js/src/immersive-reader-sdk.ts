@@ -2,7 +2,7 @@
 // Licensed under the MIT License.
 
 import { renderButtons } from './renderButtons';
-import { close, launchAsync } from './launchAsync';
+import { close, launchAsync, launchWithoutContentAsync } from './launchAsync';
 import { CookiePolicy } from './options';
 
 if (typeof window !== 'undefined') {
@@ -21,4 +21,4 @@ function dynamicallyLoadScript(scriptUrl: string) {
     document.head.appendChild(script);
 }
 
-export { renderButtons, close, launchAsync, CookiePolicy };
+export { renderButtons, close, launchAsync, launchWithoutContentAsync, CookiePolicy };

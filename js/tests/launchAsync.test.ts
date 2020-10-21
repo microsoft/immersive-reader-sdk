@@ -4,8 +4,8 @@
 // launchAsync.ts needs to read VERSION (which is passed in from package.json via webpack)
 (window as any).VERSION = '000.000.000';
 
-import { launchAsync } from '../src/immersive-reader-sdk';
-import { isValidSubdomain } from '../src/launchAsync';
+import { launchAsync, launchWithoutContentAsync } from '../src/immersive-reader-sdk';
+import { resetLoadingForTest } from '../src/launchAsync';
 import { Content } from '../src/content';
 import { CookiePolicy, Options } from '../src/options';
 
@@ -20,15 +20,6 @@ describe('launchAsync tests', () => {
             await launchAsync(null, SampleSubdomain, SampleContent);
         } catch (error) {
             expect(error.code).toBe('BadArgument');
-        }
-    });
-
-    it('fails due to missing subdomain', async () => {
-        expect.assertions(1);
-        try {
-            await launchAsync(SampleToken, null, SampleContent);
-        } catch (error) {
-            expect(error.code).toBe('InvalidSubdomain');
         }
     });
 
@@ -177,7 +168,7 @@ describe('launchAsync tests', () => {
 
         const response = await launchPromise;
         const iframe = <HTMLIFrameElement>response.container.firstElementChild;
-        expect(iframe.src.toLowerCase()).toContain(`https://${SampleSubdomain}.cognitiveservices.azure.com/immersivereader/webapp/v1.0/reader`);
+        expect(iframe.src.toLowerCase()).toContain(`https://learningtools.onenote.com/learningtoolsapp/cognitive/reader?exitcallback=immersivereader-exit&sdkplatform=js&sdkversion=000.000.000&cookiepolicy=disable`);
     });
 
     it('launches with exit button hidden', async () => {
@@ -271,7 +262,7 @@ describe('launchAsync tests', () => {
 
         expect(cbOnExit).toHaveBeenCalledTimes(1);
     });
-    
+
     it('launches with preferences not set', async () => {
         expect.assertions(1);
         const options: Options = { preferences: null };
@@ -283,7 +274,7 @@ describe('launchAsync tests', () => {
 
         return launchPromise;
     });
-    
+
     it('launches with preferences set', async () => {
         expect.assertions(1);
         const options: Options = { preferences: 'foo' };
@@ -295,11 +286,11 @@ describe('launchAsync tests', () => {
 
         return launchPromise;
     });
-    
+
     it('launches with onPreferencesChanged set', async () => {
         jest.useRealTimers();
         expect.assertions(1);
-        const options: Options = { onPreferencesChanged: (value) => { 
+        const options: Options = { onPreferencesChanged: (value) => {
             expect(value).toBe('hello world');
         } };
         const launchPromise = launchAsync(SampleToken, SampleSubdomain, SampleContent, options);
@@ -314,28 +305,91 @@ describe('launchAsync tests', () => {
     });
 });
 
-describe('Utility method isValidSubdomain', () => {
-    it('should return false', () => {
-        expect(isValidSubdomain(null)).toBe(false);
-        expect(isValidSubdomain(undefined)).toBe(false);
-        expect(isValidSubdomain('')).toBe(false);
-        expect(isValidSubdomain('é')).toBe(false);
-        expect(isValidSubdomain('hasaccént')).toBe(false);
-        expect(isValidSubdomain('1é2')).toBe(false);
-        expect(isValidSubdomain('É')).toBe(false);
-        expect(isValidSubdomain('Ã')).toBe(false);
-        expect(isValidSubdomain('has space')).toBe(false);
-        expect(isValidSubdomain('has.period')).toBe(false);
-        expect(isValidSubdomain(' startswithspace')).toBe(false);
-        expect(isValidSubdomain('endswithspace ')).toBe(false);
-        expect(isValidSubdomain('-startswithdash')).toBe(false);
-        expect(isValidSubdomain('endswithdash-')).toBe(false);
+describe('launchWithoutContentAsync tests', () => {
+    it('able to launch reader', () => {
+        expect.assertions(1);
+
+        const launchPromise = launchWithoutContentAsync()
+            .then(response => {
+                resetLoadingForTest();
+                expect(response).not.toBeNull();
+            });
+
+        return launchPromise;
     });
 
-    it('should return true', () => {
-        expect(isValidSubdomain('valid')).toBe(true);
-        expect(isValidSubdomain('valid10with2numbers')).toBe(true);
-        expect(isValidSubdomain('1234')).toBe(true);
+    it('send invalid api response', async () => {
+        expect.assertions(1);
+
+        launchWithoutContentAsync()
+            .then(async response => {
+                try {
+                    await response.provideApiResponse(null);
+                } catch (error) {
+                    resetLoadingForTest();
+                    expect(error.code).toBe('BadArgument');
+                }
+            });
+    });
+
+    it('send invalid status', async () => {
+        expect.assertions(1);
+
+        launchWithoutContentAsync()
+            .then(async response => {
+                try {
+                    const provideApiResponse: any = {
+                        data: null,
+                        meta: null,
+                        status: null
+                    };
+
+                    await response.provideApiResponse(provideApiResponse);
+                } catch (error) {
+                    resetLoadingForTest();
+                    expect(error.code).toBe('BadArgument');
+                }
+            });
+    });
+
+    it('send invalid data', async () => {
+        expect.assertions(1);
+
+        launchWithoutContentAsync()
+            .then(async response => {
+                try {
+                    const provideApiResponse: any = {
+                        data: null,
+                        meta: null,
+                        status: 200
+                    };
+
+                    await response.provideApiResponse(provideApiResponse);
+                } catch (error) {
+                    resetLoadingForTest();
+                    expect(error.code).toBe('BadArgument');
+                }
+            });
+    });
+
+    it('send invalid meta', async () => {
+        expect.assertions(1);
+
+        launchWithoutContentAsync()
+            .then(async response => {
+                try {
+                    const provideApiResponse: any = {
+                        data: {},
+                        meta: null,
+                        status: 200
+                    };
+
+                    await response.provideApiResponse(provideApiResponse);
+                } catch (error) {
+                    resetLoadingForTest();
+                    expect(error.code).toBe('BadArgument');
+                }
+            });
     });
 });
 
