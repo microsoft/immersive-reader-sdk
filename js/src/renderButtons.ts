@@ -130,7 +130,8 @@ export function renderButtons(options?: RenderButtonsOptions): void {
         div.setAttribute('role', 'button');
         const locale = div.getAttribute(attributeLocale) || 'en';
         div.setAttribute('aria-label', getLocalizedString(locale));
-
+        div.textContent = '';
+        
         const style = div.getAttribute(attributeButtonStyle) || 'icon';
         switch (style) {
             case 'icon':
