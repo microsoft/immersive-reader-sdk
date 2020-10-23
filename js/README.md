@@ -1,4 +1,4 @@
-# Cognitive Services - Immersive Reader JavaScript SDK (preview)
+# Cognitive Services - Immersive Reader JavaScript SDK
 
 [![Build status](https://dev.azure.com/ms/immersive-reader-sdk/_apis/build/status/96)](https://dev.azure.com/ms/immersive-reader-sdk/_build?definitionId=96)
 
