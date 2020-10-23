@@ -1,4 +1,4 @@
-# ImmersiveReaderView control for UWP (preview)
+# ImmersiveReaderView control for UWP
 
 
 The ImmersiveReaderView control is a Windows Runtime component that allows you to easily and quickly integrate the [Immersive Reader](https://azure.microsoft.com/services/cognitive-services/immersive-reader/) into your UWP application.
