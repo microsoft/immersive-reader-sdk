@@ -1,4 +1,4 @@
-# Cognitive Services - Immersive Reader JavaScript SDK (preview)
+# Cognitive Services - Immersive Reader JavaScript SDK
 
 [![Build status](https://dev.azure.com/ms/immersive-reader-sdk/_apis/build/status/96)](https://dev.azure.com/ms/immersive-reader-sdk/_build?definitionId=96)
 
@@ -13,7 +13,7 @@ You can find examples of how to acquire an authentication token in the [samples]
 Include the library of the stable build in your web application:
 
 ```html
-<script type='text/javascript' src='https://contentstorage.onenote.office.net/onenoteltir/immersivereadersdk/immersive-reader-sdk.1.0.0.js'></script>
+<script type='text/javascript' src='https://contentstorage.onenote.office.net/onenoteltir/immersivereadersdk/immersive-reader-sdk.1.1.0.js'></script>
 ```
 
 ```bash

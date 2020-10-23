@@ -7,25 +7,29 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		B218C478252D182700E752E5 /* iFrameMessaging.js in Resources */ = {isa = PBXBuildFile; fileRef = B218C477252D182700E752E5 /* iFrameMessaging.js */; };
 		B245605023BBDD16003FFE9B /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = B245604F23BBDD16003FFE9B /* AppDelegate.swift */; };
 		B245605423BBDD16003FFE9B /* LaunchViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B245605323BBDD16003FFE9B /* LaunchViewController.swift */; };
 		B245605623BBDD18003FFE9B /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = B245605523BBDD18003FFE9B /* Assets.xcassets */; };
 		B245605923BBDD18003FFE9B /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = B245605823BBDD18003FFE9B /* Preview Assets.xcassets */; };
+		B28AD21A252D111200C2F1DD /* ImmersiveReader.html in Resources */ = {isa = PBXBuildFile; fileRef = B28AD219252D111200C2F1DD /* ImmersiveReader.html */; };
 		B29F634823BBE0930061FFC7 /* ImmersiveReaderViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B29F634723BBE0930061FFC7 /* ImmersiveReaderViewController.swift */; };
-		B29F634A23BBE0E50061FFC7 /* LaunchImmersiveReader.swift in Sources */ = {isa = PBXBuildFile; fileRef = B29F634923BBE0E50061FFC7 /* LaunchImmersiveReader.swift */; };
-		B29F635123BBE35E0061FFC7 /* iFrameMessaging.js in Resources */ = {isa = PBXBuildFile; fileRef = B29F634F23BBE35E0061FFC7 /* iFrameMessaging.js */; };
+		DADC8ADC252CE4250070CD34 /* ImmersiveReader.swift in Sources */ = {isa = PBXBuildFile; fileRef = DADC8ADB252CE4250070CD34 /* ImmersiveReader.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		B218C477252D182700E752E5 /* iFrameMessaging.js */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.javascript; name = iFrameMessaging.js; path = "iFrameMessaging.js"; sourceTree = "<group>"; };
+		B23B1AD0251D49B40091DB93 /* PrefixHeader.pch */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PrefixHeader.pch; sourceTree = "<group>"; };
+		B23B1AD1251D4D550091DB93 /* immersive_reader_sdk.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = immersive_reader_sdk.h; sourceTree = "<group>"; };
 		B245604C23BBDD16003FFE9B /* quickstart-swift.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "quickstart-swift.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		B245604F23BBDD16003FFE9B /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		B245605323BBDD16003FFE9B /* LaunchViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LaunchViewController.swift; sourceTree = "<group>"; };
 		B245605523BBDD18003FFE9B /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		B245605823BBDD18003FFE9B /* Preview Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = "Preview Assets.xcassets"; sourceTree = "<group>"; };
 		B245605D23BBDD18003FFE9B /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		B28AD219252D111200C2F1DD /* ImmersiveReader.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; name = ImmersiveReader.html; path = "ImmersiveReader.html"; sourceTree = "<group>"; };
 		B29F634723BBE0930061FFC7 /* ImmersiveReaderViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImmersiveReaderViewController.swift; sourceTree = "<group>"; };
-		B29F634923BBE0E50061FFC7 /* LaunchImmersiveReader.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LaunchImmersiveReader.swift; sourceTree = "<group>"; };
-		B29F634F23BBE35E0061FFC7 /* iFrameMessaging.js */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.javascript; name = iFrameMessaging.js; path = Resources/iFrameMessaging.js; sourceTree = "<group>"; };
+		DADC8ADB252CE4250070CD34 /* ImmersiveReader.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = ImmersiveReader.swift; path = "quickstart-swift/ImmersiveReader.swift"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -42,6 +46,7 @@
 		B245604323BBDD16003FFE9B = {
 			isa = PBXGroup;
 			children = (
+				DADC8ADB252CE4250070CD34 /* ImmersiveReader.swift */,
 				B245604E23BBDD16003FFE9B /* quickstart-swift */,
 				B245604D23BBDD16003FFE9B /* Products */,
 			);
@@ -58,15 +63,15 @@
 		B245604E23BBDD16003FFE9B /* quickstart-swift */ = {
 			isa = PBXGroup;
 			children = (
+				B23B1AD0251D49B40091DB93 /* PrefixHeader.pch */,
 				B245604F23BBDD16003FFE9B /* AppDelegate.swift */,
-				B29F634F23BBE35E0061FFC7 /* iFrameMessaging.js */,
 				B29F634D23BBE32A0061FFC7 /* Resources */,
 				B245605323BBDD16003FFE9B /* LaunchViewController.swift */,
-				B29F634923BBE0E50061FFC7 /* LaunchImmersiveReader.swift */,
 				B245605523BBDD18003FFE9B /* Assets.xcassets */,
 				B245605D23BBDD18003FFE9B /* Info.plist */,
 				B245605723BBDD18003FFE9B /* Preview Content */,
 				B29F634723BBE0930061FFC7 /* ImmersiveReaderViewController.swift */,
+				B23B1AD1251D4D550091DB93 /* immersive_reader_sdk.h */,
 			);
 			path = "quickstart-swift";
 			sourceTree = "<group>";
@@ -82,6 +87,8 @@
 		B29F634D23BBE32A0061FFC7 /* Resources */ = {
 			isa = PBXGroup;
 			children = (
+				B218C477252D182700E752E5 /* iFrameMessaging.js */,
+				B28AD219252D111200C2F1DD /* ImmersiveReader.html */,
 			);
 			path = Resources;
 			sourceTree = "<group>";
@@ -144,9 +151,10 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				B29F635123BBE35E0061FFC7 /* iFrameMessaging.js in Resources */,
 				B245605923BBDD18003FFE9B /* Preview Assets.xcassets in Resources */,
+				B218C478252D182700E752E5 /* iFrameMessaging.js in Resources */,
 				B245605623BBDD18003FFE9B /* Assets.xcassets in Resources */,
+				B28AD21A252D111200C2F1DD /* ImmersiveReader.html in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -157,9 +165,9 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				DADC8ADC252CE4250070CD34 /* ImmersiveReader.swift in Sources */,
 				B245605023BBDD16003FFE9B /* AppDelegate.swift in Sources */,
 				B29F634823BBE0930061FFC7 /* ImmersiveReaderViewController.swift in Sources */,
-				B29F634A23BBE0E50061FFC7 /* LaunchImmersiveReader.swift in Sources */,
 				B245605423BBDD16003FFE9B /* LaunchViewController.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -289,6 +297,7 @@
 				DEVELOPMENT_ASSET_PATHS = "\"quickstart-swift/Preview Content\"";
 				DEVELOPMENT_TEAM = UBF8T346G9;
 				ENABLE_PREVIEWS = YES;
+				GCC_PREFIX_HEADER = "quickstart-swift/PrefixHeader.pch";
 				INFOPLIST_FILE = "quickstart-swift/Info.plist";
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
@@ -309,6 +318,7 @@
 				DEVELOPMENT_ASSET_PATHS = "\"quickstart-swift/Preview Content\"";
 				DEVELOPMENT_TEAM = UBF8T346G9;
 				ENABLE_PREVIEWS = YES;
+				GCC_PREFIX_HEADER = "quickstart-swift/PrefixHeader.pch";
 				INFOPLIST_FILE = "quickstart-swift/Info.plist";
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",

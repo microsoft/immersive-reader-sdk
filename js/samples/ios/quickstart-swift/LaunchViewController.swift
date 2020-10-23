@@ -12,7 +12,7 @@ class LaunchViewController: UIViewController {
     private var sampleContent: Content!
     private var sampleChunk: Chunk!
     private var sampleOptions: Options!
-
+    private var immersiveReaderInstance: LaunchViewController!
     override func viewDidLoad() {
         super.viewDidLoad()
 
@@ -80,7 +80,7 @@ class LaunchViewController: UIViewController {
         // Create content and options.
         sampleChunk = Chunk(content: bodyText.text!, lang: nil, mimeType: nil)
         sampleContent = Content(title: titleText.text!, chunks: [sampleChunk])
-        sampleOptions = Options(uiLang: nil, timeout: nil, uiZIndex: nil)
+        sampleOptions = Options(uiLang: nil, timeout: nil, uiZIndex: nil, hideExitButton: true, preferences: nil)
     }
 
     @IBAction func launchImmersiveReaderButton(sender: AnyObject) {
@@ -89,11 +89,8 @@ class LaunchViewController: UIViewController {
         // Callback to get token.
         getToken(onSuccess: {cognitiveToken in
             DispatchQueue.main.async {
-                launchImmersiveReader(navController: self.navigationController!, token: cognitiveToken, subdomain: self.subdomain!, content: self.sampleContent, options: self.sampleOptions, onSuccess: {
-                    self.launchButton.isEnabled = true
-                }, onFailure: { error in
-                    self.launchButton.isEnabled = true
-                })
+                let immersiveReaderViewController = ImmersiveReaderViewController(token: cognitiveToken, subdomain: self.subdomain!, content: self.sampleContent, options: self.sampleOptions, delegate: self)
+                self.navigationController?.pushViewController(immersiveReaderViewController!, animated: true)
             }
         }, onFailure: { error in
             print("an error occured: \(error)")
@@ -147,5 +144,30 @@ class LaunchViewController: UIViewController {
 
         task.resume()
     }
+}
 
+extension  LaunchViewController: ImmersiveReaderDelegate {
+    // Called by Immersive Reader application back button tap when not hidden.
+    // Not called when iOS Back Bar Button is tapped.
+    func didExitImmersiveReader() {
+        self.launchButton.isEnabled = true
+        print("Exited from Immersive reader")
+    }
+
+    func didFinishLaunching(_ error: Error?) {
+        if let error = error {
+            //failure
+            print("Failed to launch Immersive reader, due to error: \(String(describing: error))")
+            DispatchQueue.main.async {
+                self.launchButton.isEnabled = true
+                self.navigationController?.popViewController(animated: true)
+            }
+            return
+        }
+        //success
+        print("successfully launched Immersive reader")
+        DispatchQueue.main.async {
+            self.launchButton.isEnabled = false
+        }
+    }
 }
