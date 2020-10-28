@@ -9,9 +9,11 @@ namespace MultipleResourcesSampleWebApp
 	/// </summary>
 	public struct ImmersiveReaderResourceConfig
 	{
-		public string TenantId { get; set; } // Azure subscription TenantId
-		public string ClientId { get; set; } // Azure AD ApplicationId
-		public string ClientSecret { get; set; } // Azure AD Application Service Principal password
-		public string Subdomain { get; set; } // Immersive Reader resource subdomain (resource 'Name' if the resource was created in the Azure portal, or 'CustomSubDomain' option if the resource was created with Azure CLI Powershell. Check the Azure portal for the subdomain on the Endpoint in the resource Overview page, for example, 'https://[SUBDOMAIN].cognitiveservices.azure.com/')
+		public string SubscriptionKey { get; set; } // Azure AD Application Service key
+
+		// The location associated with the Immersive Reader resource.
+		// The following are valid values for the region:
+		// eastus, westus, northeurope, westeurope, centralindia, japaneast, japanwest, australiaeast
+		public string Region { get; set; }
 	}
 }

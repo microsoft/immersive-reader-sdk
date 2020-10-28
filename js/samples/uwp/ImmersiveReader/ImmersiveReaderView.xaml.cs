@@ -1,6 +1,7 @@
 ﻿using Microsoft.IdentityModel.Clients.ActiveDirectory;
 using System;
 using System.IO;
+using System.Net.Http;
 using System.Reflection;
 using System.Threading.Tasks;
 using Windows.Foundation;
@@ -14,57 +15,32 @@ namespace ImmersiveReader
     public sealed partial class ImmersiveReaderView : UserControl
     {
         private string _script;
-        private AuthenticationResult _authResult;
 
         public ImmersiveReaderView()
         {
             this.InitializeComponent();
         }
 
-        public string Subdomain
+        public string SubscriptionKey
         {
-            get => (string)GetValue(SubdomainProperty);
-            set => SetValue(SubdomainProperty, value);
+            get => (string)GetValue(SubscriptionKeyProperty);
+            set => SetValue(SubscriptionKeyProperty, value);
         }
 
-        private static DependencyProperty SubdomainProperty = DependencyProperty.Register(
-            "Subdomain",
+        private static DependencyProperty SubscriptionKeyProperty = DependencyProperty.Register(
+            "SubscriptionKey",
             typeof(string),
             typeof(ImmersiveReaderView),
             null);
 
-        public string TenantId
+        public string Region
         {
-            get => (string)GetValue(TenantIdProperty);
-            set => SetValue(TenantIdProperty, value);
+            get => (string)GetValue(RegionProperty);
+            set => SetValue(RegionProperty, value);
         }
 
-        private static DependencyProperty TenantIdProperty = DependencyProperty.Register(
-            "TenantId",
-            typeof(string),
-            typeof(ImmersiveReaderView),
-            null);
-
-        public string ClientId
-        {
-            get => (string)GetValue(ClientIdProperty);
-            set => SetValue(ClientIdProperty, value);
-        }
-
-        private static DependencyProperty ClientIdProperty = DependencyProperty.Register(
-            "ClientId",
-            typeof(string),
-            typeof(ImmersiveReaderView),
-            null);
-
-        public string ClientSecret
-        {
-            get => (string)GetValue(ClientSecretProperty);
-            set => SetValue(ClientSecretProperty, value);
-        }
-
-        private static DependencyProperty ClientSecretProperty = DependencyProperty.Register(
-            "ClientSecret",
+        private static DependencyProperty RegionProperty = DependencyProperty.Register(
+            "Region",
             typeof(string),
             typeof(ImmersiveReaderView),
             null);
@@ -97,45 +73,36 @@ namespace ImmersiveReader
             string text = _script;
             var token = await GetTokenAsync();
 
-            text = text.Replace("|TITLE", title);
+            text = text.Replace("|TITLE|", title);
             text = text.Replace("|TOKEN|", token);
-            text = text.Replace("|YOUR_SUB_DOMAIN|", this.Subdomain);
             text = text.Replace("|CONTENT|", content.Replace("'", "\\\'"));
             MainWebView.NavigateToString(text);
         }
 
         private async Task<string> GetTokenAsync()
         {
-            if (_authResult != null && _authResult.ExpiresOn > DateTimeOffset.Now)
-            {
-                return _authResult.AccessToken;
-            }
-
             ValidateAuthStrings();
- 
-            string authority = $"https://login.windows.net/{TenantId}";
-            const string resource = "https://cognitiveservices.azure.com/";
 
-            AuthenticationContext authContext = new AuthenticationContext(authority);
-            ClientCredential clientCredential = new ClientCredential(ClientId, ClientSecret);
-            _authResult = await authContext.AcquireTokenAsync(resource, clientCredential);
-
-            return _authResult.AccessToken;
+            using (var client = new HttpClient())
+            {
+                client.DefaultRequestHeaders.Add("Ocp-Apim-Subscription-Key", SubscriptionKey);
+                using (var response = await client.PostAsync($"https://{Region}.api.cognitive.microsoft.com/sts/v1.0/issueToken", null))
+                {
+                    string token = await response.Content.ReadAsStringAsync();
+                    return token.Replace("\"", "");
+                }
+            }
         }
 
         private void ValidateAuthStrings()
         {
-            if (string.IsNullOrWhiteSpace(this.TenantId))
+            if (string.IsNullOrWhiteSpace(SubscriptionKey))
             {
-                throw new ArgumentNullException("TenantId");
+                throw new ArgumentNullException("SubScriptionKey");
             }
-            else if (string.IsNullOrWhiteSpace(this.ClientId))
+            else if (string.IsNullOrWhiteSpace(Region))
             {
-                throw new ArgumentNullException("ClientId");
-            }
-            else if (string.IsNullOrWhiteSpace(this.ClientSecret))
-            {
-                throw new ArgumentNullException("ClientSecret");
+                throw new ArgumentNullException("Region");
             }
         }
     }
