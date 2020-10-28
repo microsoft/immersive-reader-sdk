@@ -9,7 +9,7 @@
         <title>Immersive Reader Python Quickstart</title>
 
         <script type='text/javascript' src='https://code.jquery.com/jquery-3.3.1.min.js'></script>
-        <script type='text/javascript' src='https://contentstorage.onenote.office.net/onenoteltir/immersivereadersdk/immersive-reader-sdk.1.0.0.js'></script>
+        <script type='text/javascript' src='https://contentstorage.onenote.office.net/onenoteltir/immersivereadersdk/immersive-reader-sdk.0.0.5.js'></script>
 
         <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css" />
         <style type="text/css">
@@ -70,11 +70,12 @@
         </div>
 
         <script type="text/javascript">
-            function getTokenAndSubdomainAsync() {
+            function getTokenAsync() {
                 return new Promise(function (resolve, reject) {
                     $.ajax({
-                        url: "/GetTokenAndSubdomain",
-                        type: "GET",
+                        url: "/GetToken",
+                        type: "POST",
+                        contentType: 'text/plain',
                         success: function (data) {
                             if (data.error) {
                                 reject(data.error);
@@ -94,11 +95,9 @@
             });
 
             function handleLaunchImmersiveReader() {
-                getTokenAndSubdomainAsync()
+                getTokenAsync()
                     .then(function (response) {
-                        const token = response["token"];
-                        const subdomain = response["subdomain"];
-
+                        const token = response;
                         // Learn more about chunk usage and supported MIME types https://docs.microsoft.com/azure/cognitive-services/immersive-reader/reference#chunk
                         const data = {
                             title: $("#ir-title").text(),
@@ -114,14 +113,15 @@
                             "uiZIndex": 2000
                         };
 
-                        ImmersiveReader.launchAsync(token, subdomain, data, options)
+                        // The Office compliant token does not require a subdomain, use null instead.
+                        ImmersiveReader.launchAsync(token, null, data, options)
                             .catch(function (error) {
                                 alert("Error in launching the Immersive Reader. Check the console.");
                                 console.log(error);
                             });
                     })
                     .catch(function (error) {
-                        alert("Error in getting the Immersive Reader token and subdomain. Check the console.");
+                        alert("Error in getting the Immersive Reader token. Check the console.");
                         console.log(error);
                     });
             }

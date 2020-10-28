@@ -33,33 +33,25 @@ public class IRAuthenticator implements ImmersiveReader.IAuthenticator {
 
     @Override
     public String getAccessToken() {
-        String clientId = dotEnv.get("CLIENT_ID");
-        String clientSecret = dotEnv.get("CLIENT_SECRET");
-        String tenantId = dotEnv.get("TENANT_ID");
+        String subscriptionKey = dotEnv.get("SUBSCRIPTION_KEY");
+        String region = dotEnv.get("REGION");
         String accessToken = null;
 
         try {
             StringBuilder urlStringBuilder = new StringBuilder();
-            urlStringBuilder.append("https://login.windows.net/");
-            urlStringBuilder.append(tenantId);
-            urlStringBuilder.append("/oauth2/token");
+            urlStringBuilder.append("https://");
+            urlStringBuilder.append(region);
+            urlStringBuilder.append(".api.cognitive.microsoft.com/sts/v1.0/issueToken");
             URL tokenUrl = new URL(urlStringBuilder.toString());
-
-
-            StringBuilder formStringBuilder = new StringBuilder();
-            formStringBuilder.append("grant_type=client_credentials&resource=https://cognitiveservices.azure.com/&client_id=");
-            formStringBuilder.append(clientId);
-            formStringBuilder.append("&client_secret=");
-            formStringBuilder.append(clientSecret);
-            String form = formStringBuilder.toString();
 
             HttpURLConnection httpURLConnection = (HttpURLConnection) tokenUrl.openConnection();
             httpURLConnection.setRequestMethod("POST");
-            httpURLConnection.setRequestProperty("content-type", "application/x-www-form-urlencoded");
+            httpURLConnection.setRequestProperty("Content-type", "application/x-www-form-urlencoded");
+            httpURLConnection.setRequestProperty("Content-length", "0");
+            httpURLConnection.setRequestProperty("Ocp-Apim-Subscription-Key", subscriptionKey);
             httpURLConnection.setDoOutput(true);
 
             DataOutputStream dataOutputStream = new DataOutputStream(httpURLConnection.getOutputStream());
-            dataOutputStream.writeBytes(form);
             dataOutputStream.flush();
             dataOutputStream.close();
 
@@ -78,15 +70,12 @@ public class IRAuthenticator implements ImmersiveReader.IAuthenticator {
 
                 bufferedReader.close();
 
-                JSONObject accessTokenJson = new JSONObject(response.toString());
-                accessToken = accessTokenJson.getString("access_token");
+                accessToken = response.toString();
             }
 
         } catch (MalformedURLException e) {
             e.printStackTrace();
         } catch (IOException e) {
-            e.printStackTrace();
-        } catch (JSONException e) {
             e.printStackTrace();
         }
 

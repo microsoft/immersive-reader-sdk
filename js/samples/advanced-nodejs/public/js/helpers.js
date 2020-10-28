@@ -17,23 +17,11 @@ function getImmersiveReaderTokenAsync() {
     });
 }
 
-function getSubdomainAsync() {
-    return new Promise(function (resolve, reject) {
-        $.ajax({
-            url: '/subdomain',
-            type: 'GET',
-            success: function (subdomain) { resolve(subdomain); },
-            error: function (err) { reject(err); }
-        });
-    });
-}
-
 function launchImmersiveReader(data, options) {
     getImmersiveReaderTokenAsync().then(function (token) {
-        getSubdomainAsync().then(function (subdomain) {
-            ImmersiveReader.launchAsync(token, subdomain, data, options).catch(function (error) {
-                console.log('there was an error', error);
-            });
+        // The Office compliant token does not require a subdomain, use null instead.
+        ImmersiveReader.launchAsync(token, null, data, options).catch(function (error) {
+            console.log('there was an error', error);
         });
     });
 }

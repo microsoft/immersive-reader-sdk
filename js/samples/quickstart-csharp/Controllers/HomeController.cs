@@ -6,74 +6,47 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using QuickstartSampleWebApp.Models;
 using Microsoft.IdentityModel.Clients.ActiveDirectory;
+using System.Net.Http;
 
 namespace QuickstartSampleWebApp.Controllers
 {
 	public class HomeController : Controller
 	{
-		private readonly string TenantId;     // Azure subscription TenantId
-		private readonly string ClientId;     // Azure AD ApplicationId
-		private readonly string ClientSecret; // Azure AD Application Service Principal password
-		private readonly string Subdomain;    // Immersive Reader resource subdomain (resource 'Name' if the resource was created in the Azure portal, or 'CustomSubDomain' option if the resource was created with Azure CLI Powershell. Check the Azure portal for the subdomain on the Endpoint in the resource Overview page, for example, 'https://[SUBDOMAIN].cognitiveservices.azure.com/')
+		// Insert your Azure subscription key here
+		public string SubscriptionKey = "";
+
+		// The location associated with the Immersive Reader resource.
+		// The following are valid values for the region:
+		//   eastus, westus, northeurope, westeurope, centralindia, japaneast, japanwest, australiaeast
+		public string Region = "";
 
 		public HomeController(Microsoft.Extensions.Configuration.IConfiguration configuration)
 		{
-			TenantId = configuration["TenantId"];
-			ClientId = configuration["ClientId"];
-			ClientSecret = configuration["ClientSecret"];
-			Subdomain = configuration["Subdomain"];
+			SubscriptionKey = configuration["SubscriptionKey"];
+			Region = configuration["Region"];
 
-			if (string.IsNullOrWhiteSpace(TenantId))
+			if (string.IsNullOrWhiteSpace(SubscriptionKey))
 			{
-				throw new ArgumentNullException("TenantId is null! Did you add that info to secrets.json?");
+				throw new ArgumentNullException("SubscriptionKey is null! Did you add that info to secrets.json?");
 			}
 
-			if (string.IsNullOrWhiteSpace(ClientId))
+			if (string.IsNullOrWhiteSpace(Region))
 			{
-				throw new ArgumentNullException("ClientId is null! Did you add that info to secrets.json?");
+				throw new ArgumentNullException("Region is null! Did you add that info to secrets.json?");
 			}
-
-			if (string.IsNullOrWhiteSpace(ClientSecret))
-			{
-				throw new ArgumentNullException("ClientSecret is null! Did you add that info to secrets.json?");
-			}
-
-			if (string.IsNullOrWhiteSpace(Subdomain))
-			{
-				throw new ArgumentNullException("Subdomain is null! Did you add that info to secrets.json?");
-			}
-		}
-
-		/// <summary>
-		/// Get an Azure AD authentication token
-		/// </summary>
-		private async Task<string> GetTokenAsync()
-		{
-			string authority = $"https://login.windows.net/{TenantId}";
-			const string resource = "https://cognitiveservices.azure.com/";
-
-			AuthenticationContext authContext = new AuthenticationContext(authority);
-			ClientCredential clientCredential = new ClientCredential(ClientId, ClientSecret);
-
-			AuthenticationResult authResult = await authContext.AcquireTokenAsync(resource, clientCredential);
-
-			return authResult.AccessToken;
 		}
 
 		[HttpGet]
-		public async Task<JsonResult> GetTokenAndSubdomain()
+		public async Task<string> GetToken()
 		{
-			try
+			using (var client = new HttpClient())
 			{
-				string tokenResult = await GetTokenAsync();
-
-				return new JsonResult(new { token = tokenResult, subdomain = Subdomain });
-			}
-			catch (Exception e)
-			{
-				string message = "Unable to acquire Azure AD token. Check the debugger for more information.";
-				Debug.WriteLine(message, e);
-				return new JsonResult(new { error = message });
+				client.DefaultRequestHeaders.Add("Ocp-Apim-Subscription-Key", SubscriptionKey);
+				using (var response = await client.PostAsync($"https://{Region}.api.cognitive.microsoft.com/sts/v1.0/issueToken", null))
+				{
+					string token = await response.Content.ReadAsStringAsync();
+					return token.Replace("\"", "");
+				}
 			}
 		}
 

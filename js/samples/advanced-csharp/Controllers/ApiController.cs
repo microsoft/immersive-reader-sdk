@@ -2,6 +2,7 @@
 using Microsoft.IdentityModel.Clients.ActiveDirectory;
 using System;
 using System.IO;
+using System.Net.Http;
 using System.Threading.Tasks;
 
 namespace AdvancedSampleWebApp.Pages
@@ -10,43 +11,28 @@ namespace AdvancedSampleWebApp.Pages
     [ApiController]
     public class ApiController : ControllerBase
     {
-        private readonly string TenantId;     // Azure subscription TenantId
-        private readonly string ClientId;     // Azure AD ApplicationId
-        private readonly string ClientSecret; // Azure AD Application Service Principal password
-        private readonly string Subdomain;    // Immersive Reader resource subdomain (resource 'Name' if the resource was created in the Azure portal, or 'CustomSubDomain' option if the resource was created with Azure CLI Powershell. Check the Azure portal for the subdomain on the Endpoint in the resource Overview page, for example, 'https://[SUBDOMAIN].cognitiveservices.azure.com/')
+        // Azure AD Application Service key
+        private readonly string SubscriptionKey;
+
+        // The location associated with the Immersive Reader resource.
+		// The following are valid values for the region:
+		// eastus, westus, northeurope, westeurope, centralindia, japaneast, japanwest, australiaeast
+        private readonly string Region;
 
         public ApiController(Microsoft.Extensions.Configuration.IConfiguration configuration)
         {
-            TenantId = configuration["TenantId"];
-            ClientId = configuration["ClientId"];
-            ClientSecret = configuration["ClientSecret"];
-            Subdomain = configuration["Subdomain"];
+            SubscriptionKey = configuration["SubscriptionKey"];
+            Region = configuration["Region"];
 
-            if (string.IsNullOrWhiteSpace(TenantId))
-            {
-                throw new ArgumentNullException("TenantId is null! Did you add that info to secrets.json? See ReadMe.txt.");
-            }
+            if (string.IsNullOrWhiteSpace(SubscriptionKey))
+			{
+				throw new ArgumentNullException("SubscriptionKey is null! Did you add that info to secrets.json?");
+			}
 
-            if (string.IsNullOrWhiteSpace(ClientId))
-            {
-                throw new ArgumentNullException("ClientId is null! Did you add that info to secrets.json? See ReadMe.txt.");
-            }
-
-            if (string.IsNullOrWhiteSpace(ClientSecret))
-            {
-                throw new ArgumentNullException("ClientSecret is null! Did you add that info to secrets.json? See ReadMe.txt.");
-            }
-
-            if (string.IsNullOrWhiteSpace(Subdomain))
-            {
-                throw new ArgumentNullException("Subdomain is null! Did you add that info to secrets.json? See ReadMe.txt.");
-            }
-        }
-
-        [Route("subdomain")]
-        public string GetSubdomain()
-        {
-            return Subdomain;
+			if (string.IsNullOrWhiteSpace(Region))
+			{
+				throw new ArgumentNullException("Region is null! Did you add that info to secrets.json?");
+			}
         }
 
         [Route("token")]
@@ -73,20 +59,19 @@ namespace AdvancedSampleWebApp.Pages
             }
 
             // Obtain a token using the subscription key
-            return await GetTokenAsync();
+            return await GetTokenAsync(Region, SubscriptionKey);
         }
 
-        protected async Task<string> GetTokenAsync()
+        protected async Task<string> GetTokenAsync(string region, string subscriptionKey)
         {
-            string authority = $"https://login.windows.net/{TenantId}";
-            const string resource = "https://cognitiveservices.azure.com/";
-
-            AuthenticationContext authContext = new AuthenticationContext(authority);
-            ClientCredential clientCredential = new ClientCredential(ClientId, ClientSecret);
-
-            AuthenticationResult authResult = await authContext.AcquireTokenAsync(resource, clientCredential);
-
-            return authResult.AccessToken;
+            using (var client = new HttpClient())
+            {
+                client.DefaultRequestHeaders.Add("Ocp-Apim-Subscription-Key", subscriptionKey);
+                using (var response = await client.PostAsync($"https://{region}.api.cognitive.microsoft.com/sts/v1.0/issueToken", null))
+                {
+                    return await response.Content.ReadAsStringAsync();
+                }
+            }
         }
     }
 }

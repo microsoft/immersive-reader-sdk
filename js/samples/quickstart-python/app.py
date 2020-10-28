@@ -13,31 +13,11 @@ def index():
 	'Show the index page'
 	return render_template('index.html')
 
-@app.route('/GetTokenAndSubdomain', methods=['GET'])
-def getTokenAndSubdomain():
-	'Get the access token'
-	if request.method == 'GET':
-		try:
-			headers = { 'content-type': 'application/x-www-form-urlencoded' }
-			data = {
-				'client_id': str(os.environ.get('CLIENT_ID')),
-				'client_secret': str(os.environ.get('CLIENT_SECRET')),
-				'resource': 'https://cognitiveservices.azure.com/',
-				'grant_type': 'client_credentials'
-			}
-
-			resp = requests.post('https://login.windows.net/' + str(os.environ.get('TENANT_ID')) + '/oauth2/token', data=data, headers=headers)
-			jsonResp = resp.json()
-			
-			if ('access_token' not in jsonResp):
-				print(jsonResp)
-				raise Exception('AAD Authentication error')
-
-			token = jsonResp['access_token']
-			subdomain = str(os.environ.get('SUBDOMAIN'))
-
-			return jsonify(token = token, subdomain = subdomain)
-		except Exception as e:
-			message = 'Unable to acquire Azure AD token. Check the debugger for more information.'
-			print(message, e)
-			return jsonify(error = message)
+@app.route('/GetToken', methods=['POST'])
+def getToken():
+	'Post request to get the access token'
+	if request.method == 'POST':
+		payload = {'Ocp-Apim-Subscription-Key': os.environ.get('SUBSCRIPTION_KEY', 'defaultValue'),
+            	   'content-type': 'application/x-www-form-urlencoded'}
+		resp = requests.post('https://' + os.environ.get('REGION', 'defaultValue') + '.api.cognitive.microsoft.com/sts/v1.0/issueToken', headers=payload)
+		return resp.text

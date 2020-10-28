@@ -15,19 +15,3 @@
         });
     });
 }
-
-function getImmersiveReaderSubdomainAsync() {
-    return new Promise((resolve, reject) => {
-        $.ajax({
-            url: '/api/subdomain',
-            type: 'GET',
-            success: subdomain => {
-                resolve(subdomain);
-            },
-            error: err => {
-                console.log('Error in getting subdomain!', err);
-                reject(err);
-            }
-        });
-    });
-}

@@ -10,18 +10,15 @@ public class GetAuthTokenServlet extends HttpServlet {
 
     private static Dotenv dotenv = Dotenv.load();
 
-    private static String TENANT_ID = dotenv.get("TENANT_ID");
-    private static String CLIENT_ID = dotenv.get("CLIENT_ID");
-    private static String CLIENT_SECRET = dotenv.get("CLIENT_SECRET");
-    public static String SUBDOMAIN = dotenv.get("SUBDOMAIN");
+    private static String SUBSCRIPTION_KEY = dotenv.get("SUBSCRIPTION_KEY");
+    private static String REGION = dotenv.get("REGION");
 
     public void doGet(HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse)
             throws IOException {
 
-        if (isNullOrEmpty(TENANT_ID) || isNullOrEmpty(CLIENT_ID) ||
-                isNullOrEmpty(CLIENT_SECRET) || isNullOrEmpty(SUBDOMAIN)) {
+        if (isNullOrEmpty(SUBSCRIPTION_KEY) || isNullOrEmpty(REGION)) {
             throw new IllegalArgumentException("Azure Authentication information missing. Did you add " +
-                    "TENANT_ID, CLIENT_ID, CLIENT_SECRET and SUBDOMAIN to .env? See ReadMe.md");
+                    "SUBSCRIPTION_KEY and REGION to .env? See README.md");
         }
 
         String token = getToken();
@@ -39,19 +36,18 @@ public class GetAuthTokenServlet extends HttpServlet {
      */
     private String getToken() throws IOException {
 
-        URL tokenUrl = new URL("https://login.windows.net/" + TENANT_ID + "/oauth2/token");
-        String form = "grant_type=client_credentials&resource=https://cognitiveservices.azure.com/&client_id=" + CLIENT_ID + "&client_secret=" + CLIENT_SECRET;
+        URL tokenUrl = new URL("https://" + REGION + ".api.cognitive.microsoft.com/sts/v1.0/issueToken");
 
         HttpURLConnection connection = (HttpURLConnection) tokenUrl.openConnection();
         connection.setRequestMethod("POST");
 
-        connection.setRequestProperty("Content-Type", "application/x-www-form-urlencoded");
+        connection.setRequestProperty("Content-type", "application/x-www-form-urlencoded");
+        connection.setRequestProperty("Content-length", "0");
+        connection.setRequestProperty("Ocp-Apim-Subscription-Key", SUBSCRIPTION_KEY);
 
         connection.setDoOutput(true);
-        DataOutputStream writer = new DataOutputStream(connection.getOutputStream());
-        writer.writeBytes(form);
-        writer.flush();
-        writer.close();
+        OutputStream os = connection.getOutputStream();
+        os.close();
 
         int responseCode = connection.getResponseCode();
 
