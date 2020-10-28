@@ -19,32 +19,43 @@ public class ImmersiveReaderWebView: WKWebView {
     }
 }
 
-public class ImmersiveReaderViewController: UIViewController, WKUIDelegate, WKNavigationDelegate {
-    let tokenToSend: String
-    let subdomainToSend: String
-    let contentToSend: Content
-    let optionsToSend: Options?
-    let onSuccessImmersiveReader: (() -> Void)?
-    let onFailureImmersiveReader: ((_ error: Error) -> Void)?
-    let onTimeout: ((_ timeoutValue: TimeInterval) -> Void)?
-    let onError: ((_ error: String) -> Void)?
+public class ImmersiveReaderViewController: UIViewController {
 
-    let startTime = Date().timeIntervalSince1970*1000
-    var src: String
-    var webView: WKWebView!
-    var timer: Timer!
-    var timeoutValue: TimeInterval!
+    private enum ScriptHandlers: String {
+        case readyForContent
+        case launchSuccessful
+        case tokenExpired
+        case throttled
+        case invalidMessagePassed
+        case onExit
+        case onPreferencesChanged
+    }
+    
+    private let token: String
+    private let content: Content
+    private let startTime: TimeInterval
+    private let options: Options?
+    private let delegate: ImmersiveReaderDelegate?
+    private let userDefaults = UserDefaults.standard
 
-    public init(tokenToPass: String, subdomainToPass: String, contentToPass: Content, optionsToPass: Options?, onSuccessImmersiveReader: @escaping () -> Void, onFailureImmersiveReader: @escaping (_ status: Error) -> Void, onTimeout: @escaping (_ timeoutValue: TimeInterval) -> Void, onError: @escaping (_ error: String) -> Void) {
-        self.tokenToSend = tokenToPass
-        self.subdomainToSend = subdomainToPass
-        self.contentToSend = contentToPass
-        self.optionsToSend = optionsToPass
-        self.onSuccessImmersiveReader = onSuccessImmersiveReader
-        self.onFailureImmersiveReader = onFailureImmersiveReader
-        self.onTimeout = onTimeout
-        self.onError = onError
-        self.src = "https://" + subdomainToPass + ".cognitiveservices.azure.com/immersivereader/webapp/v1.0/reader"
+    private var webView: WKWebView!
+    private var didExit: Bool = false
+    
+    public init?(token: String, content: Content, options: Options?, delegate: ImmersiveReaderDelegate?) {
+
+        if (content.chunks.count == 0) {
+            let badArgumentError = Error(code: "BadArgument", message: "Chunks must not be empty.")
+            delegate?.didFinishLaunching(badArgumentError)
+            return nil
+        }
+        self.token = token
+        self.content = content
+        self.delegate = delegate
+        self.startTime = Date().timeIntervalSince1970*1000
+        self.options = options
+        
+        self.options?.preferences = userDefaults.object(forKey: "userPreferences") as? String
+
         super.init(nibName: nil, bundle: nil)
     }
 
@@ -54,44 +65,67 @@ public class ImmersiveReaderViewController: UIViewController, WKUIDelegate, WKNa
 
     override public func viewDidLoad() {
         super.viewDidLoad()
-
-        // If uiLang options are set update src to reflect this.
-        switch optionsToSend?.uiLang {
-        case .none: break
-        case .some(let value):
-            src = src + "?omkt=" + value
-        }
-
-        // Set timeout to default or value user specifies.
-        switch optionsToSend?.timeout {
-        case .none:
-            timeoutValue = 15
-        case .some(let value):
-            timeoutValue = value
-        }
-
         view.backgroundColor = .white
-        webView = WKWebView()
+
+        webView = createAndConfigureWebView()
+        webView.navigationDelegate = self
+        view.addSubview(webView)
+        addConstrainstsToWebView()
+
+        // Load the main HTML in the WebView.
+        loadMainHTML()
+    }
+    
+    // Called when iOS Back Bar Button is tapped.
+    // Loads a blank url forcing the web application to close
+    override public func viewDidDisappear(_ animated: Bool) {
+        super.viewDidDisappear(animated)
+        self.didExit = true
+        self.delegate?.didExitImmersiveReader()
+        webView.load(NSURLRequest(url: NSURL(string: "about:blank")! as URL) as URLRequest)
+        webView.removeFromSuperview()
+    }
+
+    private func createAndConfigureWebView() -> WKWebView {
 
         let contentController = WKUserContentController()
-        if #available(iOS 11.0, *) {
-            webView = ImmersiveReaderWebView(frame: .zero, contentController: contentController)
-        } else {
-            // Fallback on earlier versions
-            webView = WKWebView()
-            let config = WKWebViewConfiguration()
-            config.userContentController = contentController
-            webView = WKWebView(frame: .zero, configuration: config)
+        let configuration = WKWebViewConfiguration()
+        configuration.userContentController = contentController
+
+        contentController.add(self, name: ScriptHandlers.readyForContent.rawValue)
+        contentController.add(self, name: ScriptHandlers.launchSuccessful.rawValue)
+        contentController.add(self, name: ScriptHandlers.tokenExpired.rawValue)
+        contentController.add(self, name: ScriptHandlers.throttled.rawValue)
+        contentController.add(self, name: ScriptHandlers.invalidMessagePassed.rawValue)
+        contentController.add(self, name: ScriptHandlers.onExit.rawValue)
+        contentController.add(self, name: ScriptHandlers.onPreferencesChanged.rawValue)
+
+        return WKWebView(frame: .zero, configuration: configuration)
+    }
+
+
+    func loadMainHTML() {
+        guard let htmlContents = getFileContentsFor(filename: "ImmersiveReader", type: "html")  else {
+            self.delegate?.didFinishLaunching(Error(code: "Internal Error", message: "Could not get the contents of html file"))
+            return
         }
-        webView.navigationDelegate = self
-        webView.uiDelegate = self
+        webView.loadHTMLString(htmlContents, baseURL: nil)
+    }
 
-        contentController.add(self, name: "readyForContent")
-        contentController.add(self, name: "launchSuccessful")
-        contentController.add(self, name: "tokenExpired")
-        contentController.add(self, name: "throttled")
+    func getFileContentsFor(filename: String, type: String) -> String? {
+        let frameworkBundle = Bundle(for: ImmersiveReaderViewController.self)
+        guard let filePath = frameworkBundle.path(forResource: filename, ofType: type) else {
+            return nil
+        }
+        do {
+            let contents = try String(contentsOfFile: filePath)
+            return contents
+        } catch {
+            return nil
+        }
+    }
 
-        view.addSubview(webView)
+    private func addConstrainstsToWebView() {
         webView.translatesAutoresizingMaskIntoConstraints = false
 
         if #available(iOS 11.0, *) {
@@ -100,78 +134,77 @@ public class ImmersiveReaderViewController: UIViewController, WKUIDelegate, WKNa
             webView.trailingAnchor.constraint(equalTo: layoutGuide.trailingAnchor).isActive = true
             webView.topAnchor.constraint(equalTo: layoutGuide.topAnchor).isActive = true
             webView.bottomAnchor.constraint(equalTo: layoutGuide.bottomAnchor).isActive = true
-
         } else {
             webView.leadingAnchor.constraint(equalTo: view.leadingAnchor).isActive = true
             webView.trailingAnchor.constraint(equalTo: view.trailingAnchor).isActive = true
             webView.topAnchor.constraint(equalTo: view.topAnchor).isActive = true
             webView.bottomAnchor.constraint(equalTo: view.bottomAnchor).isActive = true
         }
-        // Get path to JavaScript file.
-        guard let scriptPath = Bundle.main.path(forResource: "iFrameMessaging", ofType: "js") else {
-            onError!("Could not create script path from resource.")
-            return
+    }
+}
+
+extension ImmersiveReaderViewController: WKNavigationDelegate {
+    public func webView(_ webView: WKWebView, didFinish navigation: WKNavigation!) {
+        if (self.didExit) {
+            self.didExit = false
+            return;
         }
+        // Create the message variable
+        let message = Message(cogSvcsAccessToken: token, content: content, options: options)
         do {
-            let scriptSource = try String(contentsOfFile: scriptPath)
-            let userScript = WKUserScript(source: scriptSource, injectionTime: .atDocumentStart, forMainFrameOnly: true)
-            contentController.addUserScript(userScript)
-        } catch {
-            onError!("Could not parse JavaScript file.")
-            return
+            let jsonData = try JSONEncoder().encode(message)
+            guard let jsonString = String(data: jsonData, encoding: .utf8) else {
+                print("Immersive Reader failed convert message to json string")
+                return
+            }
+            self.webView.evaluateJavaScript("launchImmersiveReader(\(jsonString))") { (result, error) in
+                if error != nil {
+                    self.delegate?.didFinishLaunching(Error(code: "Internal Error", message: "Error in executing JavaScript in WkWebView."))
+                }
+            }
+        } catch let error {
+            self.delegate?.didFinishLaunching(Error(code: "Internal Error", message: error.localizedDescription))
         }
-
-        // Start the timer.
-        timer = Timer.scheduledTimer(timeInterval: timeoutValue, target: self, selector: #selector(self.timedOut), userInfo: nil, repeats: false)
-
-        // Load the iframe from HTML.
-        webView.loadHTMLString("<!DOCTYPE html><html style='width: 100%; height: 100%; margin: 0; padding: 0;'><head><meta name='viewport' content='width=device-width, initial-scale=1, shrink-to-fit=no'></head><body style='width: 100%; height: 100%; margin: 0; padding: 0;'><iframe id='immersiveReaderIframe' src = '\(src)' width='100%' height='100%' style='border: 0'></iframe></body></html>", baseURL: URL(string: "test://learningtools.onenote.com/learningtoolsapp/cognitive/reader"))
-    }
-
-    @objc func timedOut(_ timer: AnyObject) {
-        onTimeout!(timeoutValue)
-    }
-
-    public func webView(_ webView: WKWebView, decidePolicyFor navigationAction: WKNavigationAction, decisionHandler: @escaping (WKNavigationActionPolicy) -> Void) {
-        decisionHandler(.allow)
-    }
-
-    public func webView(_ webView: WKWebView, decidePolicyFor navigationResponse: WKNavigationResponse, decisionHandler: @escaping (WKNavigationResponsePolicy) -> Void ) {
-        decisionHandler(.allow)
     }
 }
 
 extension ImmersiveReaderViewController: WKScriptMessageHandler {
     public func userContentController(_ userContentController: WKUserContentController, didReceive message: WKScriptMessage) {
-        if message.name == "readyForContent" {
-            // Stop the timer.
-            timer.invalidate()
 
-            // Create the message variable
-            let message = Message(cogSvcsAccessToken: tokenToSend, cogSvcsSubdomain: subdomainToSend, resourceName: nil, request: contentToSend, launchToPostMessageSentDurationInMs: Int(Date().timeIntervalSince1970*1000 - startTime))
-            do {
-                let jsonData = try JSONEncoder().encode(message)
-                let jsonString = String(data: jsonData, encoding: .utf8)
-                self.webView.evaluateJavaScript("sendContentToReader(\(jsonString!))") { (result, error) in
-                    if error != nil {
-                        self.onError!("Error evaluating JavaScript \(String(describing: error))")
-                    }
-                }
-            } catch { print(error)}
+        if message.name == ScriptHandlers.readyForContent.rawValue {
+
         }
-
-        if message.name == "launchSuccessful" {
-            onSuccessImmersiveReader!()
+        
+        if message.name == ScriptHandlers.onPreferencesChanged.rawValue {
+            // Print the updated user preferences string
+            print("Message from webView: \(message.body)")
+            userDefaults.set("\(message.body)", forKey: "userPreferences")
         }
-
-        if message.name == "tokenExpired" {
+        
+        if message.name == ScriptHandlers.launchSuccessful.rawValue {
+            self.delegate?.didFinishLaunching(nil)
+        }
+        
+        if message.name == ScriptHandlers.tokenExpired.rawValue {
             let tokenExpiredError = Error(code: "TokenExpired", message: "The access token supplied is expired.")
-            onFailureImmersiveReader!(tokenExpiredError)
+            self.delegate?.didFinishLaunching(tokenExpiredError)
+        }
+        
+        if message.name == ScriptHandlers.throttled.rawValue {
+            let throttledError = Error(code: "Throttled", message: "You have exceeded the call rate limit.")
+            self.delegate?.didFinishLaunching(throttledError)
         }
 
-        if message.name == "throttled" {
-            let throttledError = Error(code: "Throttled", message: "You have exceeded the call rate limit.")
-            onFailureImmersiveReader!(throttledError)
+        if message.name == ScriptHandlers.invalidMessagePassed.rawValue {
+            let invalidMessageError = Error(code: "Invalid message passed to Immersive Reader", message: "Please check if the message value passed is valid")
+            self.delegate?.didFinishLaunching(invalidMessageError)
+        }
+
+        // Message broadcast by Immersive Reader application back button tap when not hidden.
+        // Not called when iOS Back Bar Button is tapped.
+        if message.name == ScriptHandlers.onExit.rawValue {
+            self.delegate?.didExitImmersiveReader()
+            dismiss(animated: true, completion: nil)
         }
     }
 }

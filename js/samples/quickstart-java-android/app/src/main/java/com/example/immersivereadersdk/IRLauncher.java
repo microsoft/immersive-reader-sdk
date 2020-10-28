@@ -33,7 +33,6 @@ public class IRLauncher {
 
     private WebView mWebView;
     private Context mContext;
-    public final String SUBDOMAIN = dotEnv.get("SUBDOMAIN");
 
     interface IRLaunchListener {
 
@@ -110,7 +109,7 @@ public class IRLauncher {
         final Date startPostMessageSentDurationInMs = new Date();
 
         // Create the Message
-        final Message messageData = new Message(accessToken, SUBDOMAIN, content, 0, options);
+        final Message messageData = new Message(accessToken, content, 0, options);
 
         // Set WebView Client
         mWebView.setWebViewClient(new WebViewClient() {

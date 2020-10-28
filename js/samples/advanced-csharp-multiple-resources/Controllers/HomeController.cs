@@ -3,6 +3,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Net.Http;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -36,37 +37,23 @@ namespace QuickstartSampleWebApp.Controllers
 		/// </summary>
 		private void InitializeResource(IConfiguration configuration, string resourceKey)
 		{
-			string tenantId = configuration[$"{resourceKey}:TenantId"];
-			string clientId = configuration[$"{resourceKey}:ClientId"];
-			string clientSecret = configuration[$"{resourceKey}:ClientSecret"];
-			string subdomain = configuration[$"{resourceKey}:Subdomain"];
+			string subscriptionKey = configuration[$"{resourceKey}:SubscriptionKey"];
+			string region = configuration[$"{resourceKey}:Region"];
 
-			if (string.IsNullOrWhiteSpace(tenantId))
+			if (string.IsNullOrWhiteSpace(subscriptionKey))
 			{
-				throw new ArgumentNullException("TenantId is null! Did you add that info to secrets.json? See ReadMe.txt.");
+				throw new ArgumentNullException("SubscriptionKey is null! Did you add that info to secrets.json?");
 			}
 
-			if (string.IsNullOrWhiteSpace(clientId))
+			if (string.IsNullOrWhiteSpace(region))
 			{
-				throw new ArgumentNullException("ClientId is null! Did you add that info to secrets.json? See ReadMe.txt.");
-			}
-
-			if (string.IsNullOrWhiteSpace(clientSecret))
-			{
-				throw new ArgumentNullException("ClientSecret is null! Did you add that info to secrets.json? See ReadMe.txt.");
-			}
-
-			if (string.IsNullOrWhiteSpace(subdomain))
-			{
-				throw new ArgumentNullException("Subdomain is null! Did you add that info to secrets.json? See ReadMe.txt.");
+				throw new ArgumentNullException("Region is null! Did you add that info to secrets.json?");
 			}
 
 			ResourceKeyToConfigs[resourceKey] = new ImmersiveReaderResourceConfig
 			{
-				TenantId = tenantId,
-				ClientId = clientId,
-				ClientSecret = clientSecret,
-				Subdomain = subdomain
+				SubscriptionKey = subscriptionKey,
+				Region = region
 			};
 		}
 
@@ -91,8 +78,7 @@ namespace QuickstartSampleWebApp.Controllers
 
 					ImmersiveReaderLaunchParameters launchParams = new ImmersiveReaderLaunchParameters
 					{
-						Token = token,
-						Subdomain = resourceConfig.Subdomain
+						Token = token
 					};
 
 					return new JsonResult(launchParams);
@@ -113,15 +99,14 @@ namespace QuickstartSampleWebApp.Controllers
 		/// </summary>
 		private async Task<string> GetTokenAsync(ImmersiveReaderResourceConfig resourceConfig)
         {
-            string authority = $"https://login.windows.net/{resourceConfig.TenantId}";
-            const string resource = "https://cognitiveservices.azure.com/";
-
-            AuthenticationContext authContext = new AuthenticationContext(authority);
-            ClientCredential clientCredential = new ClientCredential(resourceConfig.ClientId, resourceConfig.ClientSecret);
-
-            AuthenticationResult authResult = await authContext.AcquireTokenAsync(resource, clientCredential);
-
-            return authResult.AccessToken;
+            using (var client = new HttpClient())
+            {
+                client.DefaultRequestHeaders.Add("Ocp-Apim-Subscription-Key", resourceConfig.SubscriptionKey);
+                using (var response = await client.PostAsync($"https://{resourceConfig.Region}.api.cognitive.microsoft.com/sts/v1.0/issueToken", null))
+                {
+                    return await response.Content.ReadAsStringAsync();
+                }
+            }
 		}
 
 		private JsonResult GetJsonResultError(string message, int statusCode)

@@ -16,10 +16,8 @@
         </Grid.RowDefinitions>
 
         <StackPanel Grid.Row="0" Margin="20">
-            <TextBox Header="TenantId" x:Name="TenantId"/>
-            <TextBox Header="ClientId" x:Name="ClientId"/>
-            <PasswordBox Header="ClientSecret" x:Name="ClientSecret"/>
-            <TextBox Header="Subdomain" x:Name="Subdomain"/>
+            <TextBox Header="SubscriptionKey" x:Name="SubscriptionKey"/>
+            <TextBox Header="Region" x:Name="Region"/>
             <TextBox Header="ReaderContent" x:Name="ReaderContent"/>
             <Button Content="Start immersive reader" Click="Button_Click"/>
         </StackPanel>

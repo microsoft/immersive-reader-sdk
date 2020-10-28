@@ -11,7 +11,7 @@
     <script type='text/javascript' src='https://code.jquery.com/jquery-3.3.1.min.js'></script>
     <script type='text/javascript' src='https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.12.1/jquery-ui.min.js'></script>
 
-    <!-- Use the local library built through 'yarn build:dev'. In production, use the library available on the cdn. -->
+    <!-- Use the local library built through 'yarn build:dev'. In production, use the v0.0.5 library available on the cdn. -->
     <script type='text/javascript' src='../js/immersive-reader-sdk.local.js'></script>
     
     <!-- A polyfill for Promise is needed for IE11 support -->
@@ -119,7 +119,7 @@
             }
 
             // Refer to the launchImmersiveReader() function in helpers.js for more information. It covers how to retrieve
-            // the Cognitive Services token, the subdomain, and usage of the launchAsync function of the Immersive Reader SDK
+            // the token, and usage of the launchAsync function of the Immersive Reader SDK
             launchImmersiveReader(data, options);
         }
     </script>
