@@ -23,7 +23,7 @@ Licensed under the MIT License. -->
                     window.webkit.messageHandlers.onPreferencesChanged.postMessage(value);
                 }
                 // Use the JavaScript SDK to launch the Immersive Reader.
-                ImmersiveReader.launchAsync(message.cogSvcsAccessToken, message.content, message.options);
+                ImmersiveReader.launchAsync(message.cogSvcsAccessToken, null, message.content, message.options);
             }
         }
         window.addEventListener("message",

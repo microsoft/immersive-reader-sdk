@@ -18,7 +18,7 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
-		B218C477252D182700E752E5 /* iFrameMessaging.js */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.javascript; name = iFrameMessaging.js; path = "iFrameMessaging.js"; sourceTree = "<group>"; };
+		B218C477252D182700E752E5 /* iFrameMessaging.js */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.javascript; path = iFrameMessaging.js; sourceTree = "<group>"; };
 		B23B1AD0251D49B40091DB93 /* PrefixHeader.pch */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PrefixHeader.pch; sourceTree = "<group>"; };
 		B23B1AD1251D4D550091DB93 /* immersive_reader_sdk.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = immersive_reader_sdk.h; sourceTree = "<group>"; };
 		B245604C23BBDD16003FFE9B /* quickstart-swift.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "quickstart-swift.app"; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -27,7 +27,7 @@
 		B245605523BBDD18003FFE9B /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		B245605823BBDD18003FFE9B /* Preview Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = "Preview Assets.xcassets"; sourceTree = "<group>"; };
 		B245605D23BBDD18003FFE9B /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
-		B28AD219252D111200C2F1DD /* ImmersiveReader.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; name = ImmersiveReader.html; path = "ImmersiveReader.html"; sourceTree = "<group>"; };
+		B28AD219252D111200C2F1DD /* ImmersiveReader.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = ImmersiveReader.html; sourceTree = "<group>"; };
 		B29F634723BBE0930061FFC7 /* ImmersiveReaderViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImmersiveReaderViewController.swift; sourceTree = "<group>"; };
 		DADC8ADB252CE4250070CD34 /* ImmersiveReader.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = ImmersiveReader.swift; path = "quickstart-swift/ImmersiveReader.swift"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -120,7 +120,7 @@
 			isa = PBXProject;
 			attributes = {
 				LastSwiftUpdateCheck = 1130;
-				LastUpgradeCheck = 1130;
+				LastUpgradeCheck = 1200;
 				ORGANIZATIONNAME = "";
 				TargetAttributes = {
 					B245604B23BBDD16003FFE9B = {
@@ -201,6 +201,7 @@
 				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
 				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
 				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
 				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
 				CLANG_WARN_STRICT_PROTOTYPES = YES;
 				CLANG_WARN_SUSPICIOUS_MOVE = YES;
@@ -261,6 +262,7 @@
 				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
 				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
 				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
 				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
 				CLANG_WARN_STRICT_PROTOTYPES = YES;
 				CLANG_WARN_SUSPICIOUS_MOVE = YES;
