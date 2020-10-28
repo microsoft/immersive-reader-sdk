@@ -50,28 +50,26 @@ public struct Error {
 
 struct Message: Encodable {
     let cogSvcsAccessToken: String
-    let cogSvcsSubdomain: String
     let resourceName: String?
     let request: Content
     let launchToPostMessageSentDurationInMs: Int
 
-    init(cogSvcsAccessToken: String, cogSvcsSubdomain: String, resourceName: String?, request: Content, launchToPostMessageSentDurationInMs: Int) {
+    init(cogSvcsAccessToken: String, resourceName: String?, request: Content, launchToPostMessageSentDurationInMs: Int) {
         self.cogSvcsAccessToken = cogSvcsAccessToken
-        self.cogSvcsSubdomain = cogSvcsSubdomain
         self.resourceName = resourceName
         self.request = request
         self.launchToPostMessageSentDurationInMs = launchToPostMessageSentDurationInMs
     }
 }
 
-public func launchImmersiveReader(navController: UINavigationController, token: String, subdomain: String, content: Content, options: Options?, onSuccess: @escaping () -> Void, onFailure: @escaping (_ error: Error) -> Void) {
+public func launchImmersiveReader(navController: UINavigationController, token: String, content: Content, options: Options?, onSuccess: @escaping () -> Void, onFailure: @escaping (_ error: Error) -> Void) {
     if (content.chunks.count == 0) {
         let badArgumentError = Error(code: "BadArgument", message: "Chunks must not be empty.")
         onFailure(badArgumentError)
     }
 
     navigationController = navController
-    let immersiveReaderViewController = ImmersiveReaderViewController(tokenToPass: token, subdomainToPass: subdomain, contentToPass: content, optionsToPass: options, onSuccessImmersiveReader: {
+    let immersiveReaderViewController = ImmersiveReaderViewController(tokenToPass: token, contentToPass: content, optionsToPass: options, onSuccessImmersiveReader: {
         onSuccess()
     }, onFailureImmersiveReader: { error in
         onFailure(error)

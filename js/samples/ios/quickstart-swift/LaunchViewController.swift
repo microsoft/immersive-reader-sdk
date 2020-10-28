@@ -1,10 +1,8 @@
 import UIKit
 
 class LaunchViewController: UIViewController {
-    private var tenantId = ProcessInfo.processInfo.environment["TENANT_ID"]
-    private var clientId = ProcessInfo.processInfo.environment["CLIENT_ID"]
-    private var clientSecret = ProcessInfo.processInfo.environment["CLIENT_SECRET"]
-    private var subdomain = ProcessInfo.processInfo.environment["SUBDOMAIN"]
+    private var subscriptionKey = ProcessInfo.processInfo.environment["SUBSCRIPTION_KEY"]
+    private var region = ProcessInfo.processInfo.environment["REGION"]
 
     private var launchButton: UIButton!
     private var titleText: UILabel!
@@ -12,7 +10,7 @@ class LaunchViewController: UIViewController {
     private var sampleContent: Content!
     private var sampleChunk: Chunk!
     private var sampleOptions: Options!
-
+    private var immersiveReaderInstance: LaunchViewController!
     override func viewDidLoad() {
         super.viewDidLoad()
 
@@ -80,7 +78,7 @@ class LaunchViewController: UIViewController {
         // Create content and options.
         sampleChunk = Chunk(content: bodyText.text!, lang: nil, mimeType: nil)
         sampleContent = Content(title: titleText.text!, chunks: [sampleChunk])
-        sampleOptions = Options(uiLang: nil, timeout: nil, uiZIndex: nil)
+        sampleOptions = Options(uiLang: nil, timeout: nil, uiZIndex: nil, hideExitButton: true, preferences: nil)
     }
 
     @IBAction func launchImmersiveReaderButton(sender: AnyObject) {
@@ -89,11 +87,8 @@ class LaunchViewController: UIViewController {
         // Callback to get token.
         getToken(onSuccess: {cognitiveToken in
             DispatchQueue.main.async {
-                launchImmersiveReader(navController: self.navigationController!, token: cognitiveToken, subdomain: self.subdomain!, content: self.sampleContent, options: self.sampleOptions, onSuccess: {
-                    self.launchButton.isEnabled = true
-                }, onFailure: { error in
-                    self.launchButton.isEnabled = true
-                })
+                let immersiveReaderViewController = ImmersiveReaderViewController(token: cognitiveToken, content: self.sampleContent, options: self.sampleOptions, delegate: self)
+                self.navigationController?.pushViewController(immersiveReaderViewController!, animated: true)
             }
         }, onFailure: { error in
             print("an error occured: \(error)")
@@ -103,49 +98,69 @@ class LaunchViewController: UIViewController {
     /// Retrieves the token for the Immersive Reader using Azure Active Directory authentication
     ///
     /// - Parameters:
-    ///     -onSuccess: A closure that gets called when the token is successfully recieved using Azure Active Directory authentication.
-    ///     -theToken: The token for the Immersive Reader recieved using Azure Active Directory authentication.
-    ///     -onFailure: A closure that gets called when the token fails to be obtained from the Azure Active Directory Authentication.
-    ///     -theError: The error that occured when the token fails to be obtained from the Azure Active Directory Authentication.
+    ///     -onSuccess: A closure that gets called when the token is successfully recieved.
+    ///     -theToken: The token for the Immersive Reader recieved.
+    ///     -onFailure: A closure that gets called when the token fails to be obtained.
+    ///     -theError: The error that occured when the token fails to be obtained.
     func getToken(onSuccess: @escaping (_ theToken: String) -> Void, onFailure: @escaping ( _ theError: String) -> Void) {
-        let tokenForm = "grant_type=client_credentials&resource=https://cognitiveservices.azure.com/&client_id=" + self.clientId! + "&client_secret=" + self.clientSecret!
-        let tokenUrl = "https://login.windows.net/" + self.tenantId! + "/oauth2/token"
-
-        var responseTokenString: String = "0"
-
+        let tokenUrl = "https://" + region! + ".api.cognitive.microsoft.com/sts/v1.0/issueToken"
+        print("token url: \(tokenUrl)")
+                
         let url = URL(string: tokenUrl)!
         var request = URLRequest(url: url)
-        request.httpBody = tokenForm.data(using: .utf8)
         request.httpMethod = "POST"
-
+        request.setValue(subscriptionKey!, forHTTPHeaderField: "Ocp-Apim-Subscription-Key")
+        
         let task = URLSession.shared.dataTask(with: request) { data, response, error in
             guard let data = data,
                 let response = response as? HTTPURLResponse,
+                // Check for networking errors.
                 error == nil else {
+                    print("error", error ?? "Unknown error")
                     onFailure("Error")
                     return
-                }
-
+            }
+            
+            // Check for http errors.
             guard (200 ... 299) ~= response.statusCode else {
+                print("statusCode should be 2xx, but is \(response.statusCode)")
+                print("response = \(response)")
                 onFailure(String(response.statusCode))
                 return
             }
-
-            let jsonResponse = try? JSONSerialization.jsonObject(with: data, options: [])
             
-            guard let jsonDictonary = jsonResponse as? [String: Any] else {
-                onFailure("Error parsing JSON response.")
-                return
-            }
-            guard let responseToken = jsonDictonary["access_token"] as? String else {
-                onFailure("Error retrieving token from JSON response.")
-                return
-            }
-            responseTokenString = responseToken
-            onSuccess(responseTokenString)
+            let responseString = String(data: data, encoding: .utf8)
+            print("responseString = \(String(describing: responseString!))")
+            
+            onSuccess(responseString!)
         }
-
+        
         task.resume()
     }
+}
 
+extension  LaunchViewController: ImmersiveReaderDelegate {
+    // Called by Immersive Reader application back button tap when not hidden.
+    // Not called when iOS Back Bar Button is tapped.
+    func didExitImmersiveReader() {
+        self.launchButton.isEnabled = true
+        print("Exited from Immersive reader")
+    }
+
+    func didFinishLaunching(_ error: Error?) {
+        if let error = error {
+            //failure
+            print("Failed to launch Immersive reader, due to error: \(String(describing: error))")
+            DispatchQueue.main.async {
+                self.launchButton.isEnabled = true
+                self.navigationController?.popViewController(animated: true)
+            }
+            return
+        }
+        //success
+        print("successfully launched Immersive reader")
+        DispatchQueue.main.async {
+            self.launchButton.isEnabled = false
+        }
+    }
 }
