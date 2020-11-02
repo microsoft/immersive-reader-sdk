@@ -12,7 +12,7 @@ type Message = {
     request?: Content;
     apiResponse?: ApiResponseSuccessMessage;
     cogSvcsAccessToken?: string;
-    cogSvcsSubdomain?: string;
+    cogSvcsSubdomain?: string | null;
     disableFirstRun?: boolean;
     readAloudOptions?: ReadAloudOptions;
     translationOptions?: TranslationOptions;
