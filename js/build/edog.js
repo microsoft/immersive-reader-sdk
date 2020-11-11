@@ -16,6 +16,12 @@ replace.sync({
 });
 
 replace.sync({
+    files: 'lib/immersive-reader-sdk.edog.js',
+    from: /learningtools\.onenote\.com/g,
+    to: 'learningtools.edog.onenote.com'
+});
+
+replace.sync({
     files: 'lib/immersive-reader-sdk.local.js',
     from: /https:\/\/learningtools\.onenote\.com\/learningtoolsapp\/cognitive\/reader/g,
     to: 'reader.html'
