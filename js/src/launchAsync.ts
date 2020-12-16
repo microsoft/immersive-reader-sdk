@@ -340,7 +340,10 @@ export function launchWithoutContentAsync(options?: Options): Promise<LaunchWith
         }
 
         window.removeEventListener('message', messageHandler);
-        isLoading = false; // Since any reset message from the web app will go unheard after the line above
+        // Since any reset message from the web app will go unheard after the line above
+        isLoading = false;
+        readyForContent = false;
+        apiResponseMessage = null;
 
         // Clear the timeout timer
         resetTimeout();
