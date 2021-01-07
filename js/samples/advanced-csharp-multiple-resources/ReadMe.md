@@ -14,7 +14,7 @@ Here are the steps:
 1. Once you have access to the Subscription created via AIRS in the Azure portal https://portal.azure.com - use it to create the Immersive Reader Resource.
 1. From the Subscription go to Resources and click the `Add` button.
 1. Search for "Immersive Reader" and click the `Create` button.
-1. Provide the project details, ensuring one of the following regions is selected: `eastus`, `westus`, `northeurope`, `westeurope`, `centralindia`, `japaneast`, `japanwest`, `australiaeast` (the Learning tools Service on OSI only supports these regions) and click next.
+1. Provide the project details, ensuring one of the following regions is selected: `eastus`, `westus`, `northeurope`, `westeurope`, `centralindia`, `japaneast`, `australiaeast` (the Learning tools Service on OSI only supports these regions) and click next.
 1. (optional) Add any tags and click next.
 1. Review the terms and click the `Create` button (it’ll take a moment to deploy).
 1. Once deployed, click the `Go to resource` button.

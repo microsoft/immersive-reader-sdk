@@ -13,7 +13,7 @@ namespace MultipleResourcesSampleWebApp
 
 		// The location associated with the Immersive Reader resource.
 		// The following are valid values for the region:
-		// eastus, westus, northeurope, westeurope, centralindia, japaneast, japanwest, australiaeast
+		// eastus, westus, northeurope, westeurope, centralindia, japaneast, australiaeast
 		public string Region { get; set; }
 	}
 }
