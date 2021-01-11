@@ -17,7 +17,7 @@ namespace QuickstartSampleWebApp.Controllers
 
 		// The location associated with the Immersive Reader resource.
 		// The following are valid values for the region:
-		//   eastus, westus, northeurope, westeurope, centralindia, japaneast, japanwest, australiaeast
+		//   eastus, westus, northeurope, westeurope, centralindia, japaneast, australiaeast
 		public string Region = "";
 
 		public HomeController(Microsoft.Extensions.Configuration.IConfiguration configuration)
