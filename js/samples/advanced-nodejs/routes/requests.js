@@ -1,31 +1,40 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // Licensed under the MIT License.
 
+var axios = require('axios');
 var express = require('express');
 var router = express.Router();
-var request = require('request');
+var qs = require('qs');
 
 router.get('/getimmersivereadertoken', function(req, res) {
-    request.post({
+    try {
+        var config ={
             headers: {
                 'content-type': 'application/x-www-form-urlencoded'
-            },
-            url: `https://login.windows.net/${process.env.TENANT_ID}/oauth2/token`,
-            form: {
-                grant_type: 'client_credentials',
-                client_id: process.env.CLIENT_ID,
-                client_secret: process.env.CLIENT_SECRET,
-                resource: 'https://cognitiveservices.azure.com/'
             }
-        },
-        function(err, resp, token) {
-            if (err) {
-                return res.status(500).send('CogSvcs IssueToken error');
-            }
-
-            return res.send(JSON.parse(token).access_token);
         }
-    );
+        var data = {
+            grant_type: 'client_credentials',
+            client_id: process.env.CLIENT_ID,
+            client_secret: process.env.CLIENT_SECRET,
+            resource: 'https://cognitiveservices.azure.com/'
+        };
+        var url = `https://login.windows.net/${process.env.TENANT_ID}/oauth2/token`
+        console.log(qs.stringify(data));
+        axios.post(url, qs.stringify(data), config)
+        .then(function (response) {
+            var token = response.data.access_token;
+            return res.send(token);
+        })
+        .catch(function (response) {
+            if (response.status !== 200) {
+                return res.send({error :  "Unable to acquire Azure AD token. Check the debugger for more information."})
+            }
+        });
+    } catch (error) {
+        console.log(error);
+        return res.status(500).send('CogSvcs IssueToken error');
+    }
 });
 
 router.get('/subdomain', function (req, res) {
