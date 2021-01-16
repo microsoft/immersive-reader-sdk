@@ -15,7 +15,6 @@
 		B28AD21A252D111200C2F1DD /* ImmersiveReader.html in Resources */ = {isa = PBXBuildFile; fileRef = B28AD219252D111200C2F1DD /* ImmersiveReader.html */; };
 		B29F634823BBE0930061FFC7 /* ImmersiveReaderViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B29F634723BBE0930061FFC7 /* ImmersiveReaderViewController.swift */; };
 		DADC8ADC252CE4250070CD34 /* ImmersiveReader.swift in Sources */ = {isa = PBXBuildFile; fileRef = DADC8ADB252CE4250070CD34 /* ImmersiveReader.swift */; };
-		DADC8ADC252CE4250070CD34 /* ImmersiveReader.swift in Sources */ = {isa = PBXBuildFile; fileRef = DADC8ADB252CE4250070CD34 /* ImmersiveReader.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -30,7 +29,6 @@
 		B245605D23BBDD18003FFE9B /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		B28AD219252D111200C2F1DD /* ImmersiveReader.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; name = ImmersiveReader.html; path = "ImmersiveReader.html"; sourceTree = "<group>"; };
 		B29F634723BBE0930061FFC7 /* ImmersiveReaderViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImmersiveReaderViewController.swift; sourceTree = "<group>"; };
-		DADC8ADB252CE4250070CD34 /* ImmersiveReader.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = ImmersiveReader.swift; path = "quickstart-swift/ImmersiveReader.swift"; sourceTree = "<group>"; };
 		DADC8ADB252CE4250070CD34 /* ImmersiveReader.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = ImmersiveReader.swift; path = "quickstart-swift/ImmersiveReader.swift"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -102,7 +100,6 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = B245606023BBDD18003FFE9B /* Build configuration list for PBXNativeTarget "quickstart-swift" */;
 			buildPhases = (
-				44A450AF22A7046700511254 /* Headers */,
 				B245604823BBDD16003FFE9B /* Sources */,
 				B245604923BBDD16003FFE9B /* Frameworks */,
 				B245604A23BBDD16003FFE9B /* Resources */,
