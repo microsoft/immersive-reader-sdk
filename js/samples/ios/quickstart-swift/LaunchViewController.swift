@@ -6,6 +6,7 @@ class LaunchViewController: UIViewController {
 
     private var launchButton: UIButton!
     private var titleText: UILabel!
+    private var bodyScrollView: UIScrollView!
     private var bodyText: UILabel!
     private var sampleContent: Content!
     private var sampleChunk: Chunk!
@@ -27,6 +28,7 @@ class LaunchViewController: UIViewController {
         bodyText.text = "The study of Earth's landforms is called physical geography. Landforms can be mountains and valleys. They can also be glaciers, lakes or rivers. Landforms are sometimes called physical features. It is important for students to know about the physical geography of Earth. The seasons, the atmosphere and all the natural processes of Earth affect where people are able to live. Geography is one of a combination of factors that people use to decide where they want to live.The physical features of a region are often rich in resources. Within a nation, mountain ranges become natural borders for settlement areas. In the U.S., major mountain ranges are the Sierra Nevada, the Rocky Mountains, and the Appalachians.Fresh water sources also influence where people settle. People need water to drink. They also need it for washing. Throughout history, people have settled near fresh water. Living near a water source helps ensure that people have the water they need. There was an added bonus, too. Water could be used as a travel route for people and goods. Many Americans live near popular water sources, such as the Mississippi River, the Colorado River and the Great Lakes.Mountains and deserts have been settled by fewer people than the plains areas. However, they have valuable resources of their own."
         bodyText.lineBreakMode = .byWordWrapping
         bodyText.numberOfLines = 0
+        bodyText.preferredMaxLayoutWidth = self.view.frame.width - 40
         let screenSize = self.view.frame.height
         if screenSize <= 667 {
             // Font size for smaller iPhones.
@@ -47,7 +49,8 @@ class LaunchViewController: UIViewController {
             // Font size for large iPads.
             bodyText.font = bodyText.font.withSize(28)
         }
-        view.addSubview(bodyText)
+        bodyScrollView = UIScrollView();
+        view.addSubview(bodyScrollView)
 
         launchButton = UIButton()
         launchButton.backgroundColor = .darkGray
@@ -63,11 +66,17 @@ class LaunchViewController: UIViewController {
         titleText.topAnchor.constraint(equalTo: layoutGuide.topAnchor, constant: 20).isActive = true
         titleText.leadingAnchor.constraint(equalTo: layoutGuide.leadingAnchor, constant: 20).isActive = true
         titleText.trailingAnchor.constraint(equalTo: layoutGuide.trailingAnchor, constant: -20).isActive = true
-
+        bodyScrollView.translatesAutoresizingMaskIntoConstraints = false
+        bodyScrollView.topAnchor.constraint(equalTo: titleText.bottomAnchor, constant: 15).isActive = true
+        bodyScrollView.leadingAnchor.constraint(equalTo: layoutGuide.leadingAnchor, constant: 0).isActive = true
+        bodyScrollView.trailingAnchor.constraint(equalTo: layoutGuide.trailingAnchor, constant: 0).isActive = true
+        bodyScrollView.bottomAnchor.constraint(equalTo: layoutGuide.bottomAnchor, constant: -80).isActive = true
+        bodyScrollView.addSubview(bodyText)
         bodyText.translatesAutoresizingMaskIntoConstraints = false
-        bodyText.topAnchor.constraint(equalTo: titleText.bottomAnchor, constant: 15).isActive = true
-        bodyText.leadingAnchor.constraint(equalTo: layoutGuide.leadingAnchor, constant: 20).isActive = true
-        bodyText.trailingAnchor.constraint(equalTo: layoutGuide.trailingAnchor, constant: -20).isActive = true
+        bodyText.topAnchor.constraint(equalTo: bodyScrollView.topAnchor, constant: 0).isActive = true
+        bodyText.leadingAnchor.constraint(equalTo: bodyScrollView.leadingAnchor, constant: 20).isActive = true
+        bodyText.trailingAnchor.constraint(equalTo: bodyScrollView.trailingAnchor, constant: 20).isActive = true
+        bodyText.bottomAnchor.constraint(equalTo: bodyScrollView.bottomAnchor, constant: 0).isActive = true
 
         launchButton.translatesAutoresizingMaskIntoConstraints = false
         launchButton.widthAnchor.constraint(equalToConstant: 200).isActive = true

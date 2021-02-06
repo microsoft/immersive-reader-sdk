@@ -6,7 +6,7 @@ The Immersive Reader JavaScript SDK is a JavaScript library that allows you to e
 
 ## Usage
 
-Microsoft 1st Party Office applications should use the `v0.0.5` Immersive Reader JavaScript SDK, this SDK's authentication token is retrieved by providing a `SubscriptionKey` and `Region`. This will ensure the Immersive Reader uses Office compliant APIs deployed to OSI.
+Microsoft 1st Party Office applications should use the `v0.5.2` Immersive Reader JavaScript SDK, this SDK's authentication token is retrieved by providing a `SubscriptionKey` and `Region`. This will ensure the Immersive Reader uses Office compliant APIs deployed to OSI.
 
 Here are the steps:
 
@@ -29,15 +29,15 @@ You can find examples of how to acquire an authentication token in the [samples]
 Include the library of the stable build in your web application:
 
 ```html
-<script type='text/javascript' src='https://contentstorage.onenote.office.net/onenoteltir/immersivereadersdk/immersive-reader-sdk.0.0.5.js'></script>
+<script type='text/javascript' src='https://contentstorage.onenote.office.net/onenoteltir/immersivereadersdk/immersive-reader-sdk.0.5.2.js'></script>
 ```
 
 ```bash
-npm install @microsoft/immersive-reader-sdk@0.0.5
+npm install @microsoft/immersive-reader-sdk@0.5.2
 ```
 
 ```bash
-yarn add @microsoft/immersive-reader-sdk@0.0.5
+yarn add @microsoft/immersive-reader-sdk@0.5.2
 ```
 
 Add an HTML element to your webpage with the `immersive-reader-button` class attribute.
@@ -74,10 +74,10 @@ Clone a copy of the repo:
 git clone https://github.com/microsoft/immersive-reader-sdk
 ```
 
-Check out the v0.0.5 branch of the repo:
+Check out the v0.5.2 branch of the repo:
 
 ```bash
-git checkout origin/0.0.5-master
+git checkout origin/0.5.2-master
 ```
 
 Change to the immersive-reader-sdk directory:
