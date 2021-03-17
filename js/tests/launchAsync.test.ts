@@ -74,6 +74,18 @@ describe('launchAsync tests', () => {
         return launchPromise;
     });
 
+    it('accessibility attributes', async () => {
+        expect.assertions(2);
+        const options: Options = { hideExitButton: true };
+        const launchPromise = launchAsync(SampleToken, SampleSubdomain, SampleContent, options);
+        window.postMessage('ImmersiveReader-LaunchResponse:{"success":true}', '*');
+        const response = await launchPromise;
+        const iframe = <HTMLIFrameElement>response.container.firstElementChild;
+
+        expect(iframe.title).toEqual('Immersive Reader Frame');
+        expect(iframe.getAttribute('aria-modal')).toEqual('true');
+    });
+
     it('sets the display language', async () => {
         expect.assertions(1);
         const options: Options = { uiLang: 'zh-Hans' };
