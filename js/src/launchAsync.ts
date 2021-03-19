@@ -327,6 +327,8 @@ export function launchWithoutContentAsync(options?: Options): Promise<LaunchWith
     const iframeContainer: HTMLDivElement = document.createElement('div');
     const iframe: HTMLIFrameElement = options.useWebview ? <HTMLIFrameElement>document.createElement('webview') : document.createElement('iframe');
     iframe.allow = 'autoplay';
+    iframe.title = 'Immersive Reader Frame';
+    iframe.setAttribute('aria-modal', 'true');
     const noscroll: HTMLStyleElement = document.createElement('style');
     noscroll.innerHTML = 'body{height:100%;overflow:hidden;}';
 
