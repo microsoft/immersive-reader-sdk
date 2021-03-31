@@ -323,6 +323,8 @@ export function launchWithoutContentAsync(options?: Options): Promise<LaunchWith
         options.uiZIndex = 1000;
     }
 
+    const parent = options.parent ? options.parent : document.body;
+
     let timeoutId: number | null = null;
     const iframeContainer: HTMLDivElement = document.createElement('div');
     const iframe: HTMLIFrameElement = options.useWebview ? <HTMLIFrameElement>document.createElement('webview') : document.createElement('iframe');
@@ -341,8 +343,8 @@ export function launchWithoutContentAsync(options?: Options): Promise<LaunchWith
 
     const reset = (): void => {
         // Remove container along with the iframe inside of it
-        if (document.body.contains(iframeContainer)) {
-            document.body.removeChild(iframeContainer);
+        if (parent.contains(iframeContainer)) {
+            parent.removeChild(iframeContainer);
         }
 
         window.removeEventListener('message', messageHandler);
@@ -491,7 +493,7 @@ export function launchWithoutContentAsync(options?: Options): Promise<LaunchWith
     if (options.allowFullscreen) {
         iframe.setAttribute('allowfullscreen', '');
     }
-    iframe.style.cssText = 'position: static; width: 100vw; height: 100vh; left: 0; top: 0; border-width: 0';
+    iframe.style.cssText = options.parent ? 'position: static; width: 100%; height: 100%; left: 0; top: 0; border-width: 0' : 'position: static; width: 100vw; height: 100vh; left: 0; top: 0; border-width: 0';
 
     // Send an initial message to the webview so it has a reference to this parent window
     if (options.useWebview) {
@@ -513,10 +515,10 @@ export function launchWithoutContentAsync(options?: Options): Promise<LaunchWith
 
     iframe.src = src;
 
-    iframeContainer.style.cssText = `position: fixed; width: 100vw; height: 100vh; left: 0; top: 0; border-width: 0; -webkit-perspective: 1px; z-index: ${options.uiZIndex}; background: white; overflow: hidden`;
+    iframeContainer.style.cssText = options.parent ? `position: relative; width: 100%; height: 100%; border-width: 0; -webkit-perspective: 1px; z-index: ${options.uiZIndex}; background: white; overflow: hidden` : `position: fixed; width: 100vw; height: 100vh; left: 0; top: 0; border-width: 0; -webkit-perspective: 1px; z-index: ${options.uiZIndex}; background: white; overflow: hidden`;
 
     iframeContainer.appendChild(iframe);
-    document.body.appendChild(iframeContainer);
+    parent.appendChild(iframeContainer);
 
     // Disable body scrolling
     document.head.appendChild(noscroll);
