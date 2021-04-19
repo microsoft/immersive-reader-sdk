@@ -19,9 +19,12 @@ export type Options = {
     preferences?: string;                           // String returned from onPreferencesChanged representing the user's preferences in the Immersive Reader.
     onPreferencesChanged?: (value: string) => any;  // Executes when the user's preferences have changed.
     cognitiveAppId?: string;             // String to delineate for 1st party application to hide MS logo (i.e. 'Teams' - default is 'Cognitive').
+    themeOption?: ThemeOption               // option to set custom theme
 };
 
 export enum CookiePolicy { Disable, Enable }
+
+export enum ThemeOption { Light, Dark, HC_White, HC_Black, OS }
 
 export type ReadAloudOptions = {
     voice?: string;      // Voice, either 'male' or 'female'. Note that not all languages support both genders.
