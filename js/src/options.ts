@@ -18,6 +18,7 @@ export type Options = {
     displayOptions?: DisplayOptions;         // Options to configure text size, font, etc.
     preferences?: string;                           // String returned from onPreferencesChanged representing the user's preferences in the Immersive Reader.
     onPreferencesChanged?: (value: string) => any;  // Executes when the user's preferences have changed.
+    cognitiveAppId?: string;             // String to delineate for 1st party application to hide MS logo (i.e. 'Teams' - default is 'Cognitive').
 };
 
 export enum CookiePolicy { Disable, Enable }

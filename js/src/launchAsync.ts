@@ -83,13 +83,13 @@ export function launchAsync(token: string, subdomain: string, content: Content, 
         isLoading = true;
         const startTime = Date.now();
         options = {
+            ...options, // I made this same change in other branch, this is how we preserve already existing settings and dont override the presets below
             uiZIndex: 1000,
             timeout: 15000,  // Default to 15 seconds
             useWebview: false,
             allowFullscreen: true,
             hideExitButton: false,
             cookiePolicy: CookiePolicy.Disable,
-            ...options
         };
 
         // Ensure that we were given a number for the UI z-index
@@ -244,6 +244,10 @@ export function launchAsync(token: string, subdomain: string, content: Content, 
 
         if (options.uiLang) {
             src += '&omkt=' + options.uiLang;
+        }
+
+        if (options.cognitiveAppId) {
+            src += '&cognitiveAppId=' + options.cognitiveAppId;
         }
 
         iframe.src = src;
