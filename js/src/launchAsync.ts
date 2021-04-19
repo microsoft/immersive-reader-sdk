@@ -100,13 +100,26 @@ export function launchAsync(token: string, subdomain: string, content: Content, 
         isLoading = true;
         const startTime = Date.now();
         options = {
+            ...options,
+            // FIXME: options should be set to not override existing props, not sure how this hasnt broken anything yet...
+            // Is there a reason this was set last?
+            // let a = {
+            //     b: 'b',
+            //     d: 'd'
+            //   }
+
+            //   let x = {
+            //     ...a,
+            //     b: 'c',
+            //   }
+            //   console.log(x)              
+            // this should yield { b: 'c', d: 'd'} -> current logic youd get { b: 'b', d: 'd'} and lose the spread operation values
             uiZIndex: 1000,
             timeout: 15000,  // Default to 15 seconds
             useWebview: false,
             allowFullscreen: true,
             hideExitButton: false,
             cookiePolicy: CookiePolicy.Disable,
-            ...options
         };
 
         // Ensure that we were given a number for the UI z-index
@@ -281,6 +294,10 @@ export function launchAsync(token: string, subdomain: string, content: Content, 
 
         if (options.uiLang) {
             src += '&omkt=' + options.uiLang;
+        }
+
+        if (options.cognitiveAppId) {
+            src += '&cognitiveAppId=' + options.cognitiveAppId;
         }
 
         iframe.src = src;
