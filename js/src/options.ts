@@ -19,12 +19,9 @@ export type Options = {
     preferences?: string;                           // String returned from onPreferencesChanged representing the user's preferences in the Immersive Reader.
     onPreferencesChanged?: (value: string) => any;  // Executes when the user's preferences have changed.
     cognitiveAppId?: string;             // String to delineate for 1st party application to hide MS logo (i.e. 'Teams' - default is 'Cognitive').
-    themeOption?: ThemeOption               // option to set custom theme
 };
 
 export enum CookiePolicy { Disable, Enable }
-
-export enum ThemeOption { Light, Dark, HC_White, HC_Black, OS }
 
 export type ReadAloudOptions = {
     voice?: string;      // Voice, either 'male' or 'female'. Note that not all languages support both genders.
@@ -38,8 +35,11 @@ export type TranslationOptions = {
     autoEnableWordTranslation?: boolean;      // Automatically enable word translation
 };
 
+export enum ThemeOption { Light, Dark, HC_White, HC_Black, OS }
+
 export type DisplayOptions = {
     textSize?: number;          // Valid values are 14, 20, 28, 36, 42, 48, 56, 64, 72, 84, 96.
     increaseSpacing?: boolean;  // Set whether increased spacing is enabled.
     fontFamily?: string;        // Valid values are 'Calibri', 'ComicSans', and 'Sitka'
+    themeOption?: ThemeOption               // option to set custom theme
 };
