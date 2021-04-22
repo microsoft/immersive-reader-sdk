@@ -63,6 +63,92 @@ let launchResponseResolve: LaunchResponseResolve;
 let launchResponseReject: LaunchReject;
 let launchResponseError: Error;
 
+// function _checkIfLoading(): Promise<LaunchResponse> | null {
+//     if (isLoading) {
+//         return Promise.reject('Immersive Reader is already launching');
+//     }
+//     return null;
+// }
+enum FuncType { launchAsync, launchWithoutContentAsync }
+
+function _initializeOptions(options: Options): Options {
+
+    const { allowFullscreen, cookiePolicy, hideExitButton, timeout, uiZIndex, useWebview } = options;
+
+    const _options: Options = {
+        ...options,
+        uiZIndex: (!options.uiZIndex || typeof options.uiZIndex !== 'number') ? 1000 : uiZIndex,
+        timeout: timeout || 15000,  // Default to 15 seconds
+        useWebview: useWebview || false,
+        allowFullscreen: allowFullscreen || true,
+        hideExitButton: hideExitButton || false,
+        cookiePolicy: cookiePolicy || CookiePolicy.Disable,
+    };
+
+    return _options;
+}
+
+function _makeSrcUrl(options: Options, funcType: FuncType): string {
+    let src = '';
+    if (funcType === FuncType.launchAsync) {
+        src = 'reader?exitCallback=ImmersiveReader-Exit';
+        if (options.cognitiveAppId) {
+            src += '&cognitiveAppId=' + options.cognitiveAppId;
+        }
+    } else if (funcType === FuncType.launchWithoutContentAsync) {
+        src = 'https://learningtools.onenote.com/learningtoolsapp/cognitive/reader?exitCallback=ImmersiveReader-Exit&skipearlygcm=true';
+    }
+
+    src += '&sdkPlatform=' + sdkPlatform + '&sdkVersion=' + sdkVersion;
+
+    src += '&cookiePolicy=' + ((options.cookiePolicy === CookiePolicy.Enable) ? 'enable' : 'disable');
+
+    if (options.hideExitButton) {
+        src += '&hideExitButton=true';
+    }
+
+    if (options.uiLang) {
+        src += '&omkt=' + options.uiLang;
+    }
+
+    return src;
+}
+
+function exit(onExit: Function, reset: Function): void {
+    reset();
+    // Execute exit callback if we have one
+    if (onExit) {
+        try {
+            onExit();
+        } catch { }
+    }
+};
+
+function _generateIframeVariables(_parent: Node, useWebview: boolean): any {
+    const parent = _parent ? _parent : document.body;
+    let timeoutId: number | null = null;
+    const iframeContainer: HTMLDivElement = document.createElement('div');
+    const iframe: HTMLIFrameElement = useWebview ? <HTMLIFrameElement>document.createElement('webview') : document.createElement('iframe');
+    iframe.allow = 'autoplay';
+    iframe.title = 'Immersive Reader Frame';
+    iframe.setAttribute('aria-modal', 'true');
+    const noscroll: HTMLStyleElement = document.createElement('style');
+    noscroll.innerHTML = 'body{height:100%;overflow:hidden;}';
+    return { iframeContainer, iframe, noscroll, parent, timeoutId };
+}
+
+function _setIframeProps(iframe: HTMLIFrameElement, src: string, optionParent: Node, iframeContainer: HTMLDivElement, parent: Node, noscroll: HTMLElement, uiZIndex: number): void {
+    iframe.src = src;
+
+    iframeContainer.style.cssText = optionParent ? `position: relative; width: 100%; height: 100%; border-width: 0; -webkit-perspective: 1px; z-index: ${uiZIndex}; background: white; overflow: hidden` : `position: fixed; width: 100vw; height: 100vh; left: 0; top: 0; border-width: 0; -webkit-perspective: 1px; z-index: ${uiZIndex}; background: white; overflow: hidden`;
+
+    iframeContainer.appendChild(iframe);
+    parent.appendChild(iframeContainer);
+
+    // Disable body scrolling
+    document.head.appendChild(noscroll);
+}
+
 /**
  * Launch the Immersive Reader within an iframe.
  * @param token The authentication token.
@@ -75,6 +161,8 @@ export function launchAsync(token: string, subdomain: string, content: Content, 
     if (isLoading) {
         return Promise.reject('Immersive Reader is already launching');
     }
+
+    // if (_checkIfLoading() !== null)
 
     return new Promise((resolve, reject: (reason: Error) => void): void => {
         if (!token) {
@@ -99,44 +187,10 @@ export function launchAsync(token: string, subdomain: string, content: Content, 
 
         isLoading = true;
         const startTime = Date.now();
-        options = {
-            ...options,
-            // FIXME: options should be set to not override existing props, not sure how this hasnt broken anything yet...
-            // Is there a reason this was set last?
-            // let a = {
-            //     b: 'b',
-            //     d: 'd'
-            //   }
 
-            //   let x = {
-            //     ...a,
-            //     b: 'c',
-            //   }
-            //   console.log(x)              
-            // this should yield { b: 'c', d: 'd'} -> current logic youd get { b: 'b', d: 'd'} and lose the spread operation values
-            uiZIndex: 1000,
-            timeout: 15000,  // Default to 15 seconds
-            useWebview: false,
-            allowFullscreen: true,
-            hideExitButton: false,
-            cookiePolicy: CookiePolicy.Disable,
-        };
+        options = _initializeOptions(options);
 
-        // Ensure that we were given a number for the UI z-index
-        if (!options.uiZIndex || typeof options.uiZIndex !== 'number') {
-            options.uiZIndex = 1000;
-        }
-
-        const parent = options.parent ? options.parent : document.body;
-
-        let timeoutId: number | null = null;
-        const iframeContainer: HTMLDivElement = document.createElement('div');
-        const iframe: HTMLIFrameElement = options.useWebview ? <HTMLIFrameElement>document.createElement('webview') : document.createElement('iframe');
-        iframe.allow = 'autoplay';
-        iframe.title = 'Immersive Reader Frame';
-        iframe.setAttribute('aria-modal', 'true');
-        const noscroll: HTMLStyleElement = document.createElement('style');
-        noscroll.innerHTML = 'body{height:100%;overflow:hidden;}';
+        let { iframeContainer, iframe, noscroll, parent, timeoutId } = _generateIframeVariables(options.parent, options.useWebview)
 
         const resetTimeout = (): void => {
             if (timeoutId) {
@@ -162,16 +216,7 @@ export function launchAsync(token: string, subdomain: string, content: Content, 
             }
         };
 
-        const exit = (): void => {
-            reset();
-
-            // Execute exit callback if we have one
-            if (options.onExit) {
-                try {
-                    options.onExit();
-                } catch { }
-            }
-        };
+        exit(options.onExit, reset);
 
         // Reset variables
         reset();
@@ -196,7 +241,7 @@ export function launchAsync(token: string, subdomain: string, content: Content, 
                 };
                 iframe.contentWindow!.postMessage(JSON.stringify({ messageType: 'Content', messageValue: message }), '*');
             } else if (e.data === 'ImmersiveReader-Exit') {
-                exit();
+                exit(options.onExit, reset);
             } else if (e.data.startsWith(PostMessageLaunchResponse)) {
                 let launchResponse: LaunchResponse = null;
                 let error: Error = null;
@@ -250,7 +295,7 @@ export function launchAsync(token: string, subdomain: string, content: Content, 
                     resetTimeout();
                     resolve(launchResponse);
                 } else if (error) {
-                    exit();
+                    exit(options.onExit, reset);
                     reject(error);
                 }
             } else if (e.data.startsWith(PostMessagePreferences)) {
@@ -284,31 +329,10 @@ export function launchAsync(token: string, subdomain: string, content: Content, 
         }
 
         const domain = options.customDomain ? options.customDomain : 'https://learningtools.onenote.com/learningtoolsapp/cognitive/';
-        let src = domain + 'reader?exitCallback=ImmersiveReader-Exit&sdkPlatform=' + sdkPlatform + '&sdkVersion=' + sdkVersion;
+        let src = domain + _makeSrcUrl(options, FuncType.launchAsync);
 
-        src += '&cookiePolicy=' + ((options.cookiePolicy === CookiePolicy.Enable) ? 'enable' : 'disable');
+        _setIframeProps(iframe, src, options.parent, iframeContainer, parent, noscroll, options.uiZIndex);
 
-        if (options.hideExitButton) {
-            src += '&hideExitButton=true';
-        }
-
-        if (options.uiLang) {
-            src += '&omkt=' + options.uiLang;
-        }
-
-        if (options.cognitiveAppId) {
-            src += '&cognitiveAppId=' + options.cognitiveAppId;
-        }
-
-        iframe.src = src;
-
-        iframeContainer.style.cssText = options.parent ? `position: relative; width: 100%; height: 100%; border-width: 0; -webkit-perspective: 1px; z-index: ${options.uiZIndex}; background: white; overflow: hidden` : `position: fixed; width: 100vw; height: 100vh; left: 0; top: 0; border-width: 0; -webkit-perspective: 1px; z-index: ${options.uiZIndex}; background: white; overflow: hidden`;
-
-        iframeContainer.appendChild(iframe);
-        parent.appendChild(iframeContainer);
-
-        // Disable body scrolling
-        document.head.appendChild(noscroll);
     });
 }
 
@@ -325,31 +349,9 @@ export function launchWithoutContentAsync(options?: Options): Promise<LaunchWith
     isLoading = true;
     const startTime = Date.now();
 
-    options = {
-        uiZIndex: 1000,
-        timeout: 15000,  // Default to 15 seconds
-        useWebview: false,
-        allowFullscreen: true,
-        hideExitButton: false,
-        cookiePolicy: CookiePolicy.Disable,
-        ...options
-    };
+    options = _initializeOptions(options);
 
-    // Ensure that we were given a number for the UI z-index
-    if (!options.uiZIndex || typeof options.uiZIndex !== 'number') {
-        options.uiZIndex = 1000;
-    }
-
-    const parent = options.parent ? options.parent : document.body;
-
-    let timeoutId: number | null = null;
-    const iframeContainer: HTMLDivElement = document.createElement('div');
-    const iframe: HTMLIFrameElement = options.useWebview ? <HTMLIFrameElement>document.createElement('webview') : document.createElement('iframe');
-    iframe.allow = 'autoplay';
-    iframe.title = 'Immersive Reader Frame';
-    iframe.setAttribute('aria-modal', 'true');
-    const noscroll: HTMLStyleElement = document.createElement('style');
-    noscroll.innerHTML = 'body{height:100%;overflow:hidden;}';
+    let { iframeContainer, iframe, noscroll, parent, timeoutId } = _generateIframeVariables(options.parent, options.useWebview)
 
     const resetTimeout = (): void => {
         if (timeoutId) {
@@ -379,17 +381,6 @@ export function launchWithoutContentAsync(options?: Options): Promise<LaunchWith
         }
     };
 
-    const exit = (): void => {
-        reset();
-
-        // Execute exit callback if we have one
-        if (options.onExit) {
-            try {
-                options.onExit();
-            } catch { }
-        }
-    };
-
     const sendContentIfReady = (): void => {
         if (readyForContent && apiResponseMessage) {
             const message: Message = {
@@ -416,7 +407,7 @@ export function launchWithoutContentAsync(options?: Options): Promise<LaunchWith
             readyForContent = true;
             sendContentIfReady();
         } else if (e.data === 'ImmersiveReader-Exit') {
-            exit();
+            exit(options.onExit, reset);
         } else if (e.data.startsWith(PostMessageLaunchResponse)) {
             let launchResponse: LaunchResponse = null;
             let error: Error = null;
@@ -472,7 +463,7 @@ export function launchWithoutContentAsync(options?: Options): Promise<LaunchWith
                     launchResponseResolve(launchResponse);
                 }
             } else if (error) {
-                exit();
+                exit(options.onExit, reset);
                 if (launchResponseReject) {
                     launchResponseReject(error);
                 }
@@ -519,29 +510,12 @@ export function launchWithoutContentAsync(options?: Options): Promise<LaunchWith
         });
     }
 
-    let src = 'https://learningtools.onenote.com/learningtoolsapp/cognitive/reader?exitCallback=ImmersiveReader-Exit&skipearlygcm=true&sdkPlatform=' + sdkPlatform + '&sdkVersion=' + sdkVersion;
-    src += '&cookiePolicy=' + ((options.cookiePolicy === CookiePolicy.Enable) ? 'enable' : 'disable');
+    let src = _makeSrcUrl(options, FuncType.launchWithoutContentAsync);
 
-    if (options.hideExitButton) {
-        src += '&hideExitButton=true';
-    }
-
-    if (options.uiLang) {
-        src += '&omkt=' + options.uiLang;
-    }
-
-    iframe.src = src;
-
-    iframeContainer.style.cssText = options.parent ? `position: relative; width: 100%; height: 100%; border-width: 0; -webkit-perspective: 1px; z-index: ${options.uiZIndex}; background: white; overflow: hidden` : `position: fixed; width: 100vw; height: 100vh; left: 0; top: 0; border-width: 0; -webkit-perspective: 1px; z-index: ${options.uiZIndex}; background: white; overflow: hidden`;
-
-    iframeContainer.appendChild(iframe);
-    parent.appendChild(iframeContainer);
-
-    // Disable body scrolling
-    document.head.appendChild(noscroll);
+    _setIframeProps(iframe, src, options.parent, iframeContainer, parent, noscroll, options.uiZIndex);
 
     const launchWithoutContentResponse: LaunchWithoutContentResponse = {
-        cancelAndCloseReader: exit,
+        cancelAndCloseReader: () => exit(options.onExit, reset),
         provideApiResponse: (apiResponse: ApiResponseSuccessMessage): Promise<LaunchResponse> => {
             if (!apiResponse) {
                 return Promise.reject({ code: ErrorCode.BadArgument, message: 'No Api Response' });
