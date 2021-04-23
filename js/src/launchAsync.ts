@@ -124,17 +124,26 @@ function exit(onExit: Function, reset: Function): void {
     }
 };
 
-function _generateIframeVariables(_parent: Node, useWebview: boolean): any {
+function _generateIframeVariables(_parent: Node, useWebview: boolean, allowFullscreen: boolean): any {
     const parent = _parent ? _parent : document.body;
-    let timeoutId: number | null = null;
     const iframeContainer: HTMLDivElement = document.createElement('div');
     const iframe: HTMLIFrameElement = useWebview ? <HTMLIFrameElement>document.createElement('webview') : document.createElement('iframe');
     iframe.allow = 'autoplay';
     iframe.title = 'Immersive Reader Frame';
     iframe.setAttribute('aria-modal', 'true');
+    if (allowFullscreen) { // Style iframe
+        iframe.setAttribute('allowfullscreen', '');
+    }
+    // Send an initial message to the webview so it has a reference to this parent window
+    if (useWebview) {
+        iframe.addEventListener('loadstop', () => {
+            iframe.contentWindow.postMessage(JSON.stringify({ messageType: 'WebviewHost' }), '*');
+        });
+    }
+    iframe.style.cssText = _parent ? 'position: static; width: 100%; height: 100%; left: 0; top: 0; border-width: 0' : 'position: static; width: 100vw; height: 100vh; left: 0; top: 0; border-width: 0';
     const noscroll: HTMLStyleElement = document.createElement('style');
     noscroll.innerHTML = 'body{height:100%;overflow:hidden;}';
-    return { iframeContainer, iframe, noscroll, parent, timeoutId };
+    return { iframeContainer, iframe, noscroll, parent };
 }
 
 function _setIframeProps(iframe: HTMLIFrameElement, src: string, optionParent: Node, iframeContainer: HTMLDivElement, parent: Node, noscroll: HTMLElement, uiZIndex: number): void {
@@ -149,6 +158,15 @@ function _setIframeProps(iframe: HTMLIFrameElement, src: string, optionParent: N
     document.head.appendChild(noscroll);
 }
 
+// FIXME: this may be hard to test?
+// function resetTimeout(timeoutId: any): void {
+//     if (timeoutId) {
+//         window.clearTimeout(timeoutId);
+//         timeoutId = null;
+//     }
+// };
+
+
 /**
  * Launch the Immersive Reader within an iframe.
  * @param token The authentication token.
@@ -161,8 +179,6 @@ export function launchAsync(token: string, subdomain: string, content: Content, 
     if (isLoading) {
         return Promise.reject('Immersive Reader is already launching');
     }
-
-    // if (_checkIfLoading() !== null)
 
     return new Promise((resolve, reject: (reason: Error) => void): void => {
         if (!token) {
@@ -190,14 +206,15 @@ export function launchAsync(token: string, subdomain: string, content: Content, 
 
         options = _initializeOptions(options);
 
-        let { iframeContainer, iframe, noscroll, parent, timeoutId } = _generateIframeVariables(options.parent, options.useWebview)
+        let { iframeContainer, iframe, noscroll, parent } = _generateIframeVariables(options.parent, options.useWebview, options.allowFullscreen)
+        let timeoutId: number | null = null;
 
-        const resetTimeout = (): void => {
+        const resetTimeout = (timeoutId: any): void => {
             if (timeoutId) {
                 window.clearTimeout(timeoutId);
                 timeoutId = null;
             }
-        };
+        }
 
         const reset = (): void => {
             // Remove container along with the iframe inside of it
@@ -208,7 +225,7 @@ export function launchAsync(token: string, subdomain: string, content: Content, 
             window.removeEventListener('message', messageHandler);
 
             // Clear the timeout timer
-            resetTimeout();
+            resetTimeout(timeoutId);
 
             // Re-enable scrolling
             if (noscroll.parentNode) {
@@ -226,7 +243,7 @@ export function launchAsync(token: string, subdomain: string, content: Content, 
             if (!e || !e.data || typeof e.data !== 'string') { return; }
 
             if (e.data === 'ImmersiveReader-ReadyForContent') {
-                resetTimeout(); // Reset the timeout once the reader page loads successfully. The Reader page will report further errors through PostMessage if there is an issue obtaining the ContentModel from the server
+                resetTimeout(timeoutId); // Reset the timeout once the reader page loads successfully. The Reader page will report further errors through PostMessage if there is an issue obtaining the ContentModel from the server
                 const message: Message = {
                     cogSvcsAccessToken: token,
                     cogSvcsSubdomain: subdomain,
@@ -292,7 +309,7 @@ export function launchAsync(token: string, subdomain: string, content: Content, 
 
                 isLoading = false;
                 if (launchResponse) {
-                    resetTimeout();
+                    resetTimeout(timeoutId);
                     resolve(launchResponse);
                 } else if (error) {
                     exit(options.onExit, reset);
@@ -310,23 +327,12 @@ export function launchAsync(token: string, subdomain: string, content: Content, 
 
         // Reject the promise if the Immersive Reader page fails to load.
         timeoutId = window.setTimeout((): void => {
+            console.log(`a: ${timeoutId}`)
             reset();
+            console.log(`b: ${timeoutId}`)
             isLoading = false;
             reject({ code: ErrorCode.Timeout, message: `Page failed to load after timeout (${options.timeout} ms)` });
         }, options.timeout);
-
-        // Create and style iframe
-        if (options.allowFullscreen) {
-            iframe.setAttribute('allowfullscreen', '');
-        }
-        iframe.style.cssText = options.parent ? 'position: static; width: 100%; height: 100%; left: 0; top: 0; border-width: 0' : 'position: static; width: 100vw; height: 100vh; left: 0; top: 0; border-width: 0';
-
-        // Send an initial message to the webview so it has a reference to this parent window
-        if (options.useWebview) {
-            iframe.addEventListener('loadstop', () => {
-                iframe.contentWindow.postMessage(JSON.stringify({ messageType: 'WebviewHost' }), '*');
-            });
-        }
 
         const domain = options.customDomain ? options.customDomain : 'https://learningtools.onenote.com/learningtoolsapp/cognitive/';
         let src = domain + _makeSrcUrl(options, FuncType.launchAsync);
@@ -351,14 +357,14 @@ export function launchWithoutContentAsync(options?: Options): Promise<LaunchWith
 
     options = _initializeOptions(options);
 
-    let { iframeContainer, iframe, noscroll, parent, timeoutId } = _generateIframeVariables(options.parent, options.useWebview)
+    let { iframeContainer, iframe, noscroll, parent, timeoutId } = _generateIframeVariables(options.parent, options.useWebview, options.allowFullscreen);
 
-    const resetTimeout = (): void => {
+    const resetTimeout = (timeoutId: any): void => {
         if (timeoutId) {
             window.clearTimeout(timeoutId);
             timeoutId = null;
         }
-    };
+    }
 
     const reset = (): void => {
         // Remove container along with the iframe inside of it
@@ -373,7 +379,7 @@ export function launchWithoutContentAsync(options?: Options): Promise<LaunchWith
         apiResponseMessage = null;
 
         // Clear the timeout timer
-        resetTimeout();
+        resetTimeout(timeoutId);
 
         // Re-enable scrolling
         if (noscroll.parentNode) {
@@ -403,7 +409,7 @@ export function launchWithoutContentAsync(options?: Options): Promise<LaunchWith
         if (!e || !e.data || typeof e.data !== 'string') { return; }
 
         if (e.data === 'ImmersiveReader-ReadyForContent') {
-            resetTimeout(); // Reset the timeout once the reader page loads successfully. The Reader page will report further errors through PostMessage if there is an issue obtaining the ContentModel from the server
+            resetTimeout(timeoutId); // Reset the timeout once the reader page loads successfully. The Reader page will report further errors through PostMessage if there is an issue obtaining the ContentModel from the server
             readyForContent = true;
             sendContentIfReady();
         } else if (e.data === 'ImmersiveReader-Exit') {
@@ -458,7 +464,7 @@ export function launchWithoutContentAsync(options?: Options): Promise<LaunchWith
 
             isLoading = false;
             if (launchResponse) {
-                resetTimeout();
+                resetTimeout(timeoutId);
                 if (launchResponseResolve) {
                     launchResponseResolve(launchResponse);
                 }
@@ -497,18 +503,6 @@ export function launchWithoutContentAsync(options?: Options): Promise<LaunchWith
         }
     }, options.timeout);
 
-    // Create and style iframe
-    if (options.allowFullscreen) {
-        iframe.setAttribute('allowfullscreen', '');
-    }
-    iframe.style.cssText = options.parent ? 'position: static; width: 100%; height: 100%; left: 0; top: 0; border-width: 0' : 'position: static; width: 100vw; height: 100vh; left: 0; top: 0; border-width: 0';
-
-    // Send an initial message to the webview so it has a reference to this parent window
-    if (options.useWebview) {
-        iframe.addEventListener('loadstop', () => {
-            iframe.contentWindow.postMessage(JSON.stringify({ messageType: 'WebviewHost' }), '*');
-        });
-    }
 
     let src = _makeSrcUrl(options, FuncType.launchWithoutContentAsync);
 
