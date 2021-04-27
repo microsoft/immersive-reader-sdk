@@ -75,6 +75,7 @@ function _initializeOptions(options: Options): Options {
 
     const { allowFullscreen, cookiePolicy, hideExitButton, parent, timeout, uiZIndex, useWebview } = options;
 
+    // FIXME: will this options set work?
     const _options: Options = {
         ...options,
         uiZIndex: (!options.uiZIndex || typeof options.uiZIndex !== 'number') ? 1000 : uiZIndex,
