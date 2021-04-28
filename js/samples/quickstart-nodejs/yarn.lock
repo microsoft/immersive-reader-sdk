@@ -441,7 +441,7 @@ pug@3.0.0:
   version "3.0.0"
   resolved "https://registry.yarnpkg.com/pug/-/pug-3.0.0.tgz#101eecd7a236cd9906e420e17799d4d57f2b7d93"
   dependencies:
-    pug-code-gen "^3.0.0"
+    pug-code-gen "^3.0.2"
     pug-filters "^4.0.0"
     pug-lexer "^5.0.0"
     pug-linker "^4.0.0"
