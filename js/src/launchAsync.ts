@@ -131,18 +131,15 @@ function _createMessageHandler(options: Options, funcType: FuncType, extras: any
                     iframe.contentWindow!.postMessage(JSON.stringify({ messageType: 'Content', messageValue: message }), '*');
                 }
                 case FuncType.launchWithoutContentAsync: {
-                    if (e.data === 'ImmersiveReader-ReadyForContent') {
-                        resetTimeout(); // Reset the timeout once the reader page loads successfully. The Reader page will report further errors through PostMessage if there is an issue obtaining the ContentModel from the server
-                        readyForContent = true;
-                        const { sendContentIfReady } = extras;
-                        sendContentIfReady();
-                    }
+                    resetTimeout(); // Reset the timeout once the reader page loads successfully. The Reader page will report further errors through PostMessage if there is an issue obtaining the ContentModel from the server
+                    readyForContent = true;
+                    const { sendContentIfReady } = extras;
+                    sendContentIfReady();
                 }
                 default:
                     return;
             }
-        }
-        else if (e.data === 'ImmersiveReader-Exit') {
+        } else if (e.data === 'ImmersiveReader-Exit') {
             exit(options.onExit);
             return;
         } else if (e.data.startsWith(PostMessageLaunchResponse)) {
@@ -207,18 +204,21 @@ function _createMessageHandler(options: Options, funcType: FuncType, extras: any
                         exit(options.onExit);
                         reject(error);
                     }
+                    return;
                 }
                 case FuncType.launchWithoutContentAsync: {
                     if (launchResponse) {
                         resetTimeout();
                         if (launchResponseResolve) {
                             launchResponseResolve(launchResponse);
+                            return;
                         }
                     } else if (error) {
                         exit(options.onExit);
                         if (launchResponseReject) {
                             launchResponseReject(error);
                         }
+                        return;
                     }
                 }
             }
@@ -301,7 +301,7 @@ function resetTimeout(): void {
     }
 }
 
-function reset(messageHandler: any): void {
+function reset(): void {
     // Remove container along with the iframe inside of it
     if (parent.contains(iframeContainer)) {
         parent.removeChild(iframeContainer);
@@ -319,7 +319,7 @@ function reset(messageHandler: any): void {
 }
 
 function exit(onExit: Function): void {
-    reset(messageHandler);
+    reset();
     // Execute exit callback if we have one
     if (onExit) {
         try {
@@ -381,13 +381,13 @@ export function launchAsync(token: string, subdomain: string, content: Content, 
         exit(options.onExit);
 
         // Reset variables
-        reset(messageHandler);
+        reset();
 
         window.addEventListener('message', messageHandler);
 
         // Reject the promise if the Immersive Reader page fails to load.
         timeoutId = window.setTimeout((): void => {
-            reset(messageHandler);
+            reset();
             isLoading = false;
             reject({ code: ErrorCode.Timeout, message: `Page failed to load after timeout (${options.timeout} ms)` });
         }, options.timeout);
@@ -413,28 +413,7 @@ export function launchWithoutContentAsync(options?: Options): Promise<LaunchWith
     isLoading = true;
     const startTime = Date.now();
 
-    _initializeOptions(options);
-
-    const reset = (): void => {
-        // Remove container along with the iframe inside of it
-        if (parent.contains(iframeContainer)) {
-            parent.removeChild(iframeContainer);
-        }
-
-        window.removeEventListener('message', messageHandler);
-        // Since any reset message from the web app will go unheard after the line above
-        isLoading = false;
-        readyForContent = false;
-        apiResponseMessage = null;
-
-        // Clear the timeout timer
-        resetTimeout();
-
-        // Re-enable scrolling
-        if (noscroll.parentNode) {
-            noscroll.parentNode.removeChild(noscroll);
-        }
-    };
+    options = _initializeOptions(options);
 
     const sendContentIfReady = (): void => {
         if (readyForContent && apiResponseMessage) {
@@ -453,88 +432,11 @@ export function launchWithoutContentAsync(options?: Options): Promise<LaunchWith
         }
     };
 
-    // const extras: any = {
-    //     sendContentIfReady
-    // }
+    const extras: any = {
+        sendContentIfReady
+    }
 
-    const messageHandler = (e: any): void => {
-        // Don't process the message if the data is not a string
-        if (!e || !e.data || typeof e.data !== 'string') { return; }
-
-        if (e.data === 'ImmersiveReader-ReadyForContent') {
-            resetTimeout(); // Reset the timeout once the reader page loads successfully. The Reader page will report further errors through PostMessage if there is an issue obtaining the ContentModel from the server
-            readyForContent = true;
-            sendContentIfReady();
-        } else if (e.data === 'ImmersiveReader-Exit') {
-            exit(options.onExit);
-        } else if (e.data.startsWith(PostMessageLaunchResponse)) {
-            let launchResponse: LaunchResponse = null;
-            let error: Error = null;
-
-            let response: LaunchResponseMessage = null;
-            try {
-                response = JSON.parse(e.data.substring(PostMessageLaunchResponse.length));
-            } catch {
-                // No-op
-            }
-
-            if (response && response.success) {
-                const playMessageValue: any = {
-                    command: 'PlayState',
-                    parameters: 'Play'
-                };
-
-                const pauseMessageValue: any = {
-                    command: 'PlayState',
-                    parameters: 'Pause'
-                };
-
-                launchResponse = {
-                    container: iframeContainer,
-                    sessionId: response.sessionId,
-                    charactersProcessed: response.meteredContentSize,
-                    postLaunchOperations: {
-                        pause: () => {
-                            iframe.contentWindow!.postMessage(JSON.stringify({ messageType: 'InstrumentationCommand', messageValue: pauseMessageValue }), '*');
-                        },
-                        play: () => {
-                            iframe.contentWindow!.postMessage(JSON.stringify({ messageType: 'InstrumentationCommand', messageValue: playMessageValue }), '*');
-                        }
-                    }
-                };
-            } else if (response && !response.success) {
-                error = {
-                    code: response.errorCode,
-                    message: errorMessageMap[response.errorCode],
-                    sessionId: response.sessionId
-                };
-            } else {
-                error = {
-                    code: ErrorCode.ServerError,
-                    message: errorMessageMap[ErrorCode.ServerError]
-                };
-            }
-
-            isLoading = false;
-            if (launchResponse) {
-                resetTimeout();
-                if (launchResponseResolve) {
-                    launchResponseResolve(launchResponse);
-                }
-            } else if (error) {
-                exit(options.onExit);
-                if (launchResponseReject) {
-                    launchResponseReject(error);
-                }
-            }
-        } else if (e.data.startsWith(PostMessagePreferences)) {
-            if (options.onPreferencesChanged && typeof options.onPreferencesChanged === 'function') {
-                try {
-                    options.onPreferencesChanged(e.data.substring(PostMessagePreferences.length));
-                } catch { }
-            }
-        }
-    };
+    messageHandler = _createMessageHandler(options, FuncType.launchAsync, extras);
 
     // Reset variables
     reset();
