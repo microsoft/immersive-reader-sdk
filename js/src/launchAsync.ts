@@ -327,8 +327,10 @@ function reset(): void {
     }
 }
 
+// TODO: Set loading false and make shared variable
 function exit(onExit: Function): void {
     reset();
+    isLoading = false;
     // Execute exit callback if we have one
     if (onExit) {
         try {
