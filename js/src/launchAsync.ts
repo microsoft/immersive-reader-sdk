@@ -34,6 +34,17 @@ type ApiResponseSuccessMessage = {
     status: number;
 };
 
+// TODO: This can be split between the 2 functions since theres no overlap at the moment
+type Extras = {
+    content?: Content;
+    subdomain?: string;
+    reject?: (reason: Error) => void;
+    resolve?: (value: LaunchResponse | PromiseLike<LaunchResponse>) => void;
+    sendContentIfReady?: () => void;
+    startTime?: number;
+    token?: string;
+}
+
 type LaunchWithoutContentResponse = {
     provideApiResponse: (apiResponse: ApiResponseSuccessMessage) => Promise<LaunchResponse>;
     cancelAndCloseReader: () => void;
@@ -100,8 +111,7 @@ function _initializeOptions(options?: Options): Options {
     return _options;
 }
 
-function _createMessageHandler(options: Options, funcType: FuncType, extras: any) {
-
+function _createMessageHandler(options: Options, funcType: FuncType, extras: Extras) {
     return (e: any) => {
         // Don't process the message if the data is not a string
         if (!e || !e.data || typeof e.data !== 'string') { return; }
@@ -191,34 +201,31 @@ function _createMessageHandler(options: Options, funcType: FuncType, extras: any
             }
 
             isLoading = false;
-            switch (funcType) {
-                case FuncType.launchAsync: {
-                    const {
-                        reject,
-                        resolve,
-                    } = extras;
-                    if (launchResponse) {
-                        resetTimeout();
-                        resolve(launchResponse);
-                    } else if (error) {
-                        exit(options.onExit);
-                        reject(error);
-                    }
-                    return;
+
+            if (funcType === FuncType.launchAsync) {
+                const {
+                    reject,
+                    resolve,
+                } = extras;
+                if (launchResponse) {
+                    resetTimeout();
+                    resolve(launchResponse);
+                } else if (error) {
+                    exit(options.onExit);
+                    reject(error);
                 }
-                case FuncType.launchWithoutContentAsync: {
-                    if (launchResponse) {
-                        resetTimeout();
-                        if (launchResponseResolve) {
-                            launchResponseResolve(launchResponse);
-                            return;
-                        }
-                    } else if (error) {
-                        exit(options.onExit);
-                        if (launchResponseReject) {
-                            launchResponseReject(error);
-                        }
+            }
+            else if (funcType === FuncType.launchWithoutContentAsync) {
+                if (launchResponse) {
+                    resetTimeout();
+                    if (launchResponseResolve) {
+                        launchResponseResolve(launchResponse);
                         return;
+                    }
+                } else if (error) {
+                    exit(options.onExit);
+                    if (launchResponseReject) {
+                        launchResponseReject(error);
                     }
                 }
             }
@@ -367,7 +374,7 @@ export function launchAsync(token: string, subdomain: string, content: Content, 
 
         options = _initializeOptions(options);
 
-        const extras: any = {
+        const extras: Extras = {
             content,
             subdomain,
             reject,
@@ -432,7 +439,7 @@ export function launchWithoutContentAsync(options?: Options): Promise<LaunchWith
         }
     };
 
-    const extras: any = {
+    const extras: Extras = {
         sendContentIfReady
     }
 
