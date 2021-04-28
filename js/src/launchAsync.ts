@@ -132,6 +132,7 @@ export function launchAsync(token: string, subdomain: string, content: Content, 
 
         const exit = (): void => {
             reset();
+            isLoading = false;
 
             // Execute exit callback if we have one
             if (options.onExit) {
