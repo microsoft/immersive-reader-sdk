@@ -247,6 +247,10 @@ export function launchAsync(token: string, subdomain: string, content: Content, 
             src += '&omkt=' + options.uiLang;
         }
 
+        if (options.cognitiveAppId) {
+            src += '&cognitiveAppId=' + options.cognitiveAppId;
+        }
+
         iframe.src = src;
 
         iframeContainer.style.cssText = options.parent ? `position: relative; width: 100%; height: 100%; border-width: 0; -webkit-perspective: 1px; z-index: ${options.uiZIndex}; background: white; overflow: hidden` : `position: fixed; width: 100vw; height: 100vh; left: 0; top: 0; border-width: 0; -webkit-perspective: 1px; z-index: ${options.uiZIndex}; background: white; overflow: hidden`;
