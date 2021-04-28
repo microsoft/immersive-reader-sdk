@@ -93,7 +93,7 @@ enum FuncType { launchAsync, launchWithoutContentAsync }
 
 function _initializeOptions(options?: Options): Options {
 
-    const { allowFullscreen, cookiePolicy, hideExitButton, parent, timeout, uiZIndex, useWebview } = options || {};
+    const { allowFullscreen, cookiePolicy, hideExitButton, onExit, parent, timeout, uiZIndex, useWebview } = options || {};
 
     // FIXME: will this options set work?
     const _options = {
@@ -103,7 +103,8 @@ function _initializeOptions(options?: Options): Options {
         useWebview: useWebview || false,
         allowFullscreen: allowFullscreen || true,
         hideExitButton: hideExitButton || false,
-        cookiePolicy: cookiePolicy || CookiePolicy.Disable
+        cookiePolicy: cookiePolicy || CookiePolicy.Disable,
+        onExit
     };
 
     _generateIframeVariables(parent, useWebview, allowFullscreen);
@@ -139,12 +140,14 @@ function _createMessageHandler(options: Options, funcType: FuncType, extras: Ext
                         preferences: options.preferences
                     };
                     iframe.contentWindow!.postMessage(JSON.stringify({ messageType: 'Content', messageValue: message }), '*');
+                    break;
                 }
                 case FuncType.launchWithoutContentAsync: {
                     resetTimeout(); // Reset the timeout once the reader page loads successfully. The Reader page will report further errors through PostMessage if there is an issue obtaining the ContentModel from the server
                     readyForContent = true;
                     const { sendContentIfReady } = extras;
                     sendContentIfReady();
+                    break;
                 }
                 default:
                     return;
@@ -205,7 +208,7 @@ function _createMessageHandler(options: Options, funcType: FuncType, extras: Ext
             if (funcType === FuncType.launchAsync) {
                 const {
                     reject,
-                    resolve,
+                    resolve
                 } = extras;
                 if (launchResponse) {
                     resetTimeout();
@@ -214,8 +217,7 @@ function _createMessageHandler(options: Options, funcType: FuncType, extras: Ext
                     exit(options.onExit);
                     reject(error);
                 }
-            }
-            else if (funcType === FuncType.launchWithoutContentAsync) {
+            } else if (funcType === FuncType.launchWithoutContentAsync) {
                 if (launchResponse) {
                     resetTimeout();
                     if (launchResponseResolve) {
@@ -239,7 +241,7 @@ function _createMessageHandler(options: Options, funcType: FuncType, extras: Ext
                 }
             }
         }
-    }
+    };
 }
 
 function _makeSrcUrl(options: Options, funcType: FuncType): string {
@@ -331,7 +333,9 @@ function exit(onExit: Function): void {
     if (onExit) {
         try {
             onExit();
-        } catch { }
+        } catch {
+            console.log('Error on exit')
+        }
     }
 }
 
@@ -381,11 +385,9 @@ export function launchAsync(token: string, subdomain: string, content: Content, 
             resolve,
             startTime,
             token
-        }
+        };
 
         messageHandler = _createMessageHandler(options, FuncType.launchAsync, extras);
-
-        exit(options.onExit);
 
         // Reset variables
         reset();
@@ -439,9 +441,10 @@ export function launchWithoutContentAsync(options?: Options): Promise<LaunchWith
         }
     };
 
+    // TEST: will startime + options all be correctly referenced?
     const extras: Extras = {
         sendContentIfReady
-    }
+    };
 
     messageHandler = _createMessageHandler(options, FuncType.launchAsync, extras);
 

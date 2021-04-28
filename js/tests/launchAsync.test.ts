@@ -64,6 +64,26 @@ describe('launchAsync tests', () => {
         }
     });
 
+    it('launches with onExit callback', async () => {
+        jest.useRealTimers();
+        expect.assertions(1);
+
+        const cbOnExit = jest.fn(() => { });
+
+        const options: Options = { onExit: () => { cbOnExit(); } };
+        const launchPromise = launchAsync(SampleToken, SampleSubdomain, SampleContent, options);
+        window.postMessage('ImmersiveReader-LaunchResponse:{"success":true}', '*');
+
+        await launchPromise;
+
+        window.postMessage('ImmersiveReader-Exit', '*');
+
+        // this is to yield this thread of execution to allow the exit message to get processed
+        await new Promise(resolve => { setTimeout(resolve, 1); });
+
+        expect(cbOnExit).toHaveBeenCalledTimes(1);
+    });
+
     it('succeeds', () => {
         expect.assertions(1);
         const launchPromise = launchAsync(SampleToken, SampleSubdomain, SampleContent)
@@ -171,6 +191,7 @@ describe('launchAsync tests', () => {
         expect(iframe.src.toLowerCase()).toContain(`https://learningtools.onenote.com/learningtoolsapp/cognitive/reader?exitcallback=immersivereader-exit&sdkplatform=js&sdkversion=000.000.000&cookiepolicy=disable`);
     });
 
+
     it('launches with exit button hidden', async () => {
         expect.assertions(1);
         const options: Options = { hideExitButton: true };
@@ -241,26 +262,6 @@ describe('launchAsync tests', () => {
         const iframe = <HTMLIFrameElement>response.container.firstElementChild;
 
         expect(iframe.src).toContain('&cookiePolicy=disable');
-    });
-
-    it('launches with onExit callback', async () => {
-        jest.useRealTimers();
-        expect.assertions(1);
-
-        const cbOnExit = jest.fn(() => { });
-
-        const options: Options = { onExit: () => { cbOnExit(); } };
-        const launchPromise = launchAsync(SampleToken, SampleSubdomain, SampleContent, options);
-        window.postMessage('ImmersiveReader-LaunchResponse:{"success":true}', '*');
-
-        await launchPromise;
-
-        window.postMessage('ImmersiveReader-Exit', '*');
-
-        // this is to yield this thread of execution to allow the exit message to get processed
-        await new Promise(resolve => { setTimeout(resolve, 1); });
-
-        expect(cbOnExit).toHaveBeenCalledTimes(1);
     });
 
     it('launches with preferences not set', async () => {
