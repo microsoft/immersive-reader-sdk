@@ -69,16 +69,25 @@ let launchResponseError: Error;
 //     }
 //     return null;
 // }
+
+// Added globals to persist between functions
+let timeoutId: number | null = null;
+let parent: Node = null;
+let iframeContainer: HTMLDivElement = null;
+let iframe: HTMLIFrameElement = null;
+let noscroll: HTMLStyleElement = null;
+let messageHandler: (e: any) => void = null;
+
 enum FuncType { launchAsync, launchWithoutContentAsync }
 
-function _initializeOptions(options: Options): Options {
+function _initializeOptions(options?: Options): Options {
 
-    const { allowFullscreen, cookiePolicy, hideExitButton, parent, timeout, uiZIndex, useWebview } = options;
+    const { allowFullscreen, cookiePolicy, hideExitButton, parent, timeout, uiZIndex, useWebview } = options || {};
 
     // FIXME: will this options set work?
-    const _options: Options = {
+    const _options = {
         ...options,
-        uiZIndex: (!options.uiZIndex || typeof options.uiZIndex !== 'number') ? 1000 : uiZIndex,
+        uiZIndex: (!uiZIndex || typeof options.uiZIndex !== 'number') ? 1000 : uiZIndex,
         timeout: timeout || 15000,  // Default to 15 seconds
         useWebview: useWebview || false,
         allowFullscreen: allowFullscreen || true,
@@ -89,6 +98,141 @@ function _initializeOptions(options: Options): Options {
     _generateIframeVariables(parent, useWebview, allowFullscreen);
 
     return _options;
+}
+
+function _createMessageHandler(options: Options, funcType: FuncType, extras: any) {
+
+    return (e: any) => {
+        // Don't process the message if the data is not a string
+        if (!e || !e.data || typeof e.data !== 'string') { return; }
+
+        if (e.data === 'ImmersiveReader-ReadyForContent') {
+            switch (funcType) {
+                case FuncType.launchAsync: {
+                    resetTimeout(); // Reset the timeout once the reader page loads successfully. The Reader page will report further errors through PostMessage if there is an issue obtaining the ContentModel from the server
+                    const {
+                        content,
+                        subdomain,
+                        startTime,
+                        token
+                    } = extras;
+                    const message: Message = {
+                        cogSvcsAccessToken: token,
+                        cogSvcsSubdomain: subdomain,
+                        request: content,
+                        launchToPostMessageSentDurationInMs: Date.now() - startTime,
+                        disableFirstRun: options.disableFirstRun,
+                        readAloudOptions: options.readAloudOptions,
+                        translationOptions: options.translationOptions,
+                        displayOptions: options.displayOptions,
+                        sendPreferences: !!options.onPreferencesChanged,
+                        preferences: options.preferences
+                    };
+                    iframe.contentWindow!.postMessage(JSON.stringify({ messageType: 'Content', messageValue: message }), '*');
+                }
+                case FuncType.launchWithoutContentAsync: {
+                    if (e.data === 'ImmersiveReader-ReadyForContent') {
+                        resetTimeout(); // Reset the timeout once the reader page loads successfully. The Reader page will report further errors through PostMessage if there is an issue obtaining the ContentModel from the server
+                        readyForContent = true;
+                        const { sendContentIfReady } = extras;
+                        sendContentIfReady();
+                    }
+                }
+                default:
+                    return;
+            }
+        }
+        else if (e.data === 'ImmersiveReader-Exit') {
+            exit(options.onExit);
+            return;
+        } else if (e.data.startsWith(PostMessageLaunchResponse)) {
+            let launchResponse: LaunchResponse = null;
+            let error: Error = null;
+
+            let response: LaunchResponseMessage = null;
+            try {
+                response = JSON.parse(e.data.substring(PostMessageLaunchResponse.length));
+            } catch {
+                // No-op
+            }
+
+            if (response && response.success) {
+                const playMessageValue: any = {
+                    command: 'PlayState',
+                    parameters: 'Play'
+                };
+
+                const pauseMessageValue: any = {
+                    command: 'PlayState',
+                    parameters: 'Pause'
+                };
+
+                launchResponse = {
+                    container: iframeContainer,
+                    sessionId: response.sessionId,
+                    charactersProcessed: response.meteredContentSize,
+                    postLaunchOperations: {
+                        pause: () => {
+                            iframe.contentWindow!.postMessage(JSON.stringify({ messageType: 'InstrumentationCommand', messageValue: pauseMessageValue }), '*');
+                        },
+                        play: () => {
+                            iframe.contentWindow!.postMessage(JSON.stringify({ messageType: 'InstrumentationCommand', messageValue: playMessageValue }), '*');
+                        }
+                    }
+                };
+            } else if (response && !response.success) {
+                error = {
+                    code: response.errorCode,
+                    message: errorMessageMap[response.errorCode],
+                    sessionId: response.sessionId
+                };
+            } else {
+                error = {
+                    code: ErrorCode.ServerError,
+                    message: errorMessageMap[ErrorCode.ServerError]
+                };
+            }
+
+            isLoading = false;
+            switch (funcType) {
+                case FuncType.launchAsync: {
+                    const {
+                        reject,
+                        resolve,
+                    } = extras;
+                    if (launchResponse) {
+                        resetTimeout();
+                        resolve(launchResponse);
+                    } else if (error) {
+                        exit(options.onExit);
+                        reject(error);
+                    }
+                }
+                case FuncType.launchWithoutContentAsync: {
+                    if (launchResponse) {
+                        resetTimeout();
+                        if (launchResponseResolve) {
+                            launchResponseResolve(launchResponse);
+                        }
+                    } else if (error) {
+                        exit(options.onExit);
+                        if (launchResponseReject) {
+                            launchResponseReject(error);
+                        }
+                    }
+                }
+            }
+        } else if (e.data.startsWith(PostMessagePreferences)) {
+            if (options.onPreferencesChanged && typeof options.onPreferencesChanged === 'function') {
+                try {
+                    options.onPreferencesChanged(e.data.substring(PostMessagePreferences.length));
+                    return; // TODO: Yes?
+                } catch {
+                    // no-op?
+                }
+            }
+        }
+    }
 }
 
 function _makeSrcUrl(options: Options, funcType: FuncType): string {
@@ -116,12 +260,6 @@ function _makeSrcUrl(options: Options, funcType: FuncType): string {
 
     return src;
 }
-
-let timeoutId: number | null = null;
-let parent: Node = null;
-let iframeContainer: HTMLDivElement = null;
-let iframe: HTMLIFrameElement = null;
-let noscroll: HTMLStyleElement = null;
 
 function _generateIframeVariables(_parent: Node, useWebview: boolean, allowFullscreen: boolean): void {
     parent = _parent ? _parent : document.body;
@@ -180,7 +318,7 @@ function reset(messageHandler: any): void {
     }
 }
 
-function exit(onExit: Function, messageHandler: any): void {
+function exit(onExit: Function): void {
     reset(messageHandler);
     // Execute exit callback if we have one
     if (onExit) {
@@ -229,93 +367,18 @@ export function launchAsync(token: string, subdomain: string, content: Content, 
 
         options = _initializeOptions(options);
 
-        const messageHandler = (e: any): void => {
-            // Don't process the message if the data is not a string
-            if (!e || !e.data || typeof e.data !== 'string') { return; }
+        const extras: any = {
+            content,
+            subdomain,
+            reject,
+            resolve,
+            startTime,
+            token
+        }
 
-            if (e.data === 'ImmersiveReader-ReadyForContent') {
-                resetTimeout(); // Reset the timeout once the reader page loads successfully. The Reader page will report further errors through PostMessage if there is an issue obtaining the ContentModel from the server
-                const message: Message = {
-                    cogSvcsAccessToken: token,
-                    cogSvcsSubdomain: subdomain,
-                    request: content,
-                    launchToPostMessageSentDurationInMs: Date.now() - startTime,
-                    disableFirstRun: options.disableFirstRun,
-                    readAloudOptions: options.readAloudOptions,
-                    translationOptions: options.translationOptions,
-                    displayOptions: options.displayOptions,
-                    sendPreferences: !!options.onPreferencesChanged,
-                    preferences: options.preferences
-                };
-                iframe.contentWindow!.postMessage(JSON.stringify({ messageType: 'Content', messageValue: message }), '*');
-            } else if (e.data === 'ImmersiveReader-Exit') {
-                exit(options.onExit, reset);
-            } else if (e.data.startsWith(PostMessageLaunchResponse)) {
-                let launchResponse: LaunchResponse = null;
-                let error: Error = null;
+        messageHandler = _createMessageHandler(options, FuncType.launchAsync, extras);
 
-                let response: LaunchResponseMessage = null;
-                try {
-                    response = JSON.parse(e.data.substring(PostMessageLaunchResponse.length));
-                } catch {
-                    // No-op
-                }
-
-                if (response && response.success) {
-                    const playMessageValue: any = {
-                        command: 'PlayState',
-                        parameters: 'Play'
-                    };
-
-                    const pauseMessageValue: any = {
-                        command: 'PlayState',
-                        parameters: 'Pause'
-                    };
-
-                    launchResponse = {
-                        container: iframeContainer,
-                        sessionId: response.sessionId,
-                        charactersProcessed: response.meteredContentSize,
-                        postLaunchOperations: {
-                            pause: () => {
-                                iframe.contentWindow!.postMessage(JSON.stringify({ messageType: 'InstrumentationCommand', messageValue: pauseMessageValue }), '*');
-                            },
-                            play: () => {
-                                iframe.contentWindow!.postMessage(JSON.stringify({ messageType: 'InstrumentationCommand', messageValue: playMessageValue }), '*');
-                            }
-                        }
-                    };
-                } else if (response && !response.success) {
-                    error = {
-                        code: response.errorCode,
-                        message: errorMessageMap[response.errorCode],
-                        sessionId: response.sessionId
-                    };
-                } else {
-                    error = {
-                        code: ErrorCode.ServerError,
-                        message: errorMessageMap[ErrorCode.ServerError]
-                    };
-                }
-
-                isLoading = false;
-                if (launchResponse) {
-                    resetTimeout();
-                    resolve(launchResponse);
-                } else if (error) {
-                    exit(options.onExit, reset);
-                    reject(error);
-                }
-            } else if (e.data.startsWith(PostMessagePreferences)) {
-                if (options.onPreferencesChanged && typeof options.onPreferencesChanged === 'function') {
-                    try {
-                        options.onPreferencesChanged(e.data.substring(PostMessagePreferences.length));
-                    } catch { }
-                }
-            }
-        };
-
-        exit(options.onExit, messageHandler);
+        exit(options.onExit);
 
         // Reset variables
         reset(messageHandler);
@@ -350,7 +413,7 @@ export function launchWithoutContentAsync(options?: Options): Promise<LaunchWith
     isLoading = true;
     const startTime = Date.now();
 
-    options = _initializeOptions(options);
+    _initializeOptions(options);
 
     const reset = (): void => {
         // Remove container along with the iframe inside of it
@@ -390,6 +453,10 @@ export function launchWithoutContentAsync(options?: Options): Promise<LaunchWith
         }
     };
 
+    // const extras: any = {
+    //     sendContentIfReady
+    // }
+
     const messageHandler = (e: any): void => {
         // Don't process the message if the data is not a string
         if (!e || !e.data || typeof e.data !== 'string') { return; }
@@ -399,7 +466,7 @@ export function launchWithoutContentAsync(options?: Options): Promise<LaunchWith
             readyForContent = true;
             sendContentIfReady();
         } else if (e.data === 'ImmersiveReader-Exit') {
-            exit(options.onExit, reset);
+            exit(options.onExit);
         } else if (e.data.startsWith(PostMessageLaunchResponse)) {
             let launchResponse: LaunchResponse = null;
             let error: Error = null;
@@ -455,7 +522,7 @@ export function launchWithoutContentAsync(options?: Options): Promise<LaunchWith
                     launchResponseResolve(launchResponse);
                 }
             } else if (error) {
-                exit(options.onExit, reset);
+                exit(options.onExit);
                 if (launchResponseReject) {
                     launchResponseReject(error);
                 }
@@ -494,7 +561,7 @@ export function launchWithoutContentAsync(options?: Options): Promise<LaunchWith
     _setIframeProps(src, options.parent, options.uiZIndex);
 
     const launchWithoutContentResponse: LaunchWithoutContentResponse = {
-        cancelAndCloseReader: () => exit(options.onExit, reset),
+        cancelAndCloseReader: () => exit(options.onExit),
         provideApiResponse: (apiResponse: ApiResponseSuccessMessage): Promise<LaunchResponse> => {
             if (!apiResponse) {
                 return Promise.reject({ code: ErrorCode.BadArgument, message: 'No Api Response' });
