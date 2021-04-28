@@ -43,7 +43,7 @@ type Extras = {
     sendContentIfReady?: () => void;
     startTime?: number;
     token?: string;
-}
+};
 
 type LaunchWithoutContentResponse = {
     provideApiResponse: (apiResponse: ApiResponseSuccessMessage) => Promise<LaunchResponse>;
@@ -334,7 +334,7 @@ function exit(onExit: Function): void {
         try {
             onExit();
         } catch {
-            console.log('Error on exit')
+            console.log('Error on exit');
         }
     }
 }
