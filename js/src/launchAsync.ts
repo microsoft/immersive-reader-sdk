@@ -34,7 +34,7 @@ type ApiResponseSuccessMessage = {
     status: number;
 };
 
-// TODO: This can be split between the 2 functions since theres no overlap at the moment
+// TODO Future: This can be split between the 2 functions since theres no overlap at the moment
 type Extras = {
     content?: Content;
     subdomain?: string;
@@ -74,13 +74,6 @@ let launchResponseResolve: LaunchResponseResolve;
 let launchResponseReject: LaunchReject;
 let launchResponseError: Error;
 
-// function _checkIfLoading(): Promise<LaunchResponse> | null {
-//     if (isLoading) {
-//         return Promise.reject('Immersive Reader is already launching');
-//     }
-//     return null;
-// }
-
 // Added globals to persist between functions
 let timeoutId: number | null = null;
 let parent: Node = null;
@@ -95,15 +88,14 @@ function _initializeOptions(options?: Options): Options {
 
     const { allowFullscreen, cookiePolicy, hideExitButton, onExit, parent, timeout, uiZIndex, useWebview } = options || {};
 
-    // FIXME: will this options set work?
     const _options = {
         ...options,
-        uiZIndex: (!uiZIndex || typeof options.uiZIndex !== 'number') ? 1000 : uiZIndex,
-        timeout: timeout || 15000,  // Default to 15 seconds
+        uiZIndex: (!uiZIndex || typeof options.uiZIndex !== 'number') ? 1000 : uiZIndex, // Default to 1000 if not valid
+        timeout: timeout ?? 15000,  // Default to 15 seconds
         useWebview: useWebview || false,
         allowFullscreen: allowFullscreen || true,
         hideExitButton: hideExitButton || false,
-        cookiePolicy: cookiePolicy || CookiePolicy.Disable,
+        cookiePolicy: cookiePolicy ?? CookiePolicy.Disable, // Default to disable as presently
         onExit
     };
 
@@ -149,12 +141,9 @@ function _createMessageHandler(options: Options, funcType: FuncType, extras: Ext
                     sendContentIfReady();
                     break;
                 }
-                default:
-                    return;
             }
         } else if (e.data === 'ImmersiveReader-Exit') {
             exit(options.onExit);
-            return;
         } else if (e.data.startsWith(PostMessageLaunchResponse)) {
             let launchResponse: LaunchResponse = null;
             let error: Error = null;
@@ -222,7 +211,6 @@ function _createMessageHandler(options: Options, funcType: FuncType, extras: Ext
                     resetTimeout();
                     if (launchResponseResolve) {
                         launchResponseResolve(launchResponse);
-                        return;
                     }
                 } else if (error) {
                     exit(options.onExit);
@@ -235,7 +223,6 @@ function _createMessageHandler(options: Options, funcType: FuncType, extras: Ext
             if (options.onPreferencesChanged && typeof options.onPreferencesChanged === 'function') {
                 try {
                     options.onPreferencesChanged(e.data.substring(PostMessagePreferences.length));
-                    return; // TODO: Yes?
                 } catch {
                     // no-op?
                 }
@@ -327,7 +314,6 @@ function reset(): void {
     }
 }
 
-// TODO: Set loading false and make shared variable
 function exit(onExit: Function): void {
     reset();
     isLoading = false;
