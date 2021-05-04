@@ -35,7 +35,7 @@ export type TranslationOptions = {
     autoEnableWordTranslation?: boolean;      // Automatically enable word translation
 };
 
-export enum ThemeOption { Light, Dark, HC_White, HC_Black, OS }
+export enum ThemeOption { Light, Dark, HC_White, HC_Black }
 
 export type DisplayOptions = {
     textSize?: number;          // Valid values are 14, 20, 28, 36, 42, 48, 56, 64, 72, 84, 96.
