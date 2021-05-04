@@ -12,7 +12,21 @@ import { CookiePolicy, Options } from '../src/options';
 describe('launchAsync tests', () => {
     const SampleToken: string = 'not-a-real-token';
     const SampleSubdomain: string = 'not-a-real-subdomain';
-    const SampleContent: Content = { chunks: [ { content: 'Hello, world' } ] };
+    const SampleContent: Content = { chunks: [{ content: 'Hello, world' }] };
+
+    it('fails to launch due to expired token', async () => {
+        expect.assertions(2);
+        const launchPromise = launchAsync(SampleToken, SampleSubdomain, SampleContent);
+
+        window.postMessage('ImmersiveReader-LaunchResponse:{"success":false, "errorCode":"TokenExpired"}', '*');
+
+        try {
+            await launchPromise;
+        } catch (error) {
+            expect(error.code).toBe('TokenExpired');
+            expect(error.message).toBe('The access token supplied is expired.');
+        }
+    });
 
     it('fails due to missing token', async () => {
         expect.assertions(1);
@@ -48,6 +62,26 @@ describe('launchAsync tests', () => {
         } catch (error) {
             expect(error.code).toBe('BadArgument');
         }
+    });
+
+    it('launches with onExit callback', async () => {
+        jest.useRealTimers();
+        expect.assertions(1);
+
+        const cbOnExit = jest.fn(() => { });
+
+        const options: Options = { onExit: () => { cbOnExit(); } };
+        const launchPromise = launchAsync(SampleToken, SampleSubdomain, SampleContent, options);
+        window.postMessage('ImmersiveReader-LaunchResponse:{"success":true}', '*');
+
+        await launchPromise;
+
+        window.postMessage('ImmersiveReader-Exit', '*');
+
+        // this is to yield this thread of execution to allow the exit message to get processed
+        await new Promise(resolve => { setTimeout(resolve, 1); });
+
+        expect(cbOnExit).toHaveBeenCalledTimes(1);
     });
 
     it('succeeds', () => {
@@ -135,20 +169,6 @@ describe('launchAsync tests', () => {
         }
     });
 
-    it('fails to launch due to expired token', async () => {
-        expect.assertions(2);
-        const launchPromise = launchAsync(SampleToken, SampleSubdomain, SampleContent);
-
-        window.postMessage('ImmersiveReader-LaunchResponse:{"success":false, "errorCode":"TokenExpired"}', '*');
-
-        try {
-            await launchPromise;
-        } catch (error) {
-            expect(error.code).toBe('TokenExpired');
-            expect(error.message).toBe('The access token supplied is expired.');
-        }
-    });
-
     it('launches with a custom subdomain', async () => {
         expect.assertions(1);
         const options: Options = { customDomain: 'https://foo.com/' };
@@ -170,6 +190,7 @@ describe('launchAsync tests', () => {
         const iframe = <HTMLIFrameElement>response.container.firstElementChild;
         expect(iframe.src.toLowerCase()).toContain(`https://learningtools.onenote.com/learningtoolsapp/cognitive/reader?exitcallback=immersivereader-exit&sdkplatform=js&sdkversion=000.000.000&cookiepolicy=disable`);
     });
+
 
     it('launches with exit button hidden', async () => {
         expect.assertions(1);
@@ -243,26 +264,6 @@ describe('launchAsync tests', () => {
         expect(iframe.src).toContain('&cookiePolicy=disable');
     });
 
-    it('launches with onExit callback', async () => {
-        jest.useRealTimers();
-        expect.assertions(1);
-
-        const cbOnExit = jest.fn(() => { });
-
-        const options: Options = { onExit: () => { cbOnExit(); } };
-        const launchPromise = launchAsync(SampleToken, SampleSubdomain, SampleContent, options);
-        window.postMessage('ImmersiveReader-LaunchResponse:{"success":true}', '*');
-
-        await launchPromise;
-
-        window.postMessage('ImmersiveReader-Exit', '*');
-
-        // this is to yield this thread of execution to allow the exit message to get processed
-        await new Promise(resolve => { setTimeout(resolve, 1); });
-
-        expect(cbOnExit).toHaveBeenCalledTimes(1);
-    });
-
     it('launches with preferences not set', async () => {
         expect.assertions(1);
         const options: Options = { preferences: null };
@@ -290,9 +291,11 @@ describe('launchAsync tests', () => {
     it('launches with onPreferencesChanged set', async () => {
         jest.useRealTimers();
         expect.assertions(1);
-        const options: Options = { onPreferencesChanged: (value) => {
-            expect(value).toBe('hello world');
-        } };
+        const options: Options = {
+            onPreferencesChanged: (value) => {
+                expect(value).toBe('hello world');
+            }
+        };
         const launchPromise = launchAsync(SampleToken, SampleSubdomain, SampleContent, options);
         window.postMessage('ImmersiveReader-LaunchResponse:{"success":true}', '*');
 
@@ -302,6 +305,7 @@ describe('launchAsync tests', () => {
 
         // this is to yield this thread of execution to allow the exit message to get processed
         await new Promise(resolve => { setTimeout(resolve, 1); });
+        // });
     });
 });
 
