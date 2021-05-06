@@ -7,6 +7,13 @@ import { Error, ErrorCode } from './error';
 import { LaunchResponse } from './launchResponse';
 declare const VERSION: string;
 
+
+/* -------------------------------------------------------------------------- */
+/*                                   Shared                                   */
+/* -------------------------------------------------------------------------- */
+const sdkPlatform = 'js';
+const sdkVersion = VERSION;
+
 type Message = {
     launchToPostMessageSentDurationInMs: number;
     request?: Content;
@@ -21,6 +28,42 @@ type Message = {
     preferences?: string;
 };
 
+// TODO Future: This can be split between the 2 functions since there is no overlap at the moment
+type UnifiedExtraFunctionOptions = {
+    content?: Content;
+    subdomain?: string;
+    reject?: (reason: Error) => void;
+    resolve?: (value: LaunchResponse | PromiseLike<LaunchResponse>) => void;
+    sendContentIfReady?: () => void;
+    startTime?: number;
+    token?: string;
+};
+
+const PostMessagePreferences = 'ImmersiveReader-Preferences:';
+const PostMessageLaunchResponse = 'ImmersiveReader-LaunchResponse:';
+
+const errorMessageMap: { [errorCode: string]: string } = {};
+errorMessageMap[ErrorCode.TokenExpired] = 'The access token supplied is expired.';
+errorMessageMap[ErrorCode.Throttled] = 'You have exceeded your quota.';
+errorMessageMap[ErrorCode.ServerError] = 'An error occurred when calling the server to process the text.';
+errorMessageMap[ErrorCode.InvalidSubdomain] = 'The subdomain supplied is invalid.';
+
+// Added globals to persist between functions
+let isLoading: boolean = false;
+let timeoutId: number | null = null;
+let parent: Node = null;
+let iframeContainer: HTMLDivElement = null;
+let iframe: HTMLIFrameElement = null;
+let noscroll: HTMLStyleElement = null;
+let messageHandler: (e: any) => void = null;
+
+enum FuncType { launchAsync, launchWithoutContentAsync }
+/* ------------------------------- End Shared ------------------------------- */
+
+
+/* -------------------------------------------------------------------------- */
+/*                               S2S (Internal)                               */
+/* -------------------------------------------------------------------------- */
 type LaunchResponseMessage = {
     success: boolean;
     errorCode?: ErrorCode;
@@ -34,17 +77,6 @@ type ApiResponseSuccessMessage = {
     status: number;
 };
 
-// TODO Future: This can be split between the 2 functions since theres no overlap at the moment
-type Extras = {
-    content?: Content;
-    subdomain?: string;
-    reject?: (reason: Error) => void;
-    resolve?: (value: LaunchResponse | PromiseLike<LaunchResponse>) => void;
-    sendContentIfReady?: () => void;
-    startTime?: number;
-    token?: string;
-};
-
 type LaunchWithoutContentResponse = {
     provideApiResponse: (apiResponse: ApiResponseSuccessMessage) => Promise<LaunchResponse>;
     cancelAndCloseReader: () => void;
@@ -54,65 +86,46 @@ type LaunchWithoutContentResolve = (value: LaunchWithoutContentResponse) => void
 type LaunchResponseResolve = (value: LaunchResponse) => void;
 type LaunchReject = (reason: Error) => void;
 
-const sdkPlatform = 'js';
-const sdkVersion = VERSION;
-
-const PostMessagePreferences = 'ImmersiveReader-Preferences:';
-const PostMessageLaunchResponse = 'ImmersiveReader-LaunchResponse:';
-
-const errorMessageMap: { [errorCode: string]: string } = {};
-errorMessageMap[ErrorCode.TokenExpired] = 'The access token supplied is expired.';
-errorMessageMap[ErrorCode.Throttled] = 'You have exceeded your quota.';
-errorMessageMap[ErrorCode.ServerError] = 'An error occurred when calling the server to process the text.';
-errorMessageMap[ErrorCode.InvalidSubdomain] = 'The subdomain supplied is invalid.';
-
-let isLoading: boolean = false;
 let readyForContent: boolean = false;
 let apiResponseMessage: ApiResponseSuccessMessage;
 
 let launchResponseResolve: LaunchResponseResolve;
 let launchResponseReject: LaunchReject;
 let launchResponseError: Error;
+/* --------------------------------- End S2S -------------------------------- */
 
-// Added globals to persist between functions
-let timeoutId: number | null = null;
-let parent: Node = null;
-let iframeContainer: HTMLDivElement = null;
-let iframe: HTMLIFrameElement = null;
-let noscroll: HTMLStyleElement = null;
-let messageHandler: (e: any) => void = null;
-
-enum FuncType { launchAsync, launchWithoutContentAsync }
-
-function _initializeOptions(options?: Options): Options {
+/* -------------------------------------------------------------------------- */
+/*                           Shared Helper Functions                          */
+/* -------------------------------------------------------------------------- */
+function _getAndSetOptionDefaults(options?: Options): Options {
 
     const { allowFullscreen, cookiePolicy, hideExitButton, onExit, parent, timeout, uiZIndex, useWebview } = options || {};
 
     const _options = {
         ...options,
-        uiZIndex: (!uiZIndex || typeof options.uiZIndex !== 'number') ? 1000 : uiZIndex, // Default to 1000 if not valid
-        timeout: timeout ?? 15000,  // Default to 15 seconds
-        useWebview: useWebview || false,
         allowFullscreen: allowFullscreen || true,
+        cookiePolicy: cookiePolicy ?? CookiePolicy.Disable, // Disabled by default. Customers must explicitly enable
         hideExitButton: hideExitButton || false,
-        cookiePolicy: cookiePolicy ?? CookiePolicy.Disable, // Default to disable as presently
-        onExit
+        onExit,
+        timeout: timeout ?? 15000,  // Default to 15 seconds
+        uiZIndex: (!uiZIndex || typeof options.uiZIndex !== 'number') ? 1000 : uiZIndex, // Default to 1000 if not valid
+        useWebview: useWebview || false
     };
 
-    _generateIframeVariables(parent, useWebview, allowFullscreen);
+    _createIFrame(parent, useWebview, allowFullscreen);
 
     return _options;
 }
 
-function _createMessageHandler(options: Options, funcType: FuncType, extras: Extras) {
+function _createMessageHandler(options: Options, funcType: FuncType, extras: UnifiedExtraFunctionOptions) {
     return (e: any) => {
         // Don't process the message if the data is not a string
         if (!e || !e.data || typeof e.data !== 'string') { return; }
 
         if (e.data === 'ImmersiveReader-ReadyForContent') {
+            resetTimeout(); // Reset the timeout once the reader page loads successfully. The Reader page will report further errors through PostMessage if there is an issue obtaining the ContentModel from the server
             switch (funcType) {
                 case FuncType.launchAsync: {
-                    resetTimeout(); // Reset the timeout once the reader page loads successfully. The Reader page will report further errors through PostMessage if there is an issue obtaining the ContentModel from the server
                     const {
                         content,
                         subdomain,
@@ -135,7 +148,6 @@ function _createMessageHandler(options: Options, funcType: FuncType, extras: Ext
                     break;
                 }
                 case FuncType.launchWithoutContentAsync: {
-                    resetTimeout(); // Reset the timeout once the reader page loads successfully. The Reader page will report further errors through PostMessage if there is an issue obtaining the ContentModel from the server
                     readyForContent = true;
                     const { sendContentIfReady } = extras;
                     sendContentIfReady();
@@ -147,7 +159,6 @@ function _createMessageHandler(options: Options, funcType: FuncType, extras: Ext
         } else if (e.data.startsWith(PostMessageLaunchResponse)) {
             let launchResponse: LaunchResponse = null;
             let error: Error = null;
-
             let response: LaunchResponseMessage = null;
             try {
                 response = JSON.parse(e.data.substring(PostMessageLaunchResponse.length));
@@ -194,28 +205,31 @@ function _createMessageHandler(options: Options, funcType: FuncType, extras: Ext
 
             isLoading = false;
 
-            if (funcType === FuncType.launchAsync) {
-                const {
-                    reject,
-                    resolve
-                } = extras;
-                if (launchResponse) {
-                    resetTimeout();
-                    resolve(launchResponse);
-                } else if (error) {
-                    exit(options.onExit);
-                    reject(error);
-                }
-            } else if (funcType === FuncType.launchWithoutContentAsync) {
-                if (launchResponse) {
-                    resetTimeout();
-                    if (launchResponseResolve) {
-                        launchResponseResolve(launchResponse);
+            switch (funcType) {
+                case FuncType.launchAsync: {
+                    const {
+                        reject,
+                        resolve
+                    } = extras;
+                    if (launchResponse) {
+                        resetTimeout();
+                        resolve(launchResponse);
+                    } else if (error) {
+                        exit(options.onExit);
+                        reject(error);
                     }
-                } else if (error) {
-                    exit(options.onExit);
-                    if (launchResponseReject) {
-                        launchResponseReject(error);
+                }
+                case FuncType.launchWithoutContentAsync: {
+                    if (launchResponse) {
+                        resetTimeout();
+                        if (launchResponseResolve) {
+                            launchResponseResolve(launchResponse);
+                        }
+                    } else if (error) {
+                        exit(options.onExit);
+                        if (launchResponseReject) {
+                            launchResponseReject(error);
+                        }
                     }
                 }
             }
@@ -235,30 +249,31 @@ function _makeSrcUrl(options: Options, funcType: FuncType): string {
     let src = '';
     if (funcType === FuncType.launchAsync) {
         src = 'reader?exitCallback=ImmersiveReader-Exit';
-        if (options.cognitiveAppId) {
-            src += '&cognitiveAppId=' + options.cognitiveAppId;
-        }
     } else if (funcType === FuncType.launchWithoutContentAsync) {
         src = 'https://learningtools.onenote.com/learningtoolsapp/cognitive/reader?exitCallback=ImmersiveReader-Exit&skipearlygcm=true';
     }
 
-    src += '&sdkPlatform=' + sdkPlatform + '&sdkVersion=' + sdkVersion;
+    src += `&sdkPlatform=${sdkPlatform}&sdkVersion=${sdkVersion}`;
 
-    src += '&cookiePolicy=' + ((options.cookiePolicy === CookiePolicy.Enable) ? 'enable' : 'disable');
+    src += `&cookiePolicy=${((options.cookiePolicy === CookiePolicy.Enable) ? 'enable' : 'disable')}`;
+
+    if (options.cognitiveAppId) {
+        src += `&cognitiveAppId=${options.cognitiveAppId}`;
+    }
 
     if (options.hideExitButton) {
         src += '&hideExitButton=true';
     }
 
     if (options.uiLang) {
-        src += '&omkt=' + options.uiLang;
+        src += `&omkt=${options.uiLang}`;
     }
 
     return src;
 }
 
-function _generateIframeVariables(_parent: Node, useWebview: boolean, allowFullscreen: boolean): void {
-    parent = _parent ? _parent : document.body;
+function _createIFrame(_parent: Node, useWebview: boolean, allowFullscreen: boolean): void {
+    parent = _parent || document.body;
     iframeContainer = document.createElement('div');
     iframe = useWebview ? <HTMLIFrameElement>document.createElement('webview') : document.createElement('iframe');
     iframe.allow = 'autoplay';
@@ -291,10 +306,8 @@ function _setIframeProps(src: string, optionParent: Node, uiZIndex: number): voi
 }
 
 function resetTimeout(): void {
-    if (timeoutId) {
-        window.clearTimeout(timeoutId);
-        timeoutId = null;
-    }
+    window.clearTimeout(timeoutId);
+    timeoutId = null;
 }
 
 function reset(): void {
@@ -326,6 +339,7 @@ function exit(onExit: Function): void {
         }
     }
 }
+/* ----------------------- End Shared Helper Functions ---------------------- */
 
 /**
  * Launch the Immersive Reader within an iframe.
@@ -364,9 +378,9 @@ export function launchAsync(token: string, subdomain: string, content: Content, 
         isLoading = true;
         const startTime = Date.now();
 
-        options = _initializeOptions(options);
+        options = _getAndSetOptionDefaults(options);
 
-        const extras: Extras = {
+        const extras: UnifiedExtraFunctionOptions = {
             content,
             subdomain,
             reject,
@@ -410,7 +424,7 @@ export function launchWithoutContentAsync(options?: Options): Promise<LaunchWith
     isLoading = true;
     const startTime = Date.now();
 
-    options = _initializeOptions(options);
+    options = _getAndSetOptionDefaults(options);
 
     const sendContentIfReady = (): void => {
         if (readyForContent && apiResponseMessage) {
@@ -429,8 +443,7 @@ export function launchWithoutContentAsync(options?: Options): Promise<LaunchWith
         }
     };
 
-    // TEST: will startime + options all be correctly referenced?
-    const extras: Extras = {
+    const extras: UnifiedExtraFunctionOptions = {
         sendContentIfReady
     };
 
