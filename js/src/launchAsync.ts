@@ -178,10 +178,29 @@ export function launchAsync(token: string, subdomain: string, content: Content, 
                 }
 
                 if (response && response.success) {
+
+                    const playMessageValue: any = {
+                        command: 'PlayState',
+                        parameters: 'Play'
+                    };
+    
+                    const pauseMessageValue: any = {
+                        command: 'PlayState',
+                        parameters: 'Pause'
+                    };
+    
                     launchResponse = {
                         container: iframeContainer,
                         sessionId: response.sessionId,
-                        charactersProcessed: response.meteredContentSize
+                        charactersProcessed: response.meteredContentSize,
+                        postLaunchOperations: {
+                            pause: () => {
+                                iframe.contentWindow!.postMessage(JSON.stringify({ messageType: 'InstrumentationCommand', messageValue: pauseMessageValue }), '*');
+                            },
+                            play: () => {
+                                iframe.contentWindow!.postMessage(JSON.stringify({ messageType: 'InstrumentationCommand', messageValue: playMessageValue }), '*');
+                            }
+                        }
                     };
                 } else if (response && !response.success) {
                     error = {
