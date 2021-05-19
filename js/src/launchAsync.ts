@@ -254,7 +254,7 @@ function _makeSrcUrl(options: Options, funcType: FuncType): string {
     }
 
     src += `&sdkPlatform=${sdkPlatform}&sdkVersion=${sdkVersion}`;
-
+  
     src += `&cookiePolicy=${((options.cookiePolicy === CookiePolicy.Enable) ? 'enable' : 'disable')}`;
 
     if (options.cognitiveAppId) {
