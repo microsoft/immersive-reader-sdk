@@ -191,7 +191,6 @@ describe('launchAsync tests', () => {
         expect(iframe.src.toLowerCase()).toContain(`https://learningtools.onenote.com/learningtoolsapp/cognitive/reader?exitcallback=immersivereader-exit&sdkplatform=js&sdkversion=000.000.000&cookiepolicy=disable`);
     });
 
-
     it('launches with exit button hidden', async () => {
         expect.assertions(1);
         const options: Options = { hideExitButton: true };
@@ -202,6 +201,18 @@ describe('launchAsync tests', () => {
         const iframe = <HTMLIFrameElement>response.container.firstElementChild;
 
         expect(iframe.src).toContain('&hideExitButton=true');
+    });
+
+    it('launches with custom style overrides', async () => {
+        expect.assertions(1);
+        const options: Options = { iframeStyleOverrides: "border-radius: 20px; width: 50%;" };
+        const launchPromise = launchAsync(SampleToken, SampleSubdomain, SampleContent, options);
+        window.postMessage('ImmersiveReader-LaunchResponse:{"success":true}', '*');
+
+        const response = await launchPromise;
+        const iframe = <HTMLIFrameElement>response.container.firstElementChild;
+
+        expect(iframe.style.cssText).toContain('border-radius: 20px; width: 50%;');
     });
 
     it('launches with exit button displayed', async () => {

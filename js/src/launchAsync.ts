@@ -59,7 +59,6 @@ let messageHandler: (e: any) => void = null;
 enum FuncType { launchAsync, launchWithoutContentAsync }
 /* ------------------------------- End Shared ------------------------------- */
 
-
 /* -------------------------------------------------------------------------- */
 /*                               S2S (Internal)                               */
 /* -------------------------------------------------------------------------- */
@@ -218,6 +217,7 @@ function _createMessageHandler(options: Options, funcType: FuncType, extras: Uni
                         exit(options.onExit);
                         reject(error);
                     }
+                    break;
                 }
                 case FuncType.launchWithoutContentAsync: {
                     if (launchResponse) {
@@ -290,13 +290,9 @@ function _createIFrame(_parent: Node, useWebview: boolean, allowFullscreen: bool
     }
     iframe.style.cssText = _parent
         ? 'position: static; width: 100%; height: 100%; left: 0; top: 0; border-width: 0;'
-        : 'position: static; width: 100vw; height: 100vh; left: 0; top: 0; border-width: 0;';
-
-    if (iframeStyleOverrides && iframeStyleOverrides !== '') {
-        iframe.style.cssText += iframeStyleOverrides;
-    }
-
-    console.log('cssText', iframe.style.cssText);
+        : (iframeStyleOverrides !== '')
+            ? iframeStyleOverrides
+            : 'position: static; width: 100vw; height: 100vh; left: 0; top: 0; border-width: 0;';
 
     noscroll = document.createElement('style');
     noscroll.innerHTML = 'body{height:100%;overflow:hidden;}';
