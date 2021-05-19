@@ -7,7 +7,6 @@ import { Error, ErrorCode } from './error';
 import { LaunchResponse } from './launchResponse';
 declare const VERSION: string;
 
-
 /* -------------------------------------------------------------------------- */
 /*                                   Shared                                   */
 /* -------------------------------------------------------------------------- */
@@ -99,20 +98,21 @@ let launchResponseError: Error;
 /* -------------------------------------------------------------------------- */
 function _getAndSetOptionDefaults(options?: Options): Options {
 
-    const { allowFullscreen, cookiePolicy, hideExitButton, onExit, parent, timeout, uiZIndex, useWebview } = options || {};
+    const { allowFullscreen, cookiePolicy, hideExitButton, iframeStyleOverrides, onExit, parent, timeout, uiZIndex, useWebview } = options || {};
 
     const _options = {
         ...options,
         allowFullscreen: allowFullscreen || true,
         cookiePolicy: cookiePolicy ?? CookiePolicy.Disable, // Disabled by default. Customers must explicitly enable
         hideExitButton: hideExitButton || false,
+        iframeStyleOverrides: iframeStyleOverrides || '',
         onExit,
         timeout: timeout ?? 15000,  // Default to 15 seconds
         uiZIndex: (!uiZIndex || typeof options.uiZIndex !== 'number') ? 1000 : uiZIndex, // Default to 1000 if not valid
         useWebview: useWebview || false
     };
 
-    _createIFrame(parent, useWebview, allowFullscreen);
+    _createIFrame(parent, useWebview, allowFullscreen, iframeStyleOverrides);
 
     return _options;
 }
@@ -272,7 +272,7 @@ function _makeSrcUrl(options: Options, funcType: FuncType): string {
     return src;
 }
 
-function _createIFrame(_parent: Node, useWebview: boolean, allowFullscreen: boolean): void {
+function _createIFrame(_parent: Node, useWebview: boolean, allowFullscreen: boolean, iframeStyleOverrides?: string): void {
     parent = _parent || document.body;
     iframeContainer = document.createElement('div');
     iframe = useWebview ? <HTMLIFrameElement>document.createElement('webview') : document.createElement('iframe');
@@ -288,7 +288,16 @@ function _createIFrame(_parent: Node, useWebview: boolean, allowFullscreen: bool
             iframe.contentWindow.postMessage(JSON.stringify({ messageType: 'WebviewHost' }), '*');
         });
     }
-    iframe.style.cssText = _parent ? 'position: static; width: 100%; height: 100%; left: 0; top: 0; border-width: 0' : 'position: static; width: 100vw; height: 100vh; left: 0; top: 0; border-width: 0';
+    iframe.style.cssText = _parent
+        ? 'position: static; width: 100%; height: 100%; left: 0; top: 0; border-width: 0;'
+        : 'position: static; width: 100vw; height: 100vh; left: 0; top: 0; border-width: 0;';
+
+    if (iframeStyleOverrides && iframeStyleOverrides !== '') {
+        iframe.style.cssText += iframeStyleOverrides;
+    }
+
+    console.log('cssText', iframe.style.cssText);
+
     noscroll = document.createElement('style');
     noscroll.innerHTML = 'body{height:100%;overflow:hidden;}';
 }
@@ -296,7 +305,9 @@ function _createIFrame(_parent: Node, useWebview: boolean, allowFullscreen: bool
 function _setIframeProps(src: string, optionParent: Node, uiZIndex: number): void {
     iframe.src = src;
 
-    iframeContainer.style.cssText = optionParent ? `position: relative; width: 100%; height: 100%; border-width: 0; -webkit-perspective: 1px; z-index: ${uiZIndex}; background: white; overflow: hidden` : `position: fixed; width: 100vw; height: 100vh; left: 0; top: 0; border-width: 0; -webkit-perspective: 1px; z-index: ${uiZIndex}; background: white; overflow: hidden`;
+    iframeContainer.style.cssText = optionParent
+        ? `position: relative; width: 100%; height: 100%; border-width: 0; -webkit-perspective: 1px; z-index: ${uiZIndex}; background: white; overflow: hidden`
+        : `position: fixed; width: 100vw; height: 100vh; left: 0; top: 0; border-width: 0; -webkit-perspective: 1px; z-index: ${uiZIndex}; background: white; overflow: hidden`;
 
     iframeContainer.appendChild(iframe);
     parent.appendChild(iframeContainer);
