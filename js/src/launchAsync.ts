@@ -2,7 +2,7 @@
 // Licensed under the MIT License.
 
 import { Content } from './content';
-import { CookiePolicy, DisplayOptions, Options, ReadAloudOptions, TranslationOptions } from './options';
+import { CookiePolicy, DisplayOptions, InternalOptionDictionary, Options, ReadAloudOptions, TranslationOptions } from './options';
 import { Error, ErrorCode } from './error';
 import { LaunchResponse } from './launchResponse';
 declare const VERSION: string;
@@ -25,6 +25,7 @@ type Message = {
     displayOptions?: DisplayOptions;
     sendPreferences?: boolean;
     preferences?: string;
+    internalOptions?: InternalOptionDictionary;
 };
 
 // TODO Future: This can be split between the 2 functions since there is no overlap at the moment
@@ -104,7 +105,7 @@ function _getAndSetOptionDefaults(options?: Options): Options {
         allowFullscreen: allowFullscreen || true,
         cookiePolicy: cookiePolicy ?? CookiePolicy.Disable, // Disabled by default. Customers must explicitly enable
         hideExitButton: hideExitButton || false,
-        iframeStyleOverrides: iframeStyleOverrides || '',
+        iframeStyleOverrides: iframeStyleOverrides ?? '',
         onExit,
         timeout: timeout ?? 15000,  // Default to 15 seconds
         uiZIndex: (!uiZIndex || typeof options.uiZIndex !== 'number') ? 1000 : uiZIndex, // Default to 1000 if not valid
@@ -290,7 +291,7 @@ function _createIFrame(_parent: Node, useWebview: boolean, allowFullscreen: bool
     }
     iframe.style.cssText = _parent
         ? 'position: static; width: 100%; height: 100%; left: 0; top: 0; border-width: 0;'
-        : (iframeStyleOverrides !== '')
+        : (iframeStyleOverrides && iframeStyleOverrides !== '')
             ? iframeStyleOverrides
             : 'position: static; width: 100vw; height: 100vh; left: 0; top: 0; border-width: 0;';
 
