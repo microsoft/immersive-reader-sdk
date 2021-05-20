@@ -20,7 +20,6 @@ export type Options = {
     customDomain?: string;                  // Reserved for internal use. Custom domain where the Immersive Reader webapp is hosted (default is null).
     cognitiveAppId?: string;                // String to delineate for 1st party application to hide MS logo (i.e. 'Teams' - default is 'Cognitive').
     internalOptions?: InternalOptions;       // Options reserved for internal use.
-    iframeStyleOverrides?: string           // Style string to OVERRIDDEN (not appended) to the iframe, i.e. "border-radius: 20px;"
 };
 
 export enum CookiePolicy { Disable, Enable }
@@ -46,9 +45,16 @@ export type DisplayOptions = {
     themeOption?: ThemeOption               // option to set custom theme
 };
 
+// Reserved for internal use. Style overrides, strings: [iframeStyleOverrides, iframeContainerStyleOverrides]
+export type StyleOverrideOptions = {
+    iframeStyleOverrides?: string;
+    iframeContainerStyleOverrides?: string;
+};
+
 export type InternalOptions = {
     messageOptions?: InternalOptionDictionary   // Reserved for internal use. Additional options to be sent through Content message.
     queryParameters?: InternalOptionDictionary  // Reserved for internal use. Additional query parameters.
+    styleOverrides?: StyleOverrideOptions
 };
 
 export type InternalOptionDictionary = {

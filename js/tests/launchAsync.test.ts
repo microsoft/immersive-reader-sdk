@@ -203,9 +203,9 @@ describe('launchAsync tests', () => {
         expect(iframe.src).toContain('&hideExitButton=true');
     });
 
-    it('launches with custom style overrides', async () => {
+    it('launches with custom style overrides on iframe', async () => {
         expect.assertions(1);
-        const options: Options = { iframeStyleOverrides: "border-radius: 20px; width: 50%;" };
+        const options: Options = { internalOptions: { styleOverrides: { iframeStyleOverrides: "border-radius: 20px; width: 50%;" } } };
         const launchPromise = launchAsync(SampleToken, SampleSubdomain, SampleContent, options);
         window.postMessage('ImmersiveReader-LaunchResponse:{"success":true}', '*');
 
@@ -213,6 +213,18 @@ describe('launchAsync tests', () => {
         const iframe = <HTMLIFrameElement>response.container.firstElementChild;
 
         expect(iframe.style.cssText).toContain('border-radius: 20px; width: 50%;');
+    });
+
+    it('launches with custom style overrides on the iframe container', async () => {
+        expect.assertions(1);
+        const options: Options = { internalOptions: { styleOverrides: { iframeContainerStyleOverrides: "border-radius: 20px; width: 50%;" } } };
+        const launchPromise = launchAsync(SampleToken, SampleSubdomain, SampleContent, options);
+        window.postMessage('ImmersiveReader-LaunchResponse:{"success":true}', '*');
+
+        const response = await launchPromise;
+        const iframeContainer = <HTMLIFrameElement>response.container;
+
+        expect(iframeContainer.style.cssText).toContain('border-radius: 20px; width: 50%;');
     });
 
     it('launches with exit button displayed', async () => {
