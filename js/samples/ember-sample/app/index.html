@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <title>EmberQuickstart</title>
+  <meta name="description" content="">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  <script type='text/javascript' src='https://code.jquery.com/jquery-3.3.1.min.js'></script>
+  <script type='text/javascript'
+    src='https://contentstorage.onenote.office.net/onenoteltir/immersivereadersdk/immersive-reader-sdk.1.1.0.js'></script>
+  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css" />
+
+  {{content-for "head"}}
+
+  {{content-for "head-footer"}}
+</head>
+
+<body>
+  {{content-for "body"}}
+
+  <script src="{{rootURL}}assets/vendor.js"></script>
+  <script src="{{rootURL}}assets/ember-sample.js"></script>
+
+  {{content-for "body-footer"}}
+</body>
+
+</html>

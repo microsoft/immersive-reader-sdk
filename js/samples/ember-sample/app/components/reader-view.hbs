@@ -1,0 +1,68 @@
+{{page-title "Reader"}}
+
+<div style="margin-left: 20px;">
+
+  <div>
+    <h3>Step 1: Fetch Credentials</h3>
+    <button type="button" {{on "click" this.getCredentials}}>Get Credentials!</button>
+  </div>
+
+  <div>
+    <h3>Step 2: try out the reader on the text below!</h3>
+    <button class="immersive-reader-button" data-button-style="iconAndText" data-locale="en" {{on "click"
+      this.launchReader}}></button>
+  </div>
+</div>
+
+<div>
+  <div class="container">
+    <div>
+      <h1 id="ir-title">About Immersive Reader</h1>
+    </div>
+    <div id="ir-content" lang="en-us">
+      <div>
+        <p>
+          Immersive Reader is a tool that implements proven techniques to improve reading comprehension for
+          emerging readers,
+          language learners, and people with learning differences.
+          The Immersive Reader is designed to make reading more accessible for everyone. The Immersive Reader
+        </p>
+        <ul>
+          <li>
+            Shows content in a minimal reading view
+          </li>
+          <li>
+            Displays pictures of commonly used words
+          </li>
+          <li>
+            Highlights nouns, verbs, adjectives, and adverbs
+          </li>
+          <li>
+            Reads your content out loud to you
+          </li>
+          <li>
+            Translates your content into another language
+          </li>
+          <li>
+            Breaks down words into syllables
+          </li>
+        </ul>
+      </div>
+      <h3>
+        The Immersive Reader is available in many languages.
+      </h3>
+      <p lang="es-es">
+        El Lector inmersivo está disponible en varios idiomas.
+      </p>
+      <p lang="zh-cn">
+        沉浸式阅读器支持许多语言
+      </p>
+      <p lang="de-de">
+        Der plastische Reader ist in vielen Sprachen verfügbar.
+      </p>
+      <p lang="ar-eg" dir="rtl" style="textAlign: 'right'">
+        يتوفر \"القارئ الشامل\" في العديد من اللغات.
+      </p>
+    </div>
+  </div>
+</div>
