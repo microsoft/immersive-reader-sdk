@@ -2,16 +2,12 @@ import Component from '@ember/component';
 import { action } from '@ember/object';
 import { tracked } from '@glimmer/tracking';
 import fetch from 'fetch'
-import { launchAsync, initialize } from "@microsoft/immersive-reader-sdk"
+import { launchAsync } from "@microsoft/immersive-reader-sdk"
 
 export default class ReaderViewComponent extends Component {
 
     @tracked token = null;
     @tracked subdomain = null;
-
-    didInsertElement() {
-        initialize();
-    }
 
     @action
     async getCredentials() {
