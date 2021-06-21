@@ -138,7 +138,9 @@ export function launchAsync(token: string, subdomain: string, content: Content, 
             if (options.onExit) {
                 try {
                     options.onExit();
-                } catch { }
+                } catch {
+                    // No-op
+                }
             }
         };
 
@@ -183,12 +185,12 @@ export function launchAsync(token: string, subdomain: string, content: Content, 
                         command: 'PlayState',
                         parameters: 'Play'
                     };
-    
+
                     const pauseMessageValue: any = {
                         command: 'PlayState',
                         parameters: 'Pause'
                     };
-    
+
                     launchResponse = {
                         container: iframeContainer,
                         sessionId: response.sessionId,
@@ -227,7 +229,9 @@ export function launchAsync(token: string, subdomain: string, content: Content, 
                 if (options.onPreferencesChanged && typeof options.onPreferencesChanged === 'function') {
                     try {
                         options.onPreferencesChanged(e.data.substring(PostMessagePreferences.length));
-                    } catch { }
+                    } catch {
+                        // No-op
+                    }
                 }
             }
         };
@@ -264,10 +268,6 @@ export function launchAsync(token: string, subdomain: string, content: Content, 
 
         if (options.uiLang) {
             src += '&omkt=' + options.uiLang;
-        }
-
-        if (options.cognitiveAppId) {
-            src += '&cognitiveAppId=' + options.cognitiveAppId;
         }
 
         iframe.src = src;
