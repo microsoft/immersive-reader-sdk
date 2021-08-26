@@ -18,6 +18,8 @@ type Message = {
     displayOptions?: DisplayOptions;
     sendPreferences?: boolean;
     preferences?: string;
+    disableGrammar?: boolean;
+    disableTranslation?: boolean;
 };
 
 type LaunchResponseMessage = {
@@ -160,7 +162,9 @@ export function launchAsync(token: string, subdomain: string, content: Content, 
                     translationOptions: options.translationOptions,
                     displayOptions: options.displayOptions,
                     sendPreferences: !!options.onPreferencesChanged,
-                    preferences: options.preferences
+                    preferences: options.preferences,
+                    disableTranslation: options.disableTranslation,
+                    disableGrammar: options.disableGrammar
                 };
                 iframe.contentWindow!.postMessage(JSON.stringify({ messageType: 'Content', messageValue: message }), '*');
             } else if (e.data === 'ImmersiveReader-Exit') {
