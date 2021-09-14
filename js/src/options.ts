@@ -18,6 +18,8 @@ export type Options = {
     displayOptions?: DisplayOptions;         // Options to configure text size, font, etc.
     preferences?: string;                           // String returned from onPreferencesChanged representing the user's preferences in the Immersive Reader.
     onPreferencesChanged?: (value: string) => any;  // Executes when the user's preferences have changed.
+    disableGrammar?: boolean;       // Option to disable Grammar
+    disableTranslation?: boolean;   // Option to disable translation    
 };
 
 export enum CookiePolicy { Disable, Enable }
