@@ -1,0 +1,1660 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<link rel="icon" href="data:;base64,iVBORw0KGgo=">	
+	<script type='text/javascript' src='https://code.jquery.com/jquery-3.3.1.min.js'></script>
+	<script type='text/javascript' src='https://cdnjs.cloudflare.com/ajax/libs/knockout/3.5.0/knockout-min.js'></script>
+	<script src="https://cdn.jsdelivr.net/npm/js-cookie@rc/dist/js.cookie.min.js"></script>
+	<script type='text/javascript' src='immersive-reader-sdk.edog.js'></script>
+
+	<style>
+		body {
+			font-family: 'Segoe UI'
+		}
+
+		.table thead th {
+			font-weight: 600;
+		}
+
+		.regionheader {
+			padding-bottom: 3px;
+			font-weight: 500;
+		}
+	</style>
+</head>
+
+<body>
+	<h2>Immersive Reader SDK - Tests</h2>
+	<div style='padding: 5px'>
+		<div>Title</div>
+		<input id='input-title' type='text' style='width: 400px' value='Immersive Reader' />
+
+		<div>Text</div>
+		<textarea id='input-text' style='height: 200px; width: 100%; font-family: "Segoe UI"'>
+			The study of Earth’s landforms is called physical geography. Landforms can be mountains and valleys. They can also be glaciers, lakes or rivers. Landforms are sometimes called physical features. It is important for students to know about the physical geography of Earth. The seasons, the atmosphere and all the natural processes of Earth affect where people are able to live. Geography is one of a combination of factors that people use to decide where they want to live.
+			The physical features of a region are often rich in resources. Within a nation, mountain ranges become natural borders for settlement areas. In the U.S., major mountain ranges are the Sierra Nevada, the Rocky Mountains, and the Appalachians.
+			Fresh water sources also influence where people settle. People need water to drink. They also need it for washing. Throughout history, people have settled near fresh water. Living near a water source helps ensure that people have the water they need. There was an added bonus, too. Water could be used as a travel route for people and goods. Many Americans live near popular water sources, such as the Mississippi River, the Colorado River and the Great Lakes.
+			Mountains and deserts have been settled by fewer people than the plains areas. However, they have valuable resources of their own.
+        </textarea>
+
+		<div>Lang</div>
+		<input id='input-lang' type='text' value='en' />
+
+		<div>MIME Type</div>
+		<input id='input-mimetype' type='text' value='text/plain' />
+
+		<div>Raw JSON</div>
+		<textarea id='input-json' style='height: 100px; width: 100%; font-family: "Segoe UI"'></textarea>
+
+		<div>Math</div>
+		<textarea id='input-math' type='text'
+			placeholder='&lt;math xmlns=&#39;http://www.w3.org/1998/Math/MathML&#39; display=&#39;block&#39;&gt;&lt;mfrac&gt;&lt;mrow&gt;&lt;msup&gt;&lt;mi&gt;x&lt;/mi&gt;&lt;mn&gt;2&lt;/mn&gt;&lt;/msup&gt;&lt;mo&gt;+&lt;/mo&gt;&lt;mn&gt;3&lt;/mn&gt;&lt;mi&gt;x&lt;/mi&gt;&lt;mo&gt;+&lt;/mo&gt;&lt;mn&gt;2&lt;/mn&gt;&lt;/mrow&gt;&lt;mrow&gt;&lt;mi&gt;x&lt;/mi&gt;&lt;mo&gt;−&lt;/mo&gt;&lt;mn&gt;3&lt;/mn&gt;&lt;/mrow&gt;&lt;/mfrac&gt;&lt;mo&gt;=&lt;/mo&gt;&lt;mn&gt;4&lt;/mn&gt;&lt;/math&gt;'
+			style='height: 100px; width: 100%; font-family: "Segoe UI"'></textarea>
+
+		<div>
+			<input type="radio" name="readerInputRadio" value="Text" onchange="checkIfDocxIsSelected()" checked /> Text
+			<input type="radio" name="readerInputRadio" value="Math" onchange="checkIfDocxIsSelected()" /> Math
+			<input type="radio" name="readerInputRadio" value="Docx" onchange="checkIfDocxIsSelected()" /> Docx
+		</div>
+
+		<div>
+			<label id='input-docx-label' style='display:none'>Upload a Docx File</label>
+			<input id='docxContent' type='hidden'
+				value='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'>
+			<input class='btn' type='file' id='input-docx' name='file' style='display:none'
+				onchange='uploadedDocx(this)' />
+			<input id="uploadedDocxContent" type="hidden" value="">
+		</div>
+	</div>
+
+	<br>
+	<div>
+		<div>Preferences</div>
+		<textarea id='input-preferences' style='height: 100px; width: 100%; font-family: "Segoe UI"'></textarea>
+		<br>
+		<button id="preferencesGetLatest" onclick="GetLatestPreferences()">Get Latest</button>
+		<button id="preferencesClear" onclick="ClearPreferences()">Clear</button>
+	</div>
+
+	<br>
+	<br>
+	<div>
+		<input type="radio" name="readerDomainRadio" value="local" checked/> Local Reader
+		<input type="radio" name="readerDomainRadio" value="deployed" /> Deployed Reader
+	</div>
+
+	<br>
+	<div style='padding-bottom: 5px;'>Resource Region (Prod)</div>
+	<div style='width: 450px; display: table; table-layout: fixed;'>
+		<div style='display: table-row'>
+			<div style='display: table-cell'>
+				<div class='regionheader'>NAM</div>
+				<input type="radio" name="prodRegion" value="EastUS" /> EastUS <br>
+				<input type="radio" name="prodRegion" value="EastUS2" /> EastUS2 <br>
+				<input type="radio" name="prodRegion" value="SouthCentralUS" /> SouthCentralUS <br>
+				<input type="radio" name="prodRegion" value="WestUS" checked /> WestUS <br>
+				<input type="radio" name="prodRegion" value="WestUS2" /> WestUS2 <br>
+			</div>
+			<div style='display: table-cell'>
+				<div class='regionheader'>EUR</div>
+				<input type="radio" name="prodRegion" value="NorthEurope" /> NorthEurope <br>
+				<input type="radio" name="prodRegion" value="WestEurope" /> WestEurope <br>
+				<input type="radio" name="prodRegion" value="UKSouth" /> UKSouth <br>
+			</div>
+			<div style='display: table-cell'>
+				<div class='regionheader'>APC</div>
+				<input type="radio" name="prodRegion" value="AustraliaEast" /> AustraliaEast <br>
+				<input type="radio" name="prodRegion" value="CentralIndia" /> CentralIndia <br>
+				<input type="radio" name="prodRegion" value="JapanEast" /> JapanEast <br>
+				<input type="radio" name="prodRegion" value="SouthEastAsia" /> SouthEastAsia <br>
+			</div>
+		</div>
+	</div>
+
+
+	<br>
+	<div style='padding-bottom: 5px; font-weight: 500'>Options</div>
+	<div>
+		<input type="checkbox" name="optionsCheckbox" value="allowFullscreen" id="allowFullscreenOptionCheckbox"
+			checked="checked" />
+		<label for="allowFullscreenOptionCheckbox">allowFullscreen</label>
+		<input type="checkbox" name="optionsCheckbox" value="hideExitButton" id="hideExitButtonOptionCheckbox" />
+		<label for="hideExitButtonOptionCheckbox">hideExitButton</label>
+		<input type="checkbox" name="optionsCheckbox" value="onExit" id="onExitOptionCheckbox" />
+		<label for="onExitOptionCheckbox">onExit</label>
+		<input type="checkbox" name="optionsCheckbox" value="disableFirstRun" id="disableFirstRunOptionCheckbox" />
+		<label for="disableFirstRunOptionCheckbox">disableFirstRun</label>
+		<input type="checkbox" value="persistPreferences" id="persistPreferencesCheckbox" />
+        <label for="persistPreferencesCheckbox">Persist Preferences</label>		
+		<input type="checkbox" name="optionsCheckbox" value="disableSuggestionLink" id="disableSuggestionLinkCheckbox" />
+		<label for="disableSuggestionLinkCheckbox">disableSuggestionLink</label>
+		<input type="checkbox" name="optionsCheckbox" value="disableGrammar" id="disableGrammarCheckbox" />
+		<label for="disableGrammarCheckbox">disableGrammar</label>
+		<input type="checkbox" name="optionsCheckbox" value="disableTranslation" id="disableTranslationCheckbox" />
+		<label for="disableTranslationCheckbox">disableTranslation</label>
+	</div>
+	<div>
+		<label for="uiLangOption">uiLangOption (string)</label>
+		<input type="text" id="uiLangOption" class="optionTextBox" data-option-name="uiLang" placeholder="en-us" />
+		<label for="timeoutOption" style="margin-left: 10px;">timeout (number)</label>
+		<input type="number" id="timeoutOption" class="optionTextBox" data-option-name="timeout" placeholder="15000" />
+		<label for="uiZIndexOption" style="margin-left: 10px;">uiZIndex (number)</label>
+		<input type="number" id="uiZIndexOption" class="optionTextBox" data-option-name="uiZIndex" placeholder="1000" />
+		<label for="cookiePolicyOption" style="margin-left: 10px;">cookiePolicy (0 for disable, 1 for enable)</label>
+		<input type="number" id="cookiePolicyOption" class="optionTextBox" data-option-name="cookiePolicy"
+			placeholder="0" />
+		<label for="cognitiveAppIdOption" style="margin-left: 10px;">Set Cognitive AppId</label>
+		<input type="text" id="cognitiveAppIdOption" name="cognitiveAppIdOption" class="optionTextBox"
+			data-option-name="cognitiveAppId" placeholder="Cognitive" />
+
+
+
+	</div>
+
+	<br />
+	<div style='padding-bottom: 5px; font-weight: 500'>
+		<input type="checkbox" name="optionsCheckbox" value="displayOptions" id="displayOptionsEnabledCheckbox"
+			onclick="displayOptionsClicked()" />
+		<label for="displayOptionsEnabledCheckbox">Display Options</label>
+	</div>
+	<div id="displayOptions">
+		<div>
+			<label for="displayOptionsTextSize">TextSize</label>
+			<input type="radio" name="displayOptionsTextSizeRadio" onchange="displayOptionsTextSizeChanged(14)" /> 14
+			<input type="radio" name="displayOptionsTextSizeRadio" onchange="displayOptionsTextSizeChanged(20)" /> 20
+			<input type="radio" name="displayOptionsTextSizeRadio" onchange="displayOptionsTextSizeChanged(28)" /> 28
+			<input type="radio" name="displayOptionsTextSizeRadio" onchange="displayOptionsTextSizeChanged(36)" /> 36
+			<input type="radio" name="displayOptionsTextSizeRadio" onchange="displayOptionsTextSizeChanged(42)"
+				checked /> 42
+			<input type="radio" name="displayOptionsTextSizeRadio" onchange="displayOptionsTextSizeChanged(48)" /> 48
+			<input type="radio" name="displayOptionsTextSizeRadio" onchange="displayOptionsTextSizeChanged(56)" /> 56
+			<input type="radio" name="displayOptionsTextSizeRadio" onchange="displayOptionsTextSizeChanged(64)" /> 64
+			<input type="radio" name="displayOptionsTextSizeRadio" onchange="displayOptionsTextSizeChanged(72)" /> 72
+			<input type="radio" name="displayOptionsTextSizeRadio" onchange="displayOptionsTextSizeChanged(84)" /> 84
+			<input type="radio" name="displayOptionsTextSizeRadio" onchange="displayOptionsTextSizeChanged(96)" /> 96
+			<input type="text" id="displayOptionsTextSize" value="42" />
+		</div>
+		<div>
+			<input type="checkbox" id="displayOptionsIncreaseSpacing" />
+			<label for="displayOptionsIncreaseSpacing">Increase Spacing</label>
+		</div>
+		<div> <br />
+			<div>
+				<label for="readerThemeRadio"> App theme</label>
+				<input type="radio" name="readerThemeRadio" value="Light" /> Light
+				<input type="radio" name="readerThemeRadio" value="Dark" /> Dark
+				<input type="radio" name="readerThemeRadio" value="Contrast" /> Contrast
+			</div>
+		</div>
+		<br />
+		<div>
+			<label for="displayOptionsFontFamily">FontFamily</label>
+			<input type="radio" name="displayOptionsFontFamilyRadio"
+				onchange="displayOptionsFontFamilyChanged('Calibri')" checked /> Calibri
+			<input type="radio" name="displayOptionsFontFamilyRadio"
+				onchange="displayOptionsFontFamilyChanged('Sitka')" /> Sitka
+			<input type="radio" name="displayOptionsFontFamilyRadio"
+				onchange="displayOptionsFontFamilyChanged('ComicSans')" /> Comic Sans
+			<input type="text" id="displayOptionsFontFamily" value="Calibri" />
+		</div>
+	</div>
+
+	<br />
+	<div style='padding-bottom: 5px; font-weight: 500'>
+		<input type="checkbox" name="optionsCheckbox" value="internalOptions" id="internalOptionsEnabledCheckbox"
+			onclick="internalOptionsClicked()" />
+		<label for="internalOptionsEnabledCheckbox">Internal (Override) Options --- </label>
+		<a href='https://dev.azure.com/1edu/LearningTools/_wiki/wikis/LearningTools.wiki/1590/Web-app-override-options-on-host.html' target=”_blank”>Option documentation wiki page</a>
+
+	</div>
+
+	<div id="internalOptions">
+		<input type="checkbox" value="default-menu-option" id="default-menu-option" />
+		<label for="default-menu-option">defaultMenuOption (must be selected for radio buttons to take effect)</label>
+		<input type="radio" id="menu-option-display-options" name="default-menu-option" checked><label
+			for="input-enableSessionId"> Text Pref </label>
+		<input type="radio" id="menu-option-pos-options" name="default-menu-option"><label for="input-enableSessionId">
+			Grammar </label>
+		<input type="radio" id="menu-option-read-aloud-options" name="default-menu-option"><label
+			for="input-enableSessionId"> Reading Prefs </label>
+		<br />
+		<input type="checkbox" value="hide-Header" id="hide-header" />
+		<label for="hide-header">hideHeader (should be used with allowFullscreen: false; hideExitButton
+			hideMenuButtonsContentPaneAndFRE, and hideDocumentTitle: true) </label>
+		<br />
+		<input type="checkbox" value="hide-menu-buttons-content-pane-and-fre"
+			id="hide-menu-buttons-content-pane-and-fre" />
+		<label for="hide-menu-buttons-content-pane-and-fre">hideMenuButtonsContentPaneAndFRE</label>
+		<input type="checkbox" value="hide-menu-buttons-panel" id="hide-menu-buttons-panel" />
+		<label for="hide-menu-buttons-panel">hideMenuButtonsPanel</label>
+		<input type="checkbox" value="disable-source-formatting-toggle" id="disable-source-formatting-toggle" />
+		<label for="disable-source-formatting-toggle">disableSourceFormattingToggle</label>
+		<input type="checkbox" value="disable-picture-dictionary" id="disable-picture-dictionary" />
+		<label for="disable-picture-dictionary">disablePictureDictionary</label>
+		<input type="checkbox" value="disable-parts-of-speech" id="disable-parts-of-speech" />
+		<label for="disable-parts-of-speech">disablePartsOfSpeech</label>
+		<input type="checkbox" value="disable-syllables" id="disable-syllables" />
+		<label for="disable-syllables">disableSyllables</label>
+		<input type="checkbox" value="disable-translate-by-word" id="disable-translate-by-word" />
+		<label for="disable-translate-by-word">disableTranslateByWord</label>
+		<input type="checkbox" value="hide-panel-footer" id="hide-panel-footer" />
+		<label for="hide-panel-footer">hidePanelFooter</label>
+		<input type="checkbox" value="disable-read-aloud-pane-and-fre" id="disable-read-aloud-pane-and-fre" />
+		<label for="disable-read-aloud-pane-and-fre">disableReadAloudPaneAndFRE</label>
+		<input type="checkbox" value="hide-document-title" id="hide-document-title" />
+		<label for="hide-document-title">hideDocumentTitle</label>
+		<input type="checkbox" value="disable-sound-it-out" id="disable-sound-it-out" />
+		<label for="disable-sound-it-out">disableSoundItOut</label>
+		<input type="checkbox" value="disable-phrases" id="disable-phrases" />
+		<label for="disable-phrases">disablePhrases</label>
+		<input type="checkbox" value="add-reading-assignments-done-button" id="add-reading-assignments-done-button" />
+		<label for="add-reading-assignments-done-button">addReadingAssingmentsDoneButton</label>
+		<input type="checkbox" value="in-reading-progress" id="in-reading-progress" />
+		<label for="in-reading-progress">inReadingProgress</label>
+		<input type="checkbox" value="in-reading-progress-mobile" id="in-reading-progress-mobile" />
+		<label for="in-reading-progress-mobile">inReadingProgressMobile</label>
+		<input type="checkbox" value="remove-focus-trap" id="remove-focus-trap" />
+		<label for="remove-focus-trap">removeFocusTrap</label>
+
+		<br />
+		<label for="iframeStyleOverridesOption">Set Iframe style overrides</label>
+		<input type="text" id="iframeStyleOverridesOption" name="iframeStyleOverridesOption" class="styleOverideBox"
+			data-option-name="iframeStyleOverrides" placeholder="" />
+		<label for="iframeContainerStyleOverridesOption" style="margin-left: 10px;">Set Iframe Container style
+			overrides</label>
+		<input type="text" id="iframeContainerStyleOverridesOption" name="iframeContainerStyleOverridesOption"
+			class="styleOverideBox" data-option-name="iframeContainerStyleOverrides" placeholder="" />
+
+	</div>
+
+	<br />
+
+	<br />
+	<div style='padding-bottom: 5px; font-weight: 500'>
+		<input type="checkbox" name="optionsCheckbox" value="readAloudOptions" id="readAloudOptionsEnabledCheckbox"
+			onclick="readAloudOptionsClicked()" />
+		<label for="readAloudOptionsEnabledCheckbox">Read Aloud Options</label>
+	</div>
+	<div id="readAloudOptions">
+		<div>
+			<input type="checkbox" id="readAloudAutoplay" />
+			<label for="readAloudAutoplay">Autoplay</label>
+		</div>
+		<div>
+			<label for="readAloudGender">Gender</label>
+			<input type="radio" name="readAloudGenderRadio" onchange="readAloudOptionsGenderChanged('female')"
+				checked /> Female
+			<input type="radio" name="readAloudGenderRadio" onchange="readAloudOptionsGenderChanged('male')" /> Male
+			<input type="text" id="readAloudGender" value="female" />
+		</div>
+		<div>
+			<label for="readAloudSpeed">Speed</label>
+			<input type="radio" name="readAloudSpeedRadio" onchange="readAloudOptionsSpeedChanged(0.5)" /> 0.5
+			<input type="radio" name="readAloudSpeedRadio" onchange="readAloudOptionsSpeedChanged(0.75)" /> 0.75
+			<input type="radio" name="readAloudSpeedRadio" onchange="readAloudOptionsSpeedChanged(1.0)" checked /> 1.0
+			<input type="radio" name="readAloudSpeedRadio" onchange="readAloudOptionsSpeedChanged(1.25)" /> 1.25
+			<input type="radio" name="readAloudSpeedRadio" onchange="readAloudOptionsSpeedChanged(1.5)" /> 1.5
+			<input type="radio" name="readAloudSpeedRadio" onchange="readAloudOptionsSpeedChanged(1.75)" /> 1.75
+			<input type="radio" name="readAloudSpeedRadio" onchange="readAloudOptionsSpeedChanged(2.0)" /> 2.0
+			<input type="radio" name="readAloudSpeedRadio" onchange="readAloudOptionsSpeedChanged(2.25)" /> 2.25
+			<input type="radio" name="readAloudSpeedRadio" onchange="readAloudOptionsSpeedChanged(2.5)" /> 2.5
+			<input type="text" id="readAloudSpeed" value="1.0" />
+		</div>
+	</div>
+
+	<br />
+	<div style='padding-bottom: 5px; font-weight: 500'>
+		<input type="checkbox" name="optionsCheckbox" value="translationOptions" id="translationOptionsEnabledCheckbox"
+			onclick="translationOptionsClicked()" />
+		<label for="translationOptionsEnabledCheckbox">Translation Options</label>
+	</div>
+	<div id="translationOptions">
+		<div>
+			<input type="checkbox" id="autoEnableDocumentTranslation" />
+			<label for="autoEnableDocumentTranslation">autoEnableDocumentTranslation</label>
+			<input type="checkbox" id="autoEnableWordTranslation" />
+			<label for="autoEnableWordTranslation">autoEnableWordTranslation</label>
+		</div>
+		<div>
+			<label for="translationLanguage">Language</label>
+			<input type="text" id="translationLanguage" />
+		</div>
+	</div>
+	<div>
+		<br />
+		<div>
+			<label><b>Show feedback</b></label>
+			<select id="showFeedback">
+					<option value="">Undefined</option>
+					<option value="true">Yes</option>
+					<option value="false">No</option>
+			</select>
+		</div>
+	</div>
+
+	<br>
+	<div style='padding-bottom: 5px; font-weight: 500;'>Product SKU</div>
+	<input type="radio" name="productSKU" value="S0" /> S0 <br>
+	<input type="radio" name="productSKU" value="S1" checked /> S1 <br>
+
+	<br>
+	<div style='padding-bottom: 5px; font-weight: 500;'>Resource Region (Prod.AME)</div>
+	<div style='width: 600px; display: table; table-layout: fixed;'>
+		<div style='display: table-row'>
+			<div style='display: table-cell'>
+				<div class='regionheader' style='padding-bottom: 5px;'>NAM</div>
+				<input type="radio" name="prodRegion" value="BrazilSouth" /> Brazil South <br>
+				<input type="radio" name="prodRegion" value="CanadaCentral" /> Canada Central <br>
+				<input type="radio" name="prodRegion" value="CentralUS" /> Central US <br>
+				<input type="radio" name="prodRegion" value="CentralUSEUAP" /> Central US EUAP <br>
+				<input type="radio" name="prodRegion" value="EastUS" /> East US <br>
+				<input type="radio" name="prodRegion" value="EastUS2" /> East US 2 <br>
+				<input type="radio" name="prodRegion" value="EastUS2EUAP" /> East US 2 EUAP <br>
+				<input type="radio" name="prodRegion" value="NorthCentralUS" /> North Central US <br>
+				<input type="radio" name="prodRegion" value="SouthCentralUS" /> South Central US <br>
+				<input type="radio" name="prodRegion" value="WestCentralUS" /> West Central US <br>
+				<input type="radio" name="prodRegion" value="WestUS" /> West US <br>
+				<input type="radio" name="prodRegion" value="WestUS2" checked /> West US 2 <br>
+				<input type="radio" name="prodRegion" value="WestUS3" /> West US 3 <br>
+			</div>
+			<div style='display: table-cell'>
+				<div class='regionheader' style='padding-bottom: 5px;'>EUR</div>
+				<input type="radio" name="prodRegion" value="FranceCentral" /> France Central <br>
+				<input type="radio" name="prodRegion" value="GermanyWestCentral" /> Germany West Central <br>
+				<input type="radio" name="prodRegion" value="NorthEurope" /> North Europe <br>
+				<input type="radio" name="prodRegion" value="NorwayEast" /> Norway East <br>
+				<input type="radio" name="prodRegion" value="SwitzerlandWest" /> Switzerland West <br>
+				<input type="radio" name="prodRegion" value="SwitzerlandNorth" /> Switzerland North <br>
+				<input type="radio" name="prodRegion" value="UKSouth" /> UK South <br>
+				<input type="radio" name="prodRegion" value="WestEurope" /> West Europe <br>
+			</div>
+			<div style='display: table-cell'>
+				<div class='regionheader' style='padding-bottom: 5px;'>APC</div>
+				<input type="radio" name="prodRegion" value="AustraliaEast" /> Australia East <br>
+				<input type="radio" name="prodRegion" value="CentralIndia" /> Central India <br>
+				<input type="radio" name="prodRegion" value="EastAsia" /> East Asia <br>
+				<input type="radio" name="prodRegion" value="JapanWest" /> Japan West <br>
+				<input type="radio" name="prodRegion" value="JapanEast" /> Japan East <br>
+				<input type="radio" name="prodRegion" value="JioIndiaWest" /> Jio India West <br>
+				<input type="radio" name="prodRegion" value="KoreaCentral" /> Korea Central <br>
+				<input type="radio" name="prodRegion" value="SouthAfricaNorth" /> South Africa North <br>
+				<input type="radio" name="prodRegion" value="SoutheastAsia" /> Southeast Asia <br>
+				<input type="radio" name="prodRegion" value="UAENorth" /> UAE North <br>
+			</div>
+		</div>
+	</div>
+
+	<br>
+	<div style='padding-bottom: 5px; font-weight: 500'>S2S</div>
+	<div>
+		<input type="checkbox" id="useLaunchWithoutContentAsync" onchange="disableNonS2SSDKVersionToggle()" />
+		<label for="useLaunchWithoutContentAsync">Use S2S</label>
+	</div>
+
+	<br>
+
+	<br>
+	<button data-bind='click: initialize.bind()'>Initialize</button>
+	<br>
+	<table cellpadding='5px' class='table'>
+		<thead>
+			<tr>
+				<th>Version</th>
+				<th>Edog</th>
+				<th>OSI Edog 1P</th>
+				<th>OSI Edog 3P</th>
+				<th>OSI Prod 1P</th>
+				<th>OSI Prod 3P</th>
+				<th>SF PPE</th>
+				<th>SF Prod.AME</th>
+				<th>CNTR PPE</th>
+				<th>CNTR Prod.AME</th>
+			</tr>
+		</thead>
+		<tbody>
+			<tr>
+				<td>dev</td>
+				<td>
+					<button data-bind='click: launch.bind(null, "dev", "edog")'>Launch</button>
+				</td>
+				<td></td>
+				<td></td>
+				<td></td>
+				<td></td>
+				<td>
+					<button class='NoS2S' data-bind='click: launch.bind(null, "dev", "SF_PPE")'>Launch</button>
+				</td>
+				<td>
+					<button class='NoS2S' data-bind='click: launch.bind(null, "dev", "SF_PROD_AME")'>Launch</button>
+				</td>
+				<td>
+					<button class='NoS2S' data-bind='click: launch.bind(null, "dev", "CNTR_PPE")'>Launch</button>
+				</td>
+				<td>
+					<button class='NoS2S' data-bind='click: launch.bind(null, "dev", "CNTR_PROD_AME")'>Launch</button>
+				</td>
+			</tr>
+			<tr>
+				<td>1.1.0</td>
+				<td></td>
+				<td></td>
+				<td></td>
+				<td></td>
+				<td></td>
+				<td>
+					<button class='NoS2S' data-bind='click: launch.bind(null, "1.1.0", "SF_PPE")'>Launch</button>
+				</td>
+				<td>
+					<button class='NoS2S' data-bind='click: launch.bind(null, "1.1.0", "SF_PROD_AME")'>Launch</button>
+				</td>
+				<td>
+					<button class='NoS2S' data-bind='click: launch.bind(null, "1.1.0", "CNTR_PPE")'>Launch</button>
+				</td>
+				<td>
+					<button class='NoS2S' data-bind='click: launch.bind(null, "1.1.0", "CNTR_PROD_AME")'>Launch</button>
+				</td>
+			</tr>
+			<tr>
+				<td>1.0.0</td>
+				<td></td>
+				<td></td>
+				<td></td>
+				<td></td>
+				<td></td>
+				<td>
+					<button class='NoS2S' data-bind='click: launch.bind(null, "1.0.0", "SF_PPE")'>Launch</button>
+				</td>
+				<td>
+					<button class='NoS2S' data-bind='click: launch.bind(null, "1.0.0", "SF_PROD_AME")'>Launch</button>
+				</td>
+				<td>
+					<button class='NoS2S' data-bind='click: launch.bind(null, "1.0.0", "CNTR_PPE")'>Launch</button>
+				</td>
+				<td>
+					<button class='NoS2S' data-bind='click: launch.bind(null, "1.0.0", "CNTR_PROD_AME")'>Launch</button>
+				</td>
+			</tr>
+			<tr>
+				<td>0.6.4</td>
+				<td></td>
+				<td></td>
+				<td></td>
+				<td></td>
+				<td></td>
+				<td>
+					<button class='S2S' data-bind='click: launch.bind(null, "0.6.4", "SF_PPE")'>Launch</button>
+				</td>
+				<td>
+					<button class='S2S' data-bind='click: launch.bind(null, "0.6.4", "SF_PROD_AME")'>Launch</button>
+				</td>
+				<td>
+					<button class='S2S' data-bind='click: launch.bind(null, "0.6.4", "CNTR_PPE")'>Launch</button>
+				</td>
+				<td>
+					<button class='S2S' data-bind='click: launch.bind(null, "0.6.4", "CNTR_PROD_AME")'>Launch</button>
+				</td>
+			</tr>
+			<tr>
+				<td>0.6.3</td>
+				<td></td>
+				<td></td>
+				<td></td>
+				<td></td>
+				<td></td>
+				<td>
+					<button class='NoS2S' data-bind='click: launch.bind(null, "0.6.3", "SF_PPE")'>Launch</button>
+				</td>
+				<td>
+					<button class='NoS2S' data-bind='click: launch.bind(null, "0.6.3", "SF_PROD_AME")'>Launch</button>
+				</td>
+				<td>
+					<button class='NoS2S' data-bind='click: launch.bind(null, "0.6.3", "CNTR_PPE")'>Launch</button>
+				</td>
+				<td>
+					<button class='NoS2S' data-bind='click: launch.bind(null, "0.6.3", "CNTR_PROD_AME")'>Launch</button>
+				</td>
+			</tr>
+			<tr>
+				<td>0.6.2</td>
+				<td></td>
+				<td></td>
+				<td></td>
+				<td></td>
+				<td></td>
+				<td>
+					<button class='NoS2S' data-bind='click: launch.bind(null, "0.6.2", "SF_PPE")'>Launch</button>
+				</td>
+				<td>
+					<button class='NoS2S' data-bind='click: launch.bind(null, "0.6.2", "SF_PROD_AME")'>Launch</button>
+				</td>
+				<td>
+					<button class='NoS2S' data-bind='click: launch.bind(null, "0.6.2", "CNTR_PPE")'>Launch</button>
+				</td>
+				<td>
+					<button class='NoS2S' data-bind='click: launch.bind(null, "0.6.2", "CNTR_PROD_AME")'>Launch</button>
+				</td>
+			</tr>
+			<tr>
+				<td>0.6.1</td>
+				<td></td>
+				<td></td>
+				<td></td>
+				<td></td>
+				<td></td>
+				<td>
+					<button class='NoS2S' data-bind='click: launch.bind(null, "0.6.1", "SF_PPE")'>Launch</button>
+				</td>
+				<td>
+					<button class='NoS2S' data-bind='click: launch.bind(null, "0.6.1", "SF_PROD_AME")'>Launch</button>
+				</td>
+				<td>
+					<button class='NoS2S' data-bind='click: launch.bind(null, "0.6.1", "CNTR_PPE")'>Launch</button>
+				</td>
+				<td>
+					<button class='NoS2S' data-bind='click: launch.bind(null, "0.6.1", "CNTR_PROD_AME")'>Launch</button>
+				</td>
+			</tr>
+			<tr>
+				<td>0.6.0</td>
+				<td></td>
+				<td>
+					<button class='NoS2S' data-bind='click: launch.bind(null, "0.6.0", "OSI_EDOG_1P")'>Launch</button>
+				</td>
+				<td></td>
+				<td>
+					<button class='NoS2S' data-bind='click: launch.bind(null, "0.6.0", "OSI_PROD_1P")'>Launch</button>
+				</td>
+				<td></td>
+				<td></td>
+				<td></td>
+				<td></td>
+				<td></td>
+			</tr>
+			<tr>
+				<td>0.5.9</td>
+				<td></td>
+				<td>
+					<button class='NoS2S' data-bind='click: launch.bind(null, "0.5.9", "OSI_EDOG_1P")'>Launch</button>
+				</td>
+				<td></td>
+				<td>
+					<button class='NoS2S' data-bind='click: launch.bind(null, "0.5.9", "OSI_PROD_1P")'>Launch</button>
+				</td>
+				<td></td>
+				<td></td>
+				<td></td>
+				<td></td>
+				<td></td>
+			</tr>
+			<tr>
+				<td>0.5.8</td>
+				<td></td>
+				<td>
+					<button class='NoS2S' data-bind='click: launch.bind(null, "0.5.8", "OSI_EDOG_1P")'>Launch</button>
+				</td>
+				<td></td>
+				<td>
+					<button class='NoS2S' data-bind='click: launch.bind(null, "0.5.8", "OSI_PROD_1P")'>Launch</button>
+				</td>
+				<td></td>
+				<td></td>
+				<td></td>
+				<td></td>
+				<td></td>
+			</tr>
+			<tr>
+				<td>0.5.6</td>
+				<td></td>
+				<td>
+					<button class='S2S' data-bind='click: launch.bind(null, "0.5.6", "OSI_EDOG_1P")'>Launch</button>
+				</td>
+				<td></td>
+				<td>
+					<button class='S2S' data-bind='click: launch.bind(null, "0.5.6", "OSI_PROD_1P")'>Launch</button>
+				</td>
+				<td></td>
+				<td></td>
+				<td></td>
+				<td></td>
+				<td></td>
+			</tr>
+			<tr>
+				<td>0.5.4</td>
+				<td></td>
+				<td>
+					<button class='NoS2S' data-bind='click: launch.bind(null, "0.5.4", "OSI_EDOG_1P")'>Launch</button>
+				</td>
+				<td></td>
+				<td>
+					<button class='NoS2S' data-bind='click: launch.bind(null, "0.5.4", "OSI_PROD_1P")'>Launch</button>
+				</td>
+				<td></td>
+				<td></td>
+				<td></td>
+				<td></td>
+				<td></td>
+			</tr>
+			<!-- <tr>
+				<td>0.5.2</td>
+				<td>
+					<button class='S2S' data-bind='click: launch.bind(null, "0.5.2", "OSI_EDOG_1P")'>Launch</button>
+				</td>
+				<td></td>
+				<td>
+					<button class='S2S' data-bind='click: launch.bind(null, "0.5.2", "OSI_PROD_1P")'>Launch</button>
+				</td>
+				<td></td>
+				<td></td>
+				<td></td>
+				<td></td>
+				<td></td>
+			</tr>
+			<tr>
+				<td>0.5.0</td>
+				<td>
+					<button class='S2S' data-bind='click: launch.bind(null, "0.5.0", "OSI_EDOG_1P")'>Launch</button>
+				</td>
+				<td></td>
+				<td>
+					<button class='S2S' data-bind='click: launch.bind(null, "0.5.0", "OSI_PROD_1P")'>Launch</button>
+				</td>
+				<td></td>
+				<td></td>
+				<td></td>
+				<td></td>
+				<td></td>
+			</tr>
+			<tr>
+				<td>0.0.5</td>
+				<td>
+					<button class='S2S' data-bind='click: launch.bind(null, "0.0.5", "OSI_EDOG_1P")'>Launch</button>
+				</td>
+				<td></td>
+				<td>
+					<button class='S2S' data-bind='click: launch.bind(null, "0.0.5", "OSI_PROD_1P")'>Launch</button>
+				</td>
+				<td></td>
+				<td></td>
+				<td></td>
+				<td></td>
+				<td></td>
+			</tr>
+			<tr>
+				<td>0.0.2</td>
+				<td>
+					<button class='NoS2S' data-bind='click: launch.bind(null, "0.0.2", "OSI_EDOG_1P")'>Launch</button>
+				</td>
+				<td></td>
+				<td>
+					<button class='NoS2S' data-bind='click: launch.bind(null, "0.0.2", "OSI_PROD_1P")'>Launch</button>
+				</td>
+				<td></td>
+				<td></td>
+				<td></td>
+				<td></td>
+				<td></td>
+			</tr>
+			<tr>
+				<td>0.0.1</td>
+				<td>
+					<button class='NoS2S' data-bind='click: launch.bind(null, "0.0.1", "OSI_EDOG_1P")'>Launch</button>
+				</td>
+				<td></td>
+				<td>
+					<button class='NoS2S' data-bind='click: launch.bind(null, "0.0.1", "OSI_PROD_1P")'>Launch</button>
+				</td>
+				<td></td>
+				<td></td>
+				<td></td>
+				<td></td>
+				<td></td>
+			</tr> -->
+			<tr>
+				<td>0.0.3</td>
+				<td></td>
+				<td>
+					<button class='NoS2S' data-bind='click: launch.bind(null, "0.0.3", "OSI_EDOG_1P")'>Launch</button>
+				</td>
+				<td>
+					<button class='NoS2S' data-bind='click: launch.bind(null, "0.0.3", "OSI_EDOG_3P")'>Launch</button>
+				</td>
+				<td>
+					<button class='NoS2S' data-bind='click: launch.bind(null, "0.0.3", "OSI_PROD_1P")'>Launch</button>
+				</td>
+				<td>
+					<button class='NoS2S' data-bind='click: launch.bind(null, "0.0.3", "OSI_PROD_3P")'>Launch</button>
+				</td>
+				<td></td>
+				<td></td>
+				<td></td>
+				<td></td>
+			</tr>
+		</tbody>
+	</table>
+
+	<script type='text/javascript'>
+
+		displayOptionsClicked();
+		readAloudOptionsClicked();
+		translationOptionsClicked();
+		internalOptionsClicked();
+
+		function displayOptionsClicked() {
+			var enabled = $('#displayOptionsEnabledCheckbox').prop('checked');
+			$('#displayOptions *').prop('disabled', !enabled);
+		}
+
+		function readAloudOptionsClicked() {
+			var enabled = $('#readAloudOptionsEnabledCheckbox').prop('checked');
+			$('#readAloudOptions *').prop('disabled', !enabled);
+		}
+
+		function translationOptionsClicked() {
+			var enabled = $('#translationOptionsEnabledCheckbox').prop('checked');
+			$('#translationOptions *').prop('disabled', !enabled);
+		}
+
+		function internalOptionsClicked() {
+			var enabled = $('#internalOptionsEnabledCheckbox').prop('checked');
+			$('#internalOptions *').prop('disabled', !enabled);
+		}
+
+		function displayOptionsTextSizeChanged(textSize) {
+			$('#displayOptionsTextSize').val(textSize);
+		}
+
+		function displayOptionsFontFamilyChanged(fontFamily) {
+			$('#displayOptionsFontFamily').val(fontFamily);
+		}
+
+		function readAloudOptionsGenderChanged(gender) {
+			$('#readAloudGender').val(gender);
+		}
+
+		function readAloudOptionsSpeedChanged(speed) {
+			$('#readAloudSpeed').val(speed);
+		}
+
+		function checkIfDocxIsSelected() {
+			if ($('input[name=readerInputRadio]:checked').val() === 'Docx') {
+				document.getElementById('input-docx-label').style.display = 'inline';
+				document.getElementById('input-docx').style.display = 'inline';
+			}
+			else {
+				document.getElementById('input-docx-label').style.display = 'none';
+				document.getElementById('input-docx').style.display = 'none';
+			}
+		}
+
+		function uploadedDocx(input) {
+			var reader = new FileReader();
+
+			reader.onloadend = function (evt) {
+				$('#input-text').val('uploadedDocx');
+				var base64EncodedFile = window.btoa(reader.result);
+				$('#uploadedDocxContent').val(base64EncodedFile);
+			}
+
+			if (!input.value.toString().endsWith('.docx')) {
+				$('#input-docx-label').val('You must choose a .docx file');
+			} else {
+				reader.readAsBinaryString(input.files[0]);
+			}
+		}
+
+		function uploadedDocxChunks() {
+			return [{
+				content: ($('#uploadedDocxContent').val() !== '') ? $('#uploadedDocxContent').val() : $('#docxContent').val(),
+				lang: 'en',
+				mimeType: 'application/vnd.openxmlformats-officedocument.wordprocessingml.document' // Word Docx mimetype
+			}];
+		}
+
+		function mathChunks() {
+			// Populate math chunks
+			var chunks = [];
+
+			if ($('#input-math').val() !== '') {
+				chunks.push({
+					content: $('#input-math').val().trim(),
+					lang: 'en',
+					mimeType: 'application/mathml+xml'
+				});
+			}
+			else {
+				chunks = [{ "lang": "en-US", "content": "Sample Addition " }, { "lang": "en-US", "content": "\n " }, { "lang": "en-US", "content": "\n" }, { "lang": "en-US", "mimeType": "application/mathml+xml", "content": "<mml:math xmlns:mml=\"http://www.w3.org/1998/Math/MathML\" display=\"block\"><mml:mn>1</mml:mn><mml:mo>+</mml:mo><mml:mn>4</mml:mn><mml:mo>=</mml:mo><mml:mn>5</mml:mn><mml:mo>&nbsp;</mml:mo><mml:mo>&nbsp;</mml:mo></mml:math>" }, { "lang": "en-US", "content": "\n " }, { "lang": "en-US", "content": "\nSolution Steps " }, { "lang": "en-US", "content": "\nAdd 1 and 4 to get " }, { "lang": "en-US", "content": "\n5=5" }, { "lang": "en-US", "content": "\n " }, { "lang": "en-US", "content": "\n" }, { "lang": "en-US", "mimeType": "application/mathml+xml", "content": "<mml:math xmlns:mml=\"http://www.w3.org/1998/Math/MathML\" display=\"block\"><mml:mn>10</mml:mn><mml:mo>+</mml:mo><mml:mn>95</mml:mn><mml:mo>+</mml:mo><mml:mn>69</mml:mn><mml:mo>−</mml:mo><mml:mn>134</mml:mn><mml:mo>=</mml:mo><mml:mn>40</mml:mn><mml:mo>&nbsp;</mml:mo></mml:math>" }, { "lang": "en-US", "content": "\n " }, { "lang": "en-US", "content": "\n " }, { "lang": "en-US", "content": "\n " }, { "lang": "en-US", "content": "\n " }, { "lang": "en-US", "content": "\nSubtraction  " }, { "lang": "en-US", "content": "\n " }, { "lang": "en-US", "content": "\n" }, { "lang": "en-US", "mimeType": "application/mathml+xml", "content": "<mml:math xmlns:mml=\"http://www.w3.org/1998/Math/MathML\" display=\"block\"><mml:mn>10</mml:mn><mml:mo>+</mml:mo><mml:mn>95</mml:mn><mml:mo>+</mml:mo><mml:mn>69</mml:mn><mml:mo>−</mml:mo><mml:mn>134</mml:mn><mml:mo>=</mml:mo><mml:mn>40</mml:mn><mml:mo>&nbsp;</mml:mo></mml:math>" }, { "lang": "en-US", "content": "\n " }, { "lang": "en-US", "content": "\n " }, { "lang": "en-US", "content": "\nSolution Steps " }, { "lang": "en-US", "content": "\nAdd 10 and 95 to get 105. " }, { "lang": "en-US", "content": "\n" }, { "lang": "en-US", "mimeType": "application/mathml+xml", "content": "<mml:math xmlns:mml=\"http://www.w3.org/1998/Math/MathML\" display=\"block\"><mml:mn>105</mml:mn><mml:mo>+</mml:mo><mml:mn>69</mml:mn><mml:mo>−</mml:mo><mml:mn>134</mml:mn><mml:mo>=</mml:mo><mml:mn>40</mml:mn></mml:math>" }, { "lang": "en-US", "content": "\n " }, { "lang": "en-US", "content": "\n " }, { "lang": "en-US", "content": "\nAdd 105 and 69 to get 174. " }, { "lang": "en-US", "content": "\n" }, { "lang": "en-US", "mimeType": "application/mathml+xml", "content": "<mml:math xmlns:mml=\"http://www.w3.org/1998/Math/MathML\" display=\"block\"><mml:mn>174</mml:mn><mml:mo>−</mml:mo><mml:mn>134</mml:mn><mml:mo>=</mml:mo><mml:mn>40</mml:mn></mml:math>" }, { "lang": "en-US", "content": "\n " }, { "lang": "en-US", "content": "\n " }, { "lang": "en-US", "content": "\nSubtract 134 from 174 to get 40. " }, { "lang": "en-US", "content": "\n" }, { "lang": "en-US", "mimeType": "application/mathml+xml", "content": "<mml:math xmlns:mml=\"http://www.w3.org/1998/Math/MathML\" display=\"block\"><mml:mn>40</mml:mn><mml:mo>=</mml:mo><mml:mn>40</mml:mn></mml:math>" }, { "lang": "en-US", "content": "\n " }, { "lang": "en-US", "content": "\n " }, { "lang": "en-US", "content": "\nCompare 40 and 40: true" }, { "lang": "en-US", "content": "\n    " }, { "lang": "en-US", "content": "\n " }, { "lang": "en-US", "content": "\nMultiplication  " }, { "lang": "en-US", "content": "\n " }, { "lang": "en-US", "content": "\nWhat is " }, { "lang": "en-US", "mimeType": "application/mathml+xml", "content": "<mml:math xmlns:mml=\"http://www.w3.org/1998/Math/MathML\"><mml:mn mathbackground=\"#FFFFFF\">9</mml:mn><mml:mo mathbackground=\"#FFFFFF\">!</mml:mo><mml:mo mathbackground=\"#FFFFFF\">&nbsp;</mml:mo></mml:math>" }, { "lang": "en-US", "content": "\n " }, { "lang": "en-US", "content": "\nSolution " }, { "lang": "en-US", "content": "\n" }, { "lang": "en-US", "mimeType": "application/mathml+xml", "content": "<mml:math xmlns:mml=\"http://www.w3.org/1998/Math/MathML\" display=\"block\"><mml:mn>9</mml:mn><mml:mo>×</mml:mo><mml:mn>8</mml:mn><mml:mo>×</mml:mo><mml:mn>7</mml:mn><mml:mo>×</mml:mo><mml:mn>6</mml:mn><mml:mo>×</mml:mo><mml:mn>5</mml:mn><mml:mo>×</mml:mo><mml:mn>4</mml:mn><mml:mo>×</mml:mo><mml:mn>3</mml:mn><mml:mo>×</mml:mo><mml:mn>2</mml:mn><mml:mo>×</mml:mo><mml:mn>1</mml:mn><mml:mo>=</mml:mo><mml:mn>362</mml:mn><mml:mo>,</mml:mo><mml:mn>880</mml:mn><mml:mo>&nbsp;</mml:mo><mml:mo>&nbsp;</mml:mo></mml:math>" }, { "lang": "en-US", "content": "\n " }, { "lang": "en-US", "content": "\n " }, { "lang": "en-US", "content": "\n " }, { "lang": "en-US", "content": "\nWhat is " }, { "lang": "en-US", "mimeType": "application/mathml+xml", "content": "<mml:math xmlns:mml=\"http://www.w3.org/1998/Math/MathML\"><mml:mn>5</mml:mn><mml:mo>×</mml:mo><mml:mn>2</mml:mn><mml:mo>&nbsp;</mml:mo></mml:math>" }, { "lang": "en-US", "content": "\nSolution " }, { "lang": "en-US", "content": "\n5 ×2=10   " }, { "lang": "en-US", "content": "\n " }, { "lang": "en-US", "content": "\n " }, { "lang": "en-US", "content": "\nDivision  " }, { "lang": "en-US", "content": "\n " }, { "lang": "en-US", "content": "\n" }, { "lang": "en-US", "mimeType": "application/mathml+xml", "content": "<mml:math xmlns:mml=\"http://www.w3.org/1998/Math/MathML\" display=\"block\"><mml:mn>10</mml:mn><mml:mi>÷</mml:mi><mml:mn>5</mml:mn><mml:mo>=</mml:mo><mml:mn>2</mml:mn></mml:math>" }, { "lang": "en-US", "content": "\n " }, { "lang": "en-US", "content": "\n " }, { "lang": "en-US", "content": "\nSolution Steps " }, { "lang": "en-US", "content": "\nDivide 10 by 5 to get 2. " }, { "lang": "en-US", "content": "\n" }, { "lang": "en-US", "mimeType": "application/mathml+xml", "content": "<mml:math xmlns:mml=\"http://www.w3.org/1998/Math/MathML\" display=\"block\"><mml:mn>2</mml:mn><mml:mo>=</mml:mo><mml:mn>2</mml:mn></mml:math>" }, { "lang": "en-US", "content": "\n " }, { "lang": "en-US", "content": "\n " }, { "lang": "en-US", "content": "\nCompare 2 and 2: true " }, { "lang": "en-US", "content": "\n " }, { "lang": "en-US", "content": "\n " }, { "lang": "en-US", "content": "\n " }, { "lang": "en-US", "content": "\nScripts  " }, { "lang": "en-US", "content": "\n" }, { "lang": "en-US", "mimeType": "application/mathml+xml", "content": "<mml:math xmlns:mml=\"http://www.w3.org/1998/Math/MathML\" display=\"block\"><mml:msup><mml:mrow><mml:mo fence=\"false\">(</mml:mo><mml:mi>a</mml:mi><mml:mo>+</mml:mo><mml:mi>b</mml:mi><mml:mo fence=\"false\">)</mml:mo></mml:mrow><mml:mn>2</mml:mn></mml:msup><mml:mo>=</mml:mo><mml:msup><mml:mi>a</mml:mi><mml:mn>2</mml:mn></mml:msup><mml:mo>+</mml:mo><mml:msup><mml:mi>b</mml:mi><mml:mn>2</mml:mn></mml:msup><mml:mo>+</mml:mo><mml:mn>2</mml:mn><mml:mi>a</mml:mi><mml:mi>b</mml:mi></mml:math>" }, { "lang": "en-US", "content": "\n " }, { "lang": "en-US", "content": "\n " }, { "lang": "en-US", "content": "\n " }, { "lang": "en-US", "content": "\nValues: " }, { "lang": "en-US", "content": "\n" }, { "lang": "en-US", "mimeType": "application/mathml+xml", "content": "<mml:math xmlns:mml=\"http://www.w3.org/1998/Math/MathML\" display=\"block\"><mml:mi>a</mml:mi><mml:mo>=</mml:mo><mml:mn>2</mml:mn></mml:math>" }, { "lang": "en-US", "content": "\n" }, { "lang": "en-US", "mimeType": "application/mathml+xml", "content": "<mml:math xmlns:mml=\"http://www.w3.org/1998/Math/MathML\" display=\"block\"><mml:mi>b</mml:mi><mml:mo>=</mml:mo><mml:mn>4</mml:mn></mml:math>" }, { "lang": "en-US", "content": "\n " }, { "lang": "en-US", "content": "\nWhat is " }, { "lang": "en-US", "mimeType": "application/mathml+xml", "content": "<mml:math xmlns:mml=\"http://www.w3.org/1998/Math/MathML\"><mml:msup><mml:mrow><mml:mo fence=\"false\">(</mml:mo><mml:mi>a</mml:mi><mml:mo>+</mml:mo><mml:mi>b</mml:mi><mml:mo fence=\"false\">)</mml:mo></mml:mrow><mml:mn>2</mml:mn></mml:msup></mml:math>" }, { "lang": "en-US", "content": "?" }, { "lang": "en-US", "content": "\n  " }, { "lang": "en-US", "content": "\nSolution Steps:  " }, { "lang": "en-US", "content": "\n" }, { "lang": "en-US", "mimeType": "application/mathml+xml", "content": "<mml:math xmlns:mml=\"http://www.w3.org/1998/Math/MathML\" display=\"block\"><mml:msup><mml:mrow><mml:mo fence=\"false\">(</mml:mo><mml:mi>a</mml:mi><mml:mo>+</mml:mo><mml:mi>b</mml:mi><mml:mo fence=\"false\">)</mml:mo></mml:mrow><mml:mn>2</mml:mn></mml:msup><mml:mo>=</mml:mo><mml:msup><mml:mi>a</mml:mi><mml:mn>2</mml:mn></mml:msup><mml:mo>+</mml:mo><mml:msup><mml:mi>b</mml:mi><mml:mn>2</mml:mn></mml:msup><mml:mo>+</mml:mo><mml:mn>2</mml:mn><mml:mi>a</mml:mi><mml:mi>b</mml:mi></mml:math>" }, { "lang": "en-US", "content": "\n " }, { "lang": "en-US", "content": "\n" }, { "lang": "en-US", "mimeType": "application/mathml+xml", "content": "<mml:math xmlns:mml=\"http://www.w3.org/1998/Math/MathML\" display=\"block\"><mml:msup><mml:mrow><mml:mo fence=\"false\">(</mml:mo><mml:mi>a</mml:mi><mml:mo>+</mml:mo><mml:mi>b</mml:mi><mml:mo fence=\"false\">)</mml:mo></mml:mrow><mml:mn>2</mml:mn></mml:msup><mml:mo>=</mml:mo><mml:msup><mml:mn>2</mml:mn><mml:mn>2</mml:mn></mml:msup><mml:mo>+</mml:mo><mml:msup><mml:mn>4</mml:mn><mml:mn>2</mml:mn></mml:msup><mml:mo>+</mml:mo><mml:mn>2</mml:mn><mml:mo>×</mml:mo><mml:mn>2</mml:mn><mml:mo>×</mml:mo><mml:mn>4</mml:mn></mml:math>" }, { "lang": "en-US", "content": "\n " }, { "lang": "en-US", "content": "\n" }, { "lang": "en-US", "mimeType": "application/mathml+xml", "content": "<mml:math xmlns:mml=\"http://www.w3.org/1998/Math/MathML\" display=\"block\"><mml:msup><mml:mrow><mml:mo fence=\"false\">(</mml:mo><mml:mi>a</mml:mi><mml:mo>+</mml:mo><mml:mi>b</mml:mi><mml:mo fence=\"false\">)</mml:mo></mml:mrow><mml:mn>2</mml:mn></mml:msup><mml:mo>=</mml:mo><mml:mn>2</mml:mn><mml:mo>×</mml:mo><mml:mn>2</mml:mn><mml:mo>+</mml:mo><mml:mn>4</mml:mn><mml:mo>×</mml:mo><mml:mn>4</mml:mn><mml:mo>+</mml:mo><mml:mn>2</mml:mn><mml:mo>×</mml:mo><mml:mn>2</mml:mn><mml:mo>×</mml:mo><mml:mn>4</mml:mn></mml:math>" }, { "lang": "en-US", "content": "\n " }, { "lang": "en-US", "content": "\n" }, { "lang": "en-US", "mimeType": "application/mathml+xml", "content": "<mml:math xmlns:mml=\"http://www.w3.org/1998/Math/MathML\" display=\"block\"><mml:msup><mml:mrow><mml:mo fence=\"false\">(</mml:mo><mml:mi>a</mml:mi><mml:mo>+</mml:mo><mml:mi>b</mml:mi><mml:mo fence=\"false\">)</mml:mo></mml:mrow><mml:mn>2</mml:mn></mml:msup><mml:mo>=</mml:mo><mml:mn>4</mml:mn><mml:mo>+</mml:mo><mml:mn>16</mml:mn><mml:mo>+</mml:mo><mml:mn>16</mml:mn></mml:math>" }, { "lang": "en-US", "content": "\n" }, { "lang": "en-US", "mimeType": "application/mathml+xml", "content": "<mml:math xmlns:mml=\"http://www.w3.org/1998/Math/MathML\" display=\"block\"><mml:msup><mml:mrow><mml:mo fence=\"false\">(</mml:mo><mml:mi>a</mml:mi><mml:mo>+</mml:mo><mml:mi>b</mml:mi><mml:mo fence=\"false\">)</mml:mo></mml:mrow><mml:mn>2</mml:mn></mml:msup><mml:mo>=</mml:mo><mml:mn>36</mml:mn></mml:math>" }, { "lang": "en-US", "content": "\n " }, { "lang": "en-US", "content": "\n " }, { "lang": "en-US", "content": "\n " }, { "lang": "en-US", "content": "\n " }, { "lang": "en-US", "content": "\n " }, { "lang": "en-US", "content": "\nArea of circle " }, { "lang": "en-US", "content": "\n " }, { "lang": "en-US", "content": "\n " }, { "lang": "en-US", "content": "\nFormula: Area of circle: " }, { "lang": "en-US", "mimeType": "application/mathml+xml", "content": "<mml:math xmlns:mml=\"http://www.w3.org/1998/Math/MathML\"><mml:mi>a</mml:mi><mml:mo>=</mml:mo><mml:mi>&#120587;</mml:mi><mml:msup><mml:mi>r</mml:mi><mml:mn>2</mml:mn></mml:msup></mml:math>" }, { "lang": "en-US", "content": "\n " }, { "lang": "en-US", "content": "\n " }, { "lang": "en-US", "content": "\nSample Problem:  " }, { "lang": "en-US", "content": "\nπ (Pi) times the Radius Squared:  " }, { "lang": "en-US", "mimeType": "application/mathml+xml", "content": "<mml:math xmlns:mml=\"http://www.w3.org/1998/Math/MathML\"><mml:mi>a</mml:mi><mml:mo>=</mml:mo><mml:mi>&#120587;</mml:mi><mml:msup><mml:mi>r</mml:mi><mml:mn>2</mml:mn></mml:msup></mml:math>" }, { "lang": "en-US", "content": "\n " }, { "lang": "en-US", "content": "\n " }, { "lang": "en-US", "content": "\nOr, when you know the Diameter:  " }, { "lang": "x-none", "content": "\n " }, { "lang": "en-US", "content": "\n" }, { "lang": "en-US", "mimeType": "application/mathml+xml", "content": "<mml:math xmlns:mml=\"http://www.w3.org/1998/Math/MathML\" display=\"block\"><mml:mi>A</mml:mi><mml:mo>&nbsp;</mml:mo><mml:mo>=</mml:mo><mml:mo>&nbsp;</mml:mo><mml:mi>&#120587;</mml:mi><mml:mo>&nbsp;</mml:mo><mml:mo>×</mml:mo><mml:msup><mml:mrow><mml:mfrac><mml:mi>d</mml:mi><mml:mn>2</mml:mn></mml:mfrac></mml:mrow><mml:mn>2</mml:mn></mml:msup></mml:math>" }, { "lang": "x-none", "content": "\n " }, { "lang": "en-US", "content": "\n" }, { "lang": "en-US", "mimeType": "application/mathml+xml", "content": "<mml:math xmlns:mml=\"http://www.w3.org/1998/Math/MathML\" display=\"block\"><mml:mi>a</mml:mi><mml:mo>=</mml:mo><mml:mfrac><mml:mi>&#120587;</mml:mi><mml:mn>4</mml:mn></mml:mfrac><mml:mo>×</mml:mo><mml:msup><mml:mi>d</mml:mi><mml:mn>2</mml:mn></mml:msup></mml:math>" }, { "lang": "en-US", "content": "\n " }, { "lang": "x-none", "content": "\n " }, { "lang": "x-none", "content": "\n " }, { "lang": "x-none", "content": "\n " }, { "lang": "en-US", "content": "\nOr, when you know the Circumference:" }, { "lang": "x-none", "content": "\n " }, { "lang": "en-US", "content": "\n" }, { "lang": "en-US", "mimeType": "application/mathml+xml", "content": "<mml:math xmlns:mml=\"http://www.w3.org/1998/Math/MathML\" display=\"block\"><mml:mi>A</mml:mi><mml:mo>&nbsp;</mml:mo><mml:mo>=</mml:mo><mml:mo>&nbsp;</mml:mo><mml:mi>&#120587;</mml:mi><mml:mo>&nbsp;</mml:mo><mml:mo>×</mml:mo><mml:msup><mml:mrow><mml:mfrac><mml:mi>c</mml:mi><mml:mrow><mml:mn>2</mml:mn><mml:mi>&#120587;</mml:mi></mml:mrow></mml:mfrac></mml:mrow><mml:mn>2</mml:mn></mml:msup></mml:math>" }, { "lang": "en-US", "content": "\n" }, { "lang": "en-US", "mimeType": "application/mathml+xml", "content": "<mml:math xmlns:mml=\"http://www.w3.org/1998/Math/MathML\" display=\"block\"><mml:mi>a</mml:mi><mml:mo>=</mml:mo><mml:mfrac><mml:mrow><mml:msup><mml:mi>c</mml:mi><mml:mn>2</mml:mn></mml:msup></mml:mrow><mml:mrow><mml:mn>4</mml:mn><mml:mi>&#120587;</mml:mi></mml:mrow></mml:mfrac></mml:math>" }, { "lang": "en-US", "content": "\nArea" }, { "lang": "en-US", "content": "\n" }, { "lang": "en-US", "mimeType": "application/mathml+xml", "content": "<mml:math xmlns:mml=\"http://www.w3.org/1998/Math/MathML\" display=\"block\"><mml:mi>a</mml:mi><mml:mo>=</mml:mo><mml:mi>&#120587;</mml:mi><mml:msup><mml:mi>r</mml:mi><mml:mn>2</mml:mn></mml:msup></mml:math>" }, { "lang": "en-US", "content": "\n" }, { "lang": "en-US", "mimeType": "application/mathml+xml", "content": "<mml:math xmlns:mml=\"http://www.w3.org/1998/Math/MathML\" display=\"block\"><mml:mo>=</mml:mo><mml:mi>&#120587;</mml:mi><mml:mo>×</mml:mo><mml:msup><mml:mn>3</mml:mn><mml:mn>2</mml:mn></mml:msup></mml:math>" }, { "lang": "en-US", "content": "\n" }, { "lang": "en-US", "mimeType": "application/mathml+xml", "content": "<mml:math xmlns:mml=\"http://www.w3.org/1998/Math/MathML\" display=\"block\"><mml:mo>=</mml:mo><mml:mn>3</mml:mn><mml:mo>.</mml:mo><mml:mn>14159</mml:mn><mml:mo>…</mml:mo><mml:mo>×</mml:mo><mml:mfenced><mml:mrow><mml:mn>3</mml:mn><mml:mo>×</mml:mo><mml:mn>3</mml:mn></mml:mrow></mml:mfenced></mml:math>" }, { "lang": "en-US", "content": "\n" }, { "lang": "en-US", "mimeType": "application/mathml+xml", "content": "<mml:math xmlns:mml=\"http://www.w3.org/1998/Math/MathML\" display=\"block\"><mml:mo>=</mml:mo><mml:mn>28</mml:mn><mml:mo>.</mml:mo><mml:mn>27</mml:mn><mml:msup><mml:mi>m</mml:mi><mml:mn>2</mml:mn></mml:msup></mml:math>" }, { "lang": "en-US", "content": "\n " }]
+			}
+
+			return chunks;
+		}
+
+		var _preferences = null;
+
+		function GetLatestPreferences() {
+			$('#input-preferences').val(_preferences);
+		}
+
+		function ClearPreferences() {
+			$('#input-preferences').val(null);
+		}
+
+		function getOptions() {
+			var options = {};
+
+			var optionsCheckboxes = document.getElementsByName("optionsCheckbox");
+			for (var i = 0; i < optionsCheckboxes.length; i++) {
+				var checkbox = optionsCheckboxes.item(i);
+				if (checkbox.checked) {
+					options[checkbox.value] = true;
+				} else {
+					options[checkbox.value] = false;
+				}
+			}
+
+			var optionsTextBoxes = document.getElementsByClassName("optionTextBox");
+			for (var i = 0; i < optionsTextBoxes.length; i++) {
+				var textbox = optionsTextBoxes.item(i);
+				var optionName = textbox.getAttribute("data-option-name");
+				if (textbox.value && optionName) {
+					options[optionName] = textbox.type === "number" ? textbox.valueAsNumber : textbox.value;
+				}
+			}
+
+			var persistPreferences = document.getElementById("persistPreferencesCheckbox").checked;
+			if (persistPreferences) {
+				options.onPreferencesChanged = (value) => {
+					console.log(value);
+					_preferences = value;
+				}
+			}
+
+			if ($('#internalOptionsEnabledCheckbox').prop('checked')) {
+				options.internalOptions = {
+					messageOptions: getInternalMessageOptions()
+				}
+			}
+
+			var queryParameters = getInternalQueryParameterOptions();
+			if (queryParameters && Object.keys(queryParameters).length > 0) {
+				options.internalOptions.queryParameters = queryParameters;
+			}
+
+			var styleOverrides = {};
+			var styleTextBoxes = document.getElementsByClassName("styleOverideBox");
+			for (var i = 0; i < styleTextBoxes.length; i++) {
+				var textbox = styleTextBoxes.item(i);
+				var optionName = textbox.getAttribute("data-option-name");
+				if (textbox.value && optionName) {
+					styleOverrides[optionName] = textbox.value;
+				}
+			}
+
+			if (Object.keys(styleOverrides).length > 0) {
+				options.internalOptions.styleOverrides = styleOverrides;
+			}
+
+			var preferences = $('#input-preferences').val();
+			if (preferences) {
+				options.preferences = preferences;
+			}
+
+			var showFeedbackValue = $('#showFeedback').val();
+
+			if (showFeedbackValue.length > 0) {
+				alert(showFeedbackValue);
+				options.showFeedback = showFeedbackValue;
+			}
+			const themeOption = $('input[name=readerThemeRadio]:checked').val();
+			if (themeOption && themeOption !== null) {
+				options.displayOptions.themeOption = themeOption;
+			}
+			console.log(options);
+			return options;
+		}
+		
+		function optionIsChecked(id) {
+			if ($('#' + id).is(':checked')) {
+				return true;
+			}
+
+			return undefined;
+		}
+
+		function getInternalMessageOptions() {
+			var internalOptions = {};
+
+			if ($('#default-menu-option').is(':checked')) {
+				if ($('#menu-option-display-options').is(':checked')) {
+					internalOptions['defaultMenuOption'] = 'textPreferences';
+				} else if ($('#menu-option-pos-options').is(':checked')) {
+					internalOptions['defaultMenuOption'] = 'grammarOptions';
+				} else {
+					internalOptions['defaultMenuOption'] = 'readingPreferences';
+				}
+			}
+
+			internalOptions['disableSoundItOut'] = optionIsChecked('disable-sound-it-out');
+			internalOptions['hideMenuButtonsPanel'] = optionIsChecked('hide-menu-buttons-panel');
+			internalOptions['disableSourceFormattingToggle'] = optionIsChecked('disable-source-formatting-toggle');
+			internalOptions['disablePictureDictionary'] = optionIsChecked('disable-picture-dictionary');
+			internalOptions['disablePartsOfSpeech'] = optionIsChecked('disable-parts-of-speech');
+			internalOptions['disableSyllables'] = optionIsChecked('disable-syllables');
+			internalOptions['disableTranslateByWord'] = optionIsChecked('disable-translate-by-word');
+			internalOptions['hidePanelFooter'] = optionIsChecked('hide-panel-footer');
+			internalOptions['disableReadAloudPaneAndFRE'] = optionIsChecked('disable-read-aloud-pane-and-fre');
+			internalOptions['hideDocumentTitle'] = optionIsChecked('hide-document-title');
+			internalOptions['disablePhrases'] = optionIsChecked('disable-phrases');
+			internalOptions['addReadingAssingmentsDoneButton'] = optionIsChecked('add-reading-assignments-done-button');
+			internalOptions['inReadingProgress'] = optionIsChecked('in-reading-progress');
+            internalOptions['inReadingProgressMobile'] = optionIsChecked('in-reading-progress-mobile');
+            internalOptions['removeFocusTrap'] = optionIsChecked('remove-focus-trap');
+			internalOptions['hideHeader'] = optionIsChecked('hide-header');
+
+			var filteredOptionsArray = {};
+			for (var option in internalOptions) {
+				if (internalOptions[option]) {
+					filteredOptionsArray[option] = internalOptions[option];
+				}
+			}
+
+			return filteredOptionsArray;
+		}
+
+		function getInternalQueryParameterOptions() {
+			var internalOptions = {};
+
+			internalOptions['hideMenuButtonsContentPaneAndFRE'] = optionIsChecked('hide-menu-buttons-content-pane-and-fre');
+
+			var filteredOptionsArray = {};
+			for (var option in internalOptions) {
+				if (internalOptions[option]) {
+					filteredOptionsArray[option] = internalOptions[option];
+				}
+			}
+
+			return filteredOptionsArray;
+		}
+
+		var apiResponse = null;
+		var provideApiResponse = null;
+		var sentResponseToFrame = false;
+
+		function sendResponseIfReadyForContent() {
+			if (apiResponse && provideApiResponse && !sentResponseToFrame) {
+				sentResponseToFrame = true;
+
+				provideApiResponse(apiResponse)
+					.then((launchResponse) => {
+						// usage from dev tools console window: window.postLaunchOperations.play()
+						// make sure the top most frame is selected otherwise window.postLaunchOperations will be undefined
+						window.postLaunchOperations = launchResponse.postLaunchOperations;
+						handleSuccess();
+					})
+					.catch((error) => {
+						handleError(error);
+					});
+			}
+		}
+
+		var subdomains =
+		{
+			edog: {
+				S0: {
+					WestUS: 'immersivereaderaad',
+				},
+				S1: {
+					WestUS: 'immersivereaderS1aadwestus'
+				}
+			},
+			OSI_EDOG_1P: {
+				S0: {
+					WestUS2: null
+				},
+				S1: {
+					WestUS2: null
+				}
+			},
+			OSI_EDOG_3P: {
+				S0: {
+					WestUS2: 'ImmersiveReaderAAD-S0-WestUS2'
+				},
+				S1: {
+					WestUS2: 'ImmersiveReaderAAD-S1-WestUS2'
+				}
+			},
+			OSI_PROD_1P: {
+				S0: {
+					WestUS2: null
+				},
+				S1: {
+					WestUS2: null
+				}
+			},
+			OSI_PROD_3P: {
+				S0: {
+					WestUS2: 'ImmersiveReaderAADWestUS2'
+				},
+				S1: {
+					WestUS2: 'ImmersiveReaderS1AADWestus2'
+				}
+			},
+			SF_PPE: {
+				S0: {
+					WestUS2: 'ImmersiveReaderAAD-S0-SF-WestUS2'
+				},
+				S1: {
+					WestUS2: 'ImmersiveReaderAAD-S1-SF-WestUS2'
+				}
+			},
+			SF_PROD_AME: {
+				S0: {
+					BrazilSouth: 'ImmersiveReader-S0-SF-BrazilSouth',
+					CanadaCentral: 'ImmersiveReader-S0-SF-CanadaCentral',
+					CentralUS: 'ImmersiveReader-S0-SF-CentralUS',
+					CentralUSEUAP: 'ImmersiveReader-S0-SF-CentralUSEUAP',
+					EastUS: 'ImmersiveReader-S0-SF-EastUS',
+					EastUS2: 'ImmersiveReader-S0-SF-EastUS2',
+					EastUS2EUAP: 'ImmersiveReader-S0-SF-EastUS2EUAP',
+					NorthCentralUS: 'ImmersiveReader-S0-SF-NorthCentralUS',
+					SouthCentralUS: 'ImmersiveReader-S0-SF-SouthCentralUS',
+					WestCentralUS: 'ImmersiveReader-S0-SF-WestCentralUS',
+					WestUS: 'ImmersiveReader-S0-SF-WestUS',
+					WestUS2: 'ImmersiveReader-S0-SF-WestUS2',
+					WestUS3: 'ImmersiveReader-S0-SF-WestUS3',
+
+					FranceCentral: 'ImmersiveReader-S0-SF-FranceCentral',
+					GermanyWestCentral: 'ImmersiveReader-S0-SF-GermanyWestCentral',
+					NorthEurope: 'ImmersiveReader-S0-SF-NorthEurope',
+					NorwayEast: 'ImmersiveReader-S0-SF-NorwayEast',
+					SwitzerlandWest: 'ImmersiveReader-S0-SF-SwitzerlandWest',
+					SwitzerlandNorth: 'ImmersiveReader-S0-SF-SwitzerlandNorth',
+					UKSouth: 'ImmersiveReader-S0-SF-UKSouth',
+					WestEurope: 'ImmersiveReader-S0-SF-WestEurope',
+
+					AustraliaEast: 'ImmersiveReader-S0-SF-AustraliaEast',
+					CentralIndia: 'ImmersiveReader-S0-SF-CentralIndia',
+					EastAsia: 'ImmersiveReader-S0-SF-EastAsia',
+					JapanWest: 'ImmersiveReader-S0-SF-JapanWest',
+					JapanEast: 'ImmersiveReader-S0-SF-JapanEast',
+					JioIndiaWest: 'ImmersiveReader-S0-SF-JioIndiaWest',
+					KoreaCentral: 'ImmersiveReader-S0-SF-KoreaCentral',
+					SouthAfricaNorth: 'ImmersiveReader-S0-SF-SouthAfricaNorth',
+					SoutheastAsia: 'ImmersiveReader-S0-SF-SoutheastAsia',
+					UAENorth: 'ImmersiveReader-S0-SF-UAENorth'
+				},
+				S1: {
+					BrazilSouth: 'ImmersiveReader-S1-SF-BrazilSouth',
+					CanadaCentral: 'ImmersiveReader-S1-SF-CanadaCentral',
+					CentralUS: 'ImmersiveReader-S1-SF-CentralUS',
+					CentralUSEUAP: 'ImmersiveReader-S1-SF-CentralUSEUAP',
+					EastUS: 'ImmersiveReader-S1-SF-EastUS',
+					EastUS2: 'ImmersiveReader-S1-SF-EastUS2',
+					EastUS2EUAP: 'ImmersiveReader-S1-SF-EastUS2EUAP',
+					NorthCentralUS: 'ImmersiveReader-S1-SF-NorthCentralUS',
+					SouthCentralUS: 'ImmersiveReader-S1-SF-SouthCentralUS',
+					WestCentralUS: 'ImmersiveReader-S1-SF-WestCentralUS',
+					WestUS: 'ImmersiveReader-S1-SF-WestUS',
+					WestUS2: 'ImmersiveReader-S1-SF-WestUS2',
+					WestUS3: 'ImmersiveReader-S1-SF-WestUS3',
+
+					FranceCentral: 'ImmersiveReader-S1-SF-FranceCentral',
+					GermanyWestCentral: 'ImmersiveReader-S1-SF-GermanyWestCentral',
+					NorthEurope: 'ImmersiveReader-S1-SF-NorthEurope',
+					NorwayEast: 'ImmersiveReader-S1-SF-NorwayEast',
+					SwitzerlandWest: 'ImmersiveReader-S1-SF-SwitzerlandWest',
+					SwitzerlandNorth: 'ImmersiveReader-S1-SF-SwitzerlandNorth',
+					UKSouth: 'ImmersiveReader-S1-SF-UKSouth',
+					WestEurope: 'ImmersiveReader-S1-SF-WestEurope',
+
+					AustraliaEast: 'ImmersiveReader-S1-SF-AustraliaEast',
+					CentralIndia: 'ImmersiveReader-S1-SF-CentralIndia',
+					EastAsia: 'ImmersiveReader-S1-SF-EastAsia',
+					JapanWest: 'ImmersiveReader-S1-SF-JapanWest',
+					JapanEast: 'ImmersiveReader-S1-SF-JapanEast',
+					JioIndiaWest: 'ImmersiveReader-S1-SF-JioIndiaWest',
+					KoreaCentral: 'ImmersiveReader-S1-SF-KoreaCentral',
+					SouthAfricaNorth: 'ImmersiveReader-S1-SF-SouthAfricaNorth',
+					SoutheastAsia: 'ImmersiveReader-S1-SF-SoutheastAsia',
+					UAENorth: 'ImmersiveReader-S1-SF-UAENorth'
+				}
+			},
+			CNTR_PPE: {
+				S0: {
+					WestUS2: 'ImmersiveReader-CNTR-S0-WestUS' // 8-27-2021 - Temporary change to WestUS (which APIM will route to EastUS2) for AICP Cluster V8 update test sign-off - revert after 9-13-2021 when AICP cluster changes are expected to be signed off and deployed to Prod 
+				},
+				S1: {
+					WestUS2: 'ImmersiveReader-CNTR-S1-WestUS' // 8-27-2021 - Temporary change to WestUS (which APIM will route to EastUS2) for AICP Cluster V8 update test sign-off - revert after 9-13-2021 when AICP cluster changes are expected to be signed off and deployed to Prod
+				}
+			},
+			CNTR_PROD_AME: {
+				S0: {
+					BrazilSouth: 'ImmersiveReader-CNTR-S0-BrazilSouth',
+					CanadaCentral: 'ImmersiveReader-CNTR-S0-CanadaCentral',
+					CentralUS: 'ImmersiveReader-CNTR-S0-CentralUS',
+					CentralUSEUAP: 'ImmersiveReader-CNTR-S0-CentralUSEUAP',
+					EastUS: 'ImmersiveReader-CNTR-S0-EastUS',
+					EastUS2: 'ImmersiveReader-CNTR-S0-EastUS2',
+					EastUS2EUAP: 'ImmersiveReader-CNTR-S0-EastUS2EUAP',
+					NorthCentralUS: 'ImmersiveReader-CNTR-S0-NorthCentralUS',
+					SouthCentralUS: 'ImmersiveReader-CNTR-S0-SouthCentralUS',
+					WestCentralUS: 'ImmersiveReader-CNTR-S0-WestCentralUS',
+					WestUS: 'ImmersiveReader-CNTR-S0-WestUS',
+					WestUS2: 'ImmersiveReader-CNTR-S0-WestUS2',
+					WestUS3: 'ImmersiveReader-CNTR-S0-WestUS3',
+
+					FranceCentral: 'ImmersiveReader-CNTR-S0-FranceCentral',
+					GermanyWestCentral: 'ImmersiveReader-CNTR-S0-GermanyWestCentral',
+					NorthEurope: 'ImmersiveReader-CNTR-S0-NorthEurope',
+					NorwayEast: 'ImmersiveReader-CNTR-S0-NorwayEast',
+					SwitzerlandWest: 'ImmersiveReader-CNTR-S0-SwitzerlandWest',
+					SwitzerlandNorth: 'ImmersiveReader-CNTR-S0-SwitzerlandNorth',
+					UKSouth: 'ImmersiveReader-CNTR-S0-UKSouth',
+					WestEurope: 'ImmersiveReader-CNTR-S0-WestEurope',
+
+					AustraliaEast: 'ImmersiveReader-CNTR-S0-AustraliaEast',
+					CentralIndia: 'ImmersiveReader-CNTR-S0-CentralIndia',
+					EastAsia: 'ImmersiveReader-CNTR-S0-EastAsia',
+					JapanWest: 'ImmersiveReader-CNTR-S0-JapanWest',
+					JapanEast: 'ImmersiveReader-CNTR-S0-JapanEast',
+					JioIndiaWest: 'ImmersiveReader-CNTR-S0-JioIndiaWest',
+					KoreaCentral: 'ImmersiveReader-CNTR-S0-KoreaCentral',
+					SouthAfricaNorth: 'ImmersiveReader-CNTR-S0-SouthAfricaNorth',
+					SoutheastAsia: 'ImmersiveReader-CNTR-S0-SoutheastAsia',
+					UAENorth: 'ImmersiveReader-CNTR-S0-UAENorth'
+				},
+				S1: {
+					BrazilSouth: 'ImmersiveReader-CNTR-S1-BrazilSouth',
+					CanadaCentral: 'ImmersiveReader-CNTR-S1-CanadaCentral',
+					CentralUS: 'ImmersiveReader-CNTR-S1-CentralUS',
+					CentralUSEUAP: 'ImmersiveReader-CNTR-S1-CentralUSEUAP',
+					EastUS: 'ImmersiveReader-CNTR-S1-EastUS',
+					EastUS2: 'ImmersiveReader-CNTR-S1-EastUS2',
+					EastUS2EUAP: 'ImmersiveReader-CNTR-S1-EastUS2EUAP',
+					NorthCentralUS: 'ImmersiveReader-CNTR-S1-NorthCentralUS',
+					SouthCentralUS: 'ImmersiveReader-CNTR-S1-SouthCentralUS',
+					WestCentralUS: 'ImmersiveReader-CNTR-S1-WestCentralUS',
+					WestUS: 'ImmersiveReader-CNTR-S1-WestUS',
+					WestUS2: 'ImmersiveReader-CNTR-S1-WestUS2',
+					WestUS3: 'ImmersiveReader-CNTR-S1-WestUS3',
+
+					FranceCentral: 'ImmersiveReader-CNTR-S1-FranceCentral',
+					GermanyWestCentral: 'ImmersiveReader-CNTR-S1-GermanyWestCentral',
+					NorthEurope: 'ImmersiveReader-CNTR-S1-NorthEurope',
+					NorwayEast: 'ImmersiveReader-CNTR-S1-NorwayEast',
+					SwitzerlandWest: 'ImmersiveReader-CNTR-S1-SwitzerlandWest',
+					SwitzerlandNorth: 'ImmersiveReader-CNTR-S1-SwitzerlandNorth',
+					UKSouth: 'ImmersiveReader-CNTR-S1-UKSouth',
+					WestEurope: 'ImmersiveReader-CNTR-S1-WestEurope',
+
+					AustraliaEast: 'ImmersiveReader-CNTR-S1-AustraliaEast',
+					CentralIndia: 'ImmersiveReader-CNTR-S1-CentralIndia',
+					EastAsia: 'ImmersiveReader-CNTR-S1-EastAsia',
+					JapanWest: 'ImmersiveReader-CNTR-S1-JapanWest',
+					JapanEast: 'ImmersiveReader-CNTR-S1-JapanEast',
+					JioIndiaWest: 'ImmersiveReader-CNTR-S1-JioIndiaWest',
+					KoreaCentral: 'ImmersiveReader-CNTR-S1-KoreaCentral',
+					SouthAfricaNorth: 'ImmersiveReader-CNTR-S1-SouthAfricaNorth',
+					SoutheastAsia: 'ImmersiveReader-CNTR-S1-SoutheastAsia',
+					UAENorth: 'ImmersiveReader-CNTR-S1-UAENorth'
+				}
+			}
+		};
+
+		function getAuthInfo(version, environment) {
+
+			const issueTokenUrl = 'https://learningtools.edog.onenote.com/learningtoolsapi/cognitive/v2.0/getcogsvcsaccesstoken';
+			const aadTokenUrl = 'https://learningtools.edog.onenote.com/learningtoolsapi/cognitive/v2.0/getcogsvcsaadtoken';
+
+			const environmentTokenEndpoint = {
+				edog: {
+					issueTokenUrl: issueTokenUrl,
+					aadTokenUrl: aadTokenUrl,
+				},
+				prod: {
+					issueTokenUrl: issueTokenUrl + '?prodEnvironment=true',
+					aadTokenUrl: aadTokenUrl + '?prodEnvironment=true',
+				}
+			};
+
+			var url = version === '0.0.1' ? environmentTokenEndpoint[environment].issueTokenUrl : environmentTokenEndpoint[environment].aadTokenUrl;
+
+			var region = environment === 'prod' ? $('input[name=prodRegion]:checked').val() : 'WestUS';
+			var sku = $('input[name=productSKU]:checked').val()
+			var subdomain = version === '0.0.1' ? null : subdomains[environment][sku][region];
+
+			return { url: url, subdomain: subdomain };
+		}
+
+		function initialize() {
+			ImmersiveReader.initialize();
+		};
+
+		function getTokenUrl(environment) {
+			var issueTokenUrl_OSI = 'https://learningtools.edog.onenote.com/learningtoolsapi/cognitive/v2.0/getcogsvcsaccesstoken';
+			var aadTokenUrl_OSI = 'https://learningtools.edog.onenote.com/learningtoolsapi/cognitive/v2.0/getcogsvcsaadtoken';
+			var aadTokenUrl_SF = 'https://ppe.usw2.immersivereader.api.cognitive.trafficmanager.net:8493/immersivereader/v1.0/getimmersivereaderaadtoken';
+
+			var environmentTokenEndpoint = {
+				OSI_EDOG_1P: {
+					issueTokenUrl: issueTokenUrl_OSI,
+				},
+				OSI_EDOG_3P: {
+					aadTokenUrl: aadTokenUrl_OSI,
+				},
+				OSI_PROD_1P: {
+					issueTokenUrl: issueTokenUrl_OSI + '?prodEnvironment=true',
+				},
+				OSI_PROD_3P: {
+					aadTokenUrl: aadTokenUrl_OSI + '?prodEnvironment=true',
+				},
+				SF_PPE: {
+					aadTokenUrl: aadTokenUrl_SF,
+				},
+				SF_PROD_AME: {
+					aadTokenUrl: aadTokenUrl_SF + '?prodEnvironment=true'
+				},
+				CNTR_PPE: {
+					aadTokenUrl: aadTokenUrl_SF
+				},
+				CNTR_PROD_AME: {
+					aadTokenUrl: aadTokenUrl_SF + '?prodEnvironment=true'
+				}
+			};
+
+			var url = environmentTokenEndpoint[environment].aadTokenUrl ? environmentTokenEndpoint[environment].aadTokenUrl : environmentTokenEndpoint[environment].issueTokenUrl;
+
+			return url;
+		}
+
+		function getContentModelHostUrl(environment, subdomain) {
+			var contentModelHostUrl_EDOG_OSI = 'https://learningtools.edog.onenote.com/learningtoolsapi/cognitive/v2.0/GetContentModelForReader';
+			var contentModelHostUrl_PROD_OSI = 'https://learningtools.onenote.com/learningtoolsapi/cognitive/v2.0/GetContentModelForReader';
+			var subdomain = environment.indexOf('PPE') > -1 ? subdomain + '.ppe' : subdomain;
+			var contentModelHostUrl_SF = 'https://' + subdomain + '.cognitiveservices.azure.com/immersivereader/v1.0/GetContentModelForReader';
+
+			let contentModelHostUrl;
+
+			switch (environment) {
+				case 'OSI_EDOG_1P':
+					contentModelHostUrl = contentModelHostUrl_EDOG_OSI;
+					break;
+				case 'OSI_EDOG_3P':
+					contentModelHostUrl = contentModelHostUrl_EDOG_OSI;
+					break;
+				case 'OSI_PROD_1P':
+					contentModelHostUrl = contentModelHostUrl_PROD_OSI;
+					break;
+				case 'OSI_PROD_3P':
+					contentModelHostUrl = contentModelHostUrl_PROD_OSI;
+					break;
+				case 'SF_PPE':
+					contentModelHostUrl = contentModelHostUrl_SF;
+					break;
+				case 'SF_PROD_AME':
+					contentModelHostUrl = contentModelHostUrl_SF;
+					break;
+				case 'CNTR_PPE':
+					contentModelHostUrl = contentModelHostUrl_SF;
+					break;
+				case 'CNTR_PROD_AME':
+					contentModelHostUrl = contentModelHostUrl_SF;
+					break;
+				default:
+					// Noop
+					break;
+			};
+
+			return contentModelHostUrl;
+		}
+
+		function getSubdomain(environment) {
+			var region = prodEnvironment(environment) ? $('input[name=prodRegion]:checked').val() : 'WestUS2';
+			var sku = $('input[name=productSKU]:checked').val();
+
+			if(environment == "edog"){
+				region = "WestUS";
+			}
+
+			var subdomain = subdomains[environment][sku][region];
+
+			return subdomain;
+		}
+
+		function prodEnvironment(environment) {
+			return	environment === 'SF_PROD_AME' ||
+					environment === 'CNTR_PROD_AME' ||
+					environment === 'OSI_PROD_1P' ||
+					environment === 'OSI_PROD_3P';
+		}
+
+		function launch(version, environment) {
+			// var readerDomainOption = $('input[name=readerDomainRadio]:checked').val();
+			if(version == "dev" && environment == "edog"){
+				getTokenAndLaunchLocal(version, environment);
+			}
+			else{
+				console.log(environment);
+				// first, load the SDK script
+				var isProd = prodEnvironment(environment);
+				var scriptUrl = 'https://contentstorage.onenote.office.net/onenoteltir/immersivereadersdk/immersive-reader-sdk.' + version + (isProd ? '' : '.edog') + '.js';
+				$.getScript(scriptUrl, function () { getTokenAndLaunch(version, environment); }); // then launch on success
+			}
+		};
+
+		function getTokenAndLaunchLocal(version, environment) {
+			var authInfo = getAuthInfo(version, environment);
+
+			$.ajax(authInfo.url, {
+				method: 'GET',
+				success: function (token) {
+					launchInternal(version, environment, authInfo.subdomain, token);
+				},
+				error: function (xhr, status, error) {
+					console.log("GetToken error: " + status + " - " + error);
+				}
+			});
+		}
+
+		function getTokenAndLaunch(version, environment) {
+
+			var subdomain = getSubdomain(environment);
+
+			getToken(environment,
+				function (token) {
+					launchInternal(version, environment, subdomain, token);
+				},
+				function (errorMessage) {
+					console.log(errorMessage);
+				}
+			);
+		}
+
+		function getToken(environment, onsuccess, onerror) {
+			var tokenUrl = getTokenUrl(environment);
+			$.ajax(tokenUrl, {
+				method: 'GET',
+				success: function (token) {
+					onsuccess(token);
+				},
+				error: function (xhr, status, error) {
+					var failureMessage = "GetToken error: " + status + " - " + error;
+					onerror(failureMessage);
+				}
+			});
+		}
+
+		function launchInternal(version, environment, subdomain, token) {
+			sentResponseToFrame = false;
+
+			var chunks = [{
+				content: $('#input-text').val(),
+				lang: $('#input-lang').val(),
+				mimeType: $('#input-mimetype').val()
+			}];
+
+			var rawJson = $('#input-json').val();
+			if (rawJson) {
+				chunks = JSON.parse(rawJson);
+			}
+
+			var content = '';
+
+			switch ($('input[name=readerInputRadio]:checked').val()) {
+				case 'Text':
+					content = {
+						title: $('#input-title').val(),
+						chunks: chunks
+					};
+					break;
+				case 'Math':
+					content = {
+						title: $('#input-title').val(),
+						chunks: mathChunks()
+					};
+					break;
+				case 'Docx':
+					content = {
+						title: $('#input-title').val(),
+						chunks: uploadedDocxChunks()
+					};
+					break;
+				default:
+					content = {
+						title: $('#input-title').val(),
+						chunks: chunks
+					};
+					break;
+			}
+
+			var readerDomainOption = $('input[name=readerDomainRadio]:checked').val();
+			console.log('using reader domain ' + readerDomainOption);
+
+			let options = getOptions();
+
+			if (readerDomainOption === 'local') {
+				options.customDomain = "https://127.0.0.1:44444/";
+			}
+
+			if (options.onExit === true) {
+				options.onExit = () => { $('#input-text').val('On Exit Executed successfully.'); };
+			}
+
+			if (options.displayOptions === true) {
+				var themeOption = $('input[name=readerThemeRadio]:checked').val();
+				options.displayOptions = {
+					textSize: +($('#displayOptionsTextSize').val()),
+					increaseSpacing: $('#displayOptionsIncreaseSpacing').prop('checked'),
+					fontFamily: $('#displayOptionsFontFamily').val(),
+					themeOption: themeOption ?? "Light"
+				};
+			}
+
+			if (options.readAloudOptions === true) {
+				options.readAloudOptions = {
+					autoplay: $('#readAloudAutoplay').prop('checked'),
+					voice: $('#readAloudGender').val(),
+					speed: +($('#readAloudSpeed').val())
+				};
+			}
+
+			if (options.translationOptions === true) {
+				options.translationOptions = {
+					autoEnableDocumentTranslation: $('#autoEnableDocumentTranslation').prop('checked'),
+					autoEnableWordTranslation: $('#autoEnableWordTranslation').prop('checked'),
+					language: $('#translationLanguage').val()
+				};
+			}
+
+			console.log('opts:', options.internalOptions)
+
+			options.internalOptions = {
+				messageOptions: getInternalMessageOptions(),
+				queryParameters: getInternalQueryParameterOptions(),
+				styleOverrides: getInternalStyleOverrideOptions()
+			};
+
+			// The latest version of the SDK require an initialization in order to adhere to CSP.
+			// Internal SDK only: Extracted out renderButtons function and placed in new initialize function to give more granular control and customization of the SDK
+			if (version >= '0.6.1' && version < '1.0.0') {
+				ImmersiveReader.initialize();
+			}
+
+			if (version === '0.0.1') {
+				ImmersiveReader.launchAsync(token, content, options)
+					.then(() => {
+						handleSuccess();
+					})
+					.catch((error) => {
+						handleError(error);
+					});
+				}
+			else {
+				var useS2SPath = iS2SSdkVersion(version) && $('#useLaunchWithoutContentAsync').prop('checked');
+
+				if (useS2SPath) {
+					apiResponse = null;
+					provideApiResponse = null;
+
+					// In actual usage, this getContentModel() would be a call to a backend which in turn calls GetContentModelForReader
+					// and passes the response here
+					getContentModel(environment, subdomain, function (result, status) {
+						apiResponse = result;
+						sendResponseIfReadyForContent();
+					});
+					
+					// SDK versions using SF where S2S is enabled require a subdomain.
+					if ((version === '0.5.6')||(version === '0.6.4')) {
+						ImmersiveReader.launchWithoutContentAsync(subdomain, options)
+							.then((noContentResponse) => {
+								provideApiResponse = noContentResponse.provideApiResponse;
+								sendResponseIfReadyForContent();
+							})
+							.catch((error) => {
+								handleError(error);
+							});
+					} else {
+						ImmersiveReader.launchWithoutContentAsync(options)
+							.then((noContentResponse) => {
+								provideApiResponse = noContentResponse.provideApiResponse;
+								sendResponseIfReadyForContent();
+							})
+							.catch((error) => {
+								handleError(error);
+							});
+					}
+				} else {
+					ImmersiveReader.launchAsync(token, subdomain, content, options)
+						.then((launchResponse) => {
+							// usage from dev tools console window: window.postLaunchOperations.play()
+							// make sure the top most frame is selected otherwise window.postLaunchOperations will be undefined
+							window.postLaunchOperations = launchResponse.postLaunchOperations;
+							handleSuccess();
+						})
+						.catch((error) => {
+							handleError(error);
+						});
+				}
+			}
+		}
+
+		function getInternalStyleOverrideOptions() {
+			const styleOverrides = {};
+			var styleTextBoxes = document.getElementsByClassName("styleOverideBox");
+			for (var i = 0; i < styleTextBoxes.length; i++) {
+				var textbox = styleTextBoxes.item(i);
+				var optionName = textbox.getAttribute("data-option-name");
+				if (textbox.value && optionName) {
+					styleOverrides[optionName] = textbox.value;
+				}
+			}
+			styleOverrides['nonce'] = 'nonce';
+			return styleOverrides;
+		}
+
+		function optionIsChecked(id) {
+			if ($('#' + id).is(':checked')) {
+				return true;
+			}
+
+			return undefined;
+		}
+
+		// Returns true for SDK Versions that contain launchWithoutContentAsync added to the array.
+		function iS2SSdkVersion(version) {
+			var S2SSdkVersions = ['0.5.6', '0.6.4' ];
+			return S2SSdkVersions.indexOf(version);
+		}
+
+		// Enables or Disables the Non-S2S buttons of the page.
+		var disableNonS2SSDKVersionToggleChecked = false;
+
+		function disableNonS2SSDKVersionToggle() {
+			disableNonS2SSDKVersionToggleChecked = !disableNonS2SSDKVersionToggleChecked;
+			var noS2SButtons  = document.getElementsByClassName('NoS2S');
+			for (var i = 0; i < noS2SButtons.length; ++i) {
+				noS2SButtons[i].disabled = disableNonS2SSDKVersionToggleChecked;
+			}
+		}
+
+		function generateGuid() {
+			return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function (c) {
+				var r = (Math.random() * 16) | 0;
+				var v = c === 'x' ? r : (r & 0x3) | 0x8;
+				return v.toString(16);
+			});
+		}
+
+		function getContentModel(environment, subdomain, onsuccess) {
+			var host = getContentModelHostUrl(environment, subdomain);
+			var gcmEndpoint = host;
+
+			var chunks = [{
+				content: $('#input-text').val(),
+				lang: $('#input-lang').val(),
+				mimeType: $('#input-mimetype').val()
+			}];
+
+			var rawJson = $('#input-json').val();
+			if (rawJson) {
+				chunks = JSON.parse(rawJson);
+			}
+
+			var content = {
+				title: $('#input-title').val(),
+				chunks: chunks
+			};
+
+			var data = {
+				data: content
+			};
+
+			var authScheme = environment.indexOf('OSI') > -1 ? "CogSvcsAccessToken " : "Bearer ";
+
+			getToken(environment,
+				function (token) {
+					$.ajax({
+						type: 'POST',
+						url: gcmEndpoint,
+						beforeSend: function (request) {
+							request.setRequestHeader("X-UserSessionId", generateGuid());
+							request.setRequestHeader("X-CorrelationId", generateGuid());
+							request.setRequestHeader("MS-Int-AppId", "Cognitive");
+							request.setRequestHeader("Authorization", authScheme + token);
+						},
+						contentType: 'application/json',
+						data: JSON.stringify(data),
+						dataType: 'json',
+						success: function (result, status, xhr) {
+							onsuccess(result, xhr.status);
+						},
+						error: function (xhr, status, error) {
+							// callback(null, xhr.status, error);
+							console.log(xhr.status);
+							console.log(status);
+							console.log(error);
+						}
+					});
+				},
+				function (errorMessage) {
+					console.log(errorMessage);
+				}
+			);
+		}
+
+		function handleSuccess() {
+			console.log('Successful launch.');
+		}
+
+		function handleError(error) {
+			console.log('There was an error', error);
+		}
+
+		// Initialize Knockout viewmodel with available versions of the SDK
+		var vm = {
+			versions: ko.observableArray(['dev', '1.1.0', '1.0.0', '0.6.4', '0.6.3', '0.6.2', '0.6.1', '0.6.0', '0.5.9', '0.5.8', '0.5.6', '0.5.4', '0.0.3'])
+		};
+		ko.applyBindings(vm);
+	</script>
+</body>
+
+</html>
