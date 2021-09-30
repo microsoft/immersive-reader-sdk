@@ -19,7 +19,7 @@ type Message = {
     sendPreferences?: boolean;
     preferences?: string;
     disableGrammar?: boolean;
-    disableTranslation?: boolean;    
+    disableTranslation?: boolean;
 };
 
 type LaunchResponseMessage = {
