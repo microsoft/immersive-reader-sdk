@@ -4,6 +4,11 @@
   "homepage": "https://github.com/Microsoft/immersive-reader-sdk",
   "license": "MIT",
   "main": "lib/immersive-reader-sdk.js",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/microsoft/immersive-reader-sdk.git",
+    "directory":"js"
+  },
   "types": "lib/immersive-reader-sdk.d.ts",
   "devDependencies": {
     "@types/jest": "^26.0.20",
