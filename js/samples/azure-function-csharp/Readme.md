@@ -17,7 +17,7 @@ This function returns an Azure AD token in order to call an Immersive Reader res
 
     > dotnet add package Microsoft.Azure.Services.AppAuthentication --version 1.6.1
 
-3. Replace the `<subdomain>` place holder into **getADTokenNet.cs**, it should be the same generated in **Prerequisites** section.
+3. Replace the `<subdomain>` place holder into **ManagedIdentityAzureADTokenProvider.cs**. Subdomain value is generated when creating your Immersive Reader resource as described in the **Prerequisites** section.
 
 4. Run the command below to test the function locally.
 
@@ -25,7 +25,7 @@ This function returns an Azure AD token in order to call an Immersive Reader res
 
     ![FuncHost](images/funchost.png)
 
-5. It will start a local development server on port 7071, try accesing `http://localhost:7071/api/getADTokenNet` in your browser and you will see an AD token render on page.
+5. This will start a local development server on port 7071. Browse to `http://localhost:7071/api/GetAzureADToken` and you will see an Azure AD token displayed on the page.
 
     ![FuncResponse](images/funcresponse.png)
 
@@ -35,15 +35,19 @@ This function returns an Azure AD token in order to call an Immersive Reader res
 
     ![](images/azfunc1.png)
 
-2. Select the first option to **Create new Function App in Azure…** make sure it is NOT the **Advanced**.
+2. Select the first option to **Create new Function App in Azure…** 
+
+    Make sure it is NOT the **Advanced**.
 
     ![](images/azfunc2.png)
 
-3. You must enter a unique globally name for the function, an error will be shown in case it already exists.
+3. You must enter a unique globally name for the function. 
+
+    An error will be shown in case it already exists.
 
     ![](images/azfunc3.png)
 
-4. Select the runtime stack .Net Core 3.1
+4. Select the runtime stack .Net 5
 
     ![](images/azfunc4.png)
 
@@ -51,17 +55,27 @@ This function returns an Azure AD token in order to call an Immersive Reader res
 
     ![](images/azfunc5.png)
 
-6. The function is being created on Azure now, you will see the status on the bottom right corner of VS Code and a confirmation message when completed.
+6. The function is being created on Azure now. 
+
+    You will see the status on the bottom right corner of VS Code and a confirmation message when completed.
 
     ![](images/azfunc6.png)
 
-7. Go to your subscription, expand your function > **Functions** and right click over your function name and click on **Copy Function Url**.
+7. Go to your subscription.
+
+    Expand your function > **Functions**.
+    
+    Right-click over your function name and click on **Copy Function Url**.
 
     ![](images/azfunc7.png)
 
-8. This value copied is the URL to be used in your apps to call this function, it includes a `code` param that can be passed either in the querystring parameters or in the request header.
+8. This is the URL to be used in your apps to call this function. 
 
-    > Example: https://funcadtoken.azurewebsites.net/api/getadtokennet?code=JC64NBXjg6U9CarjJaJxbBqhFjHBlaUPNDa2btCMxFGVwe24B1E8EQ%3D%3D
+    It includes a `code` param that can be passed either in the querystring parameters or in the request header.
+
+    > Example: https://funcazureadtoken.azurewebsites.net/api/getazureadtoken?code=[YOUR_FUNCTION_SECRET_APIKEY]
+
+    `code` is an API key assigned by default to your function 
 
     See the code samples below to see how the Azure function is called.
 
@@ -79,15 +93,25 @@ This function returns an Azure AD token in order to call an Immersive Reader res
 
     ![](images/azpor1.png)
 
-3. Scroll down until **CORS** option, click on it and list all the allowed origins for this function. This config is needed when the callers are web applications.
+3. Scroll down until **CORS** option and click on it.
+
+    Add all the allowed origins for this function. 
+    
+    This config is needed when the callers are web applications.
+
+    Example values are `https://localhost:44347` when you call it from your local host server in .Net, or `https://localhost:3000` when called from a local NodeJS app.
 
     ![](images/azpor2.png)
 
 ## Configure Managed Identities
 
+Follow the next steps to add permissions to your Immersive Reader resource for the Managed identities. This allowas the Azure AD tokens acquired by the MI to work with your IR resource.
+
 1. Scroll down until **Identity** option and click on it.
 
-2. Make sure you are into **System assigned** tab, set **Status On** and click on **Save**.
+2. Make sure you have selected the **System assigned** tab.
+
+    Set **Status On** and click on **Save**.
 
     ![](images/azid1.png)
 
@@ -95,7 +119,9 @@ This function returns an Azure AD token in order to call an Immersive Reader res
 
     ![](images/azid2.png)
 
-4. Search for **Immersive Reader** resource, click on the listed resource.
+4. Go to the **Search resources** textbox in the top of the Azure portal.
+
+    Search for **Immersive Reader** resource and click on the listed resource.
 
     ![](images/azid3.png)
 
@@ -103,15 +129,38 @@ This function returns an Azure AD token in order to call an Immersive Reader res
 
     ![](images/azid4.png)
 
-6. Specify the values below for the options displayed on the right and press **Save**.
+6. Select **Cognitive Services User** role and press **Next**.
+
+    ![](images/azid6.png)
+
+7. Select **Managed identity** in the **Assign access to** option and then press **+ Select members**.
+
+    Specify the values below for the options displayed on the right.
+
+    **Managed identity**: Function App
     
-    Role: Cognitive Services Data Reader (Preview).
-    Assign access to: Function app
-    Select: click on your function name.
+    **Select**: click on your function name. After this your function must be added into **Selected members:**.
 
-    ![](images/azid5.png)
+    Press **Select**.
 
-7. Repeat steps 5 and 6 but now for role **Cognitive Services User**.
+    ![](images/azid7.png)
+
+8. Your function info is displayed now.
+
+    Press **Review + assign**.
+
+    ![](images/azid8.png)
+
+7. Confirmation message is displayed when the role is assigned.
+
+    ![](images/azid9.png)
+
+
+## See also
+
+* [About Azure Functios](https://docs.microsoft.com/en-us/azure/azure-functions/functions-overview)
+* [Create first function C#](https://docs.microsoft.com/en-us/azure/azure-functions/create-first-function-vs-code-csharp?tabs=in-process&pivots=programming-runtime-functions-v3)
+* [Running functions on .NET 5.0 in Azure](https://docs.microsoft.com/en-us/azure/azure-functions/dotnet-isolated-process-guide)
 
 ## License
 
