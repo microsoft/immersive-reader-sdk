@@ -10,7 +10,7 @@ namespace quickstart_azure_function_csharp.GetAzureADToken
 {
     public static class ManagedIdentityAzureADTokenProvider
     {
-        const string subdomain = "ImmersiveReader-TestCristobal072021";
+        const string subdomain = "<subdomain>";
 
         [Function("GetAzureADToken")]
         public static async Task<HttpResponseData> Run([HttpTrigger(AuthorizationLevel.Function, "get", "post")] HttpRequestData req, FunctionContext executionContext)
