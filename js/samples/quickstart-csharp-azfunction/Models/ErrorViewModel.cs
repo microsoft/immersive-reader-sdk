@@ -1,6 +1,6 @@
 using System;
 
-namespace ImmersiveReader_testapp_mvc.Models
+namespace quickstart_csharp_azfunction.Models
 {
     public class ErrorViewModel
     {

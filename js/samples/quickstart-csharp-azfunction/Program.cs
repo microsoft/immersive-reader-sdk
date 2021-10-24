@@ -1,7 +1,7 @@
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Hosting;
 
-namespace ImmersiveReader_testapp_mvc
+namespace quickstart_csharp_azfunction
 {
     public class Program
     {

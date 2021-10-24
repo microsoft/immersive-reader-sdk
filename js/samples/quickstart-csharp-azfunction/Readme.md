@@ -6,13 +6,13 @@ This code sample shows how to get Azure AD token from an Azure function.
 
 * A function already created and deployed into Azure, see this [Azure function code sample](https://github.com/microsoft/immersive-reader-sdk/tree/master/js/samples/azure-function-csharp).
         
-        You must have the Azure function code sample setup and running to get the `YOUR_FUNCTION_LOCAL` value to be used in the next section.
+    You must have the Azure function code sample setup and running to get the `YOUR_FUNCTION_LOCAL` value to be used in the next section.
 
-        Follow [these steps]() and run the function either pressing **F5** or with the command below:
+    Follow the steps in the sample and run the function either pressing **F5** or with the command below:
 
-        > func host start
+    > func host start
 
-        You must deploy the function to Azure first to get the `YOUR_FUNCTION_URL`.
+    You must deploy the function to Azure first to get the `YOUR_FUNCTION_URL` value.
 
 * [Visual Studio 2019](https://visualstudio.microsoft.com/downloads)
 
@@ -34,7 +34,7 @@ This code sample shows how to get Azure AD token from an Azure function.
 
 4. Select option to get the token, make sure to have the function either running locally or deployed according to your choose.
 
-    ![FuncHost](images/gettoken.png)
+    ![FuncHost](wwwroot/images/gettoken.png)
 
 ## Disclaimer
 
@@ -44,7 +44,7 @@ That Production auth is beyond the scope of this sample.
 
 ## See also
 
-[Function Access Keys](https://docs.microsoft.com/en-us/azure/azure-functions/functions-bindings-http-webhook-trigger?tabs=csharp#authorization-keys)
+* [Function Access Keys](https://docs.microsoft.com/en-us/azure/azure-functions/functions-bindings-http-webhook-trigger?tabs=csharp#authorization-keys)
 
 ## License
 

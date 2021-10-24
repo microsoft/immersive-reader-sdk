@@ -3,7 +3,6 @@
   <PropertyGroup>
     <TargetFramework>net5.0</TargetFramework>
     <RootNamespace>quickstart-csharp-azfunction</RootNamespace>
-    <UserSecretsId>5b5d5969-5a88-4bbd-9c56-7b66c70222d5</UserSecretsId>
   </PropertyGroup>
 
   <ItemGroup>

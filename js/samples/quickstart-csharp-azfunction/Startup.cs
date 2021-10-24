@@ -4,7 +4,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 
-namespace ImmersiveReader_testapp_mvc
+namespace quickstart_csharp_azfunction
 {
     public class Startup
     {
