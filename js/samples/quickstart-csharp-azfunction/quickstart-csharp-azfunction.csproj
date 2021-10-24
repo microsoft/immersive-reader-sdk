@@ -3,10 +3,28 @@
   <PropertyGroup>
     <TargetFramework>net5.0</TargetFramework>
     <RootNamespace>quickstart-csharp-azfunction</RootNamespace>
+    <UserSecretsId>5b5d5969-5a88-4bbd-9c56-7b66c70222d5</UserSecretsId>
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Remove="Properties\PublishProfiles\**" />
+    <Compile Remove="Properties\ServiceDependencies\**" />
+    <Content Remove="Properties\PublishProfiles\**" />
+    <Content Remove="Properties\ServiceDependencies\**" />
+    <EmbeddedResource Remove="Properties\PublishProfiles\**" />
+    <EmbeddedResource Remove="Properties\ServiceDependencies\**" />
+    <None Remove="Properties\PublishProfiles\**" />
+    <None Remove="Properties\ServiceDependencies\**" />
+    <_WebToolingArtifacts Remove="Properties\PublishProfiles\**" />
+    <_WebToolingArtifacts Remove="Properties\ServiceDependencies\**" />
+  </ItemGroup>
+
+  <ItemGroup>
     <PackageReference Include="Microsoft.IdentityModel.Clients.ActiveDirectory" Version="5.2.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="wwwroot\images\" />
   </ItemGroup>
 
 </Project>

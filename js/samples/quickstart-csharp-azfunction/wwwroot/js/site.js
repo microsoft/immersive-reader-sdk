@@ -1,6 +1,6 @@
 ﻿function getTokenAndLaunch() {
 
-    getTokenAzure(
+    getTokenFromAzureFunction(
         function (response) {
             launchInternal(response.subdomain, response.token);
         },
@@ -10,15 +10,15 @@
     );
 }
 
-function getTokenAzure(onsuccess, onerror) {
-    // Calling Azure function to get AD token
+function getTokenFromAzureFunction(onsuccess, onerror) {
+    // Calling Azure function to get Azure AD token
     // Function URL example: https://<function-name>.azurewebsites.net/api/<method-name>
-    var tokenUrl = '<your_function_url>';
+    var tokenUrl =  (tokenFrom == 'local') ? functionLocalUrl : functionUrl;
 
     $.ajax(tokenUrl, {
         method: 'GET',
         beforeSend: function (request) {
-            request.setRequestHeader("x-functions-key", "<your-function-code>");
+            request.setRequestHeader("x-functions-key", functionApiKey);
         },
         success: function (data) {
             onsuccess(data);
@@ -41,8 +41,7 @@ function launchInternal(subdomain, token) {
     };
 
     const options = {
-        "onExit": exitCallback,
-        "uiZIndex": 2000
+        "onExit": exitCallback
     };
 
     ImmersiveReader.launchAsync(token, subdomain, data, options)
@@ -51,7 +50,6 @@ function launchInternal(subdomain, token) {
             console.log(error);
         });
 
-    console.log(options);
 }
 
 function exitCallback() {
