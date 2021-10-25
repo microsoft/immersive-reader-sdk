@@ -11,8 +11,11 @@ import android.webkit.WebView
 import android.widget.Button
 import android.webkit.WebViewClient
 import android.widget.LinearLayout
+import android.widget.RadioButton
 import android.widget.TextView
 import com.google.gson.*
+import io.github.cdimascio.dotenv.dotenv
+import kotlinx.android.synthetic.main.activity_main.*
 import java.io.IOException
 import java.io.*
 import java.net.HttpURLConnection
@@ -24,6 +27,14 @@ import java.util.*
 
 
 class MainActivity : AppCompatActivity() {
+    private val dotEnv = dotenv {
+        directory = "/assets"
+        filename = "env"
+        ignoreIfMalformed = true
+        ignoreIfMissing = true
+    }
+
+    var tokenFrom = "local"
 
     private lateinit var contextualWebView: WebView
 
@@ -32,6 +43,13 @@ class MainActivity : AppCompatActivity() {
         this.supportActionBar!!.hide()
         setContentView(R.layout.activity_main)
         val immersiveReaderButton = findViewById<Button>(R.id.LaunchImmersiveReaderButton)
+
+        rgGetToken.setOnCheckedChangeListener{ rgGetToken, i ->
+            val rb = findViewById<RadioButton>(i)
+            if(rb != null)
+                tokenFrom = rb.text.toString()
+        }
+
         immersiveReaderButton.setOnClickListener { GlobalScope.launch { handleLoadImmersiveReaderWebView() } }
     }
 
@@ -75,18 +93,27 @@ class MainActivity : AppCompatActivity() {
     }
 
     private suspend fun getImmersiveReaderTokenAsync(): String {
-        return getToken()
+        return getTokenFromAzureFunction()
     }
 
     @Throws(IOException::class)
-    fun getToken(): String {
+    fun getTokenFromAzureFunction(): String {
         // Calling Azure function to get AD token
-        val tokenUrl = URL("<YOUR_FUNCTION_URL>")
+        var secretUrlString = ""
+        val apiKey = dotEnv["FUNCTION_API_KEY"]
+
+        if ( tokenFrom == "Local"){
+            secretUrlString = "FUNCTION_URL_LOCAL"
+        } else {
+            secretUrlString = "FUNCTION_URL"
+        }
+
+        val tokenUrl = URL(dotEnv[secretUrlString])
 
         val connection = tokenUrl.openConnection() as HttpURLConnection
         connection.requestMethod = "POST"
         // Sending 'code' parameter obtained after the function was deployed.
-        connection.setRequestProperty("x-functions-key", "<YOUR_FUNCTION_CODE>")
+        connection.setRequestProperty("x-functions-key", apiKey)
         connection.doOutput = true
 
         val responseCode = connection.responseCode
