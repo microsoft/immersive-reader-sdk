@@ -9,7 +9,7 @@ export type Options = {
     onExit?: () => any;        // Executes when the Immersive Reader exits
     customDomain?: string;     // Reserved for internal use. Custom domain where the Immersive Reader webapp is hosted (default is null).
     allowFullscreen?: boolean; // The ability to toggle fullscreen (default is true).
-    parent?: any;               // Node in which the iframe/webview container is placed (default is body).
+    parent?: Node;             // Node in which the iframe/webview container is placed (default is body).
     hideExitButton?: boolean;  // Whether or not to hide the Immersive Reader's exit button arrow (default is false). This should only be true if there is an alternative mechanism provided to exit the Immersive Reader (e.g a mobile toolbar's back arrow).
     cookiePolicy?: CookiePolicy;             // Setting for the Immersive Reader's cookie usage (default is CookiePolicy.Disable). It's the responsibility of the host application to obtain any necessary user consent in accordance with EU Cookie Compliance Policy.
     disableFirstRun?: boolean;               // Disable the first run experience.
@@ -42,5 +42,5 @@ export type DisplayOptions = {
     textSize?: number;          // Valid values are 14, 20, 28, 36, 42, 48, 56, 64, 72, 84, 96.
     increaseSpacing?: boolean;  // Set whether increased spacing is enabled.
     fontFamily?: string;        // Valid values are 'Calibri', 'ComicSans', and 'Sitka'
-    themeOption?: ThemeOption               // option to set custom theme
+    themeOption?: ThemeOption   // option to set custom theme
 };
