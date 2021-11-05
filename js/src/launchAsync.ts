@@ -20,6 +20,7 @@ type Message = {
     preferences?: string;
     disableGrammar?: boolean;
     disableTranslation?: boolean;
+    disableLanguageDetection?: boolean;
 };
 
 type LaunchResponseMessage = {
@@ -167,7 +168,8 @@ export function launchAsync(token: string, subdomain: string, content: Content, 
                     sendPreferences: !!options.onPreferencesChanged,
                     preferences: options.preferences,
                     disableTranslation: options.disableTranslation,
-                    disableGrammar: options.disableGrammar
+                    disableGrammar: options.disableGrammar,
+                    disableLanguageDetection: options.disableLanguageDetection
                 };
                 iframe.contentWindow!.postMessage(JSON.stringify({ messageType: 'Content', messageValue: message }), '*');
             } else if (e.data === 'ImmersiveReader-Exit') {
@@ -272,6 +274,14 @@ export function launchAsync(token: string, subdomain: string, content: Content, 
 
         if (options.uiLang) {
             src += '&omkt=' + options.uiLang;
+        }
+
+        // The default value for disableLanguageDetection is true, and is used too if option is missed.
+        // Otherwise just take the explicit value of false.
+        if (options.disableLanguageDetection === false) {
+            src += '&disableLanguageDetection=false';
+        } else {
+            src += '&disableLanguageDetection=true';
         }
 
         iframe.src = src;
