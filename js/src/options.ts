@@ -19,7 +19,8 @@ export type Options = {
     preferences?: string;                           // String returned from onPreferencesChanged representing the user's preferences in the Immersive Reader.
     onPreferencesChanged?: (value: string) => any;  // Executes when the user's preferences have changed.
     disableGrammar?: boolean;       // Option to disable Grammar
-    disableTranslation?: boolean;   // Option to disable translation
+    disableTranslation?: boolean;   // Option to disable Translation
+    disableLanguageDetection?: boolean;      // Option to disable Language Detection and use only the language that is explicitly specified on the chunk
 };
 
 export enum CookiePolicy { Disable, Enable }

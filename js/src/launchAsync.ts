@@ -20,6 +20,7 @@ type Message = {
     preferences?: string;
     disableGrammar?: boolean;
     disableTranslation?: boolean;
+    disableLanguageDetection?: boolean;
 };
 
 type LaunchResponseMessage = {
@@ -169,7 +170,8 @@ export function launchAsync(token: string, subdomain: string, content: Content, 
                     sendPreferences: !!options.onPreferencesChanged,
                     preferences: options.preferences,
                     disableTranslation: options.disableTranslation,
-                    disableGrammar: options.disableGrammar
+                    disableGrammar: options.disableGrammar,
+                    disableLanguageDetection: options.disableLanguageDetection
                 };
                 iframe.contentWindow!.postMessage(JSON.stringify({ messageType: 'Content', messageValue: message }), '*');
             } else if (e.data === 'ImmersiveReader-Exit') {
@@ -274,6 +276,21 @@ export function launchAsync(token: string, subdomain: string, content: Content, 
 
         if (options.uiLang) {
             src += '&omkt=' + options.uiLang;
+        }
+
+        // The default value is false due to language detection is always active, set option only when is true
+        if (options.disableLanguageDetection) {
+            src += '&disableLanguageDetection=true';
+        }
+
+        // The default value is false due to Grammar controls are always enabled and visible, set option only when is true
+        if (options.disableGrammar) {
+            src += '&disableGrammar=true';
+        }
+
+        // The default value is false due to Translation controls are always enabled and visible, set option only when is true
+        if (options.disableTranslation) {
+            src += '&disableTranslation=true';
         }
 
         iframe.src = src;
