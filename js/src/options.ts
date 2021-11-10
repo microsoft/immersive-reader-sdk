@@ -20,7 +20,7 @@ export type Options = {
     onPreferencesChanged?: (value: string) => any;  // Executes when the user's preferences have changed.
     disableGrammar?: boolean;       // Option to disable Grammar
     disableTranslation?: boolean;   // Option to disable translation
-    disableLanguageDetection?: boolean;      // Option to disable language detection
+    disableLanguageDetection?: boolean;      // SDK option override to disable lang detection and use only the explicitly tagged language
 };
 
 export enum CookiePolicy { Disable, Enable }

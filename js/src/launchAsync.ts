@@ -276,7 +276,7 @@ export function launchAsync(token: string, subdomain: string, content: Content, 
             src += '&omkt=' + options.uiLang;
         }
 
-        // Set option only when is true
+        // The default value is false due to language detection is always active, set option only when is true
         if (options.disableLanguageDetection) {
             src += '&disableLanguageDetection=true';
         }
