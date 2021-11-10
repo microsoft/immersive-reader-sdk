@@ -276,8 +276,7 @@ export function launchAsync(token: string, subdomain: string, content: Content, 
             src += '&omkt=' + options.uiLang;
         }
 
-        // The default value for disableLanguageDetection is false, and is used too if option is missed.
-        // Otherwise just take the explicit value of true.
+        // Set option only when is true
         if (options.disableLanguageDetection) {
             src += '&disableLanguageDetection=true';
         }
