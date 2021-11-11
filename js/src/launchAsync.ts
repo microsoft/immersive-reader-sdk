@@ -316,7 +316,7 @@ export function isValidSubdomain(subdomain: string): boolean {
         return false;
     }
 
-    const validRegex = '^[a-zA-Z0-9]|[a-zA-Z0-9][a-zA-Z0-9\\-]{0,61}[a-zA-Z0-9]$';
+    const validRegex = '^([a-zA-Z0-9]|[a-zA-Z0-9][a-zA-Z0-9\\-]{0,61}[a-zA-Z0-9])$';
     const regExp = new RegExp(validRegex);
 
     return regExp.test(subdomain);
