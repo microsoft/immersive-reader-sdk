@@ -1,17 +1,7 @@
 {{page-title "Reader"}}
 
-<div style="margin-left: 20px;">
-
-  <div>
-    <h3>Step 1: Fetch Credentials</h3>
-    <button type="button" {{on "click" this.getCredentials}}>Get Credentials!</button>
-  </div>
-
-  <div>
-    <h3>Step 2: try out the reader on the text below!</h3>
-    <button class="immersive-reader-button" data-button-style="iconAndText" data-locale="en" {{on "click"
-      this.launchReader}}></button>
-  </div>
+<div style="margin-right: 20px; position: relative; display: block; left: 0; top: 20px; height: 50px;">
+  <button class="immersive-reader-button" data-button-style="iconAndText" data-locale="en" {{on "click" this.launchReader}} style="position: absolute; display: inline-block; right: 0; top: 0;"></button>
 </div>
 
 <div>

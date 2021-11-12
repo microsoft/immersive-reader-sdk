@@ -1,4 +1,4 @@
-import Component from '@ember/component';
+import Component from '@glimmer/component';
 import { action } from '@ember/object';
 import { tracked } from '@glimmer/tracking';
 import fetch from 'fetch'
@@ -9,8 +9,7 @@ export default class ReaderViewComponent extends Component {
     @tracked token = null;
     @tracked subdomain = null;
 
-    @action
-    async getCredentials() {
+    async getTokenAndSubdomainAsync() {
         try {
             const response = await fetch(`http://localhost:3001/GetTokenAndSubdomain`, {
                 method: 'GET',
@@ -19,7 +18,6 @@ export default class ReaderViewComponent extends Component {
             const { token, subdomain } = json;
             this.token = token;
             this.subdomain = subdomain;
-            alert('Credentials successfully retrieved!')
         }
         catch (err) {
             alert('There was a problem fetching your credentials, please check the console and make sure your environment variables are set');
@@ -33,7 +31,7 @@ export default class ReaderViewComponent extends Component {
 
     @action
     async launchReader() {
-
+        await this.getTokenAndSubdomainAsync();
         const data = {
             title: document.getElementById('ir-title').innerText,
             chunks: [{
