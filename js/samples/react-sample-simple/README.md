@@ -1,4 +1,4 @@
-# Immersive Reader - React Sample
+# Immersive Reader - React Sample Simple
 
 ## Prerequisites
 
@@ -9,7 +9,7 @@
 
 1. Open a command prompt (Windows) or terminal (OSX, Linux)
 
-1. Navigate to the **immersive-reader-sdk/js/samples/react-sample** directory
+1. Navigate to the **immersive-reader-sdk/js/samples/react-sample-simple** directory
 
 1. Run `yarn install`
 

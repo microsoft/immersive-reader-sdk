@@ -44,7 +44,7 @@ function App() {
 
     }
     catch (err) {
-      alert('There was a problem fetching your credentials, please check the console and make sure your environment variables are prefixed with REACT_APP_');
+      alert('There was a problem fetching your credentials, please check the console and make sure your environment variables are correct');
       console.log({ err })
     }
   }
