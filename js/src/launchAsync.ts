@@ -116,6 +116,7 @@ export function launchAsync(token: string, subdomain: string, content: Content, 
             }
         };
 
+        options.parent = options.parent === null ? document.body : options.parent;
         const parent = options.parent ? options.parent : document.body;
 
         const reset = (): void => {
