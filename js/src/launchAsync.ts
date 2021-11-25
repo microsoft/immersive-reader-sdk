@@ -21,6 +21,7 @@ type Message = {
     disableGrammar?: boolean;
     disableTranslation?: boolean;
     disableLanguageDetection?: boolean;
+    disablePlayPause?: boolean;
 };
 
 type LaunchResponseMessage = {
@@ -171,7 +172,8 @@ export function launchAsync(token: string, subdomain: string, content: Content, 
                     preferences: options.preferences,
                     disableTranslation: options.disableTranslation,
                     disableGrammar: options.disableGrammar,
-                    disableLanguageDetection: options.disableLanguageDetection
+                    disableLanguageDetection: options.disableLanguageDetection,
+                    disablePlayPause: options.disablePlayPause
                 };
                 iframe.contentWindow!.postMessage(JSON.stringify({ messageType: 'Content', messageValue: message }), '*');
             } else if (e.data === 'ImmersiveReader-Exit') {
@@ -203,7 +205,7 @@ export function launchAsync(token: string, subdomain: string, content: Content, 
                         container: iframeContainer,
                         sessionId: response.sessionId,
                         charactersProcessed: response.meteredContentSize,
-                        postLaunchOperations: {
+                        postLaunchOperations: options.disablePlayPause ? null : {
                             pause: () => {
                                 iframe.contentWindow!.postMessage(JSON.stringify({ messageType: 'InstrumentationCommand', messageValue: pauseMessageValue }), '*');
                             },
