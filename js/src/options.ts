@@ -21,7 +21,7 @@ export type Options = {
     disableGrammar?: boolean;       // Option to disable Grammar
     disableTranslation?: boolean;   // Option to disable Translation
     disableLanguageDetection?: boolean;      // Option to disable Language Detection and use only the language that is explicitly specified on the chunk
-    disablePlayPause?: boolean;      // Option to prevent Play and Pause methods to be available.
+    providePlayPauseControl?: boolean;      // Option to prevent Play and Pause methods to be available.
 };
 
 export enum CookiePolicy { Disable, Enable }
