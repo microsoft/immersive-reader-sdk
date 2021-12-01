@@ -205,7 +205,7 @@ export function launchAsync(token: string, subdomain: string, content: Content, 
                         container: iframeContainer,
                         sessionId: response.sessionId,
                         charactersProcessed: response.meteredContentSize,
-                        postLaunchOperations: options.providePlayPauseControl === true && {
+                        postLaunchOperations: options.providePlayPauseControl === false ? null : {
                             pause: () => {
                                 iframe.contentWindow!.postMessage(JSON.stringify({ messageType: 'InstrumentationCommand', messageValue: pauseMessageValue }), '*');
                             },
