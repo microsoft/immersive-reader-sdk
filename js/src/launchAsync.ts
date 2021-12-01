@@ -116,8 +116,7 @@ export function launchAsync(token: string, subdomain: string, content: Content, 
             }
         };
 
-        options.parent = options.parent && document.contains(options.parent) ? options.parent : document.body;
-        const parent = options.parent;
+        const parent = options.parent && document.contains(options.parent) ? options.parent : document.body;
 
         const reset = (): void => {
             // Remove container along with the iframe inside of it
