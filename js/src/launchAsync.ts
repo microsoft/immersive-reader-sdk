@@ -205,14 +205,14 @@ export function launchAsync(token: string, subdomain: string, content: Content, 
                         container: iframeContainer,
                         sessionId: response.sessionId,
                         charactersProcessed: response.meteredContentSize,
-                        postLaunchOperations: options.providePlayPauseControl === false ? null : {
+                        postLaunchOperations: options.providePlayPauseControl === true ? {
                             pause: () => {
                                 iframe.contentWindow!.postMessage(JSON.stringify({ messageType: 'InstrumentationCommand', messageValue: pauseMessageValue }), '*');
                             },
                             play: () => {
                                 iframe.contentWindow!.postMessage(JSON.stringify({ messageType: 'InstrumentationCommand', messageValue: playMessageValue }), '*');
                             }
-                        }
+                        } : null
                     };
                 } else if (response && !response.success) {
                     error = {
