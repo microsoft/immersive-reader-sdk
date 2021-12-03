@@ -280,21 +280,6 @@ export function launchAsync(token: string, subdomain: string, content: Content, 
             src += '&omkt=' + options.uiLang;
         }
 
-        // The default value is false due to language detection is always active, set option only when is true
-        if (options.disableLanguageDetection) {
-            src += '&disableLanguageDetection=true';
-        }
-
-        // The default value is false due to Grammar controls are always enabled and visible, set option only when is true
-        if (options.disableGrammar) {
-            src += '&disableGrammar=true';
-        }
-
-        // The default value is false due to Translation controls are always enabled and visible, set option only when is true
-        if (options.disableTranslation) {
-            src += '&disableTranslation=true';
-        }
-
         iframe.src = src;
 
         iframeContainer.style.cssText = options.parent ? `position: relative; width: 100%; height: 100%; border-width: 0; -webkit-perspective: 1px; z-index: ${options.uiZIndex}; background: white; overflow: hidden` : `position: fixed; width: 100vw; height: 100vh; left: 0; top: 0; border-width: 0; -webkit-perspective: 1px; z-index: ${options.uiZIndex}; background: white; overflow: hidden`;
