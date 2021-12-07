@@ -18,6 +18,10 @@ type Message = {
     displayOptions?: DisplayOptions;
     sendPreferences?: boolean;
     preferences?: string;
+    disableGrammar?: boolean;
+    disableTranslation?: boolean;
+    disableLanguageDetection?: boolean;
+    providePlayPauseControl?: boolean;
 };
 
 type LaunchResponseMessage = {
@@ -101,6 +105,8 @@ export function launchAsync(token: string, subdomain: string, content: Content, 
         const iframeContainer: HTMLDivElement = document.createElement('div');
         const iframe: HTMLIFrameElement = options.useWebview ? <HTMLIFrameElement>document.createElement('webview') : document.createElement('iframe');
         iframe.allow = 'autoplay';
+        iframe.title = 'Immersive Reader Frame';
+        iframe.setAttribute('aria-modal', 'true');
         const noscroll: HTMLStyleElement = document.createElement('style');
         noscroll.innerHTML = 'body{height:100%;overflow:hidden;}';
 
@@ -111,7 +117,7 @@ export function launchAsync(token: string, subdomain: string, content: Content, 
             }
         };
 
-        const parent = options.parent ? options.parent : document.body;
+        const parent = options.parent && document.contains(options.parent) ? options.parent : document.body;
 
         const reset = (): void => {
             // Remove container along with the iframe inside of it
@@ -132,12 +138,15 @@ export function launchAsync(token: string, subdomain: string, content: Content, 
 
         const exit = (): void => {
             reset();
+            isLoading = false;
 
             // Execute exit callback if we have one
             if (options.onExit) {
                 try {
                     options.onExit();
-                } catch { }
+                } catch {
+                    // No-op
+                }
             }
         };
 
@@ -160,7 +169,11 @@ export function launchAsync(token: string, subdomain: string, content: Content, 
                     translationOptions: options.translationOptions,
                     displayOptions: options.displayOptions,
                     sendPreferences: !!options.onPreferencesChanged,
-                    preferences: options.preferences
+                    preferences: options.preferences,
+                    disableTranslation: options.disableTranslation,
+                    disableGrammar: options.disableGrammar,
+                    disableLanguageDetection: options.disableLanguageDetection,
+                    providePlayPauseControl: options.providePlayPauseControl
                 };
                 iframe.contentWindow!.postMessage(JSON.stringify({ messageType: 'Content', messageValue: message }), '*');
             } else if (e.data === 'ImmersiveReader-Exit') {
@@ -177,10 +190,29 @@ export function launchAsync(token: string, subdomain: string, content: Content, 
                 }
 
                 if (response && response.success) {
+
+                    const playMessageValue: any = {
+                        command: 'PlayState',
+                        parameters: 'Play'
+                    };
+
+                    const pauseMessageValue: any = {
+                        command: 'PlayState',
+                        parameters: 'Pause'
+                    };
+
                     launchResponse = {
                         container: iframeContainer,
                         sessionId: response.sessionId,
-                        charactersProcessed: response.meteredContentSize
+                        charactersProcessed: response.meteredContentSize,
+                        postLaunchOperations: options.providePlayPauseControl === true ? {
+                            pause: () => {
+                                iframe.contentWindow!.postMessage(JSON.stringify({ messageType: 'InstrumentationCommand', messageValue: pauseMessageValue }), '*');
+                            },
+                            play: () => {
+                                iframe.contentWindow!.postMessage(JSON.stringify({ messageType: 'InstrumentationCommand', messageValue: playMessageValue }), '*');
+                            }
+                        } : null
                     };
                 } else if (response && !response.success) {
                     error = {
@@ -207,7 +239,9 @@ export function launchAsync(token: string, subdomain: string, content: Content, 
                 if (options.onPreferencesChanged && typeof options.onPreferencesChanged === 'function') {
                     try {
                         options.onPreferencesChanged(e.data.substring(PostMessagePreferences.length));
-                    } catch { }
+                    } catch {
+                        // No-op
+                    }
                 }
             }
         };

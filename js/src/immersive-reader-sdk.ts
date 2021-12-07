@@ -8,7 +8,7 @@ import { CookiePolicy } from './options';
 if (typeof window !== 'undefined') {
     window.addEventListener('load', () => {
         if (!(window.hasOwnProperty('Promise'))) {
-            dynamicallyLoadScript('https://contentstorage.onenote.office.net/onenoteltir/permanent-static-resources/promise-polyfill.min.js');
+            dynamicallyLoadScript('https://ircdname.azureedge.net/permanent-static-resources/promise-polyfill.min.js');
         }
 
         renderButtons();
