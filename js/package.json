@@ -1,23 +1,23 @@
 {
   "name": "@microsoft/immersive-reader-sdk",
-  "version": "1.1.0",
+  "version": "1.2.0",
   "homepage": "https://github.com/Microsoft/immersive-reader-sdk",
   "license": "MIT",
   "main": "lib/immersive-reader-sdk.js",
   "types": "lib/immersive-reader-sdk.d.ts",
   "devDependencies": {
-    "@types/jest": "^26.0.20",
+    "@types/jest": "^27.0.2",
     "@types/node": "^12.12.14",
-    "jest": "^26.6.3",
+    "jest": "^27.3.1",
     "replace-in-file": "^3.4.4",
-    "ts-jest": "^26.4.4",
+    "ts-jest": "^27.0.7",
     "ts-loader": "^5.3.3",
     "tslint": "^5.14.0",
     "tslint-loader": "^3.5.4",
     "tslint-microsoft-contrib": "^6.1.0",
     "typescript": "^3.8",
-    "webpack": "^4.46.0",
-    "webpack-cli": "^4.3.1"
+    "webpack": "^5.64.0",
+    "webpack-cli": "^4.9.1"
   },
   "scripts": {
     "build": "webpack --config webpack.config.js",
@@ -26,6 +26,10 @@
     "test": "jest"
   },
   "jest": {
-    "preset": "ts-jest"
+    "preset": "ts-jest",
+    "testEnvironment": "jsdom"
+  },
+  "dependencies": {
+    "json-schema": "^0.4.0"
   }
 }
