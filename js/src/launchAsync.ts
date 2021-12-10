@@ -196,9 +196,19 @@ export function launchAsync(token: string, subdomain: string, content: Content, 
                         parameters: 'Play'
                     };
 
+                    const playIfWasPausedMessageValue: any = {
+                        command: 'PlayState',
+                        parameters: 'PlayIfWasPaused'
+                    };
+
                     const pauseMessageValue: any = {
                         command: 'PlayState',
                         parameters: 'Pause'
+                    };
+
+                    const pauseIfWasPlayingMessageValue: any = {
+                        command: 'PlayState',
+                        parameters: 'PauseIfWasPlaying'
                     };
 
                     launchResponse = {
@@ -209,8 +219,14 @@ export function launchAsync(token: string, subdomain: string, content: Content, 
                             pause: () => {
                                 iframe.contentWindow!.postMessage(JSON.stringify({ messageType: 'InstrumentationCommand', messageValue: pauseMessageValue }), '*');
                             },
+                            pauseIfWasPlaying: () => {
+                                iframe.contentWindow!.postMessage(JSON.stringify({ messageType: 'InstrumentationCommand', messageValue: pauseIfWasPlayingMessageValue }), '*');
+                            },
                             play: () => {
                                 iframe.contentWindow!.postMessage(JSON.stringify({ messageType: 'InstrumentationCommand', messageValue: playMessageValue }), '*');
+                            },
+                            playIfWasPaused: () => {
+                                iframe.contentWindow!.postMessage(JSON.stringify({ messageType: 'InstrumentationCommand', messageValue: playIfWasPausedMessageValue }), '*');
                             }
                         } : null
                     };

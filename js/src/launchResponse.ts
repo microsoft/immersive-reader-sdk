@@ -10,5 +10,7 @@ export type LaunchResponse = {
 
 export type PostLaunchOperations = {
     pause: () => void,
-    play: () => void
+    pauseIfWasPlaying: () => void,
+    play: () => void,
+    playIfWasPaused: () => void
 };
