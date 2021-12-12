@@ -1,14 +1,11 @@
 ﻿@page
-@model AdvancedSampleWebApp.Pages.UILangsModel
-
-<!-- Copyright (c) Microsoft Corporation. All rights reserved.
-     Licensed under the MIT License. -->
+@model AdvancedSampleWebApp.Pages.OptionsModel
 
 <!doctype html>
 <html>
 <head>
     <meta charset='utf-8'>
-    <title>Immersive Reader Example: UI Langs</title>
+    <title>Immersive Reader Example: SDK options</title>
     <meta name='viewport' content='width=device-width, initial-scale=1'>
 
     <script type='text/javascript' src='https://code.jquery.com/jquery-3.3.1.min.js'></script>
@@ -72,56 +69,79 @@
         <a href='/index'>Sections</a>
         <a href='/document'>Document</a>
         <a href='/multilang'>Multilingual Document</a>
-        <a href='/uilangs' class='active'>UI Language</a>
+        <a href='/uilangs'>UI Language</a>
         <a href='/math'>Math</a>
         <a href='/worddoc'>Word Document</a>
-        <a href='/options'>Options</a>
+        <a href='/options' class='active'>Options</a>
     </nav>
 
     <main id='ContentArea'>
-        <h1>You can specify your desired language for the UI!</h1>
-        <p>If needed, the Immersive Reader's UI can be opened in a variety of languages. In order to change it, specify the language tag via the <code>uiLang</code> option</p>
+        <h1>You can disable Immersive Reader features as desired!</h1>
+        <p>These are some of the features you can disable:</p>
+        <p><code>disableGrammar</code> Parts of speech, syllables and Picture Dictionary are not going to be available.</p>
+        <p><code>disableLanguageDetection</code> Prevents Immersive Reader to detect the content language.</p>
+        <p><code>disableTranslation</code> Translation controls are going to be disabled.</p>
+        <p><code>providePlayPauseControl</code> Option to provide Play and Pause methods in the launch response.</p>
         <h3>Examples:</h3><br />
         <section class='section' id='Sample1'>
             <div class='immersive-reader-button ir-button-small' onclick='handleLaunchImmersiveReader(1)'></div>
-            Open UI with language tag: <input id='lang1' value='en' /> (i.e 'fr', 'es', 'de', 'zh')
-            <h3 id='title1'>Geography</h3>
+            Specify your content's speech language: <input id='lang1' value='en' /> (i.e 'fr', 'es', 'de', 'zh')
+            <h3 id='title1'>Geography (Content must be read in the specified language)</h3>
             <p id='text1'>The study of Earth's landforms is called physical geography. Landforms can be mountains and valleys. They can also be glaciers, lakes or rivers. Landforms are sometimes called physical features. It is important for students to know about the physical geography of Earth. The seasons, the atmosphere and all the natural processes of Earth affect where people are able to live. Geography is one of a combination of factors that people use to decide where they want to live.</p>
         </section>
         <div id='Cols'>
             <section class='section' id='Sample2'>
                 <div class='immersive-reader-button ir-button-small' onclick='handleLaunchImmersiveReader(2)'></div>
-                <h3 id='title2'>Water (open UI in Spanish - <span id='lang2'>es-es</span>)</h3>
+                <h3 id='title2'>Water (open UI without Grammar, syllables and Picture Dictionary features - <span id='lang2'>en</span>)</h3>
                 <p id='text2'>Fresh water sources also influence where people settle. People need water to drink. They also need it for washing. Throughout history, people have settled near fresh water. Living near a water source helps ensure that people have the water they need.</p>
             </section>
             <section class='section' id='Sample3'>
                 <div class='immersive-reader-button ir-button-small' onclick='handleLaunchImmersiveReader(3)'></div>
-                <h3 id='title3'>Mountain Ranges (open UI in German - <span id='lang3'>de</span>)</h3>
+                <h3 id='title3'>Mountain Ranges (open UI without Translation feature- <span id='lang3'>en</span>)</h3>
                 <p id='text3'>The physical features of a region are often rich in resources. Within a nation, mountain ranges become natural borders for settlement areas. In the U.S., major mountain ranges are the Sierra Nevada, the Rocky Mountains, and the Appalachians.</p>
             </section>
         </div>
+        <section class='section' id='Sample4'>
+            <div class='immersive-reader-button ir-button-small' onclick='handleLaunchImmersiveReader(4)'></div>
+            <button id="btnPlay" disabled type="button" onclick="window.postLaunchOperations.play()">Play</button> and <button id="btnPause" disabled type="button" onclick="window.postLaunchOperations.pause()">Pause</button> control
+            <h3 id='title4'>Kaiju (Use play and pause buttons - <span id='lang4'>en</span>)</h3>
+            <p id='text4'>Kaiju is a Japanese genre of films and television featuring giant monsters. The term kaiju can also refer to the giant monsters themselves, which are usually depicted attacking major cities and battling either with the military or other monsters. The kaiju genre is a subgenre of tokusatsu (special filming) entertainment.</p>
+            <div id="parentDiv" style="height: 400px; "></div>
+        </section>
     </main>
 
     <script type='text/javascript'>
         async function handleLaunchImmersiveReader(sampleId) {
+            var langEl = $('#lang' + sampleId);
+            var lang = langEl.val() || langEl.text();
+            
             const data = {
                 title: $('#title' + sampleId).text().trim(),
                 chunks: [{
                     content: $('#text' + sampleId).text().trim(),
-                    lang: 'en'
+                    lang: lang
                 }]
             };
 
-            var uiLangEl = $('#lang' + sampleId);
-            var uiLang = uiLangEl.val() || uiLangEl.text();
-            const options = {
-                uiLang: uiLang
-            }
+            let options = {};
+
+            options.disableLanguageDetection = sampleId === 1;
+            options.disableGrammar = sampleId === 2;
+            options.disableTranslation = sampleId === 3;
+            options.providePlayPauseControl = sampleId === 4;
+            options.parent = sampleId === 4 ? document.getElementById('parentDiv') : null;
 
             const token = await getImmersiveReaderTokenAsync(Canary);
             const subdomain = await getImmersiveReaderSubdomainAsync();
 
-            ImmersiveReader.launchAsync(token, subdomain, data, options);
+            ImmersiveReader.launchAsync(token, subdomain, data, options)
+                .then((launchResponse) => {
+                    if(options.providePlayPauseControl === true){
+                        window.postLaunchOperations = launchResponse.postLaunchOperations;
+                        $('#btnPlay').prop('disabled', false);
+                        $('#btnPause').prop('disabled', false);
+                    }
+                });
         }
     </script>
 </body>
