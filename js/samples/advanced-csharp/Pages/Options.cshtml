@@ -81,7 +81,6 @@
         <p><code>disableGrammar</code> Parts of speech, syllables and Picture Dictionary are not going to be available.</p>
         <p><code>disableLanguageDetection</code> Prevents Immersive Reader to detect the content language.</p>
         <p><code>disableTranslation</code> Translation controls are going to be disabled.</p>
-        <p><code>providePlayPauseControl</code> Option to provide Play and Pause methods in the launch response.</p>
         <h3>Examples:</h3><br />
         <section class='section' id='Sample1'>
             <div class='immersive-reader-button ir-button-small' onclick='handleLaunchImmersiveReader(1)'></div>
@@ -101,13 +100,6 @@
                 <p id='text3'>The physical features of a region are often rich in resources. Within a nation, mountain ranges become natural borders for settlement areas. In the U.S., major mountain ranges are the Sierra Nevada, the Rocky Mountains, and the Appalachians.</p>
             </section>
         </div>
-        <section class='section' id='Sample4'>
-            <div class='immersive-reader-button ir-button-small' onclick='handleLaunchImmersiveReader(4)'></div>
-            <button id="btnPlay" disabled type="button" onclick="window.postLaunchOperations.play()">Play</button> and <button id="btnPause" disabled type="button" onclick="window.postLaunchOperations.pause()">Pause</button> control
-            <h3 id='title4'>Kaiju (Use play and pause buttons - <span id='lang4'>en</span>)</h3>
-            <p id='text4'>Kaiju is a Japanese genre of films and television featuring giant monsters. The term kaiju can also refer to the giant monsters themselves, which are usually depicted attacking major cities and battling either with the military or other monsters. The kaiju genre is a subgenre of tokusatsu (special filming) entertainment.</p>
-            <div id="parentDiv" style="height: 400px; "></div>
-        </section>
     </main>
 
     <script type='text/javascript'>
@@ -128,20 +120,11 @@
             options.disableLanguageDetection = sampleId === 1;
             options.disableGrammar = sampleId === 2;
             options.disableTranslation = sampleId === 3;
-            options.providePlayPauseControl = sampleId === 4;
-            options.parent = sampleId === 4 ? document.getElementById('parentDiv') : null;
 
             const token = await getImmersiveReaderTokenAsync(Canary);
             const subdomain = await getImmersiveReaderSubdomainAsync();
 
-            ImmersiveReader.launchAsync(token, subdomain, data, options)
-                .then((launchResponse) => {
-                    if(options.providePlayPauseControl === true){
-                        window.postLaunchOperations = launchResponse.postLaunchOperations;
-                        $('#btnPlay').prop('disabled', false);
-                        $('#btnPause').prop('disabled', false);
-                    }
-                });
+            ImmersiveReader.launchAsync(token, subdomain, data, options);
         }
     </script>
 </body>
