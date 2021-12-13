@@ -21,7 +21,6 @@ type Message = {
     disableGrammar?: boolean;
     disableTranslation?: boolean;
     disableLanguageDetection?: boolean;
-    providePlayPauseControl?: boolean;
 };
 
 type LaunchResponseMessage = {
@@ -172,8 +171,7 @@ export function launchAsync(token: string, subdomain: string, content: Content, 
                     preferences: options.preferences,
                     disableTranslation: options.disableTranslation,
                     disableGrammar: options.disableGrammar,
-                    disableLanguageDetection: options.disableLanguageDetection,
-                    providePlayPauseControl: options.providePlayPauseControl
+                    disableLanguageDetection: options.disableLanguageDetection
                 };
                 iframe.contentWindow!.postMessage(JSON.stringify({ messageType: 'Content', messageValue: message }), '*');
             } else if (e.data === 'ImmersiveReader-Exit') {
@@ -191,44 +189,10 @@ export function launchAsync(token: string, subdomain: string, content: Content, 
 
                 if (response && response.success) {
 
-                    const playMessageValue: any = {
-                        command: 'PlayState',
-                        parameters: 'Play'
-                    };
-
-                    const playIfWasPausedMessageValue: any = {
-                        command: 'PlayState',
-                        parameters: 'PlayIfWasPaused'
-                    };
-
-                    const pauseMessageValue: any = {
-                        command: 'PlayState',
-                        parameters: 'Pause'
-                    };
-
-                    const pauseIfWasPlayingMessageValue: any = {
-                        command: 'PlayState',
-                        parameters: 'PauseIfWasPlaying'
-                    };
-
                     launchResponse = {
                         container: iframeContainer,
                         sessionId: response.sessionId,
-                        charactersProcessed: response.meteredContentSize,
-                        postLaunchOperations: options.providePlayPauseControl === true ? {
-                            pause: () => {
-                                iframe.contentWindow!.postMessage(JSON.stringify({ messageType: 'InstrumentationCommand', messageValue: pauseMessageValue }), '*');
-                            },
-                            pauseIfWasPlaying: () => {
-                                iframe.contentWindow!.postMessage(JSON.stringify({ messageType: 'InstrumentationCommand', messageValue: pauseIfWasPlayingMessageValue }), '*');
-                            },
-                            play: () => {
-                                iframe.contentWindow!.postMessage(JSON.stringify({ messageType: 'InstrumentationCommand', messageValue: playMessageValue }), '*');
-                            },
-                            playIfWasPaused: () => {
-                                iframe.contentWindow!.postMessage(JSON.stringify({ messageType: 'InstrumentationCommand', messageValue: playIfWasPausedMessageValue }), '*');
-                            }
-                        } : null
+                        charactersProcessed: response.meteredContentSize
                     };
                 } else if (response && !response.success) {
                     error = {

@@ -5,12 +5,4 @@ export type LaunchResponse = {
     container: HTMLDivElement;
     sessionId: string;
     charactersProcessed: number;
-    postLaunchOperations: PostLaunchOperations;
-};
-
-export type PostLaunchOperations = {
-    pause: () => void,
-    pauseIfWasPlaying: () => void,
-    play: () => void,
-    playIfWasPaused: () => void
 };
