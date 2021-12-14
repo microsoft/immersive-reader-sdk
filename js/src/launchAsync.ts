@@ -172,7 +172,7 @@ export function launchAsync(token: string, subdomain: string, content: Content, 
                     preferences: options.preferences,
                     disableTranslation: options.disableTranslation,
                     disableGrammar: options.disableGrammar,
-                    disableLanguageDetection: options.disableLanguageDetection,
+                    disableLanguageDetection: options.disableLanguageDetection
                     providePlayPauseControl: options.providePlayPauseControl
                 };
                 iframe.contentWindow!.postMessage(JSON.stringify({ messageType: 'Content', messageValue: message }), '*');
