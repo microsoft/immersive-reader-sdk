@@ -1,6 +1,6 @@
 Pod::Spec.new do |spec|
   spec.name         = "immersive-reader-sdk"
-  spec.version      = "1.0.0"
+  spec.version      = "1.2.0"
   spec.summary      = "Microsoft Cognitive Services - Immersive Reader iOS SDK"
 
   spec.description  = <<-DESC
