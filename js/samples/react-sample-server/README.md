@@ -1,4 +1,4 @@
-# Azure Immersive Reader - React + Node Sample
+# Azure Applied AI Immersive Reader - React + Node Sample
 
 
 For setting up the node server:

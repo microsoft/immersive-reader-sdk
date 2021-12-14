@@ -1,4 +1,4 @@
-# Azure Immersive Reader - Ember + Node Sample
+# Azure Applied AI Immersive Reader - Ember + Node Sample
 
 ## Prerequisites
 
