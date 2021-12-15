@@ -10,7 +10,7 @@
 
     <script type='text/javascript' src='https://code.jquery.com/jquery-3.3.1.min.js'></script>
     <script type='text/javascript' src='https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.12.1/jquery-ui.min.js'></script>
-    <script type='text/javascript' src='https://ircdname.azureedge.net/immersivereadersdk/immersive-reader-sdk.1.1.0.js'></script>
+    <script type='text/javascript' src='https://ircdname.azureedge.net/immersivereadersdk/immersive-reader-sdk.1.2.0.js'></script>
     <script type='text/javascript' src='~/js/helpers.js'></script>
 
     <link href='~/css/styles.css' rel='stylesheet'>
@@ -78,35 +78,44 @@
     <main id='ContentArea'>
         <h1>You can disable Immersive Reader features as desired!</h1>
         <p>These are some of the features you can disable:</p>
-        <p><code>disableGrammar</code> Parts of speech, syllables and Picture Dictionary are not going to be available.</p>
-        <p><code>disableLanguageDetection</code> Prevents Immersive Reader to detect the content language.</p>
-        <p><code>disableTranslation</code> Translation controls are going to be disabled.</p>
+        <p><code>disableGrammar</code> Grammar features such as Syllables, Parts of speech, and Picture Dictionary will be disabled.</p>
+        <p><code>disableLanguageDetection</code> The Language Detection feature will be disabled. This will prevent Immersive Reader from automatically detecting the language of the supplied content.</p>
+        <p><code>disableTranslation</code> The Translation features will be disabled.</p>
+        <p><code>parent</code> Immersive reader is launched in the specified element, otherwise will be launched in the main document body.</p>
         <h3>Examples:</h3><br />
-        <section class='section' id='Sample1'>
-            <div class='immersive-reader-button ir-button-small' onclick='handleLaunchImmersiveReader(1)'></div>
-            Specify your content's speech language: <input id='lang1' value='en' /> (i.e 'fr', 'es', 'de', 'zh')
-            <h3 id='title1'>Geography (Content must be read in the specified language)</h3>
-            <p id='text1'>The study of Earth's landforms is called physical geography. Landforms can be mountains and valleys. They can also be glaciers, lakes or rivers. Landforms are sometimes called physical features. It is important for students to know about the physical geography of Earth. The seasons, the atmosphere and all the natural processes of Earth affect where people are able to live. Geography is one of a combination of factors that people use to decide where they want to live.</p>
+        <section class='section' id='SampledisableLanguageDetection'>
+            <div class='immersive-reader-button ir-button-small' onclick="handleLaunchImmersiveReader('disableLanguageDetection')"></div>
+            Specify the content language: <input id='langdisableLanguageDetection' value='en' /> (i.e 'fr', 'es', 'de', 'zh')
+            <h3 id='titledisableLanguageDetection'>Geography (Speech, Syllables, Parts of Speech and Picture Dictionary are all affected by the language.)</h3>
+            <p id='textdisableLanguageDetection'>The study of Earth's landforms is called physical geography. Landforms can be mountains and valleys. They can also be glaciers, lakes or rivers. Landforms are sometimes called physical features. It is important for students to know about the physical geography of Earth. The seasons, the atmosphere and all the natural processes of Earth affect where people are able to live. Geography is one of a combination of factors that people use to decide where they want to live.</p>
         </section>
         <div id='Cols'>
-            <section class='section' id='Sample2'>
-                <div class='immersive-reader-button ir-button-small' onclick='handleLaunchImmersiveReader(2)'></div>
-                <h3 id='title2'>Water (open UI without Grammar, syllables and Picture Dictionary features - <span id='lang2'>en</span>)</h3>
-                <p id='text2'>Fresh water sources also influence where people settle. People need water to drink. They also need it for washing. Throughout history, people have settled near fresh water. Living near a water source helps ensure that people have the water they need.</p>
+            <section class='section' id='SampledisableGrammar'>
+                <div class='immersive-reader-button ir-button-small' onclick="handleLaunchImmersiveReader('disableGrammar')"></div>
+                <h3 id='titledisableGrammar'>Water (Parts of Speech, Syllables and Picture Dictionary are disabled - <span id='langdisableGrammar'>en</span>)</h3>
+                <p id='textdisableGrammar'>Fresh water sources also influence where people settle. People need water to drink. They also need it for washing. Throughout history, people have settled near fresh water. Living near a water source helps ensure that people have the water they need.</p>
             </section>
-            <section class='section' id='Sample3'>
-                <div class='immersive-reader-button ir-button-small' onclick='handleLaunchImmersiveReader(3)'></div>
-                <h3 id='title3'>Mountain Ranges (open UI without Translation feature- <span id='lang3'>en</span>)</h3>
-                <p id='text3'>The physical features of a region are often rich in resources. Within a nation, mountain ranges become natural borders for settlement areas. In the U.S., major mountain ranges are the Sierra Nevada, the Rocky Mountains, and the Appalachians.</p>
+            <section class='section' id='SampledisableTranslation'>
+                <div class='immersive-reader-button ir-button-small' onclick="handleLaunchImmersiveReader('disableTranslation')"></div>
+                <h3 id='titledisableTranslation'>Mountain Ranges (Translation disabled - <span id='langdisableTranslation'>en</span>)</h3>
+                <p id='textdisableTranslation'>The physical features of a region are often rich in resources. Within a nation, mountain ranges become natural borders for settlement areas. In the U.S., major mountain ranges are the Sierra Nevada, the Rocky Mountains, and the Appalachians.</p>
             </section>
         </div>
+        <section class='section' id='Sampleparent'>
+            <div class='immersive-reader-button ir-button-small' onclick="handleLaunchImmersiveReader('parent')"></div>
+            <input type="checkbox" id="checkboxparent" name="Parent" value="true">
+            <label for="vehicleparent"> Launch in Parent </label><br>
+            <h3 id='titleparent'>Kaiju (Displaying in parent - <span id='langparent'>en</span>)</h3>
+            <p id='textparent'>Kaiju is a Japanese genre of films and television featuring giant monsters. The term kaiju can also refer to the giant monsters themselves, which are usually depicted attacking major cities and battling either with the military or other monsters. The kaiju genre is a subgenre of tokusatsu (special filming) entertainment.</p>
+            <div id="parentDiv" style="height: 400px; "></div>
+        </section>
     </main>
 
     <script type='text/javascript'>
         async function handleLaunchImmersiveReader(sampleId) {
-            var langEl = $('#lang' + sampleId);
-            var lang = langEl.val() || langEl.text();
-            
+            var langElement = $('#lang' + sampleId);
+            var lang = langElement.val() || langElement.text();
+
             const data = {
                 title: $('#title' + sampleId).text().trim(),
                 chunks: [{
@@ -117,9 +126,10 @@
 
             let options = {};
 
-            options.disableLanguageDetection = sampleId === 1;
-            options.disableGrammar = sampleId === 2;
-            options.disableTranslation = sampleId === 3;
+            options.disableLanguageDetection = sampleId === 'disableLanguageDetection';
+            options.disableGrammar = sampleId === 'disableGrammar';
+            options.disableTranslation = sampleId === 'disableTranslation';
+            options.parent = sampleId === 'parent' && document.getElementById("checkboxparent").checked ? document.getElementById('parentDiv') : null;
 
             const token = await getImmersiveReaderTokenAsync(Canary);
             const subdomain = await getImmersiveReaderSubdomainAsync();
