@@ -114,9 +114,7 @@
     <script type='text/javascript'>
         async function handleLaunchImmersiveReader(sampleId) {
             var langElement = $('#lang_' + sampleId);
-            var lang = langElement.val();
-
-            lang = typeof(lang) == 'undefined' ? 'en' : lang;
+            var lang = sampleId == 'DisableLanguageDetection' ? langElement.val() : 'en';
 
             const data = {
                 title: $('#title' + sampleId).text().trim(),
