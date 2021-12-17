@@ -2,7 +2,7 @@
 
 ## Prerequisites
 
-* An Immersive Reader resource configured for Azure Active Directory authentication. Follow [these instructions](https://docs.microsoft.com/azure/cognitive-services/immersive-reader/how-to-create-immersive-reader) to get set up. You will need some of the values created here when configuring the sample project properties. Securely save the output from Step 4 into a text file for future reference.
+* An Immersive Reader resource configured for Azure Active Directory authentication. Follow [these instructions](https://docs.microsoft.com/azure/applied-ai-services/immersive-reader/how-to-create-immersive-reader) to get set up. You will need some of the values created here when configuring the sample project properties. Securely save the output from Step 4 into a text file for future reference.
 * Install [Yarn](https://yarnpkg.com)
 
 ## Usage
