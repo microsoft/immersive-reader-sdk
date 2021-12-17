@@ -1,6 +1,4 @@
-# Cognitive Services - Immersive Reader JavaScript SDK
-
-[![Build status](https://dev.azure.com/ms/immersive-reader-sdk/_apis/build/status/96)](https://dev.azure.com/ms/immersive-reader-sdk/_build?definitionId=96)
+# Azure Applied AI Immersive Reader - Immersive Reader SDK
 
 The Immersive Reader JavaScript SDK is a JavaScript library that allows you to easily and quickly integrate the [Immersive Reader](https://azure.microsoft.com/services/cognitive-services/immersive-reader/) into your web application.
 
