@@ -4,7 +4,7 @@ The Immersive Reader JavaScript SDK is a JavaScript library that allows you to e
 
 ## Usage
 
-Usage of this SDK requires an Azure subscription to Immersive Reader. Follow [these instructions](https://docs.microsoft.com/en-us/azure/applied-ai-services/immersive-reader/how-to-create-immersive-reader) to create an Immersive Reader resource and configure Azure Active Directory authentication. Save the output of your session into a text file for future reference.
+Usage of this SDK requires an Azure subscription to Immersive Reader. Follow [these instructions](https://docs.microsoft.com/azure/applied-ai-services/immersive-reader/how-to-create-immersive-reader) to create an Immersive Reader resource and configure Azure Active Directory authentication. Save the output of your session into a text file for future reference.
 
 You can find examples of how to acquire an authentication token in the [samples](./samples).
 

@@ -5,7 +5,7 @@ namespace MultipleResourcesSampleWebApp
 {
 	/// <summary>
 	/// Configuration values for a resource created with Azure Active Directory
-	/// https://docs.microsoft.com/en-us/azure/applied-ai-services/immersive-reader/how-to-create-immersive-reader
+	/// https://docs.microsoft.com/azure/applied-ai-services/immersive-reader/how-to-create-immersive-reader
 	/// </summary>
 	public struct ImmersiveReaderResourceConfig
 	{

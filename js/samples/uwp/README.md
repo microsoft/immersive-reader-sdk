@@ -5,7 +5,7 @@ The ImmersiveReaderView control is a Windows Runtime component that allows you t
 
 ## Usage
 
-Usage of this SDK requires an Azure subscription to Immersive Reader. Follow [these instructions](https://docs.microsoft.com/en-us/azure/applied-ai-services/immersive-reader/how-to-create-immersive-reader) to create an Immersive Reader resource and configure Azure Active Directory authentication. Save the output of your session into a text file for future reference.
+Usage of this SDK requires an Azure subscription to Immersive Reader. Follow [these instructions](https://docs.microsoft.com/azure/applied-ai-services/immersive-reader/how-to-create-immersive-reader) to create an Immersive Reader resource and configure Azure Active Directory authentication. Save the output of your session into a text file for future reference.
 
 For sample usage, launch the `ImmersiveReader.sln` file in Visual Studio 2019. Ensure that you have the UWP development tooling installed. Note that ImmersiveReaderView only supports the Fall Creator's Update (16299) or higher.
 
