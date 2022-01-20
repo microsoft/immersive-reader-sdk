@@ -67,6 +67,7 @@
     "edition": "octane"
   },
   "dependencies": {
-    "@microsoft/immersive-reader-sdk": "^1.1.0"
+    "@microsoft/immersive-reader-sdk": "^1.2.0",
+    "markdown-it": "^12.3.2"
   }
 }
