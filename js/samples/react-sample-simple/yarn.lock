@@ -1491,7 +1491,7 @@
     "@types/yargs" "^16.0.0"
     chalk "^4.0.0"
 
-"@microsoft/immersive-reader-sdk@^1.2.0":
+"@microsoft/immersive-reader-sdk@^1.1.0":
   version "1.2.0"
   resolved "https://registry.yarnpkg.com/@microsoft/immersive-reader-sdk/-/immersive-reader-sdk-1.2.0.tgz#fdd6ec7f9715f77558fb8e91c03d5fb39ad9540c"
   integrity sha512-SRd3D8zY2r0Uun0dF0tDGdqx8wN0t7NteHVZT+cxTXvzw4jAcl9HtKMrgo39VcWyHCGCyF9Hzzk28mhT/q6vVg==
