@@ -1495,6 +1495,8 @@
   version "1.2.0"
   resolved "https://registry.yarnpkg.com/@microsoft/immersive-reader-sdk/-/immersive-reader-sdk-1.2.0.tgz#fdd6ec7f9715f77558fb8e91c03d5fb39ad9540c"
   integrity sha512-SRd3D8zY2r0Uun0dF0tDGdqx8wN0t7NteHVZT+cxTXvzw4jAcl9HtKMrgo39VcWyHCGCyF9Hzzk28mhT/q6vVg==
+  dependencies:
+    json-schema "^0.4.0"
 
 "@nodelib/fs.scandir@2.1.5":
   version "2.1.5"
@@ -7490,10 +7492,10 @@ no-case@^3.0.4:
     lower-case "^2.0.2"
     tslib "^2.0.3"
 
-node-forge@^0.10.0:
-  version "0.10.0"
-  resolved "https://registry.yarnpkg.com/node-forge/-/node-forge-0.10.0.tgz#32dea2afb3e9926f02ee5ce8794902691a676bf3"
-  integrity sha512-PPmu8eEeG9saEUvI97fm4OYxXVB6bFvyNTyiUOBichBpFG8A1Ljw3bY62+5oOjDEMHRnd0Y7HQ+x7uzxOzC6JA==
+node-forge@^1.2.1:
+  version "1.2.1"
+  resolved "https://registry.yarnpkg.com/node-forge/-/node-forge-1.2.1.tgz#82794919071ef2eb5c509293325cec8afd0fd53c"
+  integrity sha512-Fcvtbb+zBcZXbTTVwqGA5W+MKBj56UjVRevvchv5XrcyXbmNdesfZL37nlcWOfpgHhgmxApw3tQbTr4CqNmX4w==
 
 node-int64@^0.4.0:
   version "0.4.0"
