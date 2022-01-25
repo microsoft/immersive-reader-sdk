@@ -68,6 +68,7 @@
   },
   "dependencies": {
     "@microsoft/immersive-reader-sdk": "^1.2.0",
+    "engine.io": "^6.1.2",
     "markdown-it": "^12.3.2"
   }
 }
