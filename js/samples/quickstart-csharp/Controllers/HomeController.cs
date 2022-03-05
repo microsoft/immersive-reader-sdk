@@ -1,20 +1,18 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.Linq;
-using System.Threading.Tasks;
+﻿using System.Diagnostics;
 using Microsoft.AspNetCore.Mvc;
 using QuickstartSampleWebApp.Models;
-using Microsoft.IdentityModel.Clients.ActiveDirectory;
+using Microsoft.Identity.Client;
 
 namespace QuickstartSampleWebApp.Controllers
 {
-	public class HomeController : Controller
-	{
+    public class HomeController : Controller
+    {
 		private readonly string TenantId;     // Azure subscription TenantId
 		private readonly string ClientId;     // Azure AD ApplicationId
 		private readonly string ClientSecret; // Azure AD Application Service Principal password
 		private readonly string Subdomain;    // Immersive Reader resource subdomain (resource 'Name' if the resource was created in the Azure portal, or 'CustomSubDomain' option if the resource was created with Azure CLI Powershell. Check the Azure portal for the subdomain on the Endpoint in the resource Overview page, for example, 'https://[SUBDOMAIN].cognitiveservices.azure.com/')
+
+		IConfidentialClientApplication app;
 
 		public HomeController(Microsoft.Extensions.Configuration.IConfiguration configuration)
 		{
@@ -47,15 +45,23 @@ namespace QuickstartSampleWebApp.Controllers
 		/// <summary>
 		/// Get an Azure AD authentication token
 		/// </summary>
-		private async Task<string> GetTokenAsync()
+		public async Task<string> GetTokenAsync()
 		{
 			string authority = $"https://login.windows.net/{TenantId}";
-			const string resource = "https://cognitiveservices.azure.com/";
+			const string resourceId = "https://cognitiveservices.azure.com/";
 
-			AuthenticationContext authContext = new AuthenticationContext(authority);
-			ClientCredential clientCredential = new ClientCredential(ClientId, ClientSecret);
+			if (app == null)
+			{
+				app = ConfidentialClientApplicationBuilder.Create(ClientId)
+				.WithClientSecret(ClientSecret)
+				.WithAuthority(authority)
+				.Build();
+			}
 
-			AuthenticationResult authResult = await authContext.AcquireTokenAsync(resource, clientCredential);
+			var authResult = await app.AcquireTokenForClient(
+				new[] { $"{resourceId}/.default" })
+				.ExecuteAsync()
+				.ConfigureAwait(false);
 
 			return authResult.AccessToken;
 		}
@@ -71,40 +77,26 @@ namespace QuickstartSampleWebApp.Controllers
 			}
 			catch (Exception e)
 			{
-				string message = "Unable to acquire Azure AD token. Check the debugger for more information.";
+				string message = "Unable to acquire Azure AD token. Check the console for more information.";
 				Debug.WriteLine(message, e);
 				return new JsonResult(new { error = message });
 			}
 		}
 
 		public IActionResult Index()
-		{
-			return View();
-		}
+        {
+            return View();
+        }
 
-		public IActionResult About()
-		{
-			ViewData["Message"] = "Your application description page.";
+        public IActionResult Privacy()
+        {
+            return View();
+        }
 
-			return View();
-		}
-
-		public IActionResult Contact()
-		{
-			ViewData["Message"] = "Your contact page.";
-
-			return View();
-		}
-
-		public IActionResult Privacy()
-		{
-			return View();
-		}
-
-		[ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
-		public IActionResult Error()
-		{
-			return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
-		}
-	}
+        [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
+        public IActionResult Error()
+        {
+            return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
+        }
+    }
 }

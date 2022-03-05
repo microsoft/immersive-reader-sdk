@@ -104,8 +104,7 @@
 
                     // Learn more about options https://docs.microsoft.com/azure/cognitive-services/immersive-reader/reference#options
                     const options = {
-                        "onExit": exitCallback,
-                        "uiZIndex": 2000
+                        onExit: exitCallback
                     };
 
                     ImmersiveReader.launchAsync(token, subdomain, data, options)
