@@ -2,6 +2,7 @@
 
 ## Prerequisites
 
+* [Visual Studio 2022](https://visualstudio.microsoft.com/downloads)
 * An Immersive Reader resource configured for Azure Active Directory authentication. Follow [these instructions](https://docs.microsoft.com/azure/applied-ai-services/immersive-reader/how-to-create-immersive-reader) to get set up. You will need some of the values created here when configuring the sample project properties. Save the output of your session into a text file for future reference.
 * Install [Yarn](https://yarnpkg.com), [npm](https://npmjs.com)
 
@@ -29,6 +30,8 @@
         }
     }
     ```
+> [!IMPORTANT]
+> **Be sure not to commit any references that contain secrets into source control, as secrets should not be made public**.
 
 1. Run **Debug > Start Debugging**.
 
