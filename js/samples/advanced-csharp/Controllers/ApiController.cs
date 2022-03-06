@@ -1,8 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using Microsoft.IdentityModel.Clients.ActiveDirectory;
-using System;
-using System.IO;
-using System.Threading.Tasks;
+using System.Diagnostics;
+using Microsoft.Identity.Client;
 
 namespace AdvancedSampleWebApp.Pages
 {
@@ -14,6 +12,8 @@ namespace AdvancedSampleWebApp.Pages
         private readonly string ClientId;     // Azure AD ApplicationId
         private readonly string ClientSecret; // Azure AD Application Service Principal password
         private readonly string Subdomain;    // Immersive Reader resource subdomain (resource 'Name' if the resource was created in the Azure portal, or 'CustomSubDomain' option if the resource was created with Azure CLI Powershell. Check the Azure portal for the subdomain on the Endpoint in the resource Overview page, for example, 'https://[SUBDOMAIN].cognitiveservices.azure.com/')
+
+        IConfidentialClientApplication app;
 
         public ApiController(Microsoft.Extensions.Configuration.IConfiguration configuration)
         {
@@ -55,36 +55,55 @@ namespace AdvancedSampleWebApp.Pages
         [Produces("text/plain")]
         public async Task<string> Token()
         {
-            // Retrieve the canary value and authenticate
-            string canary;
-            using (StreamReader reader = new StreamReader(Request.Body))
+            try
             {
-                canary = reader.ReadToEnd();
-            }
+                // Retrieve the canary value and authenticate
+                string canary;
+                using (StreamReader reader = new StreamReader(Request.Body))
+                {
+                    canary = await reader.ReadToEndAsync();
+                }
 
-            if (string.IsNullOrEmpty(canary))
+                if (string.IsNullOrEmpty(canary))
+                {
+                    throw new Exception("Canary missing");
+                }
+
+                if (!Canary.Validate(canary))
+                {
+                    throw new Exception("Authentication failed");
+                }
+
+                return await GetTokenAsync();
+            }
+            catch (Exception e)
             {
-                throw new Exception("Canary missing");
+                string message = "Unable to acquire token and subdomain. Check the console for more information.";
+                Debug.WriteLine(message, e);
+                return message;
             }
-
-            if (!Canary.Validate(canary))
-            {
-                throw new Exception("Authentication failed");
-            }
-
-            // Obtain a token using the subscription key
-            return await GetTokenAsync();
         }
 
-        protected async Task<string> GetTokenAsync()
+        /// <summary>
+        /// Get an Azure AD authentication token
+        /// </summary>
+        public async Task<string> GetTokenAsync()
         {
             string authority = $"https://login.windows.net/{TenantId}";
             const string resource = "https://cognitiveservices.azure.com/";
 
-            AuthenticationContext authContext = new AuthenticationContext(authority);
-            ClientCredential clientCredential = new ClientCredential(ClientId, ClientSecret);
+            if (app == null)
+            {
+                app = ConfidentialClientApplicationBuilder.Create(ClientId)
+                .WithClientSecret(ClientSecret)
+                .WithAuthority(authority)
+                .Build();
+            }
 
-            AuthenticationResult authResult = await authContext.AcquireTokenAsync(resource, clientCredential);
+            var authResult = await app.AcquireTokenForClient(
+                new[] { $"{resource}/.default" })
+                .ExecuteAsync()
+                .ConfigureAwait(false);
 
             return authResult.AccessToken;
         }

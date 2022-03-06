@@ -13,7 +13,7 @@
 
     <script type='text/javascript' src='https://code.jquery.com/jquery-3.3.1.min.js'></script>
     <script type='text/javascript' src='https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.12.1/jquery-ui.min.js'></script>
-    <script type='text/javascript' src='https://ircdname.azureedge.net/immersivereadersdk/immersive-reader-sdk.1.2.0.js'></script>
+<script type='text/javascript' src='https://ircdname.azureedge.net/immersivereadersdk/immersive-reader-sdk.1.2.0.js'></script>
     <script type='text/javascript' src='~/js/helpers.js'></script>
 
     <link href='~/css/styles.css' rel='stylesheet'>
@@ -102,7 +102,22 @@
             const token = await getImmersiveReaderTokenAsync(Canary);
             const subdomain = await getImmersiveReaderSubdomainAsync();
 
-            ImmersiveReader.launchAsync(token, subdomain, data);
+            // Learn more about options https://docs.microsoft.com/azure/cognitive-services/immersive-reader/reference#options
+            const options = {
+                cognitiveAppId: 'AdvancedSampleWebApp',
+                onExit: exitCallback
+            };
+
+            try {
+                await ImmersiveReader.launchAsync(token, subdomain, data, options);
+            } catch (e) {
+                alert('Error in launching the Immersive Reader. Check the console.');
+                console.log(e);
+            }
+        }
+
+        function exitCallback() {
+            console.log('This is the callback function. It is executed when the Immersive Reader closes.');
         }
     </script>
 </body>
