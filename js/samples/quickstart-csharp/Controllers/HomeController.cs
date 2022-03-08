@@ -48,7 +48,7 @@ namespace QuickstartSampleWebApp.Controllers
         public async Task<string> GetTokenAsync()
         {
             string authority = $"https://login.windows.net/{TenantId}";
-            const string resourceId = "https://cognitiveservices.azure.com/";
+            const string resource = "https://cognitiveservices.azure.com/";
 
             if (app == null)
             {
@@ -59,7 +59,7 @@ namespace QuickstartSampleWebApp.Controllers
             }
 
             var authResult = await app.AcquireTokenForClient(
-                new[] { $"{resourceId}/.default" })
+                new[] { $"{resource}/.default" })
                 .ExecuteAsync()
                 .ConfigureAwait(false);
 
