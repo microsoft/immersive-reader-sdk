@@ -186,12 +186,14 @@
                 onExit: exitCallback
             };
 
-            try {
-                await ImmersiveReader.launchAsync(token, subdomain, data, options);
-            } catch (e) {
-                alert('Error in launching the Immersive Reader. Check the console.');
-                console.log(e);
-            }
+            await ImmersiveReader.launchAsync(token, subdomain, data, options)
+                .then(() => {
+                    console.log('Successful launch.');
+                })
+                .catch ((e) => {
+                    alert('Error in launching the Immersive Reader. Check the console.');
+                    console.log(e);
+                });
         }
 
         function exitCallback() {
