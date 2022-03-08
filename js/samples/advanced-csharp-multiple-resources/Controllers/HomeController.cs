@@ -12,8 +12,7 @@ namespace MultipleResourcesSampleWebApp.Controllers
         private readonly HashSet<string> ResourceKeys = new HashSet<string>() { "ImmersiveReaderResourceOne", "ImmersiveReaderResourceTwo" };
         // Map the resource key to the configuration object
         private readonly Dictionary<string, ImmersiveReaderResourceConfig> ResourceKeyToConfigs;
-
-        IConfidentialClientApplication app;
+        private IConfidentialClientApplication app {get; set;}
 
         public HomeController(IConfiguration configuration)
         {
