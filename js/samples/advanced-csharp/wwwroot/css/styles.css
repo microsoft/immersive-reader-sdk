@@ -25,9 +25,9 @@ nav {
     text-align: center;
 }
 
-    nav a {
-        padding: 3px;
-    }
+nav a {
+    padding: 3px;
+}
 
 .active {
     font-weight: bold !important;
