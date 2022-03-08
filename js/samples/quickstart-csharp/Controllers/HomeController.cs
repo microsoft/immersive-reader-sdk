@@ -7,83 +7,83 @@ namespace QuickstartSampleWebApp.Controllers
 {
     public class HomeController : Controller
     {
-		private readonly string TenantId;     // Azure subscription TenantId
-		private readonly string ClientId;     // Azure AD ApplicationId
-		private readonly string ClientSecret; // Azure AD Application Service Principal password
-		private readonly string Subdomain;    // Immersive Reader resource subdomain (resource 'Name' if the resource was created in the Azure portal, or 'CustomSubDomain' option if the resource was created with Azure CLI Powershell. Check the Azure portal for the subdomain on the Endpoint in the resource Overview page, for example, 'https://[SUBDOMAIN].cognitiveservices.azure.com/')
+        private readonly string TenantId;     // Azure subscription TenantId
+        private readonly string ClientId;     // Azure AD ApplicationId
+        private readonly string ClientSecret; // Azure AD Application Service Principal password
+        private readonly string Subdomain;    // Immersive Reader resource subdomain (resource 'Name' if the resource was created in the Azure portal, or 'CustomSubDomain' option if the resource was created with Azure CLI Powershell. Check the Azure portal for the subdomain on the Endpoint in the resource Overview page, for example, 'https://[SUBDOMAIN].cognitiveservices.azure.com/')
 
-		IConfidentialClientApplication app;
+        private IConfidentialClientApplication app { get; set; }
 
-		public HomeController(Microsoft.Extensions.Configuration.IConfiguration configuration)
-		{
-			TenantId = configuration["TenantId"];
-			ClientId = configuration["ClientId"];
-			ClientSecret = configuration["ClientSecret"];
-			Subdomain = configuration["Subdomain"];
+        public HomeController(Microsoft.Extensions.Configuration.IConfiguration configuration)
+        {
+            TenantId = configuration["TenantId"];
+            ClientId = configuration["ClientId"];
+            ClientSecret = configuration["ClientSecret"];
+            Subdomain = configuration["Subdomain"];
 
-			if (string.IsNullOrWhiteSpace(TenantId))
-			{
-				throw new ArgumentNullException("TenantId is null! Did you add that info to secrets.json?");
-			}
+            if (string.IsNullOrWhiteSpace(TenantId))
+            {
+                throw new ArgumentNullException("TenantId is null! Did you add that info to secrets.json?");
+            }
 
-			if (string.IsNullOrWhiteSpace(ClientId))
-			{
-				throw new ArgumentNullException("ClientId is null! Did you add that info to secrets.json?");
-			}
+            if (string.IsNullOrWhiteSpace(ClientId))
+            {
+                throw new ArgumentNullException("ClientId is null! Did you add that info to secrets.json?");
+            }
 
-			if (string.IsNullOrWhiteSpace(ClientSecret))
-			{
-				throw new ArgumentNullException("ClientSecret is null! Did you add that info to secrets.json?");
-			}
+            if (string.IsNullOrWhiteSpace(ClientSecret))
+            {
+                throw new ArgumentNullException("ClientSecret is null! Did you add that info to secrets.json?");
+            }
 
-			if (string.IsNullOrWhiteSpace(Subdomain))
-			{
-				throw new ArgumentNullException("Subdomain is null! Did you add that info to secrets.json?");
-			}
-		}
+            if (string.IsNullOrWhiteSpace(Subdomain))
+            {
+                throw new ArgumentNullException("Subdomain is null! Did you add that info to secrets.json?");
+            }
+        }
 
-		/// <summary>
-		/// Get an Azure AD authentication token
-		/// </summary>
-		public async Task<string> GetTokenAsync()
-		{
-			string authority = $"https://login.windows.net/{TenantId}";
-			const string resourceId = "https://cognitiveservices.azure.com/";
+        /// <summary>
+        /// Get an Azure AD authentication token
+        /// </summary>
+        public async Task<string> GetTokenAsync()
+        {
+            string authority = $"https://login.windows.net/{TenantId}";
+            const string resourceId = "https://cognitiveservices.azure.com/";
 
-			if (app == null)
-			{
-				app = ConfidentialClientApplicationBuilder.Create(ClientId)
-				.WithClientSecret(ClientSecret)
-				.WithAuthority(authority)
-				.Build();
-			}
+            if (app == null)
+            {
+                app = ConfidentialClientApplicationBuilder.Create(ClientId)
+                .WithClientSecret(ClientSecret)
+                .WithAuthority(authority)
+                .Build();
+            }
 
-			var authResult = await app.AcquireTokenForClient(
-				new[] { $"{resourceId}/.default" })
-				.ExecuteAsync()
-				.ConfigureAwait(false);
+            var authResult = await app.AcquireTokenForClient(
+                new[] { $"{resourceId}/.default" })
+                .ExecuteAsync()
+                .ConfigureAwait(false);
 
-			return authResult.AccessToken;
-		}
+            return authResult.AccessToken;
+        }
 
-		[HttpGet]
-		public async Task<JsonResult> GetTokenAndSubdomain()
-		{
-			try
-			{
-				string tokenResult = await GetTokenAsync();
+        [HttpGet]
+        public async Task<JsonResult> GetTokenAndSubdomain()
+        {
+            try
+            {
+                string tokenResult = await GetTokenAsync();
 
-				return new JsonResult(new { token = tokenResult, subdomain = Subdomain });
-			}
-			catch (Exception e)
-			{
-				string message = "Unable to acquire Azure AD token. Check the console for more information.";
-				Debug.WriteLine(message, e);
-				return new JsonResult(new { error = message });
-			}
-		}
+                return new JsonResult(new { token = tokenResult, subdomain = Subdomain });
+            }
+            catch (Exception e)
+            {
+                string message = "Unable to acquire Azure AD token. Check the console for more information.";
+                Debug.WriteLine(message, e);
+                return new JsonResult(new { error = message });
+            }
+        }
 
-		public IActionResult Index()
+        public IActionResult Index()
         {
             return View();
         }
