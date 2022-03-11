@@ -1,19 +1,17 @@
-# Cognitive Services - Immersive Reader JavaScript SDK
+# Azure Applied AI Immersive Reader - Immersive Reader SDK
 
-[![Build status](https://dev.azure.com/ms/immersive-reader-sdk/_apis/build/status/96)](https://dev.azure.com/ms/immersive-reader-sdk/_build?definitionId=96)
-
-The Immersive Reader JavaScript SDK is a JavaScript library that allows you to easily and quickly integrate the [Immersive Reader](https://azure.microsoft.com/services/cognitive-services/immersive-reader/) into your web application.
+The Immersive Reader JavaScript SDK is a JavaScript library that allows you to easily and quickly integrate the [Immersive Reader](https://azure.microsoft.com/services/immersive-reader) into your web application.
 
 ## Usage
 
-Usage of this SDK requires an Azure subscription to Immersive Reader. Follow [these instructions](https://docs.microsoft.com/azure/cognitive-services/immersive-reader/how-to-create-immersive-reader) to create an Immersive Reader resource and configure Azure Active Directory authentication. Save the output of your session into a text file for future reference.
+Usage of this SDK requires an Azure subscription to Immersive Reader. Follow [these instructions](https://docs.microsoft.com/azure/applied-ai-services/immersive-reader/how-to-create-immersive-reader) to create an Immersive Reader resource and configure Azure Active Directory authentication. Save the output of your session into a text file for future reference.
 
 You can find examples of how to acquire an authentication token in the [samples](./samples).
 
 Include the library of the stable build in your web application:
 
 ```html
-<script type='text/javascript' src='https://contentstorage.onenote.office.net/onenoteltir/immersivereadersdk/immersive-reader-sdk.1.1.0.js'></script>
+<script type='text/javascript' src='https://ircdname.azureedge.net/immersivereadersdk/immersive-reader-sdk.1.2.0.js'></script>
 ```
 
 ```bash

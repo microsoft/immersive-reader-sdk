@@ -9,7 +9,7 @@ const attributeIconPxSize = 'data-icon-px-size';
 const attributeButtonStyle = 'data-button-style';
 const attributeLocale = 'data-locale';
 
-const iconUrl: string = 'https://contentstorage.onenote.office.net/onenoteltir/permanent-static-resources/immersive-reader-icon.svg';
+const iconUrl: string = 'https://ircdname.azureedge.net/permanent-static-resources/immersive-reader-icon.svg';
 
 const locs: { [key: string]: string} = {
     af: 'Indompelende leser',
@@ -131,7 +131,7 @@ export function renderButtons(options?: RenderButtonsOptions): void {
         const locale = div.getAttribute(attributeLocale) || 'en';
         div.setAttribute('aria-label', getLocalizedString(locale));
         div.textContent = '';
-        
+
         const style = div.getAttribute(attributeButtonStyle) || 'icon';
         switch (style) {
             case 'icon':
