@@ -1,0 +1,153 @@
+doctype html
+html
+   head
+      title Immersive Reader Quickstart Node.js options
+
+      link(rel='icon', href='data:;base64,iVBORw0KGgo=')
+
+      link(rel='stylesheet', href='https://stackpath.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css')
+
+      // A polyfill for Promise is needed for IE11 support.
+      script(src='https://cdn.jsdelivr.net/npm/promise-polyfill@8/dist/polyfill.min.js')
+
+      script(src='https://ircdname.azureedge.net/immersivereadersdk/immersive-reader-sdk.1.2.0.js')
+      script(src='https://code.jquery.com/jquery-3.3.1.min.js')
+      script(src='../js/helpers.js')
+
+      style(type="text/css").
+        .immersive-reader-button {
+          background-color: white;
+          margin-top: 5px;
+          border: 1px solid black;
+          float: right;
+        }
+
+        #ContentArea {
+            display: block;
+            margin: 0 20%;
+            padding-top: 50px;
+            width: 60%;
+        }
+
+        .section {
+            border: 1px solid #cccccc;
+            border-radius: 4px;
+            box-sizing: border-box;
+            display: block;
+            margin-bottom: 20px;
+            padding: 20px 20px 10px 20px;
+            position: relative;
+            width: 100%;
+        }
+
+        #Cols {
+            box-sizing: inherit;
+            column-count: 1;
+            column-gap: 0;
+        }
+
+        h3 {
+            margin: 0;
+            margin-top: 10px;
+            padding: 0;
+        }
+
+        p {
+            line-height: 25px;
+        }
+
+        @@media screen and (min-width: 900px) {
+            #Cols {
+                column-gap: 20px;
+                column-count: 2;
+            }
+        }
+   body
+        div(class="container")
+            nav
+                a(href='/') Home | 
+                a(href='/options') Options
+
+            main#ContentArea
+            h1 You can disable Immersive Reader features as desired!
+            p These are some of the features you can disable:
+            p
+                code disableGrammar
+                |  Grammar features such as Syllables, Parts of speech, and Picture Dictionary will be disabled.
+            p
+                code disableLanguageDetection
+                |  The Language Detection feature will be disabled. This will prevent Immersive Reader from automatically detecting the language of the supplied content.
+            p
+                code disableTranslation
+                |  The Translation features will be disabled.
+            p
+                code parent
+                |  Immersive reader iframe is placed the specified element, otherwise it will be placed in the main document body.
+
+            h3 Examples:
+            br
+            section#sampleDisableLanguageDetection.section
+                .immersive-reader-button.ir-button-small(onclick="handleLaunchImmersiveReader('DisableLanguageDetection')")
+                |             Specify the content language: 
+                input#lang_DisableLanguageDetection(value='en')
+                |  (i.e &apos;fr&apos;, &apos;es&apos;, &apos;de&apos;, &apos;zh&apos;)
+                h3#titleDisableLanguageDetection
+                    | Geography (Speech, Syllables, Parts of Speech and Picture Dictionary are all affected by the language.)
+                p#textDisableLanguageDetection
+                    | The study of Earth&apos;s landforms is called physical geography. Landforms can be mountains and valleys. They can also be glaciers, lakes or rivers. Landforms are sometimes called physical features. It is important for students to know about the physical geography of Earth. The seasons, the atmosphere and all the natural processes of Earth affect where people are able to live. Geography is one of a combination of factors that people use to decide where they want to live.
+
+            #Cols
+            section#sampleDisableGrammar.section
+                .immersive-reader-button.ir-button-small(onclick="handleLaunchImmersiveReader('DisableGrammar')")
+                h3#titleDisableGrammar Water (Parts of Speech, Syllables and Picture Dictionary are disabled)
+                p#textDisableGrammar
+                    | Fresh water sources also influence where people settle. People need water to drink. They also need it for washing. Throughout history, people have settled near fresh water. Living near a water source helps ensure that people have the water they need.
+            section#sampleDisableTranslation.section
+                .immersive-reader-button.ir-button-small(onclick="handleLaunchImmersiveReader('DisableTranslation')")
+                h3#titleDisableTranslation Mountain Ranges (Translation disabled)
+                p#textDisableTranslation
+                    | The physical features of a region are often rich in resources. Within a nation, mountain ranges become natural borders for settlement areas. In the U.S., major mountain ranges are the Sierra Nevada, the Rocky Mountains, and the Appalachians.
+
+            section#sampleParent.section
+                .immersive-reader-button.ir-button-small(onclick="handleLaunchImmersiveReader('Parent')")
+                input#checkboxParent(type='checkbox' name='Parent' value='true')
+                label(for='checkboxParent')  Launch in Parent
+                br
+                h3#titleParent Kaiju (Displaying in parent)
+                p#textParent
+                    | Kaiju is a Japanese genre of films and television featuring giant monsters. The term kaiju can also refer to the giant monsters themselves, which are usually depicted attacking major cities and battling either with the military or other monsters. The kaiju genre is a subgenre of tokusatsu (special filming) entertainment.
+                #parentDiv(style='height: 400px;')
+
+script(type="text/javascript").
+
+    async function handleLaunchImmersiveReader(sampleId) {
+        getTokenAndSubdomainAsync()
+            .then(function (response) {
+                const token = response["token"];
+                const subdomain = response["subdomain"];
+
+                var langElement = $('#lang_' + sampleId);
+                var lang = sampleId == 'DisableLanguageDetection' ? langElement.val() : 'en';
+
+                const data = {
+                    title: $('#title' + sampleId).text().trim(),
+                    chunks: [{
+                        content: $('#text' + sampleId).text().trim(),
+                        lang: lang
+                    }]
+                };
+
+                let options = {};
+
+                options.disableLanguageDetection = sampleId === 'DisableLanguageDetection';
+                options.disableGrammar = sampleId === 'DisableGrammar';
+                options.disableTranslation = sampleId === 'DisableTranslation';
+                options.parent = sampleId === 'Parent' && document.getElementById("checkboxParent").checked ? document.getElementById('parentDiv') : null;
+
+                ImmersiveReader.launchAsync(token, subdomain, data, options);
+            })
+            .catch(function (error) {
+                alert("Error in getting the Immersive Reader token. Check the console.");
+                console.log(error);
+            });
+    }
