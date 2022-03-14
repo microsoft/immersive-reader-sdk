@@ -8,30 +8,8 @@
     <meta charset='utf-8'>
     <title>Immersive Reader Example</title>
 
-    <script type='text/javascript' src='../../lib/immersive-reader-sdk.js'></script>
-    <script type='text/javascript'>
-        function launchImmersiveReaderFromInlineHtml(elementId, contentLanguage) {
-            var element = document.getElementById(elementId);
-
-            if (element && element.parentElement) {
-                var html = element.parentElement.innerHTML;
-
-                const data = {
-                    chunks: [{
-                        mimeType: 'text/html',
-                        content: html,
-                        lang: contentLanguage
-                    }]
-                };
-
-                var aadToken = ''; // Your Azure AD token goes here
-                var subdomain = ''; // Your subdomain goes here
-
-                ImmersiveReader.launchAsync(aadToken, subdomain, data);
-            }
-        }
-
-    </script>
+    <script type='text/javascript' src='https://code.jquery.com/jquery-3.3.1.min.js'></script>
+    <script type='text/javascript' src='https://ircdname.azureedge.net/immersivereadersdk/immersive-reader-sdk.1.2.0.js'></script>    
 
     <style type='text/css'>
         #ContentArea {
@@ -43,6 +21,24 @@
         .IRContent {
             margin: 0 100px;
         }
+
+        .immersive-reader-button {
+            background-color: white;
+            margin-top: 5px;
+            border: 1px solid black;
+            float: right;
+        }
+
+        .section {
+            border: 1px solid #cccccc;
+            border-radius: 4px;
+            box-sizing: border-box;
+            display: block;
+            margin-bottom: 20px;
+            padding: 20px 20px 10px 20px;
+            position: relative;
+            width: 100%;
+        }        
     </style>
 </head>
 
@@ -87,7 +83,92 @@
                 <p lang="es-ES">Hola mundo. Trato con contenido multilingüe todo el tiempo.</p>
             </span>
         </article>
+        <div class="container IRContent">
+            <h1>You can disable Immersive Reader features as desired!</h1>
+            <p>These are some of the features you can disable:</p>
+            <p><code>disableGrammar</code> Grammar features such as Syllables, Parts of speech, and Picture Dictionary will be disabled.</p>
+            <p><code>disableLanguageDetection</code> The Language Detection feature will be disabled. This will prevent Immersive Reader from automatically detecting the language of the supplied content.</p>
+            <p><code>disableTranslation</code> The Translation features will be disabled.</p>
+            <p><code>parent</code> Immersive reader iframe is placed the specified element, otherwise it will be placed in the main document body.</p>
+            <h3>Examples:</h3><br />
+            <section class='section' id='sampleDisableLanguageDetection'>
+                <div class='immersive-reader-button ir-button-small' onclick="launchImmersiveReaderWithOptions('DisableLanguageDetection')"></div>
+                Specify the content language: <input id='lang_DisableLanguageDetection' value='en' /> (i.e 'fr', 'es', 'de', 'zh')
+                <h3 id='titleDisableLanguageDetection'>Geography (Speech, Syllables, Parts of Speech and Picture Dictionary are all affected by the language.)</h3>
+                <p id='textDisableLanguageDetection'>The study of Earth's landforms is called physical geography. Landforms can be mountains and valleys. They can also be glaciers, lakes or rivers. Landforms are sometimes called physical features. It is important for students to know about the physical geography of Earth. The seasons, the atmosphere and all the natural processes of Earth affect where people are able to live. Geography is one of a combination of factors that people use to decide where they want to live.</p>
+            </section>
+            <div id='Cols'>
+                <section class='section' id='sampleDisableGrammar'>
+                    <div class='immersive-reader-button ir-button-small' onclick="launchImmersiveReaderWithOptions('DisableGrammar')"></div>
+                    <h3 id='titleDisableGrammar'>Water (Parts of Speech, Syllables and Picture Dictionary are disabled)</h3>
+                    <p id='textDisableGrammar'>Fresh water sources also influence where people settle. People need water to drink. They also need it for washing. Throughout history, people have settled near fresh water. Living near a water source helps ensure that people have the water they need.</p>
+                </section>
+                <section class='section' id='sampleDisableTranslation'>
+                    <div class='immersive-reader-button ir-button-small' onclick="launchImmersiveReaderWithOptions('DisableTranslation')"></div>
+                    <h3 id='titleDisableTranslation'>Mountain Ranges (Translation disabled)</h3>
+                    <p id='textDisableTranslation'>The physical features of a region are often rich in resources. Within a nation, mountain ranges become natural borders for settlement areas. In the U.S., major mountain ranges are the Sierra Nevada, the Rocky Mountains, and the Appalachians.</p>
+                </section>
+            </div>
+            <section class='section' id='sampleParent'>
+                <div class='immersive-reader-button ir-button-small' onclick="launchImmersiveReaderWithOptions('Parent')"></div>
+                <input type="checkbox" id="checkboxParent" name="Parent" value="true">
+                <label for="checkboxParent"> Launch in Parent </label><br>
+                <h3 id='titleParent'>Kaiju (Displaying in parent)</h3>
+                <p id='textParent'>Kaiju is a Japanese genre of films and television featuring giant monsters. The term kaiju can also refer to the giant monsters themselves, which are usually depicted attacking major cities and battling either with the military or other monsters. The kaiju genre is a subgenre of tokusatsu (special filming) entertainment.</p>
+                <div id="parentDiv" style="height: 400px; "></div>
+            </section>
+        </div>
     </main>
 </body>
 
 </html>
+<script type='text/javascript'>
+
+    // DO NOT COMMIT these changes to source control
+    const ClientSecret = ''; // Your Region goes here
+    const Subdomain = '';    // Your Subdomain goes here. 
+    const ClientId = '';     // Your ClientId goes here
+    const TenantId = '';     // Your TenantId goes here
+
+    function getTokenAsync() {
+        return new Promise((resolve, reject) => {
+            $.ajax({
+                url: 'https://' + Region + '.api.cognitive.microsoft.com/sts/v1.0/issueToken',
+                type: 'POST',
+                contentType: 'text/plain',
+                beforeSend: function(xhr){
+                    xhr.setRequestHeader('Ocp-Apim-Subscription-Key', SubscriptionKey);
+                },
+                success: launchParams => {
+                    resolve(launchParams);
+                },
+                error: err => {
+                    console.log('Error in getting token!', err);
+                    reject(err);
+                }
+            });
+        });
+    }
+
+    function launchImmersiveReaderFromInlineHtml(elementId, contentLanguage) {
+        var element = document.getElementById(elementId);
+
+        if (element && element.parentElement) {
+            var html = element.parentElement.innerHTML;
+
+            const data = {
+                chunks: [{
+                    mimeType: 'text/html',
+                    content: html,
+                    lang: contentLanguage
+                }]
+            };
+
+            var aadToken = ''; // Your Azure AD token goes here
+            var subdomain = ''; // Your subdomain goes here
+
+            ImmersiveReader.launchAsync(aadToken, subdomain, data);
+        }
+    }
+
+</script>
