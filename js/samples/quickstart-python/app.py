@@ -13,6 +13,11 @@ def index():
 	'Show the index page'
 	return render_template('index.html')
 
+@app.route('/options')
+def options():
+	'Show the options page'
+	return render_template('options.html')
+
 @app.route('/GetTokenAndSubdomain', methods=['GET'])
 def getTokenAndSubdomain():
 	'Get the access token'
