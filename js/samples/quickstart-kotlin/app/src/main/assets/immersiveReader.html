@@ -26,10 +26,9 @@ Licensed under the MIT License. -->
                 }
 
                 // Learn more about options https://docs.microsoft.com/azure/cognitive-services/immersive-reader/reference#options
-                var options = {
-                    onExit: exitCallback,
-                    uiZIndex: 2000
-                };
+                var options = message.options;
+                options.cognitiveAppId = 'QuickStartKotlinSampleWebApp';
+                options.onExit = exitCallback;
 
                 // Use the JavaScript SDK to launch the Immersive Reader.
                 ImmersiveReader.launchAsync(message.cogSvcsAccessToken, message.cogSvcsSubdomain, data, options);

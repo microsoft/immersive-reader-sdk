@@ -9,11 +9,13 @@ import android.os.Bundle
 import android.webkit.CookieManager
 import android.webkit.WebView
 import android.widget.Button
+import android.widget.EditText
 import android.webkit.WebViewClient
 import android.widget.LinearLayout
 import android.widget.TextView
 import com.google.gson.*
 import io.github.cdimascio.dotenv.dotenv
+import kotlinx.android.synthetic.main.activity_main.*
 import java.io.IOException
 import java.io.*
 import java.net.HttpURLConnection
@@ -43,10 +45,20 @@ class MainActivity : AppCompatActivity() {
         this.supportActionBar!!.hide()
         setContentView(R.layout.activity_main)
         val immersiveReaderButton = findViewById<Button>(R.id.LaunchImmersiveReaderButton)
+        val disableGrammarButton = findViewById<Button>(R.id.disableGrammarButton)
+        val disableTranslationButton = findViewById<Button>(R.id.disableTranslationButton)
+        val disableLanguageDetectionButton = findViewById<Button>(R.id.disableLanguageDetectionButton)
+        val setLanguage = findViewById<EditText>(R.id.editTextLanguage);
         immersiveReaderButton.setOnClickListener { GlobalScope.launch { handleLoadImmersiveReaderWebView() } }
+        disableGrammarButton.setOnClickListener { GlobalScope.launch { handleLoadImmersiveReaderWebView("disableGrammar") } }
+        disableTranslationButton.setOnClickListener { GlobalScope.launch { handleLoadImmersiveReaderWebView("disableTranslation") } }
+        disableLanguageDetectionButton.setOnClickListener { GlobalScope.launch { handleLoadImmersiveReaderWebView("disableLanguageDetection", setLanguage.text.toString()) } }
     }
 
-    private suspend fun handleLoadImmersiveReaderWebView() {
+    private suspend fun handleLoadImmersiveReaderWebView(
+        optionId: String = "",
+        language: String = ""
+    ) {
         val exampleActivity = this
         val subdomain = dotEnv["SUBDOMAIN"]
         val irTitle = findViewById<TextView>(R.id.Title)
@@ -57,12 +69,12 @@ class MainActivity : AppCompatActivity() {
         // This basic example contains chunks of two different languages.
         val chunk1 = Chunk()
         chunk1.content = irText1.text.toString()
-        chunk1.lang = "en"
+        chunk1.lang = if (language.isEmpty()) "en" else language;
         chunk1.mimeType = "text/plain"
 
         val chunk2 = Chunk()
         chunk2.content = irText2.text.toString()
-        chunk2.lang = "fr"
+        chunk2.lang = if (language.isEmpty()) "fr" else language;
         chunk2.mimeType = "text/plain"
 
         val chunks = ArrayList<Chunk>()
@@ -75,6 +87,9 @@ class MainActivity : AppCompatActivity() {
 
         // Options may be assigned values here (e.g. options.uiLang = "en").
         val options = Options()
+        options.disableGrammar = (optionId == "disableGrammar");
+        options.disableTranslation = (optionId == "disableTranslation");
+        options.disableLanguageDetection = (optionId == "disableLanguageDetection");
 
         var token: String
 
@@ -149,7 +164,10 @@ class MainActivity : AppCompatActivity() {
                   var onExit: (() -> Any)? = null, // Executes a callback function when the Immersive Reader exits
                   var customDomain: String? = null, // Reserved for internal use. Custom domain where the Immersive Reader webapp is hosted (default is null).
                   var allowFullscreen: Boolean? = null, // The ability to toggle fullscreen (default is true).
-                  var hideExitButton: Boolean? = null // Whether or not to hide the Immersive Reader's exit button arrow (default is false). This should only be true if there is an alternative mechanism provided to exit the Immersive Reader (e.g a mobile toolbar's back arrow).
+                  var hideExitButton: Boolean? = null, // Whether or not to hide the Immersive Reader's exit button arrow (default is false). This should only be true if there is an alternative mechanism provided to exit the Immersive Reader (e.g a mobile toolbar's back arrow).
+                  var disableGrammar: Boolean? = null,
+                  var disableTranslation: Boolean? = null,
+                  var disableLanguageDetection: Boolean? = null
     )
 
     class Error(var code: String? = null,
