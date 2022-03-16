@@ -10,7 +10,7 @@
 1. Open **renderButtonsPlusHtml.html** in a web browser.
 
 > [!IMPORTANT]
-> **Be sure not to commit any references that contain SubscriptionKey or other secrets into source control, as secrets should not be made public**.
+> **Be sure not to commit any references that contain TenantId, ClientId, ClientSecret, Subdomain or other secrets into source control, as secrets should not be made public**.
 
 
 ## License

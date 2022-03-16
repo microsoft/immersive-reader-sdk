@@ -125,22 +125,30 @@
 <script type='text/javascript'>
 
     // DO NOT COMMIT these changes to source control
-    const ClientSecret = ''; // Your Region goes here
-    const Subdomain = '';    // Your Subdomain goes here. 
-    const ClientId = '';     // Your ClientId goes here
-    const TenantId = '';     // Your TenantId goes here
+    const TenantId = '';     // Your Tenant Id goes here
+    const ClientId = '';     // Your Client Id goes here
+    const ClientSecret = ''; // Your Client Secret goes here
+    const Subdomain = '';    // Your Subdomain goes here.
 
     function getTokenAsync() {
         return new Promise((resolve, reject) => {
+
+            var data = {
+                grant_type: 'client_credentials',
+                client_id: ClientId,
+                client_secret: ClientSecret,
+                resource: 'https://cognitiveservices.azure.com/'
+            };
+
             $.ajax({
-                url: 'https://' + Region + '.api.cognitive.microsoft.com/sts/v1.0/issueToken',
+                url: `https://login.windows.net/${TenantId}/oauth2/token`,
+                data: data,
                 type: 'POST',
-                contentType: 'text/plain',
                 beforeSend: function(xhr){
-                    xhr.setRequestHeader('Ocp-Apim-Subscription-Key', SubscriptionKey);
+                    xhr.setRequestHeader('content-type', 'application/x-www-form-urlencoded');
                 },
                 success: launchParams => {
-                    resolve(launchParams);
+                    resolve(launchParams.access_token);
                 },
                 error: err => {
                     console.log('Error in getting token!', err);
@@ -151,24 +159,59 @@
     }
 
     function launchImmersiveReaderFromInlineHtml(elementId, contentLanguage) {
-        var element = document.getElementById(elementId);
 
-        if (element && element.parentElement) {
-            var html = element.parentElement.innerHTML;
+        getTokenAsync()
+            .then(function (response) {
+                const token = response;
+                var element = document.getElementById(elementId);
 
-            const data = {
-                chunks: [{
-                    mimeType: 'text/html',
-                    content: html,
-                    lang: contentLanguage
-                }]
-            };
+                if (element && element.parentElement) {
+                    var html = element.parentElement.innerHTML;
 
-            var aadToken = ''; // Your Azure AD token goes here
-            var subdomain = ''; // Your subdomain goes here
+                    const data = {
+                        chunks: [{
+                            mimeType: 'text/html',
+                            content: html,
+                            lang: contentLanguage
+                        }]
+                    };
 
-            ImmersiveReader.launchAsync(aadToken, subdomain, data);
-        }
+                    ImmersiveReader.launchAsync(token, Subdomain, data);
+                }
+            })
+            .catch(function(error){
+                console.log(error);
+            });
+    }
+
+    async function launchImmersiveReaderWithOptions(sampleId) {
+
+        getTokenAsync()
+            .then(function (response) {
+                const token = response;
+                var langElement = $('#lang_' + sampleId);
+                var lang = sampleId == 'DisableLanguageDetection' ? langElement.val() : 'en';
+
+                const data = {
+                    title: $('#title' + sampleId).text().trim(),
+                    chunks: [{
+                        content: $('#text' + sampleId).text().trim(),
+                        lang: lang
+                    }]
+                };
+
+                let options = {};
+
+                options.disableLanguageDetection = sampleId === 'DisableLanguageDetection';
+                options.disableGrammar = sampleId === 'DisableGrammar';
+                options.disableTranslation = sampleId === 'DisableTranslation';
+                options.parent = sampleId === 'Parent' && document.getElementById("checkboxParent").checked ? document.getElementById('parentDiv') : null;
+
+                ImmersiveReader.launchAsync(token, Subdomain, data, options);
+            })
+            .catch(function(error){
+                console.log(error);
+            });
     }
 
 </script>
