@@ -12,7 +12,28 @@ namespace MultipleResourcesSampleWebApp.Controllers
         private readonly HashSet<string> ResourceKeys = new HashSet<string>() { "ImmersiveReaderResourceOne", "ImmersiveReaderResourceTwo" };
         // Map the resource key to the configuration object
         private readonly Dictionary<string, ImmersiveReaderResourceConfig> ResourceKeyToConfigs;
-        private IConfidentialClientApplication app {get; set;}
+
+        private string TenantId;     // Azure subscription TenantId
+        private string ClientId;     // Azure AD ApplicationId
+        private string ClientSecret; // Azure AD Application Service Principal password
+        private string Subdomain;    // Immersive Reader resource subdomain (resource 'Name' if the resource was created in the Azure portal, or 'CustomSubDomain' option if the resource was created with Azure CLI Powershell. Check the Azure portal for the subdomain on the Endpoint in the resource Overview page, for example, 'https://[SUBDOMAIN].cognitiveservices.azure.com/')
+
+        private IConfidentialClientApplication _confidentialClientApplication;
+        private IConfidentialClientApplication ConfidentialClientApplication
+        {
+            get
+            {
+                if (_confidentialClientApplication == null)
+                {
+                    _confidentialClientApplication = ConfidentialClientApplicationBuilder.Create(ClientId)
+                    .WithClientSecret(ClientSecret)
+                    .WithAuthority($"https://login.windows.net/{TenantId}")
+                    .Build();
+                }
+
+                return _confidentialClientApplication;
+            }
+        }
 
         public HomeController(IConfiguration configuration)
         {
@@ -30,37 +51,37 @@ namespace MultipleResourcesSampleWebApp.Controllers
         /// </summary>
         private void InitializeResource(IConfiguration configuration, string resourceKey)
         {
-            string tenantId = configuration[$"{resourceKey}:TenantId"];
-            string clientId = configuration[$"{resourceKey}:ClientId"];
-            string clientSecret = configuration[$"{resourceKey}:ClientSecret"];
-            string subdomain = configuration[$"{resourceKey}:Subdomain"];
+            TenantId = configuration[$"{resourceKey}:TenantId"];
+            ClientId = configuration[$"{resourceKey}:ClientId"];
+            ClientSecret = configuration[$"{resourceKey}:ClientSecret"];
+            Subdomain = configuration[$"{resourceKey}:Subdomain"];
 
-            if (string.IsNullOrWhiteSpace(tenantId))
+            if (string.IsNullOrWhiteSpace(TenantId))
             {
                 throw new ArgumentNullException("TenantId is null! Did you add that info to secrets.json? See ReadMe.txt.");
             }
 
-            if (string.IsNullOrWhiteSpace(clientId))
+            if (string.IsNullOrWhiteSpace(ClientId))
             {
                 throw new ArgumentNullException("ClientId is null! Did you add that info to secrets.json? See ReadMe.txt.");
             }
 
-            if (string.IsNullOrWhiteSpace(clientSecret))
+            if (string.IsNullOrWhiteSpace(ClientSecret))
             {
                 throw new ArgumentNullException("ClientSecret is null! Did you add that info to secrets.json? See ReadMe.txt.");
             }
 
-            if (string.IsNullOrWhiteSpace(subdomain))
+            if (string.IsNullOrWhiteSpace(Subdomain))
             {
                 throw new ArgumentNullException("Subdomain is null! Did you add that info to secrets.json? See ReadMe.txt.");
             }
 
             ResourceKeyToConfigs[resourceKey] = new ImmersiveReaderResourceConfig
             {
-                TenantId = tenantId,
-                ClientId = clientId,
-                ClientSecret = clientSecret,
-                Subdomain = subdomain
+                TenantId = TenantId,
+                ClientId = ClientId,
+                ClientSecret = ClientSecret,
+                Subdomain = Subdomain
             };
         }
 
@@ -106,18 +127,9 @@ namespace MultipleResourcesSampleWebApp.Controllers
         /// </summary>
         private async Task<string> GetTokenAsync(ImmersiveReaderResourceConfig resourceConfig)
         {
-            string authority = $"https://login.windows.net/{resourceConfig.TenantId}";
             const string resource = "https://cognitiveservices.azure.com/";
 
-            if (app == null)
-            {
-                app = ConfidentialClientApplicationBuilder.Create(resourceConfig.ClientId)
-                .WithClientSecret(resourceConfig.ClientSecret)
-                .WithAuthority(authority)
-                .Build();
-            }
-
-            var authResult = await app.AcquireTokenForClient(
+            var authResult = await ConfidentialClientApplication.AcquireTokenForClient(
                 new[] { $"{resource}/.default" })
                 .ExecuteAsync()
                 .ConfigureAwait(false);
