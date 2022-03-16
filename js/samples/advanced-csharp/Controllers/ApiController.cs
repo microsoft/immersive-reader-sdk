@@ -13,7 +13,22 @@ namespace AdvancedSampleWebApp.Pages
         private readonly string ClientSecret; // Azure AD Application Service Principal password
         private readonly string Subdomain;    // Immersive Reader resource subdomain (resource 'Name' if the resource was created in the Azure portal, or 'CustomSubDomain' option if the resource was created with Azure CLI Powershell. Check the Azure portal for the subdomain on the Endpoint in the resource Overview page, for example, 'https://[SUBDOMAIN].cognitiveservices.azure.com/')
 
-        private IConfidentialClientApplication app { get; set; }
+        private IConfidentialClientApplication _confidentialClientApplication;
+        private IConfidentialClientApplication ConfidentialClientApplication
+        {
+            get
+            {
+                if (_confidentialClientApplication == null)
+                {
+                    _confidentialClientApplication = ConfidentialClientApplicationBuilder.Create(ClientId)
+                    .WithClientSecret(ClientSecret)
+                    .WithAuthority($"https://login.windows.net/{TenantId}")
+                    .Build();
+                }
+
+                return _confidentialClientApplication;
+            }
+        }
 
         public ApiController(Microsoft.Extensions.Configuration.IConfiguration configuration)
         {
@@ -89,18 +104,9 @@ namespace AdvancedSampleWebApp.Pages
         /// </summary>
         public async Task<string> GetTokenAsync()
         {
-            string authority = $"https://login.windows.net/{TenantId}";
             const string resource = "https://cognitiveservices.azure.com/";
 
-            if (app == null)
-            {
-                app = ConfidentialClientApplicationBuilder.Create(ClientId)
-                .WithClientSecret(ClientSecret)
-                .WithAuthority(authority)
-                .Build();
-            }
-
-            var authResult = await app.AcquireTokenForClient(
+            var authResult = await ConfidentialClientApplication.AcquireTokenForClient(
                 new[] { $"{resource}/.default" })
                 .ExecuteAsync()
                 .ConfigureAwait(false);
