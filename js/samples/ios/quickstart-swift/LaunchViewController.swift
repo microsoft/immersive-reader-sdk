@@ -7,6 +7,10 @@ class LaunchViewController: UIViewController {
     private var subdomain = ProcessInfo.processInfo.environment["SUBDOMAIN"]
 
     private var launchButton: UIButton!
+    private var disableGrammarButton: UIButton!
+    private var disableTranslationButton: UIButton!
+    private var disableLanguageDetectionButton: UIButton!
+    private var languageText: UITextField!
     private var titleText: UILabel!
     private var bodyText: UILabel!
     private var sampleContent: Content!
@@ -58,6 +62,35 @@ class LaunchViewController: UIViewController {
         launchButton.addTarget(self, action: #selector(launchImmersiveReaderButton(sender:)), for: .touchUpInside)
         view.addSubview(launchButton)
 
+        disableGrammarButton = UIButton()
+        disableGrammarButton.backgroundColor = .darkGray
+        disableGrammarButton.contentEdgeInsets = UIEdgeInsets(top: 10, left: 10, bottom: 10, right: 10)
+        disableGrammarButton.setTitleColor(.white, for: .normal)
+        disableGrammarButton.setTitle("disableGrammar", for: .normal)
+        disableGrammarButton.addTarget(self, action: #selector(launchImmersiveReaderButton(sender:)), for: .touchUpInside)
+        view.addSubview(disableGrammarButton)
+        
+        disableTranslationButton = UIButton()
+        disableTranslationButton.backgroundColor = .darkGray
+        disableTranslationButton.contentEdgeInsets = UIEdgeInsets(top: 10, left: 10, bottom: 10, right: 10)
+        disableTranslationButton.setTitleColor(.white, for: .normal)
+        disableTranslationButton.setTitle("disableTranslation", for: .normal)
+        disableTranslationButton.addTarget(self, action: #selector(launchImmersiveReaderButton(sender:)), for: .touchUpInside)
+        view.addSubview(disableTranslationButton)
+        
+        disableLanguageDetectionButton = UIButton()
+        disableLanguageDetectionButton.backgroundColor = .darkGray
+        disableLanguageDetectionButton.contentEdgeInsets = UIEdgeInsets(top: 10, left: 10, bottom: 10, right: 10)
+        disableLanguageDetectionButton.setTitleColor(.white, for: .normal)
+        disableLanguageDetectionButton.setTitle("disableLanguageDetection", for: .normal)
+        disableLanguageDetectionButton.addTarget(self, action: #selector(launchImmersiveReaderButton(sender:)), for: .touchUpInside)
+        view.addSubview(disableLanguageDetectionButton)
+        
+        languageText = UITextField()
+        languageText.backgroundColor = .white
+        languageText.text = "en"
+        view.addSubview(languageText)
+
         let layoutGuide = view.safeAreaLayoutGuide
 
         titleText.translatesAutoresizingMaskIntoConstraints = false
@@ -72,9 +105,33 @@ class LaunchViewController: UIViewController {
 
         launchButton.translatesAutoresizingMaskIntoConstraints = false
         launchButton.widthAnchor.constraint(equalToConstant: 200).isActive = true
-        launchButton.heightAnchor.constraint(equalToConstant: 50).isActive = true
+        launchButton.heightAnchor.constraint(equalToConstant: 30).isActive = true
         launchButton.centerXAnchor.constraint(equalTo: layoutGuide.centerXAnchor).isActive = true
-        launchButton.bottomAnchor.constraint(equalTo: layoutGuide.bottomAnchor, constant: -10).isActive = true
+        launchButton.bottomAnchor.constraint(equalTo: layoutGuide.bottomAnchor, constant: -120).isActive = true
+
+        disableGrammarButton.translatesAutoresizingMaskIntoConstraints = false
+        disableGrammarButton.widthAnchor.constraint(equalToConstant: 200).isActive = true
+        disableGrammarButton.heightAnchor.constraint(equalToConstant: 30).isActive = true
+        disableGrammarButton.centerXAnchor.constraint(equalTo: layoutGuide.centerXAnchor).isActive = true
+        disableGrammarButton.bottomAnchor.constraint(equalTo: layoutGuide.bottomAnchor, constant: -90).isActive = true
+        
+        disableTranslationButton.translatesAutoresizingMaskIntoConstraints = false
+        disableTranslationButton.widthAnchor.constraint(equalToConstant: 200).isActive = true
+        disableTranslationButton.heightAnchor.constraint(equalToConstant: 30).isActive = true
+        disableTranslationButton.centerXAnchor.constraint(equalTo: layoutGuide.centerXAnchor).isActive = true
+        disableTranslationButton.bottomAnchor.constraint(equalTo: layoutGuide.bottomAnchor, constant: -60).isActive = true
+        
+        disableLanguageDetectionButton.translatesAutoresizingMaskIntoConstraints = false
+        disableLanguageDetectionButton.widthAnchor.constraint(equalToConstant: 200).isActive = true
+        disableLanguageDetectionButton.heightAnchor.constraint(equalToConstant: 30).isActive = true
+        disableLanguageDetectionButton.centerXAnchor.constraint(equalTo: layoutGuide.centerXAnchor).isActive = true
+        disableLanguageDetectionButton.bottomAnchor.constraint(equalTo: layoutGuide.bottomAnchor, constant: -30).isActive = true
+      
+        languageText.translatesAutoresizingMaskIntoConstraints = false
+        languageText.widthAnchor.constraint(equalToConstant: 200).isActive = true
+        languageText.heightAnchor.constraint(equalToConstant: 30).isActive = true
+        languageText.centerXAnchor.constraint(equalTo: layoutGuide.centerXAnchor).isActive = true
+        languageText.bottomAnchor.constraint(equalTo: layoutGuide.bottomAnchor, constant: 0).isActive = true
 
         // Create content and options.
         sampleChunk = Chunk(content: bodyText.text!, lang: nil, mimeType: nil)
@@ -82,8 +139,15 @@ class LaunchViewController: UIViewController {
         sampleOptions = Options(uiLang: nil, timeout: nil, uiZIndex: nil, hideExitButton: true, preferences: nil)
     }
 
-    @IBAction func launchImmersiveReaderButton(sender: AnyObject) {
+    @IBAction func launchImmersiveReaderButton(sender: UIButton) {
         launchButton.isEnabled = false
+
+        self.sampleOptions?.disableGrammar = (sender == disableGrammarButton);
+        self.sampleOptions?.disableTranslation = (sender == disableTranslationButton);
+        if(sender == disableLanguageDetectionButton){
+            self.sampleOptions?.disableLanguageDetection = true
+            self.sampleContent.chunks[0].lang = languageText.text
+        }
 
         // Callback to get token.
         getToken(onSuccess: {cognitiveToken in

@@ -39,6 +39,9 @@ import Foundation
     var translationOptions: TranslationOptions?
     var displayOptions: DisplayOptions?
     var preferences: String?
+    var disableGrammar: Bool?
+    var disableTranslation: Bool?
+    var disableLanguageDetection: Bool?
 
     public init(uiLang: String?, timeout: Int?, uiZIndex: Int?, hideExitButton: Bool?, preferences: String?) {
         self.uiLang = uiLang
