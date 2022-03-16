@@ -12,18 +12,18 @@ namespace QuickstartSampleWebApp.Controllers
         private readonly string ClientSecret; // Azure AD Application Service Principal password
         private readonly string Subdomain;    // Immersive Reader resource subdomain (resource 'Name' if the resource was created in the Azure portal, or 'CustomSubDomain' option if the resource was created with Azure CLI Powershell. Check the Azure portal for the subdomain on the Endpoint in the resource Overview page, for example, 'https://[SUBDOMAIN].cognitiveservices.azure.com/')
 
-        private IConfidentialClientApplication _app;
-        private IConfidentialClientApplication app
+        private IConfidentialClientApplication _confidentialClientApplication;
+        private IConfidentialClientApplication ConfidentialClientApplication
         {
             get {
-                if (_app == null) {
-                    _app = ConfidentialClientApplicationBuilder.Create(ClientId)
+                if (_confidentialClientApplication == null) {
+                    _confidentialClientApplication = ConfidentialClientApplicationBuilder.Create(ClientId)
                     .WithClientSecret(ClientSecret)
                     .WithAuthority($"https://login.windows.net/{TenantId}")
                     .Build();
                 }
 
-                return _app;
+                return _confidentialClientApplication;
             }
         }
 
@@ -62,7 +62,7 @@ namespace QuickstartSampleWebApp.Controllers
         {
             const string resource = "https://cognitiveservices.azure.com/";
 
-            var authResult = await app.AcquireTokenForClient(
+            var authResult = await ConfidentialClientApplication.AcquireTokenForClient(
                 new[] { $"{resource}/.default" })
                 .ExecuteAsync()
                 .ConfigureAwait(false);
