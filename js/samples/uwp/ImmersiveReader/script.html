@@ -14,14 +14,16 @@
                 title: '|TITLE|',
                 chunks: [ {
                     content: '|CONTENT|',
-                    lang: 'en'
+                    lang: '|LANGUAGE|'
                 } ]
             };
 
             const options = {
-                uiZIndex: 1000000,
                 hideExitButton: true,
-                allowFullscreen: false
+                allowFullscreen: false,
+                disableGrammar: '|disableGrammar|',
+                disableLanguageDetection: '|disableLanguageDetection|',
+                disableTranslation: '|disableTranslation|'
             }
 
             ImmersiveReader.launchAsync('|TOKEN|', '|YOUR_SUB_DOMAIN|', data, options);

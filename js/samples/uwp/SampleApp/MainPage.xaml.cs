@@ -24,8 +24,14 @@ namespace SampleApp
     {
         public MainPage()
         {
+            options.Add(new KeyValuePair<string, bool>("disableGrammar", false));
+            options.Add(new KeyValuePair<string, bool>("disableTranslation", false));
+            options.Add(new KeyValuePair<string, bool>("disableLanguageDetection", false));
+
             this.InitializeComponent();
         }
+
+        private List<KeyValuePair<string, bool>> options = new List<KeyValuePair<string, bool>>();
 
         private async void Button_Click(object sender, RoutedEventArgs e)
         {
@@ -33,7 +39,38 @@ namespace SampleApp
             immersiveReader.ClientId = ClientId.Text;
             immersiveReader.ClientSecret = ClientSecret.Password;
             immersiveReader.Subdomain = Subdomain.Text;
-            await immersiveReader.Start("Title", ReaderContent.Text);
+            await immersiveReader.Start("Title", ReaderContent.Text, options, Language.Text);
+        }
+
+        private void RadioButtonOnSelectionHandler(object sender, RoutedEventArgs e)
+        {
+            var currentOption = ((RadioButton)sender);
+            foreach (var option in options)
+            {
+                if (option.Key == currentOption.Name)
+                {
+                    options.Remove(option);
+                    options.Add(new KeyValuePair<string, bool>(option.Key, true));
+                    break;
+                }
+            }
+            Language.IsEnabled = (currentOption.Name == "disableLanguageDetection");
+            Language.Text = (currentOption.Name == "disableLanguageDetection") ? Language.Text : "en";
+        }
+
+        private void RadioButtonOnDeselectionHandler(object sender, RoutedEventArgs e)
+        {
+            var currentOption = ((RadioButton)sender);
+            foreach (var option in options)
+            {
+                if (option.Key == currentOption.Name)
+                {
+                    options.Remove(option);
+                    options.Add(new KeyValuePair<string, bool>(option.Key, false));
+                    break;
+                }
+            }
+            Language.IsEnabled = !(currentOption.Name == "disableLanguageDetection");
         }
     }
 }
