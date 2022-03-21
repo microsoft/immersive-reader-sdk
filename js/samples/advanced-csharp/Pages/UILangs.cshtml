@@ -114,14 +114,28 @@
 
             var uiLangEl = $('#lang' + sampleId);
             var uiLang = uiLangEl.val() || uiLangEl.text();
+
+            // Learn more about options https://docs.microsoft.com/azure/cognitive-services/immersive-reader/reference#options
             const options = {
-                uiLang: uiLang
-            }
+                uiLang: uiLang,
+                onExit: exitCallback
+            };
 
             const token = await getImmersiveReaderTokenAsync(Canary);
             const subdomain = await getImmersiveReaderSubdomainAsync();
 
-            ImmersiveReader.launchAsync(token, subdomain, data, options);
+            await ImmersiveReader.launchAsync(token, subdomain, data, options)
+                .then(() => {
+                    console.log('Successful launch.');
+                })
+                .catch ((e) => {
+                    alert('Error in launching the Immersive Reader. Check the console.');
+                    console.log(e);
+                });
+        }
+
+        function exitCallback() {
+            console.log('This is the callback function. It is executed when the Immersive Reader closes.');
         }
     </script>
 </body>

@@ -9,7 +9,7 @@ This sample also demonstrates how to use a canary to improve security in your we
 ## Prerequisites
 
 * An Immersive Reader resource configured for Azure Active Directory authentication. Follow [these instructions](https://docs.microsoft.com/azure/applied-ai-services/immersive-reader/how-to-create-immersive-reader) to get set up. You will need some of the values created here when configuring the sample project properties. Save the output of your session into a text file for future reference.
-* [Visual Studio 2019](https://visualstudio.microsoft.com/downloads)
+* [Visual Studio 2022](https://visualstudio.microsoft.com/downloads)
 
 ## Usage
 
@@ -26,6 +26,8 @@ This sample also demonstrates how to use a canary to improve security in your we
     }
     ```
 
+> [!IMPORTANT]
+> **Be sure not to commit any references that contain secrets into source control, as secrets should not be made public**.
 1. Run **Debug > Start Debugging**.
 
 ## License
