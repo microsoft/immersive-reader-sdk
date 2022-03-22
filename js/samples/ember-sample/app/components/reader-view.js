@@ -59,4 +59,38 @@ export default class ReaderViewComponent extends Component {
             }
         }
     }
+
+    @action
+    async handleLaunchImmersiveReader(sampleId) {
+        await this.getTokenAndSubdomainAsync();
+        var langElement = $('#lang_' + sampleId);
+        var lang = sampleId == 'DisableLanguageDetection' ? langElement.val() : 'en';
+
+        const data = {
+            title: $('#title' + sampleId).text().trim(),
+            chunks: [{
+                content: $('#text' + sampleId).text().trim(),
+                lang: lang
+            }]
+        };
+
+        let options = {};
+
+        options.disableLanguageDetection = sampleId === 'DisableLanguageDetection';
+        options.disableGrammar = sampleId === 'DisableGrammar';
+        options.disableTranslation = sampleId === 'DisableTranslation';
+        options.parent = sampleId === 'Parent' && document.getElementById("checkboxParent").checked ? document.getElementById('parentDiv') : null;
+
+        if (this.token === null) {
+            alert('Error please first retrieve your token!')
+        } else {
+            try{
+                await launchAsync(this.token, this.subdomain, data, options);
+            }
+            catch (error) {
+                alert("Error in launching the Immersive Reader. Check the console.");
+                console.log(error);
+            }
+        }
+    }
 }

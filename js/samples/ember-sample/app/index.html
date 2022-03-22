@@ -13,6 +13,49 @@
     src='https://ircdname.azureedge.net/immersivereadersdk/immersive-reader-sdk.1.2.0.js'></script>
   <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css" />
 
+  <style media='screen' type='text/css'>
+    .section {
+        border: 1px solid #cccccc;
+        border-radius: 4px;
+        box-sizing: border-box;
+        display: block;
+        margin-bottom: 20px;
+        padding: 20px 20px 10px 20px;
+        position: relative;
+        width: 100%;
+    }
+    #Cols {
+        box-sizing: inherit;
+        column-count: 1;
+        column-gap: 0;
+    }
+    h3 {
+        margin: 0;
+        margin-top: 10px;
+        padding: 0;
+    }
+    p {
+        line-height: 25px;
+    }
+    @media screen and (min-width: 900px) {
+        #Cols {
+            column-gap: 20px;
+            column-count: 2;
+        }
+    }
+    .immersive-reader-button {
+        background-color: white;
+        margin-top: 5px;
+        border: 1px solid black;
+        float: right;
+    }
+    .ir-button-small {
+      position: absolute;
+      right: 5px;
+      top: 5px;
+    }
+  </style>
+
   {{content-for "head"}}
 
   {{content-for "head-footer"}}
