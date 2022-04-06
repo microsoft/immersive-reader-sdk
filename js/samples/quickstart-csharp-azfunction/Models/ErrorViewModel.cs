@@ -1,6 +1,6 @@
 using System;
 
-namespace quickstart_csharp_azfunction.Models
+namespace ImmersiveReader.Samples.QuickStart.AzureFunction.Models
 {
     public class ErrorViewModel
     {

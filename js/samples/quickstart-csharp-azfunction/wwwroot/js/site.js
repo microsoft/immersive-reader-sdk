@@ -17,9 +17,7 @@ function getTokenFromAzureFunction(onsuccess, onerror) {
 
     $.ajax(tokenUrl, {
         method: 'GET',
-        beforeSend: function (request) {
-            request.setRequestHeader("x-functions-key", functionApiKey);
-        },
+        data: { "code" : functionApiKey },
         success: function (data) {
             onsuccess(data);
         },
@@ -49,7 +47,6 @@ function launchInternal(subdomain, token) {
             alert("Error in launching the Immersive Reader. Check the console.");
             console.log(error);
         });
-
 }
 
 function exitCallback() {

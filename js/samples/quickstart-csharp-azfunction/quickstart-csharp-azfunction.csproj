@@ -2,7 +2,7 @@
 
   <PropertyGroup>
     <TargetFramework>net5.0</TargetFramework>
-    <RootNamespace>quickstart-csharp-azfunction</RootNamespace>
+    <RootNamespace>ImmersiveReader.Samples.QuickStart.AzureFunction</RootNamespace>
   </PropertyGroup>
 
   <ItemGroup>

@@ -1,42 +1,39 @@
-﻿using ImmersiveReader_testapp_mvc.Models;
+﻿using ImmersiveReader.Samples.QuickStart.AzureFunction.Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using System;
 using System.Diagnostics;
 using System.Threading.Tasks;
 
-namespace quickstart_csharp_azfunction.Controllers
+namespace ImmersiveReader.Samples.QuickStart.AzureFunction.Controllers
 {
     public class HomeController : Controller
     {
-        private readonly string _FunctionUrl;
-        private readonly string _FunctionAPIKey;
-        private readonly string _FunctionLocalUrl;
+        private readonly string FunctionUrl;
+        private readonly string FunctionAPIKey;
+        private readonly string FunctionLocalUrl;
 
-        public HomeController(Microsoft.Extensions.Configuration.IConfiguration configuration, ILogger<HomeController> logger)
+        public HomeController(Microsoft.Extensions.Configuration.IConfiguration configuration)
         {
-            _logger = logger;
-            _FunctionUrl = configuration["FunctionUrl"];
-            _FunctionAPIKey = configuration["FunctionAPIKey"];
-            _FunctionLocalUrl = configuration["FunctionLocalUrl"];
+            FunctionUrl = configuration["FunctionDeployedToAzureUrl"];
+            FunctionAPIKey = configuration["FunctionAPIKey"];
+            FunctionLocalUrl = configuration["FunctionDeployedLocallyUrl"];
 
-            if (string.IsNullOrWhiteSpace(_FunctionUrl))
+            if (string.IsNullOrWhiteSpace(FunctionUrl))
             {
                 throw new ArgumentNullException("FunctionUrl is null! Did you add that info to secrets.json?");
             }
 
-            if (string.IsNullOrWhiteSpace(_FunctionAPIKey))
+            if (string.IsNullOrWhiteSpace(FunctionAPIKey))
             {
                 throw new ArgumentNullException("FunctionAPIKey is null! Did you add that info to secrets.json?");
             }
 
-            if (string.IsNullOrWhiteSpace(_FunctionLocalUrl))
+            if (string.IsNullOrWhiteSpace(FunctionLocalUrl))
             {
                 throw new ArgumentNullException("FunctionLocalUrl is null! Did you add that info to secrets.json?");
             }
         }
-
-        private readonly ILogger<HomeController> _logger;
 
         public IActionResult Index()
         {
@@ -59,7 +56,7 @@ namespace quickstart_csharp_azfunction.Controllers
         {
             try
             {
-                var response = new { functionUrl = _FunctionUrl, functionApiKey = _FunctionAPIKey, functionLocalUrl = _FunctionLocalUrl };
+                var response = new { functionUrl = FunctionUrl, functionApiKey = FunctionAPIKey, functionLocalUrl = FunctionLocalUrl };
                 return new JsonResult(response);
             }
             catch (Exception ex) {

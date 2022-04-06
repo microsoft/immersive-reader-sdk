@@ -1,5 +1,5 @@
 ﻿@{
-    ViewData["Title"] = "Immersive Reader C# Quickstart";
+    ViewData["Title"] = "Immersive Reader C# Azure Function";
 }
 
 @section Styles {
@@ -67,7 +67,7 @@
 
 @section Scripts
 {
-    <script src="https://contentstorage.onenote.office.net/onenoteltir/immersivereadersdk/immersive-reader-sdk.1.1.0.js"></script>
+    <script src="https://ircdname.azureedge.net/immersivereadersdk/immersive-reader-sdk.1.2.0.js"></script>
 
     <script>
         var functionUrl, functionApiKey, functionLocalUrl;
@@ -90,7 +90,7 @@
             });
         });
 
-        function getFunctionInfo(){
+        function getFunctionInfo() {
             return new Promise(function (resolve, reject) {
                 $.ajax({
                     url: "@Url.Action("GetFunctionInfo", "Home")",
