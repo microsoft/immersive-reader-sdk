@@ -34,6 +34,8 @@ class MainActivity : AppCompatActivity() {
         ignoreIfMissing = true
     }
 
+    // Use "local" for development purposes and make sure the function is up and runnnig locally.
+    // Use "azure" for production and make sure the function is deployed into Azure.
     var tokenFrom = "local"
 
     private lateinit var contextualWebView: WebView
@@ -99,16 +101,16 @@ class MainActivity : AppCompatActivity() {
     @Throws(IOException::class)
     fun getTokenFromAzureFunction(): String {
         // Calling Azure function to get AD token
-        var secretUrlString = ""
+        var functionUrlString = ""
         val apiKey = dotEnv["FUNCTION_API_KEY"]
 
-        if ( tokenFrom == "Local"){
-            secretUrlString = "FUNCTION_URL_LOCAL"
+        if ( tokenFrom == "local"){
+            functionUrlString = "FUNCTION_URL_LOCAL"
         } else {
-            secretUrlString = "FUNCTION_URL"
+            functionUrlString = "FUNCTION_URL"
         }
 
-        val tokenUrl = URL(dotEnv[secretUrlString])
+        val tokenUrl = URL(dotEnv[functionUrlString])
 
         val connection = tokenUrl.openConnection() as HttpURLConnection
         connection.requestMethod = "POST"
@@ -150,7 +152,7 @@ class MainActivity : AppCompatActivity() {
                   var options: Options? = null)
 
     // Only includes Immersive Reader options relevant to Android apps.
-    // For a complete list visit https://docs.microsoft.com/azure/cognitive-services/immersive-reader/reference
+    // For a complete list visit https://docs.microsoft.com/azure/applied-ai-services/immersive-reader/reference
     class Options(var uiLang: String? = null, // Language of the UI, e.g. en, es-ES (optional). Defaults to browser language if not specified.
                   var timeout: Int? = null, // Duration (in milliseconds) before launchAsync fails with a timeout error (default is 15000 ms).
                   var uiZIndex: Int? = null, // Z-index of the iframe that will be created (default is 1000)

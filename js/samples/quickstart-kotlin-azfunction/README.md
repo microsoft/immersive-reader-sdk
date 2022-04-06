@@ -1,18 +1,17 @@
 # Immersive Reader - Quickstart Android Kotlin calling Azure Function
 
-This code sample shows how to get Azure AD token from an Azure function.
+This code sample shows how to get an Azure AD token from an Azure function.
 
 ## Prerequisites
 
-* A function already created and deployed into Azure, see this [Azure function code sample](https://github.com/microsoft/immersive-reader-sdk/tree/master/js/samples/azure-function-csharp).
+* A function up and running either locally or deployed into Azure, see this [Azure function code sample](https://github.com/microsoft/immersive-reader-sdk/tree/master/js/samples/azure-function-csharp).
+    * For using the function locally you must have the code sample above setup and running to get the `<YOUR_FUNCTION_LOCAL>` value.
 
-    You must have the Azure function code sample setup and running to get the `<YOUR_FUNCTION_LOCAL>` value to be used in the next section.
+        Follow the steps in the sample and run the function either pressing **F5** or with the command below:
 
-    Follow the steps in the sample and run the function either pressing **F5** or with the command below:
+        > func host start
 
-    > func host start
-
-    You must deploy the function to Azure first to get the `<YOUR_FUNCTION_URL>` value.
+    * Or you must deploy the function to Azure, follow the steps in the sample in the **Deploy Function into Azure** to get the `<YOUR_FUNCTION_URL>` value.
 
 * [Android Studio](https://developer.android.com/studio)
 
