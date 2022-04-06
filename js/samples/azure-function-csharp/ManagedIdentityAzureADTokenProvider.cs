@@ -10,6 +10,7 @@ namespace quickstart_azure_function_csharp.GetAzureADToken
 {
     public static class ManagedIdentityAzureADTokenProvider
     {
+        //This is the placeholder to be replaced with your own subdomain value
         const string subdomain = "<subdomain>";
 
         [Function("GetAzureADToken")]
