@@ -125,9 +125,7 @@ class MainActivity : AppCompatActivity() {
             var inputLine = readerIn.readLine()
             val response = StringBuffer()
 
-            do {
-                response.append(inputLine)
-            } while (inputLine.length < 0)
+            response.append(inputLine)
             readerIn.close()
 
             // Return token
