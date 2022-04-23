@@ -1,4 +1,4 @@
-function getTokenAndSubdomainAsync() {
+function getTokenAsync() {
     return new Promise(function (resolve, reject) {
         $.ajax({
             url: '/getAuthTokenServlet',

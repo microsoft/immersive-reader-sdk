@@ -86,7 +86,7 @@
         });
 
         function handleLaunchImmersiveReader() {
-            getTokenAndSubdomainAsync()
+            getTokenAsync()
                 .then(function (response) {
                     const token = response["token"];
                     const subdomain = '<%= Microsoft.ImmersiveReader.GetAuthTokenServlet.SUBDOMAIN %>';
