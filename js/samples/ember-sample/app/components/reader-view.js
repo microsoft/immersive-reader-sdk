@@ -20,8 +20,8 @@ export default class ReaderViewComponent extends Component {
             this.subdomain = subdomain;
         }
         catch (err) {
-            alert('There was a problem fetching your credentials, please check the console and make sure your environment variables are set');
             console.log({ err })
+            alert('There was a problem fetching your credentials, please check the console and make sure your environment variables are set');
         }
     }
 
@@ -47,16 +47,12 @@ export default class ReaderViewComponent extends Component {
             "onExit": this.exitCallback
         };
 
-        if (this.token === null) {
-            alert('Error please first retrieve your token!')
-        } else {
-            try {
-                await launchAsync(this.token, this.subdomain, data, options)
-            }
-            catch (error) {
-                alert("Error in launching the Immersive Reader. Check the console.");
-                console.log(error);
-            }
+        try {
+            await launchAsync(this.token, this.subdomain, data, options)
+        }
+        catch (error) {
+            console.log(error);
+            alert("Error in launching the Immersive Reader. Check the console.");
         }
     }
 
@@ -81,16 +77,12 @@ export default class ReaderViewComponent extends Component {
         options.disableTranslation = sampleId === 'DisableTranslation';
         options.parent = sampleId === 'Parent' && document.getElementById("checkboxParent").checked ? document.getElementById('parentDiv') : null;
 
-        if (this.token === null) {
-            alert('Error please first retrieve your token!')
-        } else {
-            try{
-                await launchAsync(this.token, this.subdomain, data, options);
-            }
-            catch (error) {
-                alert("Error in launching the Immersive Reader. Check the console.");
-                console.log(error);
-            }
+        try{
+            await launchAsync(this.token, this.subdomain, data, options);
+        }
+        catch (error) {
+            console.log(error);
+            alert("Error in launching the Immersive Reader. Check the console.");
         }
     }
 }
