@@ -44,33 +44,28 @@ namespace SampleApp
 
         private void RadioButtonOnSelectionHandler(object sender, RoutedEventArgs e)
         {
-            var currentOption = ((RadioButton)sender);
-            foreach (var option in options)
-            {
-                if (option.Key == currentOption.Name)
-                {
-                    options.Remove(option);
-                    options.Add(new KeyValuePair<string, bool>(option.Key, true));
-                    break;
-                }
-            }
-            Language.IsEnabled = (currentOption.Name == "disableLanguageDetection");
-            Language.Text = (currentOption.Name == "disableLanguageDetection") ? Language.Text : "en";
+            OptionSelectionHandler(sender, true);
         }
 
         private void RadioButtonOnDeselectionHandler(object sender, RoutedEventArgs e)
         {
-            var currentOption = ((RadioButton)sender);
+            OptionSelectionHandler(sender, false);
+        }
+
+        private void OptionSelectionHandler(object sender, bool selected) {
+            var currentOption = ((RadioButton)sender).Name;
             foreach (var option in options)
             {
-                if (option.Key == currentOption.Name)
+                if (option.Key == currentOption)
                 {
                     options.Remove(option);
-                    options.Add(new KeyValuePair<string, bool>(option.Key, false));
+                    options.Add(new KeyValuePair<string, bool>(option.Key, selected));
                     break;
                 }
             }
-            Language.IsEnabled = !(currentOption.Name == "disableLanguageDetection");
+
+            Language.IsEnabled = (currentOption == "disableLanguageDetection" && selected);
+            Language.Text = (currentOption == "disableLanguageDetection" && selected) ? Language.Text : "en";
         }
     }
 }
