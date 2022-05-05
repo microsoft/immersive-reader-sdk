@@ -12,6 +12,7 @@ html
 
       script(src='https://ircdname.azureedge.net/immersivereadersdk/immersive-reader-sdk.1.2.0.js')
       script(src='https://code.jquery.com/jquery-3.6.0.min.js', integrity='sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4=', crossorigin='anonymous')
+      script(src='../js/helpers.js')
 
       style(type="text/css").
         .immersive-reader-button {
@@ -22,6 +23,10 @@ html
         }
    body
       div(class="container")
+        nav
+            a(href='/') Home | 
+            a(href='/options') Options
+
         button(class="immersive-reader-button" data-button-style="iconAndText" data-locale="en")
 
         h1(id="ir-title") About Immersive Reader
@@ -44,24 +49,6 @@ html
           p(lang="ar-eg" dir="rtl" style="text-align:right") يتوفر \"القارئ الشامل\" في العديد من اللغات.
 
 script(type="text/javascript").
-  function getTokenAndSubdomainAsync() {
-        return new Promise(function (resolve, reject) {
-            $.ajax({
-                url: "/GetTokenAndSubdomain",
-                type: "GET",
-                success: function (data) {
-                    if (data.error) {
-                        reject(data.error);
-                    } else {
-                        resolve(data);
-                    }
-                },
-                error: function (err) {
-                    reject(err);
-                }
-            });
-        });
-    }
 
     $(".immersive-reader-button").click(function () {
         handleLaunchImmersiveReader();
@@ -87,13 +74,13 @@ script(type="text/javascript").
                 };
                 ImmersiveReader.launchAsync(token, subdomain, data, options)
                     .catch(function (error) {
-                        alert("Error in launching the Immersive Reader. Check the console.");
                         console.log(error);
+                        alert("Error in launching the Immersive Reader. Check the console.");
                     });
             })
             .catch(function (error) {
-                alert("Error in getting the Immersive Reader token and subdomain. Check the console.");
                 console.log(error);
+                alert("Error in getting the Immersive Reader token and subdomain. Check the console.");
             });
     }
 
