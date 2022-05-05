@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio Version 16
-VisualStudioVersion = 16.0.29503.13
+# Visual Studio Version 17
+VisualStudioVersion = 17.1.32228.430
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ImmersiveReader", "ImmersiveReader\ImmersiveReader.csproj", "{5803C7A4-8FFC-4414-A7CD-835B9C89F4B9}"
 EndProject
@@ -42,6 +42,8 @@ Global
 		{5803C7A4-8FFC-4414-A7CD-835B9C89F4B9}.Release|x86.ActiveCfg = Release|x86
 		{5803C7A4-8FFC-4414-A7CD-835B9C89F4B9}.Release|x86.Build.0 = Release|x86
 		{9AA48596-D10D-405C-B1CE-18F08FB847F4}.Debug|Any CPU.ActiveCfg = Debug|x86
+		{9AA48596-D10D-405C-B1CE-18F08FB847F4}.Debug|Any CPU.Build.0 = Debug|x86
+		{9AA48596-D10D-405C-B1CE-18F08FB847F4}.Debug|Any CPU.Deploy.0 = Debug|x86
 		{9AA48596-D10D-405C-B1CE-18F08FB847F4}.Debug|ARM.ActiveCfg = Debug|ARM
 		{9AA48596-D10D-405C-B1CE-18F08FB847F4}.Debug|ARM.Build.0 = Debug|ARM
 		{9AA48596-D10D-405C-B1CE-18F08FB847F4}.Debug|ARM.Deploy.0 = Debug|ARM
