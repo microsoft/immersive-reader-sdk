@@ -34,16 +34,16 @@ function AppOptions() {
   const getCredentials = async () => {
 
     // Verify environment variables values
-    if( typeof process.env.REACT_APP_CLIENT_ID === 'undefined' || process.env.REACT_APP_CLIENT_ID === null ){
+    if( !process.env.REACT_APP_CLIENT_ID ){
       console.log("ClientId is null! Did you add that info to .env file? See ReadMe.md.")
     }
-    if( typeof process.env.REACT_APP_CLIENT_SECRET === 'undefined' || process.env.REACT_APP_CLIENT_SECRET === null ){
+    if( !process.env.REACT_APP_CLIENT_SECRET ){
       console.log("Client Secret is null! Did you add that info to .env file? See ReadMe.md.")
     }
-    if( typeof process.env.REACT_APP_TENANT_ID === 'undefined' || process.env.REACT_APP_TENANT_ID === null ){
+    if( !process.env.REACT_APP_TENANT_ID ){
       console.log("TenantId is null! Did you add that info to .env file? See ReadMe.md.")
     }
-    if( typeof process.env.REACT_APP_SUBDOMAIN === 'undefined' || process.env.REACT_APP_SUBDOMAIN === null ){
+    if( !process.env.REACT_APP_SUBDOMAIN ){
       console.log("Subdomain is null! Did you add that info to .env file? See ReadMe.md.")
     }
 
