@@ -5,7 +5,9 @@ class LaunchViewController: UIViewController {
     private var clientId = ProcessInfo.processInfo.environment["CLIENT_ID"]
     private var clientSecret = ProcessInfo.processInfo.environment["CLIENT_SECRET"]
     private var subdomain = ProcessInfo.processInfo.environment["SUBDOMAIN"]
+    private var tokenServerUrl = ProcessInfo.processInfo.environment["TOKEN_SERVER_URL"]
 
+    private var checkBoxToken: UIButton!
     private var launchButton: UIButton!
     private var disableGrammarButton: UIButton!
     private var disableTranslationButton: UIButton!
@@ -16,6 +18,7 @@ class LaunchViewController: UIViewController {
     private var sampleContent: Content!
     private var sampleChunk: Chunk!
     private var sampleOptions: Options!
+    private var isTokenFromServer = false
     override func viewDidLoad() {
         super.viewDidLoad()
 
@@ -53,6 +56,11 @@ class LaunchViewController: UIViewController {
             bodyText.font = bodyText.font.withSize(28)
         }
         view.addSubview(bodyText)
+
+        checkBoxToken.setImage(UIImage(named:"Checkmarkempty"), for: .normal)
+        checkBoxToken.setImage(UIImage(named:"Checkmark"), for: .selected)
+        checkBoxToken.addTarget(self, action: #selector(checkBoxTokenTapped(sender:)), for: .touchUpInside)
+        view.addSubview(launchButton)
 
         launchButton = UIButton()
         launchButton.backgroundColor = .darkGray
@@ -160,6 +168,10 @@ class LaunchViewController: UIViewController {
         })
     }
 
+    @IBAction func checkBoxTokenTapped(sender: UIButton) {
+        self.isTokenFromServer = !sender.isSelected
+    }
+
     /// Retrieves the token for the Immersive Reader using Azure Active Directory authentication
     ///
     /// - Parameters:
@@ -169,15 +181,19 @@ class LaunchViewController: UIViewController {
     ///     -theError: The error that occured when the token fails to be obtained from the Azure Active Directory Authentication.
     func getToken(onSuccess: @escaping (_ theToken: String) -> Void, onFailure: @escaping ( _ theError: String) -> Void) {
         let tokenForm = "grant_type=client_credentials&resource=https://cognitiveservices.azure.com/&client_id=" + self.clientId! + "&client_secret=" + self.clientSecret!
-        let tokenUrl = "https://login.windows.net/" + self.tenantId! + "/oauth2/token"
+        let tokenUrl = self.isTokenFromServer ? self.tokenServerUrl : "https://login.windows.net/" + self.tenantId! + "/oauth2/token"
 
         var responseTokenString: String = "0"
 
         let url = URL(string: tokenUrl)!
         var request = URLRequest(url: url)
-        request.httpBody = tokenForm.data(using: .utf8)
-        request.httpMethod = "POST"
-
+        if(!self.isTokenFromServer){
+            request.httpBody = tokenForm.data(using: .utf8)
+            request.httpMethod = "POST"
+        } else {
+            request.httpMethod = "GET"
+        }
+        
         let task = URLSession.shared.dataTask(with: request) { data, response, error in
             guard let data = data,
                 let response = response as? HTTPURLResponse,
