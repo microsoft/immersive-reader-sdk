@@ -73,7 +73,13 @@
             </LinearLayout>
 
         </ScrollView>
-
+        <CheckBox
+            android:id="@+id/checkBoxToken"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerInParent="true"
+            android:layout_marginLeft="40dp"
+            android:text="Token from server" />
         <Button
             android:id="@+id/LaunchImmersiveReaderButton"
             android:layout_width="match_parent"
