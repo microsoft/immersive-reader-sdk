@@ -19,7 +19,7 @@ This code sample shows how to get an Azure AD token from an Azure function.
 
 1. Launch Android Studio and open the project from the **immersive-reader-sdk/js/samples/quickstart-kotlin-azfunction** directory.
 
-2. Create a file named **env** to the **/assets** folder and add the following, supplying values according to **Prerequisites** section. Be sure not to commit this file into source control, as it contains secrets that should not be made public.
+1. Create a file named **env** to the **/assets** folder and add the following, supplying values according to **Prerequisites** section. Be sure not to commit this file into source control, as it contains secrets that should not be made public.
 
     ```text
     FUNCTION_URL=<YOUR_FUNCTION_URL>
@@ -27,7 +27,9 @@ This code sample shows how to get an Azure AD token from an Azure function.
     FUNCTION_URL_LOCAL=<YOUR_FUNCTION_LOCAL>
     ```
 
-3. Choose a device emulator from the AVD Manager and run the project.
+1. Make sure to specify in **\app\src\main\java\com\example\immersivereadersdk\MainActivity.kt** where do you want to get the function url. Set the **tokenFrom** variable accordingly.
+
+1. Choose a device emulator from the AVD Manager and run the project.
 
 ## Disclaimer
 
