@@ -139,7 +139,7 @@ Follow the next steps to add permissions to your Immersive Reader resource for t
 
     ![Select Access Control IAM](images/azid4.png)
 
-6. Select **Cognitive Services User** role and press **Next**.
+6. Select **Cognitive Services Immersive Reader User** role and press **Next**.
 
     ![Select Cognitive Services User role](images/azid6.png)
 
