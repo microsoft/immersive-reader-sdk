@@ -14,7 +14,7 @@ This code sample shows how to get Azure AD token from an Azure function.
 
     You must deploy the function to Azure first to get the `YOUR_FUNCTION_URL` value. Please see the same code sample, and go to **Deploy Function into Azure** section into **Readme.md** file.
 
-* [Visual Studio 2019](https://visualstudio.microsoft.com/downloads)
+* [Visual Studio 2002](https://visualstudio.microsoft.com/downloads)
 
 ## Usage
 
