@@ -42,16 +42,17 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         this.supportActionBar!!.hide()
         setContentView(R.layout.activity_main)
+        var getTokenFromServer = checkBoxToken.isChecked
         val immersiveReaderButton = findViewById<Button>(R.id.LaunchImmersiveReaderButton)
         val disableGrammarButton = findViewById<Button>(R.id.disableGrammarButton)
         val disableTranslationButton = findViewById<Button>(R.id.disableTranslationButton)
         val disableLanguageDetectionButton = findViewById<Button>(R.id.disableLanguageDetectionButton)
         val setLanguage = findViewById<EditText>(R.id.editTextLanguage);
         val checkBoxToken = findViewById<CheckBox>(R.id.checkBoxToken);
-        immersiveReaderButton.setOnClickListener { GlobalScope.launch { handleLoadImmersiveReaderWebView(tokenFromServer = checkBoxToken.isChecked) } }
-        disableGrammarButton.setOnClickListener { GlobalScope.launch { handleLoadImmersiveReaderWebView("disableGrammar", tokenFromServer = checkBoxToken.isChecked) } }
-        disableTranslationButton.setOnClickListener { GlobalScope.launch { handleLoadImmersiveReaderWebView("disableTranslation", tokenFromServer = checkBoxToken.isChecked) } }
-        disableLanguageDetectionButton.setOnClickListener { GlobalScope.launch { handleLoadImmersiveReaderWebView("disableLanguageDetection", setLanguage.text.toString(), checkBoxToken.isChecked) } }
+        immersiveReaderButton.setOnClickListener { GlobalScope.launch { handleLoadImmersiveReaderWebView(tokenFromServer = getTokenFromServer) } }
+        disableGrammarButton.setOnClickListener { GlobalScope.launch { handleLoadImmersiveReaderWebView("disableGrammar", tokenFromServer = getTokenFromServer) } }
+        disableTranslationButton.setOnClickListener { GlobalScope.launch { handleLoadImmersiveReaderWebView("disableTranslation", tokenFromServer = getTokenFromServer) } }
+        disableLanguageDetectionButton.setOnClickListener { GlobalScope.launch { handleLoadImmersiveReaderWebView("disableLanguageDetection", setLanguage.text.toString(), getTokenFromServer) } }
     }
 
     private suspend fun handleLoadImmersiveReaderWebView(
@@ -91,14 +92,16 @@ class MainActivity : AppCompatActivity() {
         options.disableTranslation = (optionId == "disableTranslation");
         options.disableLanguageDetection = (optionId == "disableLanguageDetection");
 
-        var token: String
+        var token: String = ""
 
         runBlocking{
             val resp = async { getImmersiveReaderTokenAsync(tokenFromServer) }
-            token = resp.await()
+
             if (!tokenFromServer) {
-                val jsonResp = JSONObject(token)
+                val jsonResp = JSONObject(resp.await())
                 token = jsonResp.getString("access_token")
+            } else {
+                token = resp.await()
             }
             loadImmersiveReaderWebView(exampleActivity, token, subdomain, content, options)
         }
