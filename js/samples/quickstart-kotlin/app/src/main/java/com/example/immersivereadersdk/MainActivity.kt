@@ -8,11 +8,8 @@ import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.webkit.CookieManager
 import android.webkit.WebView
-import android.widget.Button
-import android.widget.EditText
 import android.webkit.WebViewClient
-import android.widget.LinearLayout
-import android.widget.TextView
+import android.widget.*
 import com.google.gson.*
 import io.github.cdimascio.dotenv.dotenv
 import kotlinx.android.synthetic.main.activity_main.*
@@ -23,6 +20,7 @@ import java.net.HttpURLConnection.HTTP_OK
 import java.net.URL
 import kotlinx.coroutines.*
 import org.json.JSONObject
+import org.json.JSONTokener
 import java.util.*
 
 // This sample app uses the Dotenv is a module that loads environment variables from a .env file to better manage secrets.
@@ -49,15 +47,18 @@ class MainActivity : AppCompatActivity() {
         val disableTranslationButton = findViewById<Button>(R.id.disableTranslationButton)
         val disableLanguageDetectionButton = findViewById<Button>(R.id.disableLanguageDetectionButton)
         val setLanguage = findViewById<EditText>(R.id.editTextLanguage);
-        immersiveReaderButton.setOnClickListener { GlobalScope.launch { handleLoadImmersiveReaderWebView() } }
-        disableGrammarButton.setOnClickListener { GlobalScope.launch { handleLoadImmersiveReaderWebView("disableGrammar") } }
-        disableTranslationButton.setOnClickListener { GlobalScope.launch { handleLoadImmersiveReaderWebView("disableTranslation") } }
-        disableLanguageDetectionButton.setOnClickListener { GlobalScope.launch { handleLoadImmersiveReaderWebView("disableLanguageDetection", setLanguage.text.toString()) } }
+        val checkBoxToken = findViewById<CheckBox>(R.id.checkBoxToken);
+        var getTokenFromServer = checkBoxToken.isChecked
+        immersiveReaderButton.setOnClickListener { GlobalScope.launch { handleLoadImmersiveReaderWebView(tokenFromServer = getTokenFromServer) } }
+        disableGrammarButton.setOnClickListener { GlobalScope.launch { handleLoadImmersiveReaderWebView("disableGrammar", tokenFromServer = getTokenFromServer) } }
+        disableTranslationButton.setOnClickListener { GlobalScope.launch { handleLoadImmersiveReaderWebView("disableTranslation", tokenFromServer = getTokenFromServer) } }
+        disableLanguageDetectionButton.setOnClickListener { GlobalScope.launch { handleLoadImmersiveReaderWebView("disableLanguageDetection", setLanguage.text.toString(), getTokenFromServer) } }
     }
 
     private suspend fun handleLoadImmersiveReaderWebView(
         optionId: String = "",
-        language: String = ""
+        language: String = "",
+        tokenFromServer: Boolean = false
     ) {
         val exampleActivity = this
         val subdomain = dotEnv["SUBDOMAIN"]
@@ -91,18 +92,28 @@ class MainActivity : AppCompatActivity() {
         options.disableTranslation = (optionId == "disableTranslation");
         options.disableLanguageDetection = (optionId == "disableLanguageDetection");
 
-        var token: String
+        var token: String = ""
 
         runBlocking{
-            val resp = async { getImmersiveReaderTokenAsync() }
-            token = resp.await()
-            val jsonResp = JSONObject(token)
-            loadImmersiveReaderWebView(exampleActivity, jsonResp.getString("access_token"), subdomain, content, options)
+            val resp = async { getImmersiveReaderTokenAsync(tokenFromServer) }
+
+            if (!tokenFromServer) {
+                val jsonResp = JSONObject(resp.await())
+                token = jsonResp.getString("access_token")
+            } else {
+                token = resp.await()
+            }
+            loadImmersiveReaderWebView(exampleActivity, token, subdomain, content, options)
         }
     }
 
-    private suspend fun getImmersiveReaderTokenAsync(): String {
-        return getToken()
+    private suspend fun getImmersiveReaderTokenAsync(tokenFromServer: Boolean): String {
+        var token = if (tokenFromServer) {
+            getTokenServer()
+        } else {
+            getToken()
+        }
+        return token
     }
 
     @Throws(IOException::class)
@@ -137,6 +148,35 @@ class MainActivity : AppCompatActivity() {
 
             // Return token
             return response.toString()
+        } else {
+            val responseError = Error(code = "BadRequest", message = "There was an error getting the token.")
+            throw IOException(responseError.toString())
+        }
+    }
+
+    @Throws(IOException::class)
+    fun getTokenServer(): String {
+        val serverUrl = dotEnv["TOKEN_SERVER_URL"]
+        val tokenUrl = URL(serverUrl)
+
+        val connection = tokenUrl.openConnection() as HttpURLConnection
+        connection.requestMethod = "GET"
+
+        val responseCode = connection.responseCode
+
+        if (responseCode == HTTP_OK) {
+            val readerIn = BufferedReader(InputStreamReader(connection.inputStream))
+            var inputLine = readerIn.readLine()
+            val response = StringBuffer()
+
+            do {
+                response.append(inputLine)
+            } while (inputLine.length < 0)
+            readerIn.close()
+
+            // Return token
+            val jsonResponse = JSONTokener(response.toString()).nextValue() as JSONObject
+            return jsonResponse.getString("token")
         } else {
             val responseError = Error(code = "BadRequest", message = "There was an error getting the token.")
             throw IOException(responseError.toString())
