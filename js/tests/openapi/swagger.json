@@ -1,0 +1,992 @@
+{
+    "openapi": "3.0.1",
+    "info": {
+      "title": "Immersive Reader Cognitive Service API",
+      "description": "Immersive Reader Cognitive Service API",
+      "version": "v1"
+    },
+    "paths": {
+      "/api/v1.0/GetContentModel": {
+        "post": {
+          "tags": [
+            "Api"
+          ],
+          "requestBody": {
+            "content": {
+              "application/json-patch+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ContentModelRequest"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ContentModelRequest"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ContentModelRequest"
+                }
+              },
+              "application/*+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ContentModelRequest"
+                }
+              }
+            }
+          },
+          "responses": {
+            "200": {
+              "description": "Success"
+            }
+          }
+        }
+      },
+      "/api/v1.0/GetContentModelForReader": {
+        "post": {
+          "tags": [
+            "Api"
+          ],
+          "requestBody": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ContentModelRequest"
+                }
+              }
+            }
+          },
+          "responses": {
+            "200": {
+              "description": "Success"
+            }
+          }
+        }
+      },
+      "/api/v1.0/GetContentModelForReader": {
+        "post": {
+          "tags": [
+            "Api"
+          ],
+          "requestBody": {
+            "content": {
+              "application/vnd.openxmlformats-officedocument.wordprocessingml.document": {
+              }
+            }
+          },
+          "responses": {
+            "200": {
+              "description": "Success"
+            }
+          }
+        }
+      },
+      "/api/v1.0/GetLinguisticModelByText": {
+        "post": {
+          "tags": [
+            "Api"
+          ],
+          "requestBody": {
+            "content": {
+              "application/json-patch+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/LinguisticModelRequest"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/LinguisticModelRequest"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/LinguisticModelRequest"
+                }
+              },
+              "application/*+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/LinguisticModelRequest"
+                }
+              }
+            }
+          },
+          "responses": {
+            "200": {
+              "description": "Success"
+            }
+          }
+        }
+      },
+      "/api/v1.0/GetSpeech": {
+        "post": {
+          "tags": [
+            "Api"
+          ],
+          "requestBody": {
+            "content": {
+              "application/json-patch+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SpeechRequest"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SpeechRequest"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SpeechRequest"
+                }
+              },
+              "application/*+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SpeechRequest"
+                }
+              }
+            }
+          },
+          "responses": {
+            "200": {
+              "description": "Success"
+            }
+          }
+        }
+      },
+      "/api/v1.0/GetTranslatedWord": {
+        "post": {
+          "tags": [
+            "Api"
+          ],
+          "requestBody": {
+            "content": {
+              "application/json-patch+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TranslateWordRequest"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TranslateWordRequest"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TranslateWordRequest"
+                }
+              },
+              "application/*+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TranslateWordRequest"
+                }
+              }
+            }
+          },
+          "responses": {
+            "200": {
+              "description": "Success"
+            }
+          }
+        }
+      },
+      "/api/v1.0/GetTranslatedContentModel": {
+        "post": {
+          "tags": [
+            "Api"
+          ],
+          "requestBody": {
+            "content": {
+              "application/json-patch+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TranslateContentModelRequest"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TranslateContentModelRequest"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TranslateContentModelRequest"
+                }
+              },
+              "application/*+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TranslateContentModelRequest"
+                }
+              }
+            }
+          },
+          "responses": {
+            "200": {
+              "description": "Success"
+            }
+          }
+        }
+      },
+      "/api/v1.0/GetLinguisticModelForEdge": {
+        "post": {
+          "tags": [
+            "Api"
+          ],
+          "requestBody": {
+            "content": {
+              "application/json-patch+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/LinguisticModelRequest"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/LinguisticModelRequest"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/LinguisticModelRequest"
+                }
+              },
+              "application/*+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/LinguisticModelRequest"
+                }
+              }
+            }
+          },
+          "responses": {
+            "200": {
+              "description": "Success"
+            }
+          }
+        }
+      },
+      "/api/v1.0/Languages": {
+        "get": {
+          "tags": [
+            "Api"
+          ],
+          "responses": {
+            "200": {
+              "description": "Success"
+            }
+          }
+        }
+      },
+      "/api/v1.0/APISettings": {
+        "get": {
+          "tags": [
+            "Api"
+          ],
+          "responses": {
+            "200": {
+              "description": "Success"
+            }
+          }
+        }
+      },
+      "/api/v1.0/WebAppSettings": {
+        "get": {
+          "tags": [
+            "Api"
+          ],
+          "responses": {
+            "200": {
+              "description": "Success"
+            }
+          }
+        }
+      },
+      "/health/v1.0/startup": {
+        "get": {
+          "tags": [
+            "Health"
+          ],
+          "responses": {
+            "200": {
+              "description": "Success"
+            }
+          }
+        }
+      },
+      "/ready": {
+        "get": {
+          "tags": [
+            "Ready"
+          ],
+          "responses": {
+            "200": {
+              "description": "A successful response results in a ready response (200)."
+            },
+            "503": {
+              "description": "A failed response results in an unready response (503)."
+            }
+          }
+        }
+      },
+      "/status": {
+        "get": {
+          "tags": [
+            "Status"
+          ],
+          "responses": {
+            "200": {
+              "description": "Success",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "$ref": "#/components/schemas/ServiceStatus"
+                  }
+                },
+                "text/json": {
+                  "schema": {
+                    "$ref": "#/components/schemas/ServiceStatus"
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "/webapp/v1.0/reader": {
+        "get": {
+          "tags": [
+            "WebApp"
+          ],
+          "parameters": [
+            {
+              "name": "lang",
+              "in": "query",
+              "schema": {
+                "type": "string",
+                "nullable": true
+              }
+            },
+            {
+              "name": "omkt",
+              "in": "query",
+              "schema": {
+                "type": "string",
+                "nullable": true
+              }
+            },
+            {
+              "name": "appid",
+              "in": "query",
+              "schema": {
+                "type": "string",
+                "nullable": true
+              }
+            },
+            {
+              "name": "logMode",
+              "in": "query",
+              "schema": {
+                "type": "integer",
+                "format": "int32",
+                "default": 1
+              }
+            }
+          ],
+          "responses": {
+            "200": {
+              "description": "Success"
+            }
+          }
+        }
+      }
+    },
+    "components": {
+      "schemas": {
+        "LinguisticModelRequestDeclaredLanguage": {
+          "type": "object",
+          "properties": {
+            "startIndex": {
+              "type": "integer",
+              "format": "int32"
+            },
+            "length": {
+              "type": "integer",
+              "format": "int32"
+            },
+            "languageCode": {
+              "type": "string",
+              "nullable": true
+            },
+            "confidence": {
+              "type": "number",
+              "format": "double",
+              "nullable": true
+            }
+          },
+          "additionalProperties": false
+        },
+        "LinguisticModelWordInput": {
+          "type": "object",
+          "properties": {
+            "offset": {
+              "type": "integer",
+              "format": "int32"
+            },
+            "length": {
+              "type": "integer",
+              "format": "int32"
+            }
+          },
+          "additionalProperties": false
+        },
+        "LinguisticSentenceSemanticRole": {
+          "enum": [
+            0,
+            1,
+            2
+          ],
+          "type": "integer",
+          "format": "int32"
+        },
+        "LinguisticModelSentenceInput": {
+          "type": "object",
+          "properties": {
+            "offset": {
+              "type": "integer",
+              "format": "int32"
+            },
+            "length": {
+              "type": "integer",
+              "format": "int32"
+            },
+            "semanticRole": {
+              "$ref": "#/components/schemas/LinguisticSentenceSemanticRole"
+            }
+          },
+          "additionalProperties": false
+        },
+        "LinguisticModelRequestChunk": {
+          "type": "object",
+          "properties": {
+            "content": {
+              "type": "string",
+              "nullable": true
+            },
+            "mimeType": {
+              "type": "string",
+              "nullable": true
+            },
+            "lang": {
+              "type": "string",
+              "nullable": true
+            },
+            "binaryData": {
+              "type": "object",
+              "additionalProperties": false,
+              "nullable": true
+            },
+            "startingCharIndex": {
+              "type": "integer",
+              "format": "int32"
+            }
+          },
+          "additionalProperties": false
+        },
+        "ContentModelRequestData": {
+          "type": "object",
+          "properties": {
+            "title": {
+              "type": "string",
+              "nullable": true
+            },
+            "text": {
+              "type": "string",
+              "nullable": true
+            },
+            "languages": {
+              "type": "array",
+              "items": {
+                "$ref": "#/components/schemas/LinguisticModelRequestDeclaredLanguage"
+              },
+              "nullable": true
+            },
+            "words": {
+              "type": "array",
+              "items": {
+                "$ref": "#/components/schemas/LinguisticModelWordInput"
+              },
+              "nullable": true
+            },
+            "sentences": {
+              "type": "array",
+              "items": {
+                "$ref": "#/components/schemas/LinguisticModelSentenceInput"
+              },
+              "nullable": true
+            },
+            "chunks": {
+              "type": "array",
+              "items": {
+                "$ref": "#/components/schemas/LinguisticModelRequestChunk"
+              },
+              "nullable": true
+            },
+            "startingChunkIndex": {
+              "type": "integer",
+              "format": "int32"
+            },
+            "startingCharIndex": {
+              "type": "integer",
+              "format": "int32"
+            }
+          },
+          "additionalProperties": false
+        },
+        "ContentModelRequestOptions": {
+          "type": "object",
+          "properties": {
+            "enableSegmentation": {
+              "type": "boolean"
+            },
+            "useMinimalTextOptions": {
+              "type": "boolean"
+            },
+            "enableLanguageDetection": {
+              "type": "boolean"
+            },
+            "returnText": {
+              "type": "boolean"
+            },
+            "returnWordSegments": {
+              "type": "boolean"
+            },
+            "returnSentenceSegments": {
+              "type": "boolean"
+            },
+            "returnPartsOfSpeech": {
+              "type": "boolean"
+            },
+            "returnPronunciation": {
+              "type": "boolean"
+            },
+            "returnVowelPhonemes": {
+              "type": "boolean"
+            },
+            "returnSyllables": {
+              "type": "boolean"
+            },
+            "returnLanguages": {
+              "type": "boolean"
+            },
+            "returnReadabilityScore": {
+              "type": "boolean"
+            },
+            "returnPictureDictionaryEntries": {
+              "type": "boolean"
+            },
+            "useDeclaredSegments": {
+              "type": "boolean"
+            },
+            "returnPhrases": {
+              "type": "boolean"
+            },
+            "preserveStructure": {
+              "type": "boolean"
+            },
+            "diagnosticDelayDuration": {
+              "type": "integer",
+              "format": "int32"
+            }
+          },
+          "additionalProperties": false
+        },
+        "ContentModelRequest": {
+          "type": "object",
+          "properties": {
+            "data": {
+              "$ref": "#/components/schemas/ContentModelRequestData"
+            },
+            "options": {
+              "$ref": "#/components/schemas/ContentModelRequestOptions"
+            }
+          },
+          "additionalProperties": false
+        },
+        "LinguisticModelRequestData": {
+          "type": "object",
+          "properties": {
+            "title": {
+              "type": "string",
+              "nullable": true
+            },
+            "text": {
+              "type": "string",
+              "nullable": true
+            },
+            "languages": {
+              "type": "array",
+              "items": {
+                "$ref": "#/components/schemas/LinguisticModelRequestDeclaredLanguage"
+              },
+              "nullable": true
+            },
+            "words": {
+              "type": "array",
+              "items": {
+                "$ref": "#/components/schemas/LinguisticModelWordInput"
+              },
+              "nullable": true
+            },
+            "sentences": {
+              "type": "array",
+              "items": {
+                "$ref": "#/components/schemas/LinguisticModelSentenceInput"
+              },
+              "nullable": true
+            },
+            "chunks": {
+              "type": "array",
+              "items": {
+                "$ref": "#/components/schemas/LinguisticModelRequestChunk"
+              },
+              "nullable": true
+            },
+            "startingChunkIndex": {
+              "type": "integer",
+              "format": "int32"
+            },
+            "startingCharIndex": {
+              "type": "integer",
+              "format": "int32"
+            }
+          },
+          "additionalProperties": false
+        },
+        "LinguisticModelRequestOptions": {
+          "type": "object",
+          "properties": {
+            "enableLanguageDetection": {
+              "type": "boolean"
+            },
+            "returnText": {
+              "type": "boolean"
+            },
+            "returnWordSegments": {
+              "type": "boolean"
+            },
+            "returnSentenceSegments": {
+              "type": "boolean"
+            },
+            "returnPartsOfSpeech": {
+              "type": "boolean"
+            },
+            "returnPronunciation": {
+              "type": "boolean"
+            },
+            "returnVowelPhonemes": {
+              "type": "boolean"
+            },
+            "returnSyllables": {
+              "type": "boolean"
+            },
+            "returnLanguages": {
+              "type": "boolean"
+            },
+            "returnReadabilityScore": {
+              "type": "boolean"
+            },
+            "returnPictureDictionaryEntries": {
+              "type": "boolean"
+            },
+            "useDeclaredSegments": {
+              "type": "boolean"
+            },
+            "returnPhrases": {
+              "type": "boolean"
+            },
+            "preserveStructure": {
+              "type": "boolean"
+            },
+            "diagnosticDelayDuration": {
+              "type": "integer",
+              "format": "int32"
+            }
+          },
+          "additionalProperties": false
+        },
+        "LinguisticModelRequest": {
+          "type": "object",
+          "properties": {
+            "data": {
+              "$ref": "#/components/schemas/LinguisticModelRequestData"
+            },
+            "options": {
+              "$ref": "#/components/schemas/LinguisticModelRequestOptions"
+            }
+          },
+          "additionalProperties": false
+        },
+        "SpeechRequestWordInput": {
+          "type": "object",
+          "properties": {
+            "o": {
+              "type": "integer",
+              "format": "int32"
+            },
+            "l": {
+              "type": "integer",
+              "format": "int32"
+            }
+          },
+          "additionalProperties": false
+        },
+        "SpeechRequestSentenceInput": {
+          "type": "object",
+          "properties": {
+            "o": {
+              "type": "integer",
+              "format": "int32"
+            },
+            "l": {
+              "type": "integer",
+              "format": "int32"
+            },
+            "originalOffset": {
+              "type": "integer",
+              "format": "int32"
+            }
+          },
+          "additionalProperties": false
+        },
+        "SpeechSentenceRequestModel": {
+          "type": "object",
+          "properties": {
+            "t": {
+              "type": "string",
+              "nullable": true
+            },
+            "wo": {
+              "type": "array",
+              "items": {
+                "$ref": "#/components/schemas/SpeechRequestWordInput"
+              },
+              "nullable": true
+            },
+            "se": {
+              "$ref": "#/components/schemas/SpeechRequestSentenceInput"
+            },
+            "lang": {
+              "type": "string",
+              "nullable": true
+            }
+          },
+          "additionalProperties": false
+        },
+        "SpeechRequestData": {
+          "type": "object",
+          "properties": {
+            "sentenceModels": {
+              "type": "array",
+              "items": {
+                "$ref": "#/components/schemas/SpeechSentenceRequestModel"
+              },
+              "nullable": true
+            }
+          },
+          "additionalProperties": false
+        },
+        "SpeechRequestOptions": {
+          "type": "object",
+          "properties": {
+            "preferredVoice": {
+              "type": "string",
+              "nullable": true
+            },
+            "extractWordMarkers": {
+              "type": "boolean"
+            },
+            "encoding": {
+              "type": "string",
+              "nullable": true
+            },
+            "singleWordToExtract": {
+              "type": "integer",
+              "format": "int32",
+              "nullable": true
+            },
+            "clientLabel": {
+              "type": "string",
+              "nullable": true
+            },
+            "useBrowserSpecifiedDialect": {
+              "type": "boolean"
+            },
+            "tempIdDoNotLog": {
+              "type": "string",
+              "nullable": true
+            },
+            "useLanguageDetection": {
+              "type": "boolean"
+            }
+          },
+          "additionalProperties": false
+        },
+        "SpeechRequest": {
+          "type": "object",
+          "properties": {
+            "data": {
+              "$ref": "#/components/schemas/SpeechRequestData"
+            },
+            "options": {
+              "$ref": "#/components/schemas/SpeechRequestOptions"
+            }
+          },
+          "additionalProperties": false
+        },
+        "TranslateWordRequestData": {
+          "type": "object",
+          "properties": {
+            "sourceLanguage": {
+              "type": "string",
+              "nullable": true
+            },
+            "targetLanguage": {
+              "type": "string",
+              "nullable": true
+            },
+            "sourceText": {
+              "type": "string",
+              "nullable": true
+            },
+            "sourceContext": {
+              "type": "string",
+              "nullable": true
+            },
+            "sourceContextOffset": {
+              "type": "integer",
+              "format": "int32",
+              "nullable": true
+            },
+            "translatedContext": {
+              "type": "string",
+              "nullable": true
+            },
+            "translatedContextAlignment": {
+              "type": "string",
+              "nullable": true
+            },
+            "returnTranslatedContext": {
+              "type": "boolean"
+            }
+          },
+          "additionalProperties": false
+        },
+        "TranslateWordRequestOptions": {
+          "type": "object",
+          "additionalProperties": false
+        },
+        "TranslateWordRequest": {
+          "type": "object",
+          "properties": {
+            "data": {
+              "$ref": "#/components/schemas/TranslateWordRequestData"
+            },
+            "options": {
+              "$ref": "#/components/schemas/TranslateWordRequestOptions"
+            }
+          },
+          "additionalProperties": false
+        },
+        "JToken": {
+          "type": "array",
+          "items": {
+            "$ref": "#/components/schemas/JToken"
+          }
+        },
+        "LinguisticModelLanguageRangeInput": {
+          "type": "object",
+          "properties": {
+            "offset": {
+              "type": "integer",
+              "format": "int32"
+            },
+            "length": {
+              "type": "integer",
+              "format": "int32"
+            },
+            "language": {
+              "type": "string",
+              "nullable": true
+            }
+          },
+          "additionalProperties": false
+        },
+        "TranslateContentModelRequestData": {
+          "type": "object",
+          "properties": {
+            "targetLanguage": {
+              "type": "string",
+              "nullable": true
+            },
+            "formatting": {
+              "type": "object",
+              "additionalProperties": {
+                "$ref": "#/components/schemas/JToken"
+              },
+              "nullable": true
+            },
+            "title": {
+              "type": "string",
+              "nullable": true
+            },
+            "sourcePrimaryLanguage": {
+              "type": "string",
+              "nullable": true
+            },
+            "text": {
+              "type": "string",
+              "nullable": true
+            },
+            "languages": {
+              "type": "array",
+              "items": {
+                "$ref": "#/components/schemas/LinguisticModelLanguageRangeInput"
+              },
+              "nullable": true
+            }
+          },
+          "additionalProperties": false
+        },
+        "TranslateContentModelRequestOptions": {
+          "type": "object",
+          "additionalProperties": false
+        },
+        "TranslateContentModelRequest": {
+          "type": "object",
+          "properties": {
+            "data": {
+              "$ref": "#/components/schemas/TranslateContentModelRequestData"
+            },
+            "options": {
+              "$ref": "#/components/schemas/TranslateContentModelRequestOptions"
+            }
+          },
+          "additionalProperties": false
+        },
+        "ServiceStatus": {
+          "type": "object",
+          "properties": {
+            "service": {
+              "type": "string",
+              "nullable": true
+            },
+            "apiStatus": {
+              "type": "string",
+              "nullable": true
+            },
+            "apiStatusMessage": {
+              "type": "string",
+              "nullable": true
+            }
+          },
+          "additionalProperties": false
+        }
+      }
+    }
+  }
