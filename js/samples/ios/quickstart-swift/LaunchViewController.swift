@@ -5,7 +5,6 @@ class LaunchViewController: UIViewController {
     private var clientId = ProcessInfo.processInfo.environment["CLIENT_ID"]
     private var clientSecret = ProcessInfo.processInfo.environment["CLIENT_SECRET"]
     private var subdomain = ProcessInfo.processInfo.environment["SUBDOMAIN"]
-    private var tokenServerUrl = ProcessInfo.processInfo.environment["TOKEN_SERVER_URL"]
 
     private var checkBoxToken: UIButton!
     private var launchButton: UIButton!
@@ -198,17 +197,19 @@ class LaunchViewController: UIViewController {
     ///     -theError: The error that occured when the token fails to be obtained from the Azure Active Directory Authentication.
     func getToken(onSuccess: @escaping (_ theToken: String) -> Void, onFailure: @escaping ( _ theError: String) -> Void) {
         let tokenForm = "grant_type=client_credentials&resource=https://cognitiveservices.azure.com/&client_id=" + self.clientId! + "&client_secret=" + self.clientSecret!
-        let tokenUrl = self.isTokenFromServer ? self.tokenServerUrl! : "https://login.windows.net/" + self.tenantId! + "/oauth2/token"
+        let tokenAADUrl = "https://login.windows.net/" + self.tenantId! + "/oauth2/token"
+        let tokenServerUrl = "http://10.0.2.2:3001/GetTokenAndSubdomain" // 10.0.2.2 is the IP that Xcode simulator recognizes as server from your local machine. You can see Connect to local web services from iOS simulators and Android emulators reference (https://docs.microsoft.com/en-us/xamarin/cross-platform/deploy-test/connect-to-local-web-services) for more information.
+        let tokenUrl = self.isTokenFromServer ? tokenServerUrl : tokenAADUrl
 
         var responseTokenString: String = "0"
 
         let url = URL(string: tokenUrl)!
         var request = URLRequest(url: url)
-        if(!self.isTokenFromServer){
+        if(self.isTokenFromServer){
+            request.httpMethod = "GET"
+        } else {
             request.httpBody = tokenForm.data(using: .utf8)
             request.httpMethod = "POST"
-        } else {
-            request.httpMethod = "GET"
         }
         
         let task = URLSession.shared.dataTask(with: request) { data, response, error in

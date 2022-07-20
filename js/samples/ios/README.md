@@ -19,16 +19,15 @@
       SUBDOMAIN=<YOUR_SUBDOMAIN>
       ```
 
-1. In case you want to have the iOS sample getting the token from the back end code.Cd into the **server** folder and then [refer to public node server sample here](https://github.com/microsoft/immersive-reader-sdk/tree/dev/js/samples/quickstart-nodejs).
+1. This sample utilizes two different approaches for obtaining the access token that is needed to launch the Reader -1) from within the sample app itself, and 2) from the app backend.
+
+    Requesting tokens from the backend is the recommended way to go, since it keeps secrets out of the client app.
+
+    This sample shows both approaches, but you will have to toggle between them.
+
+    If you want to have the sample get the token from the backend, Cd into the **server** folder and then [refer to public node server sample here](https://github.com/microsoft/immersive-reader-sdk/tree/dev/js/samples/quickstart-nodejs).
 
     Please note, **this server is running on port 3001** and you must have the **Token from server** option checked in UI.
-    Add **TOKEN_SERVER_URL** value only in the **Environment variables** section as in the previous steps.
-
-    ```text
-    TOKEN_SERVER_URL=http://10.0.2.2:3001/GetTokenAndSubdomain
-    ```
-
-    **10.0.2.2** is the IP that Xcode simulator recognizes as server from your local machine. You can see [Connect to local web services from iOS simulators and Android emulators](https://docs.microsoft.com/en-us/xamarin/cross-platform/deploy-test/connect-to-local-web-services) fore more information.
 
 1. In Xcode, press **Ctrl-R** to run the project.
 
