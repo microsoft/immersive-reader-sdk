@@ -6,6 +6,7 @@ class LaunchViewController: UIViewController {
     private var clientSecret = ProcessInfo.processInfo.environment["CLIENT_SECRET"]
     private var subdomain = ProcessInfo.processInfo.environment["SUBDOMAIN"]
 
+    private var checkBoxToken: UIButton!
     private var launchButton: UIButton!
     private var disableGrammarButton: UIButton!
     private var disableTranslationButton: UIButton!
@@ -16,6 +17,7 @@ class LaunchViewController: UIViewController {
     private var sampleContent: Content!
     private var sampleChunk: Chunk!
     private var sampleOptions: Options!
+    private var isTokenFromServer = false
     override func viewDidLoad() {
         super.viewDidLoad()
 
@@ -53,6 +55,12 @@ class LaunchViewController: UIViewController {
             bodyText.font = bodyText.font.withSize(28)
         }
         view.addSubview(bodyText)
+
+        checkBoxToken = UIButton()
+        checkBoxToken.setImage(UIImage(named:"Checkmarkempty"), for: .normal)
+        checkBoxToken.setImage(UIImage(named:"Checkmark"), for: .selected)
+        checkBoxToken.addTarget(self, action: #selector(checkBoxTokenTapped(sender:)), for: .touchUpInside)
+        view.addSubview(checkBoxToken)
 
         launchButton = UIButton()
         launchButton.backgroundColor = .darkGray
@@ -103,6 +111,12 @@ class LaunchViewController: UIViewController {
         bodyText.leadingAnchor.constraint(equalTo: layoutGuide.leadingAnchor, constant: 20).isActive = true
         bodyText.trailingAnchor.constraint(equalTo: layoutGuide.trailingAnchor, constant: -20).isActive = true
 
+        checkBoxToken.translatesAutoresizingMaskIntoConstraints = false
+        checkBoxToken.widthAnchor.constraint(equalToConstant: 200).isActive = true
+        checkBoxToken.heightAnchor.constraint(equalToConstant: 30).isActive = true
+        checkBoxToken.centerXAnchor.constraint(equalTo: layoutGuide.centerXAnchor).isActive = true
+        checkBoxToken.bottomAnchor.constraint(equalTo: layoutGuide.bottomAnchor, constant: -150).isActive = true
+        
         launchButton.translatesAutoresizingMaskIntoConstraints = false
         launchButton.widthAnchor.constraint(equalToConstant: 200).isActive = true
         launchButton.heightAnchor.constraint(equalToConstant: 30).isActive = true
@@ -160,6 +174,20 @@ class LaunchViewController: UIViewController {
         })
     }
 
+    @IBAction func checkBoxTokenTapped(sender: UIButton) {
+        self.isTokenFromServer = !sender.isSelected
+        
+        UIView.animate(withDuration: 0.5, delay: 0.1, options: .curveLinear, animations: {
+            sender.transform = CGAffineTransform(scaleX: 0.1, y: 0.1)
+            
+        }) { (success) in
+            UIView.animate(withDuration: 0.5, delay: 0.1, options: .curveLinear, animations: {
+                sender.isSelected = !sender.isSelected
+                sender.transform = .identity
+            }, completion: nil)
+        }
+    }
+
     /// Retrieves the token for the Immersive Reader using Azure Active Directory authentication
     ///
     /// - Parameters:
@@ -169,15 +197,21 @@ class LaunchViewController: UIViewController {
     ///     -theError: The error that occured when the token fails to be obtained from the Azure Active Directory Authentication.
     func getToken(onSuccess: @escaping (_ theToken: String) -> Void, onFailure: @escaping ( _ theError: String) -> Void) {
         let tokenForm = "grant_type=client_credentials&resource=https://cognitiveservices.azure.com/&client_id=" + self.clientId! + "&client_secret=" + self.clientSecret!
-        let tokenUrl = "https://login.windows.net/" + self.tenantId! + "/oauth2/token"
+        let tokenAADUrl = "https://login.windows.net/" + self.tenantId! + "/oauth2/token"
+        let tokenServerUrl = "http://10.0.2.2:3001/GetTokenAndSubdomain" // 10.0.2.2 is the IP that Xcode simulator recognizes as server from your local machine. You can see Connect to local web services from iOS simulators and Android emulators reference (https://docs.microsoft.com/en-us/xamarin/cross-platform/deploy-test/connect-to-local-web-services) for more information.
+        let tokenUrl = self.isTokenFromServer ? tokenServerUrl : tokenAADUrl
 
         var responseTokenString: String = "0"
 
         let url = URL(string: tokenUrl)!
         var request = URLRequest(url: url)
-        request.httpBody = tokenForm.data(using: .utf8)
-        request.httpMethod = "POST"
-
+        if(self.isTokenFromServer){
+            request.httpMethod = "GET"
+        } else {
+            request.httpBody = tokenForm.data(using: .utf8)
+            request.httpMethod = "POST"
+        }
+        
         let task = URLSession.shared.dataTask(with: request) { data, response, error in
             guard let data = data,
                 let response = response as? HTTPURLResponse,
