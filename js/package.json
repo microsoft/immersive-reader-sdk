@@ -7,7 +7,7 @@
   "repository": {
     "type": "git",
     "url": "https://github.com/microsoft/immersive-reader-sdk.git",
-    "directory":"js"
+    "directory": "js"
   },
   "types": "lib/immersive-reader-sdk.d.ts",
   "devDependencies": {
@@ -35,6 +35,7 @@
     "testEnvironment": "jsdom"
   },
   "dependencies": {
-    "json-schema": "^0.4.0"
+    "json-schema": "^0.4.0",
+    "terser": "^5.14.2"
   }
 }
