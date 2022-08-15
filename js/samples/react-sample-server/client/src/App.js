@@ -30,6 +30,7 @@ function App() {
   const [subdomain, setSubdomain] = useState('');
   /* -------------------------------------------------------------------------- */
 
+  // The GetToken API endpoint should be secured behind some form of authentication (for example, OAuth) to prevent unauthorized users from obtaining tokens to use against your Immersive Reader service and billing; that work is beyond the scope of this sample.
   const _getCredentials = async () => {
 
     try {

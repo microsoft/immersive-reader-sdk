@@ -15,6 +15,7 @@ public class GetAuthTokenServlet extends HttpServlet {
     private static String CLIENT_SECRET = dotenv.get("CLIENT_SECRET");
     public static String SUBDOMAIN = dotenv.get("SUBDOMAIN");
 
+   // The GetToken API endpoint should be secured behind some form of authentication (for example, OAuth) to prevent unauthorized users from obtaining tokens to use against your Immersive Reader service and billing; that work is beyond the scope of this sample.
     public void doGet(HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse)
             throws IOException {
 

@@ -29,6 +29,7 @@ export default class ReaderViewComponent extends Component {
         alert("This is the callback function. It is executed when the Immersive Reader closes.");
     }
 
+    // The GetToken API endpoint should be secured behind some form of authentication (for example, OAuth) to prevent unauthorized users from obtaining tokens to use against your Immersive Reader service and billing; that work is beyond the scope of this sample.
     @action
     async launchReader() {
         await this.getTokenAndSubdomainAsync();

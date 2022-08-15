@@ -70,6 +70,9 @@ namespace QuickstartSampleWebApp.Controllers
             return authResult.AccessToken;
         }
 
+        /// <summary>
+        /// The GetToken API endpoint should be secured behind some form of authentication (for example, OAuth) to prevent unauthorized users from obtaining tokens to use against your Immersive Reader service and billing; that work is beyond the scope of this sample.
+        /// </summary>
         [HttpGet]
         public async Task<JsonResult> GetTokenAndSubdomain()
         {

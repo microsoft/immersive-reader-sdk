@@ -153,6 +153,7 @@ class LaunchViewController: UIViewController {
         sampleOptions = Options(uiLang: nil, timeout: nil, uiZIndex: nil, hideExitButton: true, preferences: nil)
     }
 
+    /// The GetToken API endpoint should be secured behind some form of authentication (for example, OAuth) to prevent unauthorized users from obtaining tokens to use against your Immersive Reader service and billing; that work is beyond the scope of this sample.
     @IBAction func launchImmersiveReaderButton(sender: UIButton) {
         launchButton.isEnabled = false
 
@@ -188,7 +189,7 @@ class LaunchViewController: UIViewController {
         }
     }
 
-    /// Retrieves the token for the Immersive Reader using Azure Active Directory authentication
+    /// Retrieves the token for the Immersive Reader using Azure Active Directory authentication.
     ///
     /// - Parameters:
     ///     -onSuccess: A closure that gets called when the token is successfully recieved using Azure Active Directory authentication.
