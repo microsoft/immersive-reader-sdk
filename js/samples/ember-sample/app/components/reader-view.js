@@ -29,10 +29,25 @@ export default class ReaderViewComponent extends Component {
         alert("This is the callback function. It is executed when the Immersive Reader closes.");
     }
 
+    handleError = (error, caller) => {
+
+        let alertMessage = `Error in ${caller === 'token' ? 'getting the Immersive Reader token' : 'launching the Immersive Reader'}. Check the console.`
+        let errorStatus = error.status ?? 'unknown';
+        let errorStatusText = error.statusText ?? 'unknown';
+        let errorMessage = error.message ?? 'unknown';
+        let errorSessionId = error.sessionId ?? 'unknown'; // Customers can report this sessionId to Immersive Reader team for further debugging.
+        let errorMessageToLog = `Error - Status: ${errorStatus}, StatusText: ${errorStatusText}, Message: ${errorMessage}, SessionId: ${errorSessionId}`;
+    
+        console.log(errorMessageToLog);
+    
+        alert(alertMessage);
+    }
+
     // The GetToken API endpoint should be secured behind some form of authentication (for example, OAuth) to prevent unauthorized users from obtaining tokens to use against your Immersive Reader service and billing; that work is beyond the scope of this sample.
     @action
     async launchReader() {
-        await this.getTokenAndSubdomainAsync();
+        await this.getTokenAndSubdomainAsync()
+            .catch(error => handleError(error, 'token'));
         const data = {
             title: document.getElementById('ir-title').innerText,
             chunks: [{
@@ -48,18 +63,14 @@ export default class ReaderViewComponent extends Component {
             "onExit": this.exitCallback
         };
 
-        try {
-            await launchAsync(this.token, this.subdomain, data, options)
-        }
-        catch (error) {
-            console.log(error);
-            alert("Error in launching the Immersive Reader. Check the console.");
-        }
+        await launchAsync(this.token, this.subdomain, data, options)
+            .catch(error => handleError(error, 'launch'));
     }
 
     @action
     async handleLaunchImmersiveReader(sampleId) {
-        await this.getTokenAndSubdomainAsync();
+        await this.getTokenAndSubdomainAsync()
+            .catch(error => handleError(error, 'token'));
         var langElement = $('#lang_' + sampleId);
         var lang = sampleId == 'DisableLanguageDetection' ? langElement.val() : 'en';
 
@@ -78,12 +89,7 @@ export default class ReaderViewComponent extends Component {
         options.disableTranslation = sampleId === 'DisableTranslation';
         options.parent = sampleId === 'Parent' && document.getElementById("checkboxParent").checked ? document.getElementById('parentDiv') : null;
 
-        try{
-            await launchAsync(this.token, this.subdomain, data, options);
-        }
-        catch (error) {
-            console.log(error);
-            alert("Error in launching the Immersive Reader. Check the console.");
-        }
+        await launchAsync(this.token, this.subdomain, data, options)
+            .catch(error => handleError(error, 'launch'));
     }
 }

@@ -84,18 +84,14 @@ function App() {
       "cookiePolicy": 1
     };
 
-    try {
-      await launchAsync(token, process.env.REACT_APP_SUBDOMAIN, data, options)
-    }
-    catch (error) {
-      console.log(error);
-      alert("Error in launching the Immersive Reader. Check the console.");
-    }
+    await launchAsync(token, process.env.REACT_APP_SUBDOMAIN, data, options)
+      .catch(error => handleError(error, 'launch'));
   }
 
   // We use a react hook to fetch when the component is rendered (similar to componentDidMount)
   useEffect(() => {
-    getCredentials();
+    getCredentials()
+      .catch(error => handleError(error, 'token'));
   }, [])
 
   return (

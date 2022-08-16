@@ -8,6 +8,20 @@ Licensed under the MIT License. -->
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
     <script type="text/javascript" src="https://ircdname.azureedge.net/immersivereadersdk/immersive-reader-sdk.1.2.0.js"></script>
     <script type="text/javascript">
+        let handleError = (error, caller) => {
+
+            let alertMessage = `Error in ${caller === 'token' ? 'getting the Immersive Reader token' : 'launching the Immersive Reader'}. Check the console.`
+            let errorStatus = error.status ?? 'unknown';
+            let errorStatusText = error.statusText ?? 'unknown';
+            let errorMessage = error.message ?? 'unknown';
+            let errorSessionId = error.sessionId ?? 'unknown'; // Customers can report this sessionId to Immersive Reader team for further debugging.
+            let errorMessageToLog = `Error - Status: ${errorStatus}, StatusText: ${errorStatusText}, Message: ${errorMessage}, SessionId: ${errorSessionId}`;
+
+            console.log(errorMessageToLog);
+
+            alert(alertMessage);
+        }
+
         function launchImmersiveReader(message) {
             if (!message) {
                 window.webkit.messageHandlers.invalidMessagePassed.postMessage(null);
@@ -23,7 +37,8 @@ Licensed under the MIT License. -->
                     window.webkit.messageHandlers.onPreferencesChanged.postMessage(value);
                 }
                 // Use the JavaScript SDK to launch the Immersive Reader.
-                ImmersiveReader.launchAsync(message.cogSvcsAccessToken, message.cogSvcsSubdomain, message.content, message.options);
+                ImmersiveReader.launchAsync(message.cogSvcsAccessToken, message.cogSvcsSubdomain, message.content, message.options)
+                    .catch(error => handleError(error, 'launch'));
             }
         }
         window.addEventListener("message",

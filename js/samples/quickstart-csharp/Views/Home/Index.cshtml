@@ -108,15 +108,9 @@
                     };
 
                     ImmersiveReader.launchAsync(token, subdomain, data, options)
-                        .catch(function (error) {
-                            console.log(error);
-                            alert("Error in launching the Immersive Reader. Check the console.");
-                        });
+                        .catch(error => handleError(error, 'launch'));
                 })
-                .catch(function (error) {
-                    console.log(error);
-                    alert("Error in getting the Immersive Reader token and subdomain. Check the console.");
-                });
+                .catch(error => handleError(error, 'token'));
         }
 
         function exitCallback() {

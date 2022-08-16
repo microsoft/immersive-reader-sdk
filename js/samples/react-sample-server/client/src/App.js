@@ -62,7 +62,8 @@ function App() {
     };
 
     try {
-      await launchAsync(token, subdomain, data, options);
+      await launchAsync(token, subdomain, data, options)
+        .catch(error => handleError(error, 'launch'));
     }
     catch (error) {
       console.log(error);
@@ -73,7 +74,8 @@ function App() {
 
   // We use a react hook to fetch when the component is rendered (similar to componentDidMount)
   useEffect(() => {
-    _getCredentials();
+    _getCredentials()
+      .catch(error => handleError(error, 'token'));
   }, [])
 
   return (
