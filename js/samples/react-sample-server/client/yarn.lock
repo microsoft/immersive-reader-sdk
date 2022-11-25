@@ -2391,7 +2391,7 @@
     error-stack-parser "^2.0.6"
     find-up "^5.0.0"
     html-entities "^2.1.0"
-    loader-utils "^2.0.4"
+    loader-utils "^3.2.1"
     schema-utils "^3.0.0"
     source-map "^0.7.3"
 
@@ -2567,7 +2567,7 @@
     "@svgr/core" "^5.5.0"
     "@svgr/plugin-jsx" "^5.5.0"
     "@svgr/plugin-svgo" "^5.5.0"
-    loader-utils "^2.0.0"
+    loader-utils "^3.2.1"
 
 "@testing-library/dom@^7.28.1":
   version "7.31.2"
@@ -3246,7 +3246,7 @@ adjust-sourcemap-loader@^4.0.0:
   resolved "https://registry.yarnpkg.com/adjust-sourcemap-loader/-/adjust-sourcemap-loader-4.0.0.tgz#fc4a0fd080f7d10471f30a7320f25560ade28c99"
   integrity sha512-OXwN5b9pCUXNQHJpwwD2qP40byEmSgzj8B4ydSN0uMNYWiFmJ6x6KwUllMmfk8Rwu/HJDFR7U8ubsWBoN0Xp0A==
   dependencies:
-    loader-utils "^2.0.0"
+    loader-utils "^3.2.1"
     regex-parser "^2.2.11"
 
 agent-base@6:
@@ -3508,7 +3508,7 @@ babel-loader@^8.2.3:
   integrity sha512-H8SvsMF+m9t15HNLMipppzkC+Y2Yq+v3SonZyU70RBL/h1gxPkH08Ot8pEE9Z4Kd+czyWJClmFS8qzIP9OZ04Q==
   dependencies:
     find-cache-dir "^3.3.1"
-    loader-utils "^2.0.0"
+    loader-utils "^3.2.1"
     make-dir "^3.1.0"
     schema-utils "^2.6.5"
 
@@ -5258,7 +5258,7 @@ file-loader@^6.2.0:
   resolved "https://registry.yarnpkg.com/file-loader/-/file-loader-6.2.0.tgz#baef7cf8e1840df325e4390b4484879480eebe4d"
   integrity sha512-qo3glqyTa61Ytg4u73GultjHGjdRyig3tG6lPtyX/jOEJvHif9uB0/OCI2Kif6ctF3caQTW2G5gym21oAsI4pw==
   dependencies:
-    loader-utils "^2.0.0"
+    loader-utils "^3.2.1"
     schema-utils "^3.0.0"
 
 filelist@^1.0.1:
@@ -7163,12 +7163,7 @@ multicast-dns@^7.2.5:
     dns-packet "^5.2.2"
     thunky "^1.0.2"
 
-nanoid@^3.2.0:
-  version "3.3.0"
-  resolved "https://registry.yarnpkg.com/nanoid/-/nanoid-3.3.0.tgz#5906f776fd886c66c24f3653e0c46fcb1d4ad6b0"
-  integrity sha512-JzxqqT5u/x+/KOFSd7JP15DOo9nOoHpx6DYatqIHUW2+flybkm+mdcraotSQR5WcnZr+qhGVh8Ted0KdfSMxlg==
-
-nanoid@^3.3.4:
+nanoid@^3.1.30, nanoid@^3.3.4:
   version "3.3.4"
   resolved "https://registry.yarnpkg.com/nanoid/-/nanoid-3.3.4.tgz#730b67e3cd09e2deacf03c027c81c9d9dbc5e8ab"
   integrity sha512-MqBkQh/OHTS2egovRtLk45wEyNXwF+cokD+1YPf9u5VfJiRdAiRwB2froX5Co9Rh20xs4siNPm8naNotSD6RBw==
@@ -8375,13 +8370,13 @@ react-dev-utils@^12.0.1:
     gzip-size "^6.0.0"
     immer "^9.0.7"
     is-root "^2.1.0"
-    loader-utils "^3.2.0"
+    loader-utils "^3.2.1"
     open "^8.4.0"
     pkg-up "^3.1.0"
     prompts "^2.4.2"
     react-error-overlay "^6.0.11"
     recursive-readdir "^2.2.2"
-    shell-quote "^1.7.3"
+    shell-quote "^1.7.4"
     strip-ansi "^6.0.1"
     text-table "^0.2.0"
 
@@ -8706,7 +8701,7 @@ resolve-url-loader@^4.0.0:
   dependencies:
     adjust-sourcemap-loader "^4.0.0"
     convert-source-map "^1.7.0"
-    loader-utils "^2.0.0"
+    loader-utils "^3.2.1"
     postcss "^7.0.35"
     source-map "0.6.1"
 
@@ -8993,6 +8988,11 @@ shell-quote@^1.7.3:
   version "1.7.3"
   resolved "https://registry.yarnpkg.com/shell-quote/-/shell-quote-1.7.3.tgz#aa40edac170445b9a431e17bb62c0b881b9c4123"
   integrity sha512-Vpfqwm4EnqGdlsBFNmHhxhElJYrdfcxPThu+ryKS5J8L/fhAwLazFZtq+S+TWZ9ANj2piSQLGj6NQg+lKPmxrw==
+
+shell-quote@^1.7.4:
+  version "1.7.4"
+  resolved "https://registry.yarnpkg.com/shell-quote/-/shell-quote-1.7.4.tgz#33fe15dee71ab2a81fcbd3a52106c5cfb9fb75d8"
+  integrity sha512-8o/QEhSSRb1a5i7TFR0iM4G16Z0vYB2OQVs4G3aAFXjn3T6yEx8AZxy1PgDF7I00LZHYA3WxaSYIf5e5sAX8Rw==
 
 side-channel@^1.0.4:
   version "1.0.4"
