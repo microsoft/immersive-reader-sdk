@@ -36,6 +36,7 @@
   },
   "dependencies": {
     "json-schema": "^0.4.0",
+    "loader-utils": "^3.2.1",
     "terser": "^5.14.2"
   }
 }
