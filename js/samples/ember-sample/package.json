@@ -74,6 +74,7 @@
     "glob-parent": "^6.0.2",
     "markdown-it": "^12.3.2",
     "minimist": "^1.2.7",
+    "socket.io": "^4.5.4",
     "testem": "^3.9.0"
   }
 }
