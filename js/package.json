@@ -35,6 +35,7 @@
     "testEnvironment": "jsdom"
   },
   "dependencies": {
+    "decode-uri-component": "0.2.1",
     "json-schema": "^0.4.0",
     "loader-utils": "^3.2.1",
     "terser": "^5.14.2"
