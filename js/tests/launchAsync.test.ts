@@ -272,6 +272,22 @@ describe('launchAsync tests', () => {
         expect(cbOnExit).toHaveBeenCalledTimes(1);
     });
     
+    it('microphone allowed', async () => {
+        expect.assertions(1);
+        
+        const cbOnExit = jest.fn(() => { });
+
+        const options: Options = { onExit: () => { cbOnExit(); } };
+        const launchPromise = launchAsync(SampleToken, SampleSubdomain, SampleContent, options);
+        window.postMessage('ImmersiveReader-LaunchResponse:{"success":true}', '*');
+
+        const response = await launchPromise;
+
+        const iframe = <HTMLIFrameElement>response.container.firstElementChild;
+
+        expect(iframe.allow).toContain('microphone');
+    }); 
+
     it('launches with preferences not set', async () => {
         expect.assertions(1);
         const options: Options = { preferences: null };
