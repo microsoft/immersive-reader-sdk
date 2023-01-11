@@ -91,6 +91,7 @@ export function launchAsync(token: string, subdomain: string, content: Content, 
         isLoading = true;
         const startTime = Date.now();
         launchResponseError = null;
+
         options = {
             uiZIndex: 1000,
             timeout: 15000,  // Default to 15 seconds

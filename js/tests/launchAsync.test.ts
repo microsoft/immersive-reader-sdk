@@ -145,7 +145,7 @@ describe('launchAsync tests', () => {
     });
 
     it('fails to launch due to expired token', async () => {
-        expect.assertions(2);
+        expect.assertions(5);
         const launchPromise = launchAsync(SampleToken, SampleSubdomain, SampleContent);
 
         window.postMessage('ImmersiveReader-LaunchResponse:{"success":false, "errorCode":"TokenExpired"}', '*');
@@ -155,6 +155,9 @@ describe('launchAsync tests', () => {
         } catch (error) {
             expect(error.code).toBe('TokenExpired');
             expect(error.message).toBe('The access token supplied is expired.');
+            expect(error).toHaveProperty('readerReadyDuration');
+            expect(error).toHaveProperty('launchDuration');
+            expect(error).toHaveProperty('gcmCorrelationId');
         }
     });
 
@@ -271,6 +274,54 @@ describe('launchAsync tests', () => {
 
         expect(cbOnExit).toHaveBeenCalledTimes(1);
     });
+
+    it('launch reader is complete', async () => {
+        expect.assertions(2);
+
+        const cbOnExit = jest.fn(() => { });
+
+        const options: Options = { onExit: () => { cbOnExit(); } };
+        const launchPromise = launchAsync(SampleToken, SampleSubdomain, SampleContent, options);
+        window.postMessage('ImmersiveReader-LaunchResponse:{"success":true}', '*');
+
+        const response = await launchPromise;
+        const iframe = <HTMLIFrameElement>response.container.firstElementChild;
+
+        expect(iframe.title.toLowerCase()).toMatch('immersive reader frame');
+        expect(iframe.contentDocument).not.toBeNull();
+    });
+
+    it('response returned durations and correlations', async () => {
+        expect.assertions(3);
+
+        const cbOnExit = jest.fn(() => { });
+        
+        const options: Options = { onExit: () => { cbOnExit(); } };
+        const launchPromise = launchAsync(SampleToken, SampleSubdomain, SampleContent, options);
+        window.postMessage('ImmersiveReader-LaunchResponse:{"success":true}', '*');
+
+        const response = await launchPromise;
+
+        expect(response).toHaveProperty('readerReadyDuration');
+        expect(response).toHaveProperty('launchDuration');
+        expect(response).toHaveProperty('gcmCorrelationId');
+    });
+
+    it('microphone allowed', async () => {
+        expect.assertions(1);
+        
+        const cbOnExit = jest.fn(() => { });
+        
+        const options: Options = { onExit: () => { cbOnExit(); } };
+        const launchPromise = launchAsync(SampleToken, SampleSubdomain, SampleContent, options);
+        window.postMessage('ImmersiveReader-LaunchResponse:{"success":true}', '*');
+
+        const response = await launchPromise;
+
+        const iframe = <HTMLIFrameElement>response.container.firstElementChild;
+
+        expect(iframe.allow).toContain('microphone');
+    }); 
     
     it('launches with preferences not set', async () => {
         expect.assertions(1);
