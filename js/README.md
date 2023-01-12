@@ -11,7 +11,7 @@ You can find examples of how to acquire an authentication token in the [samples]
 Include the library of the stable build in your web application:
 
 ```html
-<script type='text/javascript' src='https://ircdname.azureedge.net/immersivereadersdk/immersive-reader-sdk.1.2.0.js'></script>
+<script type='text/javascript' src='https://ircdname.azureedge.net/immersivereadersdk/immersive-reader-sdk.1.3.0.js'></script>
 ```
 
 ```bash
