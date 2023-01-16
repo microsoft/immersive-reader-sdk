@@ -22,6 +22,11 @@
             <TextBox Header="Subdomain" x:Name="Subdomain"/>
             <TextBox Header="ReaderContent" x:Name="ReaderContent"/>
             <Button Content="Start immersive reader" Click="Button_Click"/>
+            <TextBlock Text="Options:"  Margin="5" />
+            <RadioButton x:Name="disableGrammar" Margin="5" Checked="RadioButtonOnSelectionHandler" Unchecked="RadioButtonOnDeselectionHandler" GroupName="options" Content="disableGrammar (Grammar features such as Syllables, Parts of speech, and Picture Dictionary will be disabled)" />
+            <RadioButton x:Name="disableTranslation" Margin="5" Checked="RadioButtonOnSelectionHandler" Unchecked="RadioButtonOnDeselectionHandler" GroupName="options" Content="disableTranslation (The Translation features will be disabled)" />
+            <RadioButton x:Name="disableLanguageDetection" Margin="5" Checked="RadioButtonOnSelectionHandler" Unchecked="RadioButtonOnDeselectionHandler" GroupName="options" Content="disableLanguageDetection (The Language Detection feature will be disabled. This will prevent Immersive Reader from automatically detecting the language of the supplied content)" />
+            <TextBox Header="Language (i.e 'fr', 'es', 'de', 'zh')" x:Name="Language" Text="en" IsEnabled="False"/>            
         </StackPanel>
 
         <ir:ImmersiveReaderView Grid.Row="1" x:Name="immersiveReader"/>

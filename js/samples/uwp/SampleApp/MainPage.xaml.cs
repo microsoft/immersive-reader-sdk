@@ -24,8 +24,14 @@ namespace SampleApp
     {
         public MainPage()
         {
+            options.Add(new KeyValuePair<string, bool>("disableGrammar", false));
+            options.Add(new KeyValuePair<string, bool>("disableTranslation", false));
+            options.Add(new KeyValuePair<string, bool>("disableLanguageDetection", false));
+
             this.InitializeComponent();
         }
+
+        private List<KeyValuePair<string, bool>> options = new List<KeyValuePair<string, bool>>();
 
         private async void Button_Click(object sender, RoutedEventArgs e)
         {
@@ -33,7 +39,33 @@ namespace SampleApp
             immersiveReader.ClientId = ClientId.Text;
             immersiveReader.ClientSecret = ClientSecret.Password;
             immersiveReader.Subdomain = Subdomain.Text;
-            await immersiveReader.Start("Title", ReaderContent.Text);
+            await immersiveReader.Start("Title", ReaderContent.Text, options, Language.Text);
+        }
+
+        private void RadioButtonOnSelectionHandler(object sender, RoutedEventArgs e)
+        {
+            OptionSelectionHandler(sender, true);
+        }
+
+        private void RadioButtonOnDeselectionHandler(object sender, RoutedEventArgs e)
+        {
+            OptionSelectionHandler(sender, false);
+        }
+
+        private void OptionSelectionHandler(object sender, bool selected) {
+            var currentOption = ((RadioButton)sender).Name;
+            foreach (var option in options)
+            {
+                if (option.Key == currentOption)
+                {
+                    options.Remove(option);
+                    options.Add(new KeyValuePair<string, bool>(option.Key, selected));
+                    break;
+                }
+            }
+
+            Language.IsEnabled = (currentOption == "disableLanguageDetection" && selected);
+            Language.Text = (currentOption == "disableLanguageDetection" && selected) ? Language.Text : "en";
         }
     }
 }

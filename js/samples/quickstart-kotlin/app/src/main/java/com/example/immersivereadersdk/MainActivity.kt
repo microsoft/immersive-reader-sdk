@@ -8,12 +8,11 @@ import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.webkit.CookieManager
 import android.webkit.WebView
-import android.widget.Button
 import android.webkit.WebViewClient
-import android.widget.LinearLayout
-import android.widget.TextView
+import android.widget.*
 import com.google.gson.*
 import io.github.cdimascio.dotenv.dotenv
+import kotlinx.android.synthetic.main.activity_main.*
 import java.io.IOException
 import java.io.*
 import java.net.HttpURLConnection
@@ -21,6 +20,7 @@ import java.net.HttpURLConnection.HTTP_OK
 import java.net.URL
 import kotlinx.coroutines.*
 import org.json.JSONObject
+import org.json.JSONTokener
 import java.util.*
 
 // This sample app uses the Dotenv is a module that loads environment variables from a .env file to better manage secrets.
@@ -43,10 +43,23 @@ class MainActivity : AppCompatActivity() {
         this.supportActionBar!!.hide()
         setContentView(R.layout.activity_main)
         val immersiveReaderButton = findViewById<Button>(R.id.LaunchImmersiveReaderButton)
-        immersiveReaderButton.setOnClickListener { GlobalScope.launch { handleLoadImmersiveReaderWebView() } }
+        val disableGrammarButton = findViewById<Button>(R.id.disableGrammarButton)
+        val disableTranslationButton = findViewById<Button>(R.id.disableTranslationButton)
+        val disableLanguageDetectionButton = findViewById<Button>(R.id.disableLanguageDetectionButton)
+        val setLanguage = findViewById<EditText>(R.id.editTextLanguage);
+        val checkBoxToken = findViewById<CheckBox>(R.id.checkBoxToken);
+        var getTokenFromServer = checkBoxToken.isChecked
+        immersiveReaderButton.setOnClickListener { GlobalScope.launch { handleLoadImmersiveReaderWebView(tokenFromServer = getTokenFromServer) } }
+        disableGrammarButton.setOnClickListener { GlobalScope.launch { handleLoadImmersiveReaderWebView("disableGrammar", tokenFromServer = getTokenFromServer) } }
+        disableTranslationButton.setOnClickListener { GlobalScope.launch { handleLoadImmersiveReaderWebView("disableTranslation", tokenFromServer = getTokenFromServer) } }
+        disableLanguageDetectionButton.setOnClickListener { GlobalScope.launch { handleLoadImmersiveReaderWebView("disableLanguageDetection", setLanguage.text.toString(), getTokenFromServer) } }
     }
 
-    private suspend fun handleLoadImmersiveReaderWebView() {
+    private suspend fun handleLoadImmersiveReaderWebView(
+        optionId: String = "",
+        language: String = "",
+        tokenFromServer: Boolean = false
+    ) {
         val exampleActivity = this
         val subdomain = dotEnv["SUBDOMAIN"]
         val irTitle = findViewById<TextView>(R.id.Title)
@@ -57,12 +70,12 @@ class MainActivity : AppCompatActivity() {
         // This basic example contains chunks of two different languages.
         val chunk1 = Chunk()
         chunk1.content = irText1.text.toString()
-        chunk1.lang = "en"
+        chunk1.lang = if (language.isEmpty()) "en" else language;
         chunk1.mimeType = "text/plain"
 
         val chunk2 = Chunk()
         chunk2.content = irText2.text.toString()
-        chunk2.lang = "fr"
+        chunk2.lang = if (language.isEmpty()) "fr" else language;
         chunk2.mimeType = "text/plain"
 
         val chunks = ArrayList<Chunk>()
@@ -75,19 +88,32 @@ class MainActivity : AppCompatActivity() {
 
         // Options may be assigned values here (e.g. options.uiLang = "en").
         val options = Options()
+        options.disableGrammar = (optionId == "disableGrammar");
+        options.disableTranslation = (optionId == "disableTranslation");
+        options.disableLanguageDetection = (optionId == "disableLanguageDetection");
 
-        var token: String
+        var token: String = ""
 
         runBlocking{
-            val resp = async { getImmersiveReaderTokenAsync() }
-            token = resp.await()
-            val jsonResp = JSONObject(token)
-            loadImmersiveReaderWebView(exampleActivity, jsonResp.getString("access_token"), subdomain, content, options)
+            val resp = async { getImmersiveReaderTokenAsync(tokenFromServer) }
+
+            if (!tokenFromServer) {
+                val jsonResp = JSONObject(resp.await())
+                token = jsonResp.getString("access_token")
+            } else {
+                token = resp.await()
+            }
+            loadImmersiveReaderWebView(exampleActivity, token, subdomain, content, options)
         }
     }
 
-    private suspend fun getImmersiveReaderTokenAsync(): String {
-        return getToken()
+    private suspend fun getImmersiveReaderTokenAsync(tokenFromServer: Boolean): String {
+        var token = if (tokenFromServer) {
+            getTokenServer()
+        } else {
+            getToken()
+        }
+        return token
     }
 
     @Throws(IOException::class)
@@ -128,6 +154,35 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
+    @Throws(IOException::class)
+    fun getTokenServer(): String {
+        val serverUrl = dotEnv["TOKEN_SERVER_URL"]
+        val tokenUrl = URL(serverUrl)
+
+        val connection = tokenUrl.openConnection() as HttpURLConnection
+        connection.requestMethod = "GET"
+
+        val responseCode = connection.responseCode
+
+        if (responseCode == HTTP_OK) {
+            val readerIn = BufferedReader(InputStreamReader(connection.inputStream))
+            var inputLine = readerIn.readLine()
+            val response = StringBuffer()
+
+            do {
+                response.append(inputLine)
+            } while (inputLine.length < 0)
+            readerIn.close()
+
+            // Return token
+            val jsonResponse = JSONTokener(response.toString()).nextValue() as JSONObject
+            return jsonResponse.getString("token")
+        } else {
+            val responseError = Error(code = "BadRequest", message = "There was an error getting the token.")
+            throw IOException(responseError.toString())
+        }
+    }
+
     class Chunk(var content: String? = null,
                 var lang: String? = null,
                 var mimeType: String? = null)
@@ -149,7 +204,10 @@ class MainActivity : AppCompatActivity() {
                   var onExit: (() -> Any)? = null, // Executes a callback function when the Immersive Reader exits
                   var customDomain: String? = null, // Reserved for internal use. Custom domain where the Immersive Reader webapp is hosted (default is null).
                   var allowFullscreen: Boolean? = null, // The ability to toggle fullscreen (default is true).
-                  var hideExitButton: Boolean? = null // Whether or not to hide the Immersive Reader's exit button arrow (default is false). This should only be true if there is an alternative mechanism provided to exit the Immersive Reader (e.g a mobile toolbar's back arrow).
+                  var hideExitButton: Boolean? = null, // Whether or not to hide the Immersive Reader's exit button arrow (default is false). This should only be true if there is an alternative mechanism provided to exit the Immersive Reader (e.g a mobile toolbar's back arrow).
+                  var disableGrammar: Boolean? = null,
+                  var disableTranslation: Boolean? = null,
+                  var disableLanguageDetection: Boolean? = null
     )
 
     class Error(var code: String? = null,

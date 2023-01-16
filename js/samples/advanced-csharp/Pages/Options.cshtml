@@ -1,6 +1,9 @@
 ﻿@page
 @model AdvancedSampleWebApp.Pages.OptionsModel
 
+<!-- Copyright (c) Microsoft Corporation. All rights reserved.
+     Licensed under the MIT License. -->
+
 <!doctype html>
 <html>
 <head>
@@ -8,8 +11,8 @@
     <title>Immersive Reader Example: SDK options</title>
     <meta name='viewport' content='width=device-width, initial-scale=1'>
 
-    <script type='text/javascript' src='https://code.jquery.com/jquery-3.3.1.min.js'></script>
-    <script type='text/javascript' src='https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.12.1/jquery-ui.min.js'></script>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js" integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4=" crossorigin="anonymous"></script>
+    <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.min.js" integrity="sha256-VazP97ZCwtekAsvgPBSUwPFKdrwD3unUfSGVYrahUqU=" crossorigin="anonymous"></script>
     <script type='text/javascript' src='https://ircdname.azureedge.net/immersivereadersdk/immersive-reader-sdk.1.2.0.js'></script>
     <script type='text/javascript' src='~/js/helpers.js'></script>
 
@@ -134,7 +137,14 @@
             const token = await getImmersiveReaderTokenAsync(Canary);
             const subdomain = await getImmersiveReaderSubdomainAsync();
 
-            ImmersiveReader.launchAsync(token, subdomain, data, options);
+            await ImmersiveReader.launchAsync(token, subdomain, data, options)
+                .then(() => {
+                    console.log('Successful launch.');
+                })
+                .catch ((e) => {
+                    alert('Error in launching the Immersive Reader. Check the console.');
+                    console.log(e);
+                });
         }
     </script>
 </body>

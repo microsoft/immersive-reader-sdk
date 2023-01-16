@@ -15,6 +15,20 @@ function App() {
 
   const getCredentials = async () => {
 
+    // Verify environment variables values
+    if( !process.env.REACT_APP_CLIENT_ID ){
+      console.log("ClientId is null! Did you add that info to .env file? See ReadMe.md.")
+    }
+    if( !process.env.REACT_APP_CLIENT_SECRET ){
+      console.log("Client Secret is null! Did you add that info to .env file? See ReadMe.md.")
+    }
+    if( !process.env.REACT_APP_TENANT_ID ){
+      console.log("TenantId is null! Did you add that info to .env file? See ReadMe.md.")
+    }
+    if( !process.env.REACT_APP_SUBDOMAIN ){
+      console.log("Subdomain is null! Did you add that info to .env file? See ReadMe.md.")
+    }
+
     // Form details to be passed to fetch
     const details = {
       grant_type: 'client_credentials',
@@ -48,8 +62,8 @@ function App() {
 
     }
     catch (err) {
-      alert('There was a problem fetching your credentials, please check the console and make sure your environment variables are prefixed with REACT_APP_');
       console.log({ err })
+      alert('There was a problem fetching your credentials, please check the console and make sure your environment variables are prefixed with REACT_APP_');
     }
   }
 
@@ -73,11 +87,12 @@ function App() {
       await launchAsync(token, process.env.REACT_APP_SUBDOMAIN, data, options)
     }
     catch (error) {
-      alert("Error in launching the Immersive Reader. Check the console.");
       console.log(error);
+      alert("Error in launching the Immersive Reader. Check the console.");
     }
   }
 
+  // We use a react hook to fetch when the component is rendered (similar to componentDidMount)
   useEffect(() => {
     getCredentials();
   }, [])

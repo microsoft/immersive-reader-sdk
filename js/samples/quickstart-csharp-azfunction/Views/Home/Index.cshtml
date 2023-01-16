@@ -1,0 +1,114 @@
+﻿@{
+    ViewData["Title"] = "Immersive Reader C# Azure Function";
+}
+
+@section Styles {
+    <style type="text/css">
+        .immersive-reader-button {
+            background-color: white;
+            margin-top: 5px;
+            border: 1px solid black;
+            float: right;
+        }
+    </style>
+}
+
+<div class="container">
+    <div>
+	    <div style='padding-bottom: 5px;'>Get token</div>
+	    <input type="radio" name="gettoken" value="local" checked /> Locally <br>
+	    <input type="radio" name="gettoken" value="azure" /> From Azure <br>
+    </div>
+    <button class="immersive-reader-button" data-button-style="iconAndText" data-locale="en"></button>
+
+    <h1 id="ir-title">About Immersive Reader</h1>
+    <div id="ir-content" lang="en-us">
+        <p>
+            Immersive Reader is a tool that implements proven techniques to improve reading comprehension for emerging readers, language learners, and people with learning differences.
+            The Immersive Reader is designed to make reading more accessible for everyone. The Immersive Reader
+            <ul>
+                <li>
+                    Shows content in a minimal reading view
+                </li>
+                <li>
+                    Displays pictures of commonly used words
+                </li>
+                <li>
+                    Highlights nouns, verbs, adjectives, and adverbs
+                </li>
+                <li>
+                    Reads your content out loud to you
+                </li>
+                <li>
+                    Translates your content into another language
+                </li>
+                <li>
+                    Breaks down words into syllables
+                </li>
+            </ul>
+        </p>
+        <h3 lang="en-us">
+            The Immersive Reader is available in many languages.
+        </h3>
+        <p lang="es-es">
+            El Lector inmersivo está disponible en varios idiomas.
+        </p>
+        <p lang="zh-cn">
+            沉浸式阅读器支持许多语言
+        </p>
+        <p lang="de-de">
+            Der plastische Reader ist in vielen Sprachen verfügbar.
+        </p>
+        <p lang="ar-eg" dir="rtl" style="text-align:right">
+            يتوفر \"القارئ الشامل\" في العديد من اللغات.
+        </p>
+    </div>
+</div>
+
+@section Scripts
+{
+    <script src="https://ircdname.azureedge.net/immersivereadersdk/immersive-reader-sdk.1.2.0.js"></script>
+
+    <script>
+        var functionUrl, functionApiKey, functionLocalUrl;
+        var tokenFrom;
+
+        $(".immersive-reader-button").click(function () {
+            tokenFrom = $('input[name=gettoken]:checked').val()
+
+            getFunctionInfo()
+            .then(function(response){
+                functionUrl = response.functionUrl;
+                functionApiKey = response.functionApiKey;
+                functionLocalUrl = response.functionLocalUrl;
+
+                getTokenAndLaunch();
+            })
+            .catch(function (error) {
+                alert("Error in getting function info.");
+                console.log(error);
+            });
+        });
+
+        function getFunctionInfo() {
+            return new Promise(function (resolve, reject) {
+                $.ajax({
+                    url: "@Url.Action("GetFunctionInfo", "Home")",
+                    type: "GET",
+                    success: function (data) {
+                        if (data.error) {
+                            reject(data.error);
+                        } else {
+                            resolve(data);
+                        }
+                    },
+                    error: function (err) {
+                        reject(err);
+                    }
+                });
+            });
+        }
+
+    </script>
+
+}

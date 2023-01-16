@@ -20,23 +20,15 @@ namespace AdvancedSampleWebApp
         static Canary()
         {
             // Create a key that will be valid for the length of this session
-            using (RNGCryptoServiceProvider rng = new RNGCryptoServiceProvider())
-            {
-                _key = new byte[KeyLength];
-                rng.GetBytes(_key);
-            }
+            _key = RandomNumberGenerator.GetBytes(KeyLength);
         }
 
         public static string Generate()
         {
             // Create a nonce
             string nonce;
-            using (RNGCryptoServiceProvider rng = new RNGCryptoServiceProvider())
-            {
-                byte[] nonceBytes = new byte[NonceLength];
-                rng.GetBytes(nonceBytes);
-                nonce = Convert.ToBase64String(nonceBytes);
-            }
+            byte[] nonceBytes = RandomNumberGenerator.GetBytes(NonceLength);
+            nonce = Convert.ToBase64String(nonceBytes);
 
             // Current UTC time is used to create a canary that will expire
             string time = DateTime.UtcNow.Ticks.ToString(CultureInfo.InvariantCulture);

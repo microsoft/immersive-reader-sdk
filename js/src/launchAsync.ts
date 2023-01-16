@@ -28,6 +28,7 @@ type LaunchResponseMessage = {
     errorCode?: ErrorCode;
     sessionId: string;
     meteredContentSize?: number;
+    gcmCorrelationId?: string;
 };
 
 const sdkPlatform = 'js';
@@ -43,6 +44,10 @@ errorMessageMap[ErrorCode.ServerError] = 'An error occurred when calling the ser
 errorMessageMap[ErrorCode.InvalidSubdomain] = 'The subdomain supplied is invalid.';
 
 let isLoading: boolean = false;
+let readerReadyDuration: number = 0;
+let launchStart: number = 0;
+let gcmCorrelationId: string = null;
+let launchResponseError: Error;
 
 /**
  * Launch the Immersive Reader within an iframe.
@@ -85,6 +90,7 @@ export function launchAsync(token: string, subdomain: string, content: Content, 
 
         isLoading = true;
         const startTime = Date.now();
+        launchResponseError = null;
         options = {
             uiZIndex: 1000,
             timeout: 15000,  // Default to 15 seconds
@@ -103,7 +109,7 @@ export function launchAsync(token: string, subdomain: string, content: Content, 
         let timeoutId: number | null = null;
         const iframeContainer: HTMLDivElement = document.createElement('div');
         const iframe: HTMLIFrameElement = options.useWebview ? <HTMLIFrameElement>document.createElement('webview') : document.createElement('iframe');
-        iframe.allow = 'autoplay';
+        iframe.allow = 'autoplay; microphone';
         iframe.title = 'Immersive Reader Frame';
         iframe.setAttribute('aria-modal', 'true');
         const noscroll: HTMLStyleElement = document.createElement('style');
@@ -173,6 +179,8 @@ export function launchAsync(token: string, subdomain: string, content: Content, 
                     disableGrammar: options.disableGrammar,
                     disableLanguageDetection: options.disableLanguageDetection
                 };
+                readerReadyDuration = Date.now() - startTime;
+                launchStart = startTime;
                 iframe.contentWindow!.postMessage(JSON.stringify({ messageType: 'Content', messageValue: message }), '*');
             } else if (e.data === 'ImmersiveReader-Exit') {
                 exit();
@@ -183,6 +191,8 @@ export function launchAsync(token: string, subdomain: string, content: Content, 
                 let response: LaunchResponseMessage = null;
                 try {
                     response = JSON.parse(e.data.substring(PostMessageLaunchResponse.length));
+                    // Keep GCM correlation Id available to return in case of any error
+                    gcmCorrelationId = response.gcmCorrelationId;
                 } catch {
                     // No-op
                 }
@@ -192,13 +202,19 @@ export function launchAsync(token: string, subdomain: string, content: Content, 
                     launchResponse = {
                         container: iframeContainer,
                         sessionId: response.sessionId,
-                        charactersProcessed: response.meteredContentSize
+                        charactersProcessed: response.meteredContentSize,
+                        readerReadyDuration,
+                        launchDuration: Date.now() - launchStart,
+                        gcmCorrelationId: response.gcmCorrelationId
                     };
                 } else if (response && !response.success) {
                     error = {
                         code: response.errorCode,
                         message: errorMessageMap[response.errorCode],
-                        sessionId: response.sessionId
+                        sessionId: response.sessionId,
+                        readerReadyDuration,
+                        gcmCorrelationId: response.gcmCorrelationId,
+                        launchDuration: 0
                     };
                 } else {
                     error = {
@@ -231,7 +247,17 @@ export function launchAsync(token: string, subdomain: string, content: Content, 
         timeoutId = window.setTimeout((): void => {
             reset();
             isLoading = false;
-            reject({ code: ErrorCode.Timeout, message: `Page failed to load after timeout (${options.timeout} ms)` });
+            if (launchResponseError) {
+                reject(launchResponseError);
+            } else {
+                reject({
+                    code: ErrorCode.Timeout,
+                    message: `Page failed to load after timeout (${options.timeout} ms)`,
+                    readerReadyDuration,
+                    gcmCorrelationId,
+                    launchDuration: 0
+                });
+            }
         }, options.timeout);
 
         // Create and style iframe
@@ -269,6 +295,11 @@ export function launchAsync(token: string, subdomain: string, content: Content, 
 
         // Disable body scrolling
         document.head.appendChild(noscroll);
+
+        if (launchResponseError) {
+            reject(launchResponseError);
+            return;
+        }
     });
 }
 

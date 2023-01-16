@@ -1,5 +1,3 @@
-using Microsoft.Extensions.Configuration;
-
 namespace AdvancedSampleWebApp.Pages
 {
     public class OptionsModel : SamplePageModel

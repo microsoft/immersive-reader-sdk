@@ -1,5 +1,6 @@
 ﻿using Microsoft.IdentityModel.Clients.ActiveDirectory;
 using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Reflection;
 using System.Threading.Tasks;
@@ -69,12 +70,12 @@ namespace ImmersiveReader
             typeof(ImmersiveReaderView),
             null);
 
-        public IAsyncAction Start(string title, string content)
+        public IAsyncAction Start(string title, string content, IEnumerable<KeyValuePair<string, bool>> options, string language)
         {
-            return StartAsync(title, content).AsAsyncAction();
+            return StartAsync(title, content, options, language).AsAsyncAction();
         }
 
-        private async Task StartAsync(string title, string content)
+        private async Task StartAsync(string title, string content, IEnumerable<KeyValuePair<string, bool>> options, string language)
         {
             if (string.IsNullOrWhiteSpace(_script))
             {
@@ -101,6 +102,14 @@ namespace ImmersiveReader
             text = text.Replace("|TOKEN|", token);
             text = text.Replace("|YOUR_SUB_DOMAIN|", this.Subdomain);
             text = text.Replace("|CONTENT|", content.Replace("'", "\\\'"));
+            text = text.Replace("|LANGUAGE|", language);
+            foreach (var option in options)
+            {
+                if (option.Key == "disableGrammar" || option.Key == "disableTranslation" || option.Key == "disableLanguageDetection")
+                {
+                    text = text.Replace("'|" + option.Key + "|'", option.Value.ToString().ToLower());
+                }
+            }
             MainWebView.NavigateToString(text);
         }
 
