@@ -8,30 +8,8 @@
     <meta charset='utf-8'>
     <title>Immersive Reader Example</title>
 
-    <script type='text/javascript' src='../../lib/immersive-reader-sdk.js'></script>
-    <script type='text/javascript'>
-        function launchImmersiveReaderFromInlineHtml(elementId, contentLanguage) {
-            var element = document.getElementById(elementId);
-
-            if (element && element.parentElement) {
-                var html = element.parentElement.innerHTML;
-
-                const data = {
-                    chunks: [{
-                        mimeType: 'text/html',
-                        content: html,
-                        lang: contentLanguage
-                    }]
-                };
-
-                var aadToken = ''; // Your Azure AD token goes here
-                var subdomain = ''; // Your subdomain goes here
-
-                ImmersiveReader.launchAsync(aadToken, subdomain, data);
-            }
-        }
-
-    </script>
+    <script type='text/javascript' src='https://code.jquery.com/jquery-3.3.1.min.js'></script>
+    <script type='text/javascript' src='https://ircdname.azureedge.net/immersivereadersdk/immersive-reader-sdk.1.2.0.js'></script>    
 
     <style type='text/css'>
         #ContentArea {
@@ -43,6 +21,13 @@
         .IRContent {
             margin: 0 100px;
         }
+
+        .immersive-reader-button {
+            background-color: white;
+            margin-top: 5px;
+            border: 1px solid black;
+            float: right;
+        } 
     </style>
 </head>
 
@@ -91,3 +76,66 @@
 </body>
 
 </html>
+<script type='text/javascript'>
+
+    // DO NOT COMMIT these changes to source control
+    const TenantId = '';     // Your Tenant Id goes here
+    const ClientId = '';     // Your Client Id goes here
+    const ClientSecret = ''; // Your Client Secret goes here
+    const Subdomain = '';    // Your Subdomain goes here.
+
+    function getTokenAsync() {
+        return new Promise((resolve, reject) => {
+
+            var data = {
+                grant_type: 'client_credentials',
+                client_id: ClientId,
+                client_secret: ClientSecret,
+                resource: 'https://cognitiveservices.azure.com/'
+            };
+
+            $.ajax({
+                url: `https://login.windows.net/${TenantId}/oauth2/token`,
+                data: data,
+                type: 'POST',
+                beforeSend: function(xhr){
+                    xhr.setRequestHeader('content-type', 'application/x-www-form-urlencoded');
+                },
+                success: launchParams => {
+                    resolve(launchParams.access_token);
+                },
+                error: err => {
+                    console.log('Error in getting token!', err);
+                    reject(err);
+                }
+            });
+        });
+    }
+
+    function launchImmersiveReaderFromInlineHtml(elementId, contentLanguage) {
+
+        getTokenAsync()
+            .then(function (response) {
+                const token = response;
+                var element = document.getElementById(elementId);
+
+                if (element && element.parentElement) {
+                    var html = element.parentElement.innerHTML;
+
+                    const data = {
+                        chunks: [{
+                            mimeType: 'text/html',
+                            content: html,
+                            lang: contentLanguage
+                        }]
+                    };
+
+                    ImmersiveReader.launchAsync(token, Subdomain, data);
+                }
+            })
+            .catch(function(error){
+                console.log(error);
+            });
+    }
+
+</script>

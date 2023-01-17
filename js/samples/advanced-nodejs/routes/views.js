@@ -38,4 +38,8 @@ router.get('/inner-hide-exit-button', function(req, res, next) {
   res.sendFile('inner-hide-exit-button.html', {root: viewRoot});
 });
 
+router.get('/options', function(req, res, next) {
+  res.sendFile('options.html', {root: viewRoot});
+});
+
 module.exports = router;

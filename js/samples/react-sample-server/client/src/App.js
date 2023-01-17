@@ -44,8 +44,8 @@ function App() {
 
     }
     catch (err) {
-      alert('There was a problem fetching your credentials, please check the console and make sure your environment variables are correct');
       console.log({ err })
+      alert('There was a problem fetching your credentials, please check the console and make sure your environment variables are correct');
     }
   }
 
@@ -64,8 +64,8 @@ function App() {
       await launchAsync(token, subdomain, data, options);
     }
     catch (error) {
-      alert("Error in launching the Immersive Reader. Check the console.");
       console.log(error);
+      alert("Error in launching the Immersive Reader. Check the console.");
     }
   }
 
