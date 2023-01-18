@@ -5,13 +5,14 @@ html
 
       link(rel='icon', href='data:;base64,iVBORw0KGgo=')
 
-      link(rel='stylesheet', href='https://stackpath.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css')
+      link(rel='stylesheet', href='https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css', integrity='sha384-1BmE4kWBq78iYhFldvKuhfTAU6auU8tT94WrHftjDbrCEXSU1oBoqyl2QvZ6jIW3', crossorigin='anonymous')
 
       // A polyfill for Promise is needed for IE11 support.
       script(src='https://cdn.jsdelivr.net/npm/promise-polyfill@8/dist/polyfill.min.js')
 
       script(src='https://ircdname.azureedge.net/immersivereadersdk/immersive-reader-sdk.1.2.0.js')
-      script(src='https://code.jquery.com/jquery-3.3.1.min.js')
+      script(src='https://code.jquery.com/jquery-3.6.0.min.js', integrity='sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4=', crossorigin='anonymous')
+      script(src='../js/helpers.js')
 
       style(type="text/css").
         .immersive-reader-button {
@@ -22,6 +23,10 @@ html
         }
    body
       div(class="container")
+        nav
+            a(href='/') Home | 
+            a(href='/options') Options
+
         button(class="immersive-reader-button" data-button-style="iconAndText" data-locale="en")
 
         h1(id="ir-title") About Immersive Reader
@@ -44,24 +49,6 @@ html
           p(lang="ar-eg" dir="rtl" style="text-align:right") يتوفر \"القارئ الشامل\" في العديد من اللغات.
 
 script(type="text/javascript").
-  function getTokenAndSubdomainAsync() {
-        return new Promise(function (resolve, reject) {
-            $.ajax({
-                url: "/GetTokenAndSubdomain",
-                type: "GET",
-                success: function (data) {
-                    if (data.error) {
-                        reject(data.error);
-                    } else {
-                        resolve(data);
-                    }
-                },
-                error: function (err) {
-                    reject(err);
-                }
-            });
-        });
-    }
 
     $(".immersive-reader-button").click(function () {
         handleLaunchImmersiveReader();
@@ -87,13 +74,13 @@ script(type="text/javascript").
                 };
                 ImmersiveReader.launchAsync(token, subdomain, data, options)
                     .catch(function (error) {
-                        alert("Error in launching the Immersive Reader. Check the console.");
                         console.log(error);
+                        alert("Error in launching the Immersive Reader. Check the console.");
                     });
             })
             .catch(function (error) {
-                alert("Error in getting the Immersive Reader token and subdomain. Check the console.");
                 console.log(error);
+                alert("Error in getting the Immersive Reader token and subdomain. Check the console.");
             });
     }
 

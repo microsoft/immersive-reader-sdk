@@ -39,7 +39,7 @@
         <ScrollView
             android:id="@+id/ContentPane"
             android:layout_width="match_parent"
-            android:layout_height="480dp"
+            android:layout_height="251dp"
             android:layout_marginBottom="48dp"
             android:clipToPadding="false"
             android:fillViewport="false"
@@ -73,19 +73,70 @@
             </LinearLayout>
 
         </ScrollView>
-
+        <CheckBox
+            android:id="@+id/checkBoxToken"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerInParent="true"
+            android:layout_marginLeft="40dp"
+            android:text="Token from server" />
         <Button
             android:id="@+id/LaunchImmersiveReaderButton"
             android:layout_width="match_parent"
             android:layout_height="60dp"
             android:layout_marginLeft="40dp"
             android:layout_marginRight="40dp"
-            android:layout_marginBottom="80dp"
             android:text="@string/immersiveReaderButtonText"
             android:textAllCaps="false"
             android:textSize="24sp"
             android:visibility="visible"
             tools:visibility="visible" />
+
+        <Button
+            android:id="@+id/disableGrammarButton"
+            android:layout_width="match_parent"
+            android:layout_height="60dp"
+            android:layout_marginLeft="40dp"
+            android:layout_marginRight="40dp"
+            android:text="disableGrammar"
+            android:textAllCaps="false"
+            android:textSize="24sp"
+            android:visibility="visible"
+            tools:visibility="visible" />
+
+        <Button
+            android:id="@+id/disableTranslationButton"
+            android:layout_width="match_parent"
+            android:layout_height="60dp"
+            android:layout_marginLeft="40dp"
+            android:layout_marginRight="40dp"
+            android:text="disableTranslation"
+            android:textAllCaps="false"
+            android:textSize="24sp"
+            android:visibility="visible"
+            tools:visibility="visible" />
+
+        <Button
+            android:id="@+id/disableLanguageDetectionButton"
+            android:layout_width="match_parent"
+            android:layout_height="60dp"
+            android:layout_marginLeft="40dp"
+            android:layout_marginRight="40dp"
+            android:text="disableLanguageDetection"
+            android:textAllCaps="false"
+            android:textSize="24sp"
+            android:visibility="visible"
+            tools:visibility="visible" />
+
+        <EditText
+            android:id="@+id/editTextLanguage"
+            android:layout_width="match_parent"
+            android:layout_height="60dp"
+            android:layout_marginLeft="40dp"
+            android:layout_marginRight="40dp"
+            android:ems="10"
+            android:inputType="text"
+            android:text="en" />
 
     </LinearLayout>
 
