@@ -6,7 +6,11 @@
     <meta name='viewport' content='width=device-width, initial-scale=1'>
 
     <script src="https://code.jquery.com/jquery-3.6.0.min.js" integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4=" crossorigin="anonymous"></script>
+<<<<<<< HEAD
     <script type='text/javascript' src='https://ircdname.azureedge.net/immersivereadersdk/immersive-reader-sdk.1.2.0.js'></script>
+=======
+    <script type='text/javascript' src='https://ircdname.azureedge.net/immersivereadersdk/immersive-reader-sdk.1.3.0.js'></script>
+>>>>>>> master
     <script type='text/javascript' src='/resources/helpers.js'></script>
     <!-- A polyfill for Promise is needed for IE11 support -->
     <script type='text/javascript' src='https://cdn.jsdelivr.net/npm/promise-polyfill@8/dist/polyfill.min.js'></script>
