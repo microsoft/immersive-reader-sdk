@@ -17,5 +17,5 @@ window.addEventListener("message", function(message) {
 });
 
 function sendContentToReader(message) {
-    document.getElementById('immersiveReaderIframe').contentWindow.postMessage(JSON.stringify({messageType:'Content', messageValue: message}), '*');
+    document.getElementById('immersiveReaderIframe').contentWindow.postMessage(JSON.stringify({messageType:'Content', messageValue: message}), '*'); //Always specify an exact target origin, not *, when you use postMessage to send data to other windows.
 }
