@@ -103,7 +103,7 @@ export function launchAsync(token: string, subdomain: string, content: Content, 
         let timeoutId: number | null = null;
         const iframeContainer: HTMLDivElement = document.createElement('div');
         const iframe: HTMLIFrameElement = options.useWebview ? <HTMLIFrameElement>document.createElement('webview') : document.createElement('iframe');
-        iframe.allow = 'autoplay';
+        iframe.allow = 'autoplay; microphone';
         iframe.title = 'Immersive Reader Frame';
         iframe.setAttribute('aria-modal', 'true');
         const noscroll: HTMLStyleElement = document.createElement('style');
