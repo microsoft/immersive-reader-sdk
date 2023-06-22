@@ -341,11 +341,12 @@ describe('Utility method isValidSubdomain', () => {
         expect(isValidSubdomain('É')).toBe(false);
         expect(isValidSubdomain('Ã')).toBe(false);
         expect(isValidSubdomain('has space')).toBe(false);
-        expect(isValidSubdomain('has.period')).toBe(false);
+        expect(isValidSubdomain('has.period')).toBe(true);
         expect(isValidSubdomain(' startswithspace')).toBe(false);
         expect(isValidSubdomain('endswithspace ')).toBe(false);
         expect(isValidSubdomain('-startswithdash')).toBe(false);
         expect(isValidSubdomain('endswithdash-')).toBe(false);
+        expect(isValidSubdomain('immersivereader-cntr-s1-westus2.privatelink')).toBe(true);
     });
 
     it('should return true', () => {
