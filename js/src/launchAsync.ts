@@ -283,7 +283,7 @@ export function isValidSubdomain(subdomain: string): boolean {
         return false;
     }
 
-    const validRegex = '^([a-zA-Z0-9]|[a-zA-Z0-9][a-zA-Z0-9\\-]{0,61}[a-zA-Z0-9]|[a-zA-Z0-9][a-zA-Z0-9\\-]{0,73}[a-zA-Z0-9]\.privatelink)$';
+    const validRegex = '^([a-zA-Z0-9]|[a-zA-Z0-9][a-zA-Z0-9\\-]{0,61}[a-zA-Z0-9]|[a-zA-Z0-9][a-zA-Z0-9\\-]{0,61}[a-zA-Z0-9]\.privatelink)$';
     const regExp = new RegExp(validRegex);
 
     return regExp.test(subdomain);
