@@ -341,18 +341,26 @@ describe('Utility method isValidSubdomain', () => {
         expect(isValidSubdomain('É')).toBe(false);
         expect(isValidSubdomain('Ã')).toBe(false);
         expect(isValidSubdomain('has space')).toBe(false);
-        expect(isValidSubdomain('has.period')).toBe(true);
+        expect(isValidSubdomain('has.period')).toBe(false);
         expect(isValidSubdomain(' startswithspace')).toBe(false);
         expect(isValidSubdomain('endswithspace ')).toBe(false);
         expect(isValidSubdomain('-startswithdash')).toBe(false);
         expect(isValidSubdomain('endswithdash-')).toBe(false);
-        expect(isValidSubdomain('immersivereader-cntr-s1-westus2.privatelink')).toBe(true);
+        expect(isValidSubdomain('.privatelink')).toBe(false);
+        expect(isValidSubdomain('privatelink.')).toBe(false);
+        expect(isValidSubdomain('subdomain.dot.privatelink')).toBe(false);
     });
 
     it('should return true', () => {
         expect(isValidSubdomain('valid')).toBe(true);
         expect(isValidSubdomain('valid10with2numbers')).toBe(true);
         expect(isValidSubdomain('1234')).toBe(true);
+        expect(isValidSubdomain('immersivereader-cntr-s1-westus2')).toBe(true);
+        expect(isValidSubdomain('immersivereader-cntr-s1-westus2.privatelink')).toBe(true);
+        expect(isValidSubdomain('subdomain')).toBe(true);
+        expect(isValidSubdomain('subdomain-with-dashes')).toBe(true);
+        expect(isValidSubdomain('subdomain.privatelink')).toBe(true);
+        expect(isValidSubdomain('subdomain-with-dashes.privatelink')).toBe(true);
     });
 });
 
