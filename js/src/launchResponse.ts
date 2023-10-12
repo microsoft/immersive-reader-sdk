@@ -3,6 +3,9 @@
 
 export type LaunchResponse = {
     container: HTMLDivElement;
-    sessionId: string;
     charactersProcessed: number;
+    readerReadyDuration: number;
+    launchDuration: number;
+    gcmCorrelationId: string;
+    sessionId: string;
 };

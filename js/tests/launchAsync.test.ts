@@ -14,6 +14,23 @@ describe('launchAsync tests', () => {
     const SampleSubdomain: string = 'not-a-real-subdomain';
     const SampleContent: Content = { chunks: [ { content: 'Hello, world' } ] };
 
+    it('fails to launch due to expired token', async () => {
+        expect.assertions(5);
+        const launchPromise = launchAsync(SampleToken, SampleSubdomain, SampleContent);
+
+        window.postMessage('ImmersiveReader-LaunchResponse:{"success":false, "errorCode":"TokenExpired"}', '*');
+
+        try {
+            await launchPromise;
+        } catch (error) {
+            expect(error.code).toBe('TokenExpired');
+            expect(error.message).toBe('The access token supplied is expired.');
+            expect(error).toHaveProperty('readerReadyDuration');
+            expect(error).toHaveProperty('launchDuration');
+            expect(error).toHaveProperty('gcmCorrelationId');
+        }
+    });
+
     it('fails due to missing token', async () => {
         expect.assertions(1);
         try {
@@ -59,6 +76,18 @@ describe('launchAsync tests', () => {
         }
     });
 
+    it('fails when useWebview2 is true but parent is null', async () => {
+        expect.assertions(1);
+        try {
+            const options: Options = {
+                useWebview2: true,
+            }
+            await launchAsync(SampleToken, SampleSubdomain, SampleContent, options);
+        } catch (error) {
+            expect(error.code).toBe('BadArgument');
+        }
+    });
+
     it('succeeds', () => {
         expect.assertions(1);
         const launchPromise = launchAsync(SampleToken, SampleSubdomain, SampleContent)
@@ -72,6 +101,45 @@ describe('launchAsync tests', () => {
         window.postMessage('ImmersiveReader-LaunchResponse:{"success":true}', '*');
 
         return launchPromise;
+    });
+
+    it('launches when useWebview2 is true and parent is not null', async () => {
+        expect.assertions(1);
+        const options: Options = {
+            useWebview2: true,
+            parent: document.createElement('div'),
+        }
+        const launchPromise = launchAsync(SampleToken, SampleSubdomain, SampleContent, options)
+            .then(iframe => {
+                expect(iframe).not.toBeNull();
+            });
+        window.postMessage('ImmersiveReader-LaunchResponse:{"success":true}', '*');
+
+        return launchPromise;
+    });
+
+    it('launch reader is complete', async () => {
+        expect.assertions(2);
+        const launchPromise = launchAsync(SampleToken, SampleSubdomain, SampleContent);
+        window.postMessage('ImmersiveReader-LaunchResponse:{"success":true}', '*');
+
+        const response = await launchPromise;
+        const iframe = <HTMLIFrameElement>response.container.firstElementChild;
+
+        expect(iframe.title.toLowerCase()).toMatch('immersive reader frame');
+        expect(iframe.contentDocument).not.toBeNull();
+    });
+
+    it('response returned durations and correlations', async () => {
+        expect.assertions(3);
+        const launchPromise = launchAsync(SampleToken, SampleSubdomain, SampleContent);
+        window.postMessage('ImmersiveReader-LaunchResponse:{"success":true}', '*');
+
+        const response = await launchPromise;
+
+        expect(response).toHaveProperty('readerReadyDuration');
+        expect(response).toHaveProperty('launchDuration');
+        expect(response).toHaveProperty('gcmCorrelationId');
     });
 
     it('sets the display language', async () => {

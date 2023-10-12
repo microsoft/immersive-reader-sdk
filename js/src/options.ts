@@ -21,6 +21,9 @@ export type Options = {
     disableGrammar?: boolean;       // Option to disable Grammar
     disableTranslation?: boolean;   // Option to disable Translation
     disableLanguageDetection?: boolean;      // Option to disable Language Detection and use only the language that is explicitly specified on the chunk
+    launchMode?: string                       // Option to specify the loading mode (i.e 'reading' - to launch in Reading Practice mode)
+    onReceiveReadingPracticeMessage?: (value: any) => any; // Executes when the Reading Practice message is available
+    useWebview2?: boolean;              // Option to use the SDK in an Edge WebView2 desktop application
 };
 
 export enum CookiePolicy { Disable, Enable }
