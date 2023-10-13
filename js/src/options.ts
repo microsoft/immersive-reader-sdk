@@ -18,6 +18,7 @@ export type Options = {
     displayOptions?: DisplayOptions;         // Options to configure text size, font, etc.
     preferences?: string;                           // String returned from onPreferencesChanged representing the user's preferences in the Immersive Reader.
     onPreferencesChanged?: (value: string) => any;  // Executes when the user's preferences have changed.
+    internalOptions?: InternalOptions;  // Options reserved for internal use.
     disableGrammar?: boolean;       // Option to disable Grammar
     disableTranslation?: boolean;   // Option to disable Translation
     disableLanguageDetection?: boolean;      // Option to disable Language Detection and use only the language that is explicitly specified on the chunk
@@ -47,4 +48,20 @@ export type DisplayOptions = {
     increaseSpacing?: boolean;  // Set whether increased spacing is enabled.
     fontFamily?: string;        // Valid values are 'Calibri', 'ComicSans', and 'Sitka'
     themeOption?: ThemeOption   // option to set custom theme
+};
+
+export type StyleOverrideOptions = {
+    iframeStyleOverrides?: string;
+    iframeContainerStyleOverrides?: string;
+    nonce?: string
+};
+
+export type InternalOptions = {
+    messageOptions?: InternalOptionDictionary   // Reserved for internal use. Additional options to be sent through Content message.
+    queryParameters?: InternalOptionDictionary  // Reserved for internal use. Additional query parameters.
+    styleOverrides?: StyleOverrideOptions
+};
+
+export type InternalOptionDictionary = {
+    [option: string]: boolean | string | number // Reserved for internal use. Option dictionary.
 };

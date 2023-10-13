@@ -2,7 +2,7 @@
 // Licensed under the MIT License.
 
 import { Content } from './content';
-import { CookiePolicy, DisplayOptions, Options, ReadAloudOptions, TranslationOptions } from './options';
+import { CookiePolicy, DisplayOptions, InternalOptionDictionary, Options, ReadAloudOptions, StyleOverrideOptions, TranslationOptions } from './options';
 import { Error, ErrorCode } from './error';
 import { LaunchResponse } from './launchResponse';
 declare const VERSION: string;
@@ -18,6 +18,7 @@ type Message = {
     displayOptions?: DisplayOptions;
     sendPreferences?: boolean;
     preferences?: string;
+    internalOptions?: InternalOptionDictionary;
     disableGrammar?: boolean;
     disableTranslation?: boolean;
     disableLanguageDetection?: boolean;
@@ -121,6 +122,7 @@ export function launchAsync(token: string, subdomain: string, content: Content, 
         }
 
         let timeoutId: number | null = null;
+        const styleOverrides: StyleOverrideOptions = options.internalOptions?.styleOverrides;
         const iframeContainer: HTMLDivElement = document.createElement('div');
         const iframe: HTMLIFrameElement = options.useWebview ? <HTMLIFrameElement>document.createElement('webview') : document.createElement('iframe');
         iframe.allow = 'autoplay; microphone';
@@ -128,6 +130,9 @@ export function launchAsync(token: string, subdomain: string, content: Content, 
         iframe.setAttribute('aria-modal', 'true');
         const noscroll: HTMLStyleElement = document.createElement('style');
         noscroll.innerText = 'body{height:100%;overflow:hidden;}';
+        if (options.internalOptions?.styleOverrides?.nonce && options.internalOptions?.styleOverrides?.nonce !== '') {
+            noscroll.setAttribute('nonce', options.internalOptions?.styleOverrides.nonce);
+        }
 
         const resetTimeout = (): void => {
             if (timeoutId) {
@@ -213,6 +218,7 @@ export function launchAsync(token: string, subdomain: string, content: Content, 
                     displayOptions: options.displayOptions,
                     sendPreferences: !!options.onPreferencesChanged,
                     preferences: options.preferences,
+                    internalOptions: options.internalOptions?.messageOptions,
                     disableTranslation: options.disableTranslation,
                     disableGrammar: options.disableGrammar,
                     disableLanguageDetection: options.disableLanguageDetection
@@ -302,7 +308,13 @@ export function launchAsync(token: string, subdomain: string, content: Content, 
         if (options.allowFullscreen) {
             iframe.setAttribute('allowfullscreen', '');
         }
-        iframe.style.cssText = options.parent ? 'position: static; width: 100%; height: 100%; left: 0; top: 0; border-width: 0' : 'position: static; width: 100vw; height: 100vh; left: 0; top: 0; border-width: 0';
+
+        const { iframeStyleOverrides } = options.internalOptions?.styleOverrides || {};
+        if (!!iframeStyleOverrides) {
+            iframe.style.cssText = iframeStyleOverrides;
+        } else {
+            iframe.style.cssText = options.parent ? 'position: static; width: 100%; height: 100%; left: 0; top: 0; border-width: 0' : 'position: static; width: 100vw; height: 100vh; left: 0; top: 0; border-width: 0';
+        }
 
         // Send an initial message to the webview so it has a reference to this parent window
         if (options.useWebview) {
@@ -328,9 +340,21 @@ export function launchAsync(token: string, subdomain: string, content: Content, 
             src += `&launchMode=${options.launchMode}`;
         }
 
+        const queryParameters: InternalOptionDictionary = options?.internalOptions?.queryParameters;
+        for (const parameterName in queryParameters) {
+            src += '&' + parameterName + '=' + queryParameters[parameterName];
+        }
+
+        // const { internalOptions } = options || {};
+        // const { styleOverrides } = internalOptions || {};
+
         iframe.src = src;
 
-        iframeContainer.style.cssText = options.parent ? `position: relative; width: 100%; height: 100%; border-width: 0; -webkit-perspective: 1px; z-index: ${options.uiZIndex}; background: white; overflow: hidden` : `position: fixed; width: 100vw; height: 100vh; left: 0; top: 0; border-width: 0; -webkit-perspective: 1px; z-index: ${options.uiZIndex}; background: white; overflow: hidden`;
+        if (!!styleOverrides?.iframeContainerStyleOverrides) {
+            iframeContainer.style.cssText = styleOverrides?.iframeContainerStyleOverrides;
+        } else {
+            iframeContainer.style.cssText = options.parent ? `position: relative; width: 100%; height: 100%; border-width: 0; -webkit-perspective: 1px; z-index: ${options.uiZIndex}; background: white; overflow: hidden` : `position: fixed; width: 100vw; height: 100vh; left: 0; top: 0; border-width: 0; -webkit-perspective: 1px; z-index: ${options.uiZIndex}; background: white; overflow: hidden`;
+        }
 
         iframeContainer.appendChild(iframe);
         parent.appendChild(iframeContainer);
