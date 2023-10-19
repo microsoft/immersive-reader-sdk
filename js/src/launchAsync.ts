@@ -345,9 +345,6 @@ export function launchAsync(token: string, subdomain: string, content: Content, 
             src += '&' + parameterName + '=' + queryParameters[parameterName];
         }
 
-        // const { internalOptions } = options || {};
-        // const { styleOverrides } = internalOptions || {};
-
         iframe.src = src;
 
         if (!!styleOverrides?.iframeContainerStyleOverrides) {
