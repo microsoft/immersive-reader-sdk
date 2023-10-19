@@ -74,3 +74,19 @@ Build and test:
 yarn run build
 yarn run test
 ```
+
+## Release Notes
+
+## Version 1.5.0
+This release contains new features, updates to code samples and new configuration options.
+
+### New features
+- Add option to specify the launch mode.
+- Add option to load Immersive Reader in an Edge Webview2 desktop application.
+- Add option to run a callback function when Reading Practice message is available.
+- Add **readerReadyDuration** property in the launch response.
+- Add **gcmCorrelationId** property in the launch response.
+- Add **launchDuration** property in the launch response.
+
+### Improvements
+- Update code samples to use v1.5.0
