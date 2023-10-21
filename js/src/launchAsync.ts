@@ -296,7 +296,7 @@ export function launchAsync(token: string, subdomain: string, content: Content, 
             } else {
                 reject({
                     code: ErrorCode.Timeout,
-                    message: `Page failed to load after timeout (${options.timeout} ms)`,
+                    message: `Page failed to load in time and thus timeout (${options.timeout} ms)`,
                     readerReadyDuration,
                     gcmCorrelationId,
                     launchDuration: 0
