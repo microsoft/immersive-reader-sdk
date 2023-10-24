@@ -2,7 +2,7 @@
 // Licensed under the MIT License.
 
 import { Content } from './content';
-import { CookiePolicy, DisplayOptions, Options, ReadAloudOptions, TranslationOptions } from './options';
+import { CookiePolicy, DisplayOptions, InternalOptionDictionary, Options, ReadAloudOptions, StyleOverrideOptions, TranslationOptions } from './options';
 import { Error, ErrorCode } from './error';
 import { LaunchResponse } from './launchResponse';
 declare const VERSION: string;
@@ -18,6 +18,7 @@ type Message = {
     displayOptions?: DisplayOptions;
     sendPreferences?: boolean;
     preferences?: string;
+    internalOptions?: InternalOptionDictionary;
     disableGrammar?: boolean;
     disableTranslation?: boolean;
     disableLanguageDetection?: boolean;
@@ -28,6 +29,7 @@ type LaunchResponseMessage = {
     errorCode?: ErrorCode;
     sessionId: string;
     meteredContentSize?: number;
+    gcmCorrelationId?: string;
 };
 
 const sdkPlatform = 'js';
@@ -43,6 +45,11 @@ errorMessageMap[ErrorCode.ServerError] = 'An error occurred when calling the ser
 errorMessageMap[ErrorCode.InvalidSubdomain] = 'The subdomain supplied is invalid.';
 
 let isLoading: boolean = false;
+let readerReadyDuration: number = 0;
+let launchStart: number = 0;
+let gcmCorrelationId: string = null;
+let launchResponseError: Error;
+let windowObject: Window = window;
 
 /**
  * Launch the Immersive Reader within an iframe.
@@ -78,6 +85,18 @@ export function launchAsync(token: string, subdomain: string, content: Content, 
             return;
         }
 
+        if (options && options.launchMode) {
+            if (options.launchMode === 'reading' && !options.onReceiveReadingPracticeMessage) {
+                reject({ code: ErrorCode.BadArgument, message: 'onReceiveReadingPracticeMessage must not be null for reading mode' });
+                return;
+            }
+        }
+
+        if (options?.useWebview2 && !!!options?.parent) {
+            reject({ code: ErrorCode.BadArgument, message: 'Parent must not be null when useWebview2 is specified' });
+            return;
+        }
+
         if (!isValidSubdomain(subdomain) && (!options || !options.customDomain)) {
             reject({ code: ErrorCode.InvalidSubdomain, message: errorMessageMap[ErrorCode.InvalidSubdomain] });
             return;
@@ -85,6 +104,7 @@ export function launchAsync(token: string, subdomain: string, content: Content, 
 
         isLoading = true;
         const startTime = Date.now();
+        launchResponseError = null;
         options = {
             uiZIndex: 1000,
             timeout: 15000,  // Default to 15 seconds
@@ -92,6 +112,7 @@ export function launchAsync(token: string, subdomain: string, content: Content, 
             allowFullscreen: true,
             hideExitButton: false,
             cookiePolicy: CookiePolicy.Disable,
+            useWebview2: false,
             ...options
         };
 
@@ -101,22 +122,31 @@ export function launchAsync(token: string, subdomain: string, content: Content, 
         }
 
         let timeoutId: number | null = null;
+        const styleOverrides: StyleOverrideOptions = options.internalOptions?.styleOverrides;
         const iframeContainer: HTMLDivElement = document.createElement('div');
         const iframe: HTMLIFrameElement = options.useWebview ? <HTMLIFrameElement>document.createElement('webview') : document.createElement('iframe');
         iframe.allow = 'autoplay; microphone';
         iframe.title = 'Immersive Reader Frame';
         iframe.setAttribute('aria-modal', 'true');
         const noscroll: HTMLStyleElement = document.createElement('style');
-        noscroll.innerHTML = 'body{height:100%;overflow:hidden;}';
+        noscroll.innerText = 'body{height:100%;overflow:hidden;}';
+        if (options.internalOptions?.styleOverrides?.nonce && options.internalOptions?.styleOverrides?.nonce !== '') {
+            noscroll.setAttribute('nonce', options.internalOptions?.styleOverrides.nonce);
+        }
 
         const resetTimeout = (): void => {
             if (timeoutId) {
-                window.clearTimeout(timeoutId);
+                windowObject.clearTimeout(timeoutId);
                 timeoutId = null;
             }
         };
 
-        const parent = options.parent && document.contains(options.parent) ? options.parent : document.body;
+        let parent: Node = null;
+        if (options.useWebview2) {
+            parent = options.parent;
+        } else {
+            parent = options.parent && document.contains(options.parent) ? options.parent : document.body;
+        }
 
         const reset = (): void => {
             // Remove container along with the iframe inside of it
@@ -124,7 +154,7 @@ export function launchAsync(token: string, subdomain: string, content: Content, 
                 parent.removeChild(iframeContainer);
             }
 
-            window.removeEventListener('message', messageHandler);
+            windowObject.removeEventListener('message', messageHandler);
 
             // Clear the timeout timer
             resetTimeout();
@@ -149,10 +179,29 @@ export function launchAsync(token: string, subdomain: string, content: Content, 
             }
         };
 
+        function receiveReadingPracticeMessage(onReceiveReadingPracticeMessage: Function, readingPracticeMessage: any): void {
+            // Execute callback if we have one and send the report
+            if (onReceiveReadingPracticeMessage) {
+                onReceiveReadingPracticeMessage(readingPracticeMessage);
+            }
+        }
+
         // Reset variables
         reset();
 
+        if (options.useWebview2) {
+            const doc = parent.ownerDocument;
+            const win = doc.defaultView;
+            windowObject = win;
+        }
+
         const messageHandler = (e: any): void => {
+            // Process valid object messages coming from the practice pronunciation experience
+            if (e && e.data && typeof e.data === 'object' && 'command' in e.data) {
+                receiveReadingPracticeMessage(options.onReceiveReadingPracticeMessage, e.data);
+                return;
+            }
+
             // Don't process the message if the data is not a string
             if (!e || !e.data || typeof e.data !== 'string') { return; }
 
@@ -169,10 +218,13 @@ export function launchAsync(token: string, subdomain: string, content: Content, 
                     displayOptions: options.displayOptions,
                     sendPreferences: !!options.onPreferencesChanged,
                     preferences: options.preferences,
+                    internalOptions: options.internalOptions?.messageOptions,
                     disableTranslation: options.disableTranslation,
                     disableGrammar: options.disableGrammar,
                     disableLanguageDetection: options.disableLanguageDetection
                 };
+                readerReadyDuration = Date.now() - startTime;
+                launchStart = startTime;
                 iframe.contentWindow!.postMessage(JSON.stringify({ messageType: 'Content', messageValue: message }), '*');
             } else if (e.data === 'ImmersiveReader-Exit') {
                 exit();
@@ -183,6 +235,8 @@ export function launchAsync(token: string, subdomain: string, content: Content, 
                 let response: LaunchResponseMessage = null;
                 try {
                     response = JSON.parse(e.data.substring(PostMessageLaunchResponse.length));
+                    // Keep GCM correlation Id available to return in case of any error
+                    gcmCorrelationId = response.gcmCorrelationId;
                 } catch {
                     // No-op
                 }
@@ -192,13 +246,19 @@ export function launchAsync(token: string, subdomain: string, content: Content, 
                     launchResponse = {
                         container: iframeContainer,
                         sessionId: response.sessionId,
-                        charactersProcessed: response.meteredContentSize
+                        charactersProcessed: response.meteredContentSize,
+                        readerReadyDuration,
+                        launchDuration: Date.now() - launchStart,
+                        gcmCorrelationId: response.gcmCorrelationId
                     };
                 } else if (response && !response.success) {
                     error = {
                         code: response.errorCode,
                         message: errorMessageMap[response.errorCode],
-                        sessionId: response.sessionId
+                        sessionId: response.sessionId,
+                        readerReadyDuration,
+                        gcmCorrelationId: response.gcmCorrelationId,
+                        launchDuration: 0
                     };
                 } else {
                     error = {
@@ -225,20 +285,36 @@ export function launchAsync(token: string, subdomain: string, content: Content, 
                 }
             }
         };
-        window.addEventListener('message', messageHandler);
+        windowObject.addEventListener('message', messageHandler);
 
         // Reject the promise if the Immersive Reader page fails to load.
-        timeoutId = window.setTimeout((): void => {
+        timeoutId = windowObject.setTimeout((): void => {
             reset();
             isLoading = false;
-            reject({ code: ErrorCode.Timeout, message: `Page failed to load after timeout (${options.timeout} ms)` });
+            if (launchResponseError) {
+                reject(launchResponseError);
+            } else {
+                reject({
+                    code: ErrorCode.Timeout,
+                    message: `Page failed to load in time and thus timeout (${options.timeout} ms)`,
+                    readerReadyDuration,
+                    gcmCorrelationId,
+                    launchDuration: 0
+                });
+            }
         }, options.timeout);
 
         // Create and style iframe
         if (options.allowFullscreen) {
             iframe.setAttribute('allowfullscreen', '');
         }
-        iframe.style.cssText = options.parent ? 'position: static; width: 100%; height: 100%; left: 0; top: 0; border-width: 0' : 'position: static; width: 100vw; height: 100vh; left: 0; top: 0; border-width: 0';
+
+        const { iframeStyleOverrides } = options.internalOptions?.styleOverrides || {};
+        if (!!iframeStyleOverrides) {
+            iframe.style.cssText = iframeStyleOverrides;
+        } else {
+            iframe.style.cssText = options.parent ? 'position: static; width: 100%; height: 100%; left: 0; top: 0; border-width: 0' : 'position: static; width: 100vw; height: 100vh; left: 0; top: 0; border-width: 0';
+        }
 
         // Send an initial message to the webview so it has a reference to this parent window
         if (options.useWebview) {
@@ -260,20 +336,38 @@ export function launchAsync(token: string, subdomain: string, content: Content, 
             src += '&omkt=' + options.uiLang;
         }
 
+        if (options.launchMode) {
+            src += `&launchMode=${options.launchMode}`;
+        }
+
+        const queryParameters: InternalOptionDictionary = options?.internalOptions?.queryParameters;
+        for (const parameterName in queryParameters) {
+            src += '&' + parameterName + '=' + queryParameters[parameterName];
+        }
+
         iframe.src = src;
 
-        iframeContainer.style.cssText = options.parent ? `position: relative; width: 100%; height: 100%; border-width: 0; -webkit-perspective: 1px; z-index: ${options.uiZIndex}; background: white; overflow: hidden` : `position: fixed; width: 100vw; height: 100vh; left: 0; top: 0; border-width: 0; -webkit-perspective: 1px; z-index: ${options.uiZIndex}; background: white; overflow: hidden`;
+        if (!!styleOverrides?.iframeContainerStyleOverrides) {
+            iframeContainer.style.cssText = styleOverrides?.iframeContainerStyleOverrides;
+        } else {
+            iframeContainer.style.cssText = options.parent ? `position: relative; width: 100%; height: 100%; border-width: 0; -webkit-perspective: 1px; z-index: ${options.uiZIndex}; background: white; overflow: hidden` : `position: fixed; width: 100vw; height: 100vh; left: 0; top: 0; border-width: 0; -webkit-perspective: 1px; z-index: ${options.uiZIndex}; background: white; overflow: hidden`;
+        }
 
         iframeContainer.appendChild(iframe);
         parent.appendChild(iframeContainer);
 
         // Disable body scrolling
         document.head.appendChild(noscroll);
+
+        if (launchResponseError) {
+            reject(launchResponseError);
+            return;
+        }
     });
 }
 
 export function close(): void {
-    window.postMessage('ImmersiveReader-Exit', '*');
+    windowObject.postMessage('ImmersiveReader-Exit', '*');
 }
 
 // The subdomain must be alphanumeric, and may contain '-',
