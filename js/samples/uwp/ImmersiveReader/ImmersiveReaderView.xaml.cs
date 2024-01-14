@@ -75,6 +75,7 @@ namespace ImmersiveReader
             return StartAsync(title, content, options, language).AsAsyncAction();
         }
 
+        // The GetToken API endpoint should be secured behind some form of authentication (for example, OAuth) to prevent unauthorized users from obtaining tokens to use against your Immersive Reader service and billing; that work is beyond the scope of this sample.
         private async Task StartAsync(string title, string content, IEnumerable<KeyValuePair<string, bool>> options, string language)
         {
             if (string.IsNullOrWhiteSpace(_script))

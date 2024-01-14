@@ -91,7 +91,8 @@ namespace MultipleResourcesSampleWebApp.Controllers
         }
 
         /// <summary>
-        /// Get ImmersiveReaderLaunchParameters by using the resource that maps to the resource key
+        /// Get ImmersiveReaderLaunchParameters by using the resource that maps to the resource key.
+        /// The GetToken API endpoint should be secured behind some form of authentication (for example, OAuth) to prevent unauthorized users from obtaining tokens to use against your Immersive Reader service and billing; that work is beyond the scope of this sample.
         /// </summary>
         /// <param name="resourceKey">The key for the resource in secrets.json</param>
         [Route("getLaunchParameters/{resourceKey}")]

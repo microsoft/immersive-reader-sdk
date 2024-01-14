@@ -30,6 +30,7 @@ function App() {
   const [subdomain, setSubdomain] = useState('');
   /* -------------------------------------------------------------------------- */
 
+  // The GetToken API endpoint should be secured behind some form of authentication (for example, OAuth) to prevent unauthorized users from obtaining tokens to use against your Immersive Reader service and billing; that work is beyond the scope of this sample.
   const _getCredentials = async () => {
 
     try {
@@ -61,7 +62,8 @@ function App() {
     };
 
     try {
-      await launchAsync(token, subdomain, data, options);
+      await launchAsync(token, subdomain, data, options)
+        .catch(error => handleError(error, 'launch'));
     }
     catch (error) {
       console.log(error);
@@ -72,7 +74,8 @@ function App() {
 
   // We use a react hook to fetch when the component is rendered (similar to componentDidMount)
   useEffect(() => {
-    _getCredentials();
+    _getCredentials()
+      .catch(error => handleError(error, 'token'));
   }, [])
 
   return (

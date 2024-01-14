@@ -121,17 +121,15 @@
                 onExit: exitCallback
             };
 
-            const token = await getImmersiveReaderTokenAsync(Canary);
+            const token = await getImmersiveReaderTokenAsync(Canary)
+                .catch(error => handleError(error, 'token'));
             const subdomain = await getImmersiveReaderSubdomainAsync();
 
             await ImmersiveReader.launchAsync(token, subdomain, data, options)
                 .then(() => {
                     console.log('Successful launch.');
                 })
-                .catch ((e) => {
-                    alert('Error in launching the Immersive Reader. Check the console.');
-                    console.log(e);
-                });
+                .catch(error => handleError(error, 'launch'));
         }
 
         function exitCallback() {

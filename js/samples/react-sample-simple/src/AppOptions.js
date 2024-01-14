@@ -31,6 +31,7 @@ function AppOptions() {
     }
   };
 
+  // The GetToken API endpoint should be secured behind some form of authentication (for example, OAuth) to prevent unauthorized users from obtaining tokens to use against your Immersive Reader service and billing; that work is beyond the scope of this sample.
   const getCredentials = async () => {
 
     // Verify environment variables values
@@ -106,20 +107,16 @@ function AppOptions() {
     options.disableTranslation = sampleId === 'DisableTranslation';
     options.parent = sampleId === 'Parent' && document.getElementById("checkboxParent").checked ? document.getElementById('parentDiv') : null;
 
-    try {
-      await launchAsync(token, process.env.REACT_APP_SUBDOMAIN, data, options)
-    }
-    catch (error) {
-      console.log(error);
-      alert("Error in launching the Immersive Reader. Check the console.");
-    }
+    await launchAsync(token, process.env.REACT_APP_SUBDOMAIN, data, options)
+      .catch(error => handleError(error, 'launch'));
   }
 
   const handleLanguage = (e) => setLanguage(e.target.value);
 
   // We use a react hook to fetch when the component is rendered (similar to componentDidMount)
   useEffect(() => {
-    getCredentials();
+    getCredentials()
+      .catch(error => handleError(error, 'token'));
   }, [])
 
   return (

@@ -10,6 +10,20 @@ Licensed under the MIT License. -->
 </head>
 <body>
     <script type="text/javascript">
+        let handleError = (error, caller) => {
+
+            let alertMessage = `Error in ${caller === 'token' ? 'getting the Immersive Reader token' : 'launching the Immersive Reader'}. Check the console.`
+            let errorStatus = error.status ?? 'unknown';
+            let errorStatusText = error.statusText ?? 'unknown';
+            let errorMessage = error.message ?? 'unknown';
+            let errorSessionId = error.sessionId ?? 'unknown'; // Customers can report this sessionId to Immersive Reader team for further debugging.
+            let errorMessageToLog = `Error - Status: ${errorStatus}, StatusText: ${errorStatusText}, Message: ${errorMessage}, SessionId: ${errorSessionId}`;
+
+            console.log(errorMessageToLog);
+
+            alert(alertMessage);
+        }
+
         function handleLaunchImmersiveReader(message) {
             if (!message) {
                 Android.showToast('Message is null or undefined!');
@@ -35,7 +49,8 @@ Licensed under the MIT License. -->
                 };
 
                 // Use the JavaScript SDK to launch the Immersive Reader.
-                ImmersiveReader.launchAsync(message.cogSvcsAccessToken, message.cogSvcsSubdomain, data, options);
+                ImmersiveReader.launchAsync(message.cogSvcsAccessToken, message.cogSvcsSubdomain, data, options)
+                    .catch(error => handleError(error, 'launch'));
 
                 // A simple declarative function used to close the Immersive Reader WebView via @JavaScriptInterface
                 function exitCallback() {

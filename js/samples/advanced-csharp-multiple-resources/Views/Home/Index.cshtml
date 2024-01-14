@@ -65,25 +65,27 @@
                         .then(() => {
                             console.log('Successful launch.');
                         })
-                        .catch ((error) => {
-                            handleError('Error in launching.', error);
-                        });
+                        .catch(error => handleError(error, 'launch'));
                 })
-                .catch((error) => {
-                    handleError('Error in receiving launch parameters.', error);
-                });
+                .catch(error => handleError(error, 'token'));
         }
 
         function exitCallback() {
             console.log("This is the callback function. It is executed when the Immersive Reader closes.");
         }
 
-        function handleError(logMessage, error) {
-            console.log(logMessage, error);
+        let handleError = (error, caller) => {
 
-            if (error && error.responseJSON) {
-                $("#error").text(error.responseJSON.message);
-            }
+            let alertMessage = `Error in ${caller === 'token' ? 'getting the Immersive Reader token' : 'launching the Immersive Reader'}. Check the console.`
+            let errorStatus = error.status ?? 'unknown';
+            let errorStatusText = error.statusText ?? 'unknown';
+            let errorMessage = error.message ?? 'unknown';
+            let errorSessionId = error.sessionId ?? 'unknown'; // Customers can report this sessionId to Immersive Reader team for further debugging.
+            let errorMessageToLog = `Error - Status: ${errorStatus}, StatusText: ${errorStatusText}, Message: ${errorMessage}, SessionId: ${errorSessionId}`;
+
+            console.log(errorMessageToLog);
+            $("#error").text(alertMessage);
+            alert(alertMessage);
         }
     </script>
 </body>

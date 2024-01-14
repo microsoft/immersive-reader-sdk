@@ -54,6 +54,7 @@ script(type="text/javascript").
         handleLaunchImmersiveReader();
     });
 
+    // The GetToken API endpoint should be secured behind some form of authentication (for example, OAuth) to prevent unauthorized users from obtaining tokens to use against your Immersive Reader service and billing; that work is beyond the scope of this sample.
     function handleLaunchImmersiveReader() {
         getTokenAndSubdomainAsync()
             .then(function (response) {
@@ -73,15 +74,9 @@ script(type="text/javascript").
                     "uiZIndex": 2000
                 };
                 ImmersiveReader.launchAsync(token, subdomain, data, options)
-                    .catch(function (error) {
-                        console.log(error);
-                        alert("Error in launching the Immersive Reader. Check the console.");
-                    });
+                    .catch(error => handleError(error, 'launch'));
             })
-            .catch(function (error) {
-                console.log(error);
-                alert("Error in getting the Immersive Reader token and subdomain. Check the console.");
-            });
+            .catch(error => handleError(error, 'token'));
     }
 
     function exitCallback() {

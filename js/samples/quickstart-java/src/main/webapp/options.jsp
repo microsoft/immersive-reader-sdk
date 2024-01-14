@@ -135,12 +135,10 @@
                     options.disableTranslation = sampleId === 'DisableTranslation';
                     options.parent = sampleId === 'Parent' && document.getElementById("checkboxParent").checked ? document.getElementById('parentDiv') : null;
 
-                    ImmersiveReader.launchAsync(token, subdomain, data, options);
+                    ImmersiveReader.launchAsync(token, subdomain, data, options)
+                        .catch(error => handleError(error, 'launch'));
                 })
-                .catch(function (error) {
-                    console.log(error);
-                    alert("Error in getting the Immersive Reader token. Check the console.");
-                });
+                .catch(error => handleError(error, 'token'));
         }
     </script>
 </body>
