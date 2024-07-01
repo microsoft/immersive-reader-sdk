@@ -4,9 +4,6 @@
 export type Error = {
     code: ErrorCode;
     message: string; // Human-readable representation of the error
-    readerReadyDuration?: number; // Elapsed time since launchAsync call until reader request succeeded
-    launchDuration?: number; // Elapsed time since reader request succeeded until launchResponse is returned
-    gcmCorrelationId?: string; // Get Content Model correlation id when applicable
     sessionId?: string; // Session ID which can be used for debugging
 };
 
