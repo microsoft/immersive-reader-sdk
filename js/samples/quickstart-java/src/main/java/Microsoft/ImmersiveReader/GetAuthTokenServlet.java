@@ -5,6 +5,8 @@ import javax.servlet.http.*;
 import java.io.*;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
 
 public class GetAuthTokenServlet extends HttpServlet {
 
@@ -25,9 +27,11 @@ public class GetAuthTokenServlet extends HttpServlet {
         }
 
         String token = getToken();
+        httpServletResponse.setContentType("application/json");
+        JsonObject tokenJson = JsonParser.parseString(token).getAsJsonObject();
 
         PrintWriter writer = httpServletResponse.getWriter();
-        writer.write(token);
+        writer.write(tokenJson.toString());
         writer.flush();
     }
 
