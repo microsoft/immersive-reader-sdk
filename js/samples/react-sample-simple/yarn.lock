@@ -1591,7 +1591,7 @@
   integrity sha512-8ltnOpRR/oJbOp8vaGUnipOi3bqkcW+sLHFlyXIr08OGHmVJLB1Hn7QtGXbYcpVtH1gAYZTlmDXtE4YV0+AMMQ==
   dependencies:
     "@gar/promisify" "^1.0.1"
-    semver "^7.3.5"
+    semver "^7.5.2"
 
 "@npmcli/move-file@^1.0.1":
   version "1.1.2"
@@ -2045,7 +2045,7 @@
     functional-red-black-tree "^1.0.1"
     ignore "^5.1.8"
     regexpp "^3.1.0"
-    semver "^7.3.5"
+    semver "^7.5.2"
     tsutils "^3.21.0"
 
 "@typescript-eslint/experimental-utils@4.33.0", "@typescript-eslint/experimental-utils@^4.0.1":
@@ -2123,7 +2123,7 @@
     debug "^4.3.1"
     globby "^11.0.3"
     is-glob "^4.0.1"
-    semver "^7.3.5"
+    semver "^7.5.2"
     tsutils "^3.21.0"
 
 "@typescript-eslint/visitor-keys@3.10.1":
