@@ -4,10 +4,15 @@ function getTokenAsync() {
       url: "/getAuthTokenServlet",
       type: "GET",
       success: function (response) {
-        const data = response;
+        let data = response;
         if (data.error) {
           reject(data.error);
         } else {
+          // decode token
+          const decodedData = data
+              .replace(/\\"/g, '"')   // Unescape escaped quotes
+              .replace(/\\\\/g, '\\'); // Unescape escaped backslashes
+          data = JSON.parse(decodedData);
           const token = data["access_token"];
           resolve({ token });
         }

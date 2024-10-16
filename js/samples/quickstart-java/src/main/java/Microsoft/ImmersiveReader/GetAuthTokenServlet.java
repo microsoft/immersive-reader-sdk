@@ -5,8 +5,7 @@ import javax.servlet.http.*;
 import java.io.*;
 import java.net.HttpURLConnection;
 import java.net.URL;
-import com.google.gson.JsonObject;
-import com.google.gson.JsonParser;
+import org.owasp.encoder.Encode;
 
 public class GetAuthTokenServlet extends HttpServlet {
 
@@ -27,11 +26,10 @@ public class GetAuthTokenServlet extends HttpServlet {
         }
 
         String token = getToken();
-        httpServletResponse.setContentType("application/json");
-        JsonObject tokenJson = JsonParser.parseString(token).getAsJsonObject();
+        String sanitizedToken = Encode.forJava(token);
 
         PrintWriter writer = httpServletResponse.getWriter();
-        writer.write(tokenJson.toString());
+        writer.write(sanitizedToken);
         writer.flush();
     }
 
