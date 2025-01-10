@@ -1,0 +1,5 @@
+{
+  "dependencies": {
+    "@ember/test-helpers": "^3.3.1"
+  }
+}
