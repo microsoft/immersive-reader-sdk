@@ -1,8 +1,8 @@
-﻿using System.Diagnostics;
+﻿using System.Text;
+using System.Diagnostics;
 using Microsoft.AspNetCore.Mvc;
 using QuickstartSampleWebApp.Models;
 using Microsoft.Identity.Client;
-using System.Text;
 
 namespace QuickstartSampleWebApp.Controllers
 {
