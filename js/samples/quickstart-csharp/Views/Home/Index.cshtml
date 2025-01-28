@@ -87,10 +87,14 @@
             handleLaunchImmersiveReader();
         });
 
+        function decryptToken(encryptedToken) {
+            return atob(encryptedToken);
+        }
+
         function handleLaunchImmersiveReader() {
             getTokenAndSubdomainAsync()
                 .then(function (response) {
-                    const token = response["token"];
+                    const token = decryptToken(response["token"]);
                     const subdomain = response["subdomain"];
 
                     // Learn more about chunk usage and supported MIME types https://docs.microsoft.com/azure/cognitive-services/immersive-reader/reference#chunk

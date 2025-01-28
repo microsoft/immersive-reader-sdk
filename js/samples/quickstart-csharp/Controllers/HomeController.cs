@@ -1,4 +1,5 @@
-﻿using System.Diagnostics;
+﻿using System.Text;
+using System.Diagnostics;
 using Microsoft.AspNetCore.Mvc;
 using QuickstartSampleWebApp.Models;
 using Microsoft.Identity.Client;
@@ -76,6 +77,7 @@ namespace QuickstartSampleWebApp.Controllers
             try
             {
                 string tokenResult = await GetTokenAsync();
+                tokenResult = EncryptToken(tokenResult);
 
                 return new JsonResult(new { token = tokenResult, subdomain = Subdomain });
             }
@@ -85,6 +87,11 @@ namespace QuickstartSampleWebApp.Controllers
                 Debug.WriteLine(message, e);
                 return new JsonResult(new { error = message });
             }
+        }
+
+        private string EncryptToken(string token)
+        {
+            return Convert.ToBase64String(Encoding.UTF8.GetBytes(token));
         }
 
         public IActionResult Index()
