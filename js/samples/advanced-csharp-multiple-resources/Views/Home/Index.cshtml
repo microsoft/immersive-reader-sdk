@@ -58,7 +58,7 @@
             getImmersiveReaderLaunchConfigAsync(resourceId)
                 .then((launchParams) => {
 
-                    const token = launchParams.token;
+                    const token = decryptToken(launchParams.token);
                     const subdomain = launchParams.subdomain;
 
                     ImmersiveReader.launchAsync(token, subdomain, data, options)
@@ -84,6 +84,10 @@
             if (error && error.responseJSON) {
                 $("#error").text(error.responseJSON.message);
             }
+        }
+
+        function decryptToken(encryptedToken) {
+            return atob(encryptedToken);
         }
     </script>
 </body>

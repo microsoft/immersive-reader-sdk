@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using System.Diagnostics;
 using Microsoft.Identity.Client;
+using System.Text;
 
 namespace AdvancedSampleWebApp.Pages
 {
@@ -89,7 +90,8 @@ namespace AdvancedSampleWebApp.Pages
                     throw new Exception("Authentication failed");
                 }
 
-                return await GetTokenAsync();
+                string token = await GetTokenAsync();
+                return EncryptToken(token);
             }
             catch (Exception e)
             {
@@ -112,6 +114,11 @@ namespace AdvancedSampleWebApp.Pages
                 .ConfigureAwait(false);
 
             return authResult.AccessToken;
+        }
+
+        private string EncryptToken(string token)
+        {
+            return Convert.ToBase64String(Encoding.UTF8.GetBytes(token.ToString()));
         }
     }
 }

@@ -3,6 +3,7 @@
 
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Identity.Client;
+using System.Text;
 
 namespace MultipleResourcesSampleWebApp.Controllers
 {
@@ -105,7 +106,7 @@ namespace MultipleResourcesSampleWebApp.Controllers
 
                     ImmersiveReaderLaunchParameters launchParams = new ImmersiveReaderLaunchParameters
                     {
-                        Token = token,
+                        Token = EncryptToken(token),
                         Subdomain = resourceConfig.Subdomain
                     };
 
@@ -150,6 +151,11 @@ namespace MultipleResourcesSampleWebApp.Controllers
             };
 
             return result;
+        }
+
+        private string EncryptToken(string token)
+        {
+            return Convert.ToBase64String(Encoding.UTF8.GetBytes(token));
         }
     }
 }
