@@ -110,9 +110,7 @@
             };
 
             let token = await getImmersiveReaderTokenAsync(Canary);
-            console.log(`token: ${token}`)
             token = decryptToken(token);
-            console.log(`decrypted token: ${token}`)
             const subdomain = await getImmersiveReaderSubdomainAsync();
 
             // Learn more about options https://docs.microsoft.com/azure/cognitive-services/immersive-reader/reference#options
