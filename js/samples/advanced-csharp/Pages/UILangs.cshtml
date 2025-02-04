@@ -121,7 +121,8 @@
                 onExit: exitCallback
             };
 
-            const token = await getImmersiveReaderTokenAsync(Canary);
+            let token = await getImmersiveReaderTokenAsync(Canary);
+            token = decryptToken(token);
             const subdomain = await getImmersiveReaderSubdomainAsync();
 
             await ImmersiveReader.launchAsync(token, subdomain, data, options)

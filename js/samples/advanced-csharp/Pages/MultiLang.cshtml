@@ -99,7 +99,8 @@
                 chunks: chunks
             };
 
-            const token = await getImmersiveReaderTokenAsync(Canary);
+            let token = await getImmersiveReaderTokenAsync(Canary);
+            token = decryptToken(token);
             const subdomain = await getImmersiveReaderSubdomainAsync();
 
             // Learn more about options https://docs.microsoft.com/azure/cognitive-services/immersive-reader/reference#options

@@ -68,7 +68,7 @@ namespace QuickstartSampleWebApp.Controllers
                 .ExecuteAsync()
                 .ConfigureAwait(false);
 
-            return authResult.AccessToken;
+            return EncryptToken(authResult.AccessToken);
         }
 
         [HttpGet]
@@ -77,7 +77,6 @@ namespace QuickstartSampleWebApp.Controllers
             try
             {
                 string tokenResult = await GetTokenAsync();
-                tokenResult = EncryptToken(tokenResult);
 
                 return new JsonResult(new { token = tokenResult, subdomain = Subdomain });
             }
