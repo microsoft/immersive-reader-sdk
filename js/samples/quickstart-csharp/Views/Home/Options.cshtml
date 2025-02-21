@@ -1,5 +1,7 @@
 ﻿@{
     ViewData["Title"] = "Immersive Reader C# Quickstart - Options";
+    var token = ViewData["Token"] as string;
+    var subdomain = ViewData["Subdomain"] as string;
 }
 
 @section Styles {
@@ -109,35 +111,28 @@
         }
 
         async function handleLaunchImmersiveReader(sampleId) {
-            getTokenAndSubdomainAsync()
-                .then(function (response) {
-                    const token = response["token"];
-                    const subdomain = response["subdomain"];
-                    
-                    var langElement = $('#lang_' + sampleId);
-                    var lang = sampleId == 'DisableLanguageDetection' ? langElement.val() : 'en';
-                    
-                    const data = {
-                        title: $('#title' + sampleId).text().trim(),
-                        chunks: [{
-                            content: $('#text' + sampleId).text().trim(),
-                            lang: lang
-                        }]
-                    };
+            const token = "@token";
+            const subdomain = "@subdomain";
 
-                    let options = {};
+            var langElement = $('#lang_' + sampleId);
+            var lang = sampleId == 'DisableLanguageDetection' ? langElement.val() : 'en';
                     
-                    options.disableLanguageDetection = sampleId === 'DisableLanguageDetection';
-                    options.disableGrammar = sampleId === 'DisableGrammar';
-                    options.disableTranslation = sampleId === 'DisableTranslation';
-                    options.parent = sampleId === 'Parent' && document.getElementById("checkboxParent").checked ? document.getElementById('parentDiv') : null;
+            const data = {
+                title: $('#title' + sampleId).text().trim(),
+                chunks: [{
+                    content: $('#text' + sampleId).text().trim(),
+                    lang: lang
+                }]
+            };
 
-                    ImmersiveReader.launchAsync(token, subdomain, data, options);
-                })
-                .catch(function (error) {
-                    console.log(error);
-                    alert("Error in getting the Immersive Reader token. Check the console.");
-                });
+            let options = {};
+                    
+            options.disableLanguageDetection = sampleId === 'DisableLanguageDetection';
+            options.disableGrammar = sampleId === 'DisableGrammar';
+            options.disableTranslation = sampleId === 'DisableTranslation';
+            options.parent = sampleId === 'Parent' && document.getElementById("checkboxParent").checked ? document.getElementById('parentDiv') : null;
+
+            ImmersiveReader.launchAsync(token, subdomain, data, options);
         }
     </script>
 }
