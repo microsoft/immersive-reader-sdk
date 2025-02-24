@@ -12,6 +12,7 @@ namespace QuickstartSampleWebApp.Controllers
         private readonly string ClientId;     // Azure AD ApplicationId
         private readonly string ClientSecret; // Azure AD Application Service Principal password
         private readonly string Subdomain;    // Immersive Reader resource subdomain (resource 'Name' if the resource was created in the Azure portal, or 'CustomSubDomain' option if the resource was created with Azure CLI Powershell. Check the Azure portal for the subdomain on the Endpoint in the resource Overview page, for example, 'https://[SUBDOMAIN].cognitiveservices.azure.com/')
+        private string Token;
 
         private IConfidentialClientApplication _confidentialClientApplication;
         private IConfidentialClientApplication ConfidentialClientApplication
@@ -59,7 +60,7 @@ namespace QuickstartSampleWebApp.Controllers
         /// <summary>
         /// Get an Azure AD authentication token
         /// </summary>
-        public async Task<string> GetTokenAsync()
+        private async Task GetTokenAsync()
         {
             const string resource = "https://cognitiveservices.azure.com/";
 
@@ -68,33 +69,14 @@ namespace QuickstartSampleWebApp.Controllers
                 .ExecuteAsync()
                 .ConfigureAwait(false);
 
-            return EncryptToken(authResult.AccessToken);
+            Token = authResult.AccessToken;
         }
 
-        [HttpGet]
-        public async Task<JsonResult> GetTokenAndSubdomain()
+        public async Task<IActionResult> Index()
         {
-            try
-            {
-                string tokenResult = await GetTokenAsync();
-
-                return new JsonResult(new { token = tokenResult, subdomain = Subdomain });
-            }
-            catch (Exception e)
-            {
-                string message = "Unable to acquire Azure AD token. Check the console for more information.";
-                Debug.WriteLine(message, e);
-                return new JsonResult(new { error = message });
-            }
-        }
-
-        private string EncryptToken(string token)
-        {
-            return Convert.ToBase64String(Encoding.UTF8.GetBytes(token));
-        }
-
-        public IActionResult Index()
-        {
+            await GetTokenAsync();
+            ViewData["Token"] = Token;
+            ViewData["Subdomain"] = Subdomain;
             return View();
         }
 
@@ -103,8 +85,11 @@ namespace QuickstartSampleWebApp.Controllers
             return View();
         }
 
-        public IActionResult Options()
+        public async Task<IActionResult> Options()
         {
+            await GetTokenAsync();
+            ViewData["Token"] = Token;
+            ViewData["Subdomain"] = Subdomain;
             return View();
         }
 
