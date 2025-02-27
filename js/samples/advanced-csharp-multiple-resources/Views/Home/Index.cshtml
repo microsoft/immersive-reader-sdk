@@ -1,4 +1,8 @@
-﻿<html>
+﻿@{
+    var immersiveReaderTokens = TempData["ImmersiveReaderTokens"] as string;
+}
+
+<html>
 <head>
     <meta charset='utf-8'>
     <title>Immersive Reader Example: Document</title>
@@ -24,23 +28,18 @@
     <div id="error"></div>
 
     <script type='text/javascript'>
-        function getImmersiveReaderLaunchConfigAsync(resourceId) {
-            return new Promise((resolve, reject) => {
-                $.ajax({
-                    url: '/getLaunchParameters/' + resourceId,
-                    type: 'GET',
-                    success: launchParams => {
-                        resolve(launchParams);
-                    },
-                    error: err => {
-                        reject(err);
-                    }
-                });
-            });
-        }
+        const immersiveReaderTokens = @Html.Raw(immersiveReaderTokens);
 
-        async function handleLaunchImmersiveReader(resourceId) {
-            $("#error").text(""); // Clear error
+        function handleLaunchImmersiveReader(resourceId) {
+            document.getElementById("error").textContent = ""; // Clear error
+
+            if (!immersiveReaderTokens || !immersiveReaderTokens[resourceId]) {
+                document.getElementById("error").textContent = "Invalid resource key or missing token.";
+                return;
+            }
+
+            const token = immersiveReaderTokens[resourceId].Token;
+            const subdomain = immersiveReaderTokens[resourceId].Subdomain;
 
             const data = {
                 title: document.getElementById('title').innerText,
@@ -55,22 +54,12 @@
                 onExit: exitCallback
             };
 
-            getImmersiveReaderLaunchConfigAsync(resourceId)
-                .then((launchParams) => {
-
-                    const token = decryptToken(launchParams.token);
-                    const subdomain = launchParams.subdomain;
-
-                    ImmersiveReader.launchAsync(token, subdomain, data, options)
-                        .then(() => {
-                            console.log('Successful launch.');
-                        })
-                        .catch ((error) => {
-                            handleError('Error in launching.', error);
-                        });
+            ImmersiveReader.launchAsync(token, subdomain, data, options)
+                .then(() => {
+                    console.log('Successful launch.');
                 })
-                .catch((error) => {
-                    handleError('Error in receiving launch parameters.', error);
+                .catch ((error) => {
+                    handleError('Error in launching.', error);
                 });
         }
 
@@ -80,14 +69,7 @@
 
         function handleError(logMessage, error) {
             console.log(logMessage, error);
-
-            if (error && error.responseJSON) {
-                $("#error").text(error.responseJSON.message);
-            }
-        }
-
-        function decryptToken(encryptedToken) {
-            return atob(encryptedToken);
+            document.getElementById("error").textContent = "An error occurred while launching Immersive Reader.";
         }
     </script>
 </body>
