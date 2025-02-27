@@ -1,7 +1,9 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // Licensed under the MIT License.
 
-namespace AdvancedSampleWebApp.Pages
+using AdvancedSampleWebApp.Pages;
+
+namespace AdvancedSampleWebApp.Views.Home
 {
     public class MathModel : SamplePageModel
     {

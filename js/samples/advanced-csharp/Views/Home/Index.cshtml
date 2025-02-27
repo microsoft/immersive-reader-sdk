@@ -1,10 +1,10 @@
-﻿@page
-@model IndexModel
-
-<!-- Copyright (c) Microsoft Corporation. All rights reserved.
+﻿<!-- Copyright (c) Microsoft Corporation. All rights reserved.
      Licensed under the MIT License. -->
 
-@using AdvancedSampleWebApp.Pages
+﻿@{
+    var token = ViewData["Token"] as string;
+    var subdomain = ViewData["Subdomain"] as string;
+}
 
 <html>
 <head>
@@ -71,13 +71,13 @@
 <body class='body'>
     <nav>
         Examples:
-        <a href='/index' class='active'>Sections</a>
-        <a href='/document'>Document</a>
-        <a href='/multilang'>Multilingual Document</a>
-        <a href='/uilangs'>UI Language</a>
-        <a href='/math'>Math</a>
-        <a href='/worddoc'>Word Document</a>
-        <a href='/options'>Options</a>
+        <a href='@Url.Action("Index", "Home")' class='active'>Sections</a>
+        <a href='@Url.Action("Document", "Home")'>Document</a>
+        <a href='@Url.Action("MultiLang", "Home")'>Multilingual Document</a>
+        <a href='@Url.Action("UILangs", "Home")'>UI Language</a>
+        <a href='@Url.Action("Math", "Home")'>Math</a>
+        <a href='@Url.Action("WordDoc", "Home")'>Word Document</a>
+        <a href='@Url.Action("Options", "Home")'>Options</a>
     </nav>
     <main id='ContentArea'>
         <section class='section' id='Sample1'>
@@ -109,9 +109,8 @@
                 }]
             };
 
-            let token = await getImmersiveReaderTokenAsync(Canary);
-            token = decryptToken(token);
-            const subdomain = await getImmersiveReaderSubdomainAsync();
+            let token = "@token";
+            const subdomain = "@subdomain";
 
             // Learn more about options https://docs.microsoft.com/azure/cognitive-services/immersive-reader/reference#options
             const options = {

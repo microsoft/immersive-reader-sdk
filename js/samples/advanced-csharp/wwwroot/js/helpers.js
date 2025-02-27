@@ -31,7 +31,3 @@ function getImmersiveReaderSubdomainAsync() {
     });
   });
 }
-
-function decryptToken(encryptedToken) {
-  return atob(encryptedToken);
-}

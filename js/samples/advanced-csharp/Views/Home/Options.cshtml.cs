@@ -1,4 +1,6 @@
-namespace AdvancedSampleWebApp.Pages
+using AdvancedSampleWebApp.Pages;
+
+namespace AdvancedSampleWebApp.Views.Home
 {
     public class OptionsModel : SamplePageModel
     {
