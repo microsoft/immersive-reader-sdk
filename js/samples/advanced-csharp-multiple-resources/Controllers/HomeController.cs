@@ -42,10 +42,24 @@ namespace MultipleResourcesSampleWebApp.Controllers
             ClientSecret = configuration[$"{resourceKey}:ClientSecret"];
             Subdomain = configuration[$"{resourceKey}:Subdomain"];
 
-            if (string.IsNullOrWhiteSpace(TenantId) || string.IsNullOrWhiteSpace(ClientId) ||
-                string.IsNullOrWhiteSpace(ClientSecret) || string.IsNullOrWhiteSpace(Subdomain))
+            if (string.IsNullOrWhiteSpace(TenantId))
             {
-                throw new ArgumentNullException($"{resourceKey} configuration is missing! Check secrets.json.");
+                throw new ArgumentNullException("TenantId is null! Did you add that info to secrets.json? See ReadMe.txt.");
+            }
+
+            if (string.IsNullOrWhiteSpace(ClientId))
+            {
+                throw new ArgumentNullException("ClientId is null! Did you add that info to secrets.json? See ReadMe.txt.");
+            }
+
+            if (string.IsNullOrWhiteSpace(ClientSecret))
+            {
+                throw new ArgumentNullException("ClientSecret is null! Did you add that info to secrets.json? See ReadMe.txt.");
+            }
+
+            if (string.IsNullOrWhiteSpace(Subdomain))
+            {
+                throw new ArgumentNullException("Subdomain is null! Did you add that info to secrets.json? See ReadMe.txt.");
             }
 
             ResourceKeyToConfigs[resourceKey] = new ImmersiveReaderResourceConfig

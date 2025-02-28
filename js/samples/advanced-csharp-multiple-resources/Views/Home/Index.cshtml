@@ -33,8 +33,13 @@
         function handleLaunchImmersiveReader(resourceId) {
             document.getElementById("error").textContent = ""; // Clear error
 
-            if (!immersiveReaderTokens || !immersiveReaderTokens[resourceId]) {
-                document.getElementById("error").textContent = "Invalid resource key or missing token.";
+            if (!immersiveReaderTokens) {
+                document.getElementById("error").textContent = "Missing tokens.";
+                return;
+            }
+
+            if (!immersiveReaderTokens[resourceId]) {
+                document.getElementById("error").textContent = `Invalid resource key [${resourceId}].`;
                 return;
             }
 
