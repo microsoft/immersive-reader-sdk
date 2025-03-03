@@ -74,7 +74,7 @@
 
         function handleError(logMessage, error) {
             console.log(logMessage, error);
-            document.getElementById("error").textContent = "An error occurred while launching Immersive Reader.";
+            document.getElementById("error").textContent = `An error occurred while launching Immersive Reader. ${error}`;
         }
     </script>
 </body>
