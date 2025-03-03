@@ -4,6 +4,7 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Identity.Client;
 using System.Text;
+using Newtonsoft.Json;
 
 namespace MultipleResourcesSampleWebApp.Controllers
 {
@@ -18,23 +19,7 @@ namespace MultipleResourcesSampleWebApp.Controllers
         private string ClientId;     // Azure AD ApplicationId
         private string ClientSecret; // Azure AD Application Service Principal password
         private string Subdomain;    // Immersive Reader resource subdomain (resource 'Name' if the resource was created in the Azure portal, or 'CustomSubDomain' option if the resource was created with Azure CLI Powershell. Check the Azure portal for the subdomain on the Endpoint in the resource Overview page, for example, 'https://[SUBDOMAIN].cognitiveservices.azure.com/')
-
-        private IConfidentialClientApplication _confidentialClientApplication;
-        private IConfidentialClientApplication ConfidentialClientApplication
-        {
-            get
-            {
-                if (_confidentialClientApplication == null)
-                {
-                    _confidentialClientApplication = ConfidentialClientApplicationBuilder.Create(ClientId)
-                    .WithClientSecret(ClientSecret)
-                    .WithAuthority($"https://login.windows.net/{TenantId}")
-                    .Build();
-                }
-
-                return _confidentialClientApplication;
-            }
-        }
+        private string Token;
 
         public HomeController(IConfiguration configuration)
         {
@@ -86,76 +71,44 @@ namespace MultipleResourcesSampleWebApp.Controllers
             };
         }
 
-        public IActionResult Index()
+        public async Task<IActionResult> Index()
         {
-            return View();
-        }
+            Dictionary<string, object> tokens = new Dictionary<string, object>();
 
-        /// <summary>
-        /// Get ImmersiveReaderLaunchParameters by using the resource that maps to the resource key
-        /// </summary>
-        /// <param name="resourceKey">The key for the resource in secrets.json</param>
-        [Route("getLaunchParameters/{resourceKey}")]
-        public async Task<JsonResult> GetLaunchParameters(string resourceKey)
-        {
-            if (ResourceKeyToConfigs.TryGetValue(resourceKey, out ImmersiveReaderResourceConfig resourceConfig))
+            foreach (var key in ResourceKeys)
             {
-                try
+                if (ResourceKeyToConfigs.TryGetValue(key, out var resourceConfig))
                 {
-                    string token = await GetTokenAsync(resourceConfig);
-
-                    ImmersiveReaderLaunchParameters launchParams = new ImmersiveReaderLaunchParameters
+                    await GetTokenAsync(resourceConfig);
+                    tokens[key] = new
                     {
-                        Token = EncryptToken(token),
+                        Token = Token,
                         Subdomain = resourceConfig.Subdomain
                     };
+                }
+            }
 
-                    return new JsonResult(launchParams);
-                }
-                catch
-                {
-                    return GetJsonResultError("Exception in getting token. Ensure that secrets.json is correct.", StatusCodes.Status500InternalServerError);
-                }
-            }
-            else
-            {
-                return GetJsonResultError("Invalid resource key.", StatusCodes.Status400BadRequest);
-            }
+            TempData["ImmersiveReaderTokens"] = JsonConvert.SerializeObject(tokens);
+            return View();
         }
 
         /// <summary>
         /// Get an Azure AD authentication token using a given resource
         /// </summary>
-        private async Task<string> GetTokenAsync(ImmersiveReaderResourceConfig resourceConfig)
+        private async Task GetTokenAsync(ImmersiveReaderResourceConfig resourceConfig)
         {
             const string resource = "https://cognitiveservices.azure.com/";
 
-            var authResult = await ConfidentialClientApplication.AcquireTokenForClient(
-                new[] { $"{resource}/.default" })
+            var confidentialClient = ConfidentialClientApplicationBuilder.Create(resourceConfig.ClientId)
+                .WithClientSecret(resourceConfig.ClientSecret)
+                .WithAuthority($"https://login.windows.net/{resourceConfig.TenantId}")
+                .Build();
+
+            var authResult = await confidentialClient.AcquireTokenForClient(new[] { $"{resource}/.default" })
                 .ExecuteAsync()
                 .ConfigureAwait(false);
 
-            return authResult.AccessToken;
-        }
-
-        private JsonResult GetJsonResultError(string message, int statusCode)
-        {
-            JsonResult result = new JsonResult(
-                new
-                {
-                    Message = message
-                }
-            )
-            {
-                StatusCode = statusCode
-            };
-
-            return result;
-        }
-
-        private string EncryptToken(string token)
-        {
-            return Convert.ToBase64String(Encoding.UTF8.GetBytes(token));
+            Token = authResult.AccessToken;
         }
     }
 }
