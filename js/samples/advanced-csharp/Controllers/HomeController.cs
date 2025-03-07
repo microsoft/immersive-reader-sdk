@@ -55,6 +55,9 @@ namespace AdvancedSampleWebApp.Controllers
             }
         }
 
+        /// <summary>
+        /// Get an Azure AD authentication token
+        /// </summary>
         private async Task GetTokenAsync()
         {
             const string resource = "https://cognitiveservices.azure.com/";
@@ -67,6 +70,9 @@ namespace AdvancedSampleWebApp.Controllers
             Token = authResult.AccessToken;
         }
 
+        /// <summary>
+        /// Get the home page
+        /// </summary>
         public async Task<ActionResult> Index()
         {
             await GetTokenAsync();
@@ -75,6 +81,9 @@ namespace AdvancedSampleWebApp.Controllers
             return View();
         }
 
+        /// <summary>
+        /// Get the document page
+        /// </summary>
         public async Task<ActionResult> Document()
         {
             await GetTokenAsync();
@@ -83,6 +92,9 @@ namespace AdvancedSampleWebApp.Controllers
             return View();
         }
 
+        /// <summary>
+        /// Get the math page
+        /// </summary>
         public async Task<ActionResult> Math()
         {
             await GetTokenAsync();
@@ -91,6 +103,9 @@ namespace AdvancedSampleWebApp.Controllers
             return View();
         }
 
+        /// <summary>
+        /// Get the multi-lang page
+        /// </summary>
         public async Task<ActionResult> MultiLang()
         {
             await GetTokenAsync();
@@ -99,6 +114,9 @@ namespace AdvancedSampleWebApp.Controllers
             return View();
         }
 
+        /// <summary>
+        /// Get the options page
+        /// </summary>
         public async Task<ActionResult> Options()
         {
             await GetTokenAsync();
@@ -107,6 +125,9 @@ namespace AdvancedSampleWebApp.Controllers
             return View();
         }
 
+        /// <summary>
+        /// Get the ui-langs page
+        /// </summary>
         public async Task<ActionResult> UILangs()
         {
             await GetTokenAsync();
@@ -115,6 +136,9 @@ namespace AdvancedSampleWebApp.Controllers
             return View();
         }
 
+        /// <summary>
+        /// Get the word-doc page
+        /// </summary>
         public async Task<ActionResult> WordDoc()
         {
             await GetTokenAsync();
