@@ -20,7 +20,7 @@
     "tslint": "^5.14.0",
     "tslint-loader": "^3.5.4",
     "tslint-microsoft-contrib": "^6.1.0",
-    "typescript": "^3.8",
+    "typescript": "^5.8.2",
     "webpack-cli": "^4.9.1"
   },
   "scripts": {
