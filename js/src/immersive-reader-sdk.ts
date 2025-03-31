@@ -7,18 +7,8 @@ import { CookiePolicy } from './options';
 
 if (typeof window !== 'undefined') {
     window.addEventListener('load', () => {
-        if (!(window.hasOwnProperty('Promise'))) {
-            dynamicallyLoadScript('https://ircdname.azureedge.net/permanent-static-resources/promise-polyfill.min.js');
-        }
-
         renderButtons();
     });
-}
-
-function dynamicallyLoadScript(scriptUrl: string) {
-    const script = document.createElement('script');
-    script.src = scriptUrl;
-    document.head.appendChild(script);
 }
 
 export { renderButtons, close, launchAsync, CookiePolicy };
