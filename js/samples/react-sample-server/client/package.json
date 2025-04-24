@@ -50,6 +50,7 @@
     ]
   },
   "resolutions": {
-    "cross-pawn": "^latest"
+    "cross-pawn": "^latest",
+    "ansi-html": "^0.0.8"
   }
 }
