@@ -52,6 +52,7 @@
   "resolutions": {
     "cross-pawn": "^latest",
     "ansi-html": "^0.0.8",
-    "braces": "^3.0.3"
+    "braces": "^3.0.3",
+    "lodash": "^4.17.21"
   }
 }
