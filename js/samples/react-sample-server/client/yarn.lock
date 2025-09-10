@@ -1093,9 +1093,9 @@
     core-js-pure "^3.30.2"
     regenerator-runtime "^0.14.0"
 
-"@babel/runtime@7.12.18":
-  version "7.12.18"
-  resolved "https://registry.yarnpkg.com/@babel/runtime/-/runtime-7.12.18.tgz#af137bd7e7d9705a412b3caaf991fe6aaa97831b"
+"@babel/runtime@7.26.10":
+  version "7.26.10"
+  resolved "https://registry.yarnpkg.com/@babel/runtime/-/runtime-7.26.10.tgz#af137bd7e7d9705a412b3caaf991fe6aaa97831b"
   integrity sha512-BogPQ7ciE6SYAUPtlm9tWbgI9+2AgqSam6QivMgXgAT+fKbgppaj4ZX15MHeLC1PVF5sNk70huBu20XxWOs8Cg==
   dependencies:
     regenerator-runtime "^0.13.4"
@@ -5715,7 +5715,7 @@ ember-cli-babel@^7.26.6:
     "@babel/plugin-transform-typescript" "^7.13.0"
     "@babel/polyfill" "^7.11.5"
     "@babel/preset-env" "^7.16.5"
-    "@babel/runtime" "7.12.18"
+    "@babel/runtime" "7.26.10"
     amd-name-resolver "^1.3.1"
     babel-plugin-debug-macros "^0.3.4"
     babel-plugin-ember-data-packages-polyfill "^0.1.2"
@@ -5750,7 +5750,7 @@ ember-cli-babel@^8.2.0:
     "@babel/plugin-transform-runtime" "^7.13.9"
     "@babel/plugin-transform-typescript" "^7.20.13"
     "@babel/preset-env" "^7.20.2"
-    "@babel/runtime" "7.12.18"
+    "@babel/runtime" "7.26.10"
     amd-name-resolver "^1.3.1"
     babel-plugin-debug-macros "^0.3.4"
     babel-plugin-ember-data-packages-polyfill "^0.1.2"
