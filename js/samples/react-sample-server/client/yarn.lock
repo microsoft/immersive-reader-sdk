@@ -1093,9 +1093,9 @@
     core-js-pure "^3.30.2"
     regenerator-runtime "^0.14.0"
 
-"@babel/runtime@7.12.18":
-  version "7.12.18"
-  resolved "https://registry.yarnpkg.com/@babel/runtime/-/runtime-7.12.18.tgz#af137bd7e7d9705a412b3caaf991fe6aaa97831b"
+"@babel/runtime@7.26.10":
+  version "7.26.10"
+  resolved "https://registry.yarnpkg.com/@babel/runtime/-/runtime-7.26.10.tgz#af137bd7e7d9705a412b3caaf991fe6aaa97831b"
   integrity sha512-BogPQ7ciE6SYAUPtlm9tWbgI9+2AgqSam6QivMgXgAT+fKbgppaj4ZX15MHeLC1PVF5sNk70huBu20XxWOs8Cg==
   dependencies:
     regenerator-runtime "^0.13.4"
@@ -5715,7 +5715,7 @@ ember-cli-babel@^7.26.6:
     "@babel/plugin-transform-typescript" "^7.13.0"
     "@babel/polyfill" "^7.11.5"
     "@babel/preset-env" "^7.16.5"
-    "@babel/runtime" "7.12.18"
+    "@babel/runtime" "7.26.10"
     amd-name-resolver "^1.3.1"
     babel-plugin-debug-macros "^0.3.4"
     babel-plugin-ember-data-packages-polyfill "^0.1.2"
@@ -5750,7 +5750,7 @@ ember-cli-babel@^8.2.0:
     "@babel/plugin-transform-runtime" "^7.13.9"
     "@babel/plugin-transform-typescript" "^7.20.13"
     "@babel/preset-env" "^7.20.2"
-    "@babel/runtime" "7.12.18"
+    "@babel/runtime" "7.26.10"
     amd-name-resolver "^1.3.1"
     babel-plugin-debug-macros "^0.3.4"
     babel-plugin-ember-data-packages-polyfill "^0.1.2"
@@ -9990,14 +9990,12 @@ microevent.ts@~0.1.1:
   integrity sha512-jo1OfR4TaEwd5HOrt5+tAZ9mqT4jmpNAusXtyfNzqVm9uiSYFZlKM1wYL4oU7azZW/PxQW53wM0S6OR1JHNa2g==
 
 micromatch@^3.1.10, micromatch@^3.1.4:
-  version "3.1.10"
-  resolved "https://registry.yarnpkg.com/micromatch/-/micromatch-3.1.10.tgz#70859bc95c9840952f359a068a3fc49f9ecfac23"
-  integrity sha512-MWikgl9n9M3w+bpsY3He8L+w9eF9338xRl8IAO5viDizwSzziFEyUzo2xrrloB64ADbTf8uA8vRqqttDTOmccg==
+  version "4.0.8"
+  resolved "https://registry.yarnpkg.com/micromatch/-/micromatch-4.0.8.tgz#d66fa18f3a47076789320b9b1af32bd86d9fa202"
+  integrity sha512-PXwfBhYu0hBCPw8Dn0E+WDYb7af3dSLVWKi3HGv84IdF4TyFoC0ysxFd0Goxw7nSv4T/PzEJQxsYsEiFCKo2BA==
   dependencies:
-    arr-diff "^4.0.0"
-    array-unique "^0.3.2"
-    braces "^2.3.1"
-    define-property "^2.0.2"
+    braces "^3.0.3"
+    picomatch "^2.3.1"
     extend-shallow "^3.0.2"
     extglob "^2.0.4"
     fragment-cache "^0.2.1"
