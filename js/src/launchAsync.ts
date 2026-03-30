@@ -35,6 +35,7 @@ const sdkVersion = VERSION;
 
 const PostMessagePreferences = 'ImmersiveReader-Preferences:';
 const PostMessageLaunchResponse = 'ImmersiveReader-LaunchResponse:';
+const PostMessageTranslationComplete = 'ImmersiveReader-TranslationComplete';
 
 const errorMessageMap: { [errorCode: string]: string } = {};
 errorMessageMap[ErrorCode.TokenExpired] = 'The access token supplied is expired.';
@@ -47,7 +48,7 @@ let isLoading: boolean = false;
 /**
  * Launch the Immersive Reader within an iframe.
  * @param token The authentication token.
- * @param subdomain The Immersive Reader Cognitive Service subdomain. This is a required parameter for Azure AD authentication in this and future versions of this SDK. Use of the Cognitive Services issueToken endpoint-based authentication tokens is deprecated and no longer supported.
+ * @param subdomain The Immersive Reader Cognitive Service subdomain.
  * @param content The content that should be shown in the Immersive Reader.
  * @param options Options for configuring the look and feel of the Immersive Reader.
  * @return A promise that resolves with a LaunchResponse when the Immersive Reader is launched.
@@ -95,7 +96,6 @@ export function launchAsync(token: string, subdomain: string, content: Content, 
             ...options
         };
 
-        // Ensure that we were given a number for the UI z-index
         if (!options.uiZIndex || typeof options.uiZIndex !== 'number') {
             options.uiZIndex = 1000;
         }
@@ -119,17 +119,11 @@ export function launchAsync(token: string, subdomain: string, content: Content, 
         const parent = options.parent && document.contains(options.parent) ? options.parent : document.body;
 
         const reset = (): void => {
-            // Remove container along with the iframe inside of it
             if (parent.contains(iframeContainer)) {
                 parent.removeChild(iframeContainer);
             }
-
             window.removeEventListener('message', messageHandler);
-
-            // Clear the timeout timer
             resetTimeout();
-
-            // Re-enable scrolling
             if (noscroll.parentNode) {
                 noscroll.parentNode.removeChild(noscroll);
             }
@@ -138,8 +132,6 @@ export function launchAsync(token: string, subdomain: string, content: Content, 
         const exit = (): void => {
             reset();
             isLoading = false;
-
-            // Execute exit callback if we have one
             if (options.onExit) {
                 try {
                     options.onExit();
@@ -149,22 +141,28 @@ export function launchAsync(token: string, subdomain: string, content: Content, 
             }
         };
 
-        // Reset variables
         reset();
 
         const messageHandler = (e: any): void => {
-            // Don't process the message if the data is not a string
             if (!e || !e.data || typeof e.data !== 'string') { return; }
 
             if (e.data === 'ImmersiveReader-ReadyForContent') {
-                resetTimeout(); // Reset the timeout once the reader page loads successfully. The Reader page will report further errors through PostMessage if there is an issue obtaining the ContentModel from the server
+                resetTimeout();
+                
+                // Fix for Race Condition: autoEnableDocumentTranslation + autoplay
+                const isAutoTranslate = options.translationOptions?.autoEnableDocumentTranslation;
+                const isAutoplay = options.readAloudOptions?.autoplay;
+
                 const message: Message = {
                     cogSvcsAccessToken: token,
                     cogSvcsSubdomain: subdomain,
                     request: content,
                     launchToPostMessageSentDurationInMs: Date.now() - startTime,
                     disableFirstRun: options.disableFirstRun,
-                    readAloudOptions: options.readAloudOptions,
+                    // If both are enabled, we disable autoplay here and trigger it after translation
+                    readAloudOptions: (isAutoTranslate && isAutoplay) 
+                        ? { ...options.readAloudOptions, autoplay: false } 
+                        : options.readAloudOptions,
                     translationOptions: options.translationOptions,
                     displayOptions: options.displayOptions,
                     sendPreferences: !!options.onPreferencesChanged,
@@ -174,12 +172,18 @@ export function launchAsync(token: string, subdomain: string, content: Content, 
                     disableLanguageDetection: options.disableLanguageDetection
                 };
                 iframe.contentWindow!.postMessage(JSON.stringify({ messageType: 'Content', messageValue: message }), '*');
+
+            } else if (e.data === PostMessageTranslationComplete) {
+                // Trigger play if it was deferred due to translation
+                if (options.translationOptions?.autoEnableDocumentTranslation && options.readAloudOptions?.autoplay) {
+                    iframe.contentWindow!.postMessage(JSON.stringify({ messageType: 'Play' }), '*');
+                }
+
             } else if (e.data === 'ImmersiveReader-Exit') {
                 exit();
             } else if (e.data.startsWith(PostMessageLaunchResponse)) {
                 let launchResponse: LaunchResponse = null;
                 let error: Error = null;
-
                 let response: LaunchResponseMessage = null;
                 try {
                     response = JSON.parse(e.data.substring(PostMessageLaunchResponse.length));
@@ -188,7 +192,6 @@ export function launchAsync(token: string, subdomain: string, content: Content, 
                 }
 
                 if (response && response.success) {
-
                     launchResponse = {
                         container: iframeContainer,
                         sessionId: response.sessionId,
@@ -225,22 +228,20 @@ export function launchAsync(token: string, subdomain: string, content: Content, 
                 }
             }
         };
+
         window.addEventListener('message', messageHandler);
 
-        // Reject the promise if the Immersive Reader page fails to load.
         timeoutId = window.setTimeout((): void => {
             reset();
             isLoading = false;
             reject({ code: ErrorCode.Timeout, message: `Page failed to load after timeout (${options.timeout} ms)` });
         }, options.timeout);
 
-        // Create and style iframe
         if (options.allowFullscreen) {
             iframe.setAttribute('allowfullscreen', '');
         }
         iframe.style.cssText = options.parent ? 'position: static; width: 100%; height: 100%; left: 0; top: 0; border-width: 0' : 'position: static; width: 100vw; height: 100vh; left: 0; top: 0; border-width: 0';
 
-        // Send an initial message to the webview so it has a reference to this parent window
         if (options.useWebview) {
             iframe.addEventListener('loadstop', () => {
                 iframe.contentWindow.postMessage(JSON.stringify({ messageType: 'WebviewHost' }), '*');
@@ -249,7 +250,6 @@ export function launchAsync(token: string, subdomain: string, content: Content, 
 
         const domain = options.customDomain ? options.customDomain : `https://${subdomain}.cognitiveservices.azure.com/immersivereader/webapp/v1.0/`;
         let src = domain + 'reader?exitCallback=ImmersiveReader-Exit&sdkPlatform=' + sdkPlatform + '&sdkVersion=' + sdkVersion;
-
         src += '&cookiePolicy=' + ((options.cookiePolicy === CookiePolicy.Enable) ? 'enable' : 'disable');
 
         if (options.hideExitButton) {
@@ -261,13 +261,10 @@ export function launchAsync(token: string, subdomain: string, content: Content, 
         }
 
         iframe.src = src;
-
         iframeContainer.style.cssText = options.parent ? `position: relative; width: 100%; height: 100%; border-width: 0; -webkit-perspective: 1px; z-index: ${options.uiZIndex}; background: white; overflow: hidden` : `position: fixed; width: 100vw; height: 100vh; left: 0; top: 0; border-width: 0; -webkit-perspective: 1px; z-index: ${options.uiZIndex}; background: white; overflow: hidden`;
 
         iframeContainer.appendChild(iframe);
         parent.appendChild(iframeContainer);
-
-        // Disable body scrolling
         document.head.appendChild(noscroll);
     });
 }
@@ -276,15 +273,11 @@ export function close(): void {
     window.postMessage('ImmersiveReader-Exit', '*');
 }
 
-// The subdomain must be alphanumeric, and may contain '-',
-// as long as the '-' does not start or end the subdomain.
 export function isValidSubdomain(subdomain: string): boolean {
     if (!subdomain) {
         return false;
     }
-
     const validRegex = '^([a-zA-Z0-9]|[a-zA-Z0-9][a-zA-Z0-9\\-]{0,61}[a-zA-Z0-9]|[a-zA-Z0-9][a-zA-Z0-9\\-]{0,61}[a-zA-Z0-9]\.privatelink)$';
     const regExp = new RegExp(validRegex);
-
     return regExp.test(subdomain);
 }
