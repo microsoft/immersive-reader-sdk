@@ -35,7 +35,6 @@ const sdkVersion = VERSION;
 
 const PostMessagePreferences = 'ImmersiveReader-Preferences:';
 const PostMessageLaunchResponse = 'ImmersiveReader-LaunchResponse:';
-const PostMessageTranslationComplete = 'ImmersiveReader-TranslationComplete';
 
 const errorMessageMap: { [errorCode: string]: string } = {};
 errorMessageMap[ErrorCode.TokenExpired] = 'The access token supplied is expired.';
@@ -88,7 +87,7 @@ export function launchAsync(token: string, subdomain: string, content: Content, 
         const startTime = Date.now();
         options = {
             uiZIndex: 1000,
-            timeout: 15000,  // Default to 15 seconds
+            timeout: 15000,
             useWebview: false,
             allowFullscreen: true,
             hideExitButton: false,
@@ -135,9 +134,7 @@ export function launchAsync(token: string, subdomain: string, content: Content, 
             if (options.onExit) {
                 try {
                     options.onExit();
-                } catch {
-                    // No-op
-                }
+                } catch { /* No-op */ }
             }
         };
 
@@ -148,21 +145,13 @@ export function launchAsync(token: string, subdomain: string, content: Content, 
 
             if (e.data === 'ImmersiveReader-ReadyForContent') {
                 resetTimeout();
-                
-                // Fix for Race Condition: autoEnableDocumentTranslation + autoplay
-                const isAutoTranslate = options.translationOptions?.autoEnableDocumentTranslation;
-                const isAutoplay = options.readAloudOptions?.autoplay;
-
                 const message: Message = {
                     cogSvcsAccessToken: token,
                     cogSvcsSubdomain: subdomain,
                     request: content,
                     launchToPostMessageSentDurationInMs: Date.now() - startTime,
                     disableFirstRun: options.disableFirstRun,
-                    // If both are enabled, we disable autoplay here and trigger it after translation
-                    readAloudOptions: (isAutoTranslate && isAutoplay) 
-                        ? { ...options.readAloudOptions, autoplay: false } 
-                        : options.readAloudOptions,
+                    readAloudOptions: options.readAloudOptions,
                     translationOptions: options.translationOptions,
                     displayOptions: options.displayOptions,
                     sendPreferences: !!options.onPreferencesChanged,
@@ -172,13 +161,6 @@ export function launchAsync(token: string, subdomain: string, content: Content, 
                     disableLanguageDetection: options.disableLanguageDetection
                 };
                 iframe.contentWindow!.postMessage(JSON.stringify({ messageType: 'Content', messageValue: message }), '*');
-
-            } else if (e.data === PostMessageTranslationComplete) {
-                // Trigger play if it was deferred due to translation
-                if (options.translationOptions?.autoEnableDocumentTranslation && options.readAloudOptions?.autoplay) {
-                    iframe.contentWindow!.postMessage(JSON.stringify({ messageType: 'Play' }), '*');
-                }
-
             } else if (e.data === 'ImmersiveReader-Exit') {
                 exit();
             } else if (e.data.startsWith(PostMessageLaunchResponse)) {
@@ -187,9 +169,7 @@ export function launchAsync(token: string, subdomain: string, content: Content, 
                 let response: LaunchResponseMessage = null;
                 try {
                     response = JSON.parse(e.data.substring(PostMessageLaunchResponse.length));
-                } catch {
-                    // No-op
-                }
+                } catch { /* No-op */ }
 
                 if (response && response.success) {
                     launchResponse = {
@@ -197,6 +177,22 @@ export function launchAsync(token: string, subdomain: string, content: Content, 
                         sessionId: response.sessionId,
                         charactersProcessed: response.meteredContentSize
                     };
+
+                    /**
+                     * WORKAROUND: Force a layout recalculation of the iframe.
+                     * This prevents the "Cannot read properties of undefined (reading 'height')" error
+                     * in the virtualized content pane when reading long HTML chunks.
+                     */
+                    setTimeout(() => {
+                        if (iframe) {
+                            const originalHeight = iframe.style.height;
+                            iframe.style.height = '99.9%';
+                            setTimeout(() => {
+                                iframe.style.height = originalHeight;
+                            }, 50);
+                        }
+                    }, 500);
+
                 } else if (response && !response.success) {
                     error = {
                         code: response.errorCode,
@@ -222,13 +218,10 @@ export function launchAsync(token: string, subdomain: string, content: Content, 
                 if (options.onPreferencesChanged && typeof options.onPreferencesChanged === 'function') {
                     try {
                         options.onPreferencesChanged(e.data.substring(PostMessagePreferences.length));
-                    } catch {
-                        // No-op
-                    }
+                    } catch { /* No-op */ }
                 }
             }
         };
-
         window.addEventListener('message', messageHandler);
 
         timeoutId = window.setTimeout((): void => {
@@ -252,13 +245,8 @@ export function launchAsync(token: string, subdomain: string, content: Content, 
         let src = domain + 'reader?exitCallback=ImmersiveReader-Exit&sdkPlatform=' + sdkPlatform + '&sdkVersion=' + sdkVersion;
         src += '&cookiePolicy=' + ((options.cookiePolicy === CookiePolicy.Enable) ? 'enable' : 'disable');
 
-        if (options.hideExitButton) {
-            src += '&hideExitButton=true';
-        }
-
-        if (options.uiLang) {
-            src += '&omkt=' + options.uiLang;
-        }
+        if (options.hideExitButton) { src += '&hideExitButton=true'; }
+        if (options.uiLang) { src += '&omkt=' + options.uiLang; }
 
         iframe.src = src;
         iframeContainer.style.cssText = options.parent ? `position: relative; width: 100%; height: 100%; border-width: 0; -webkit-perspective: 1px; z-index: ${options.uiZIndex}; background: white; overflow: hidden` : `position: fixed; width: 100vw; height: 100vh; left: 0; top: 0; border-width: 0; -webkit-perspective: 1px; z-index: ${options.uiZIndex}; background: white; overflow: hidden`;
@@ -274,9 +262,7 @@ export function close(): void {
 }
 
 export function isValidSubdomain(subdomain: string): boolean {
-    if (!subdomain) {
-        return false;
-    }
+    if (!subdomain) { return false; }
     const validRegex = '^([a-zA-Z0-9]|[a-zA-Z0-9][a-zA-Z0-9\\-]{0,61}[a-zA-Z0-9]|[a-zA-Z0-9][a-zA-Z0-9\\-]{0,61}[a-zA-Z0-9]\.privatelink)$';
     const regExp = new RegExp(validRegex);
     return regExp.test(subdomain);
