@@ -267,3 +267,4 @@ export function isValidSubdomain(subdomain: string): boolean {
     const regExp = new RegExp(validRegex);
     return regExp.test(subdomain);
 }
+
