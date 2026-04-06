@@ -67,7 +67,7 @@
   },
   "dependencies": {
     "@microsoft/immersive-reader-sdk": "^1.4.0",
-    "@xmldom/xmldom": "0.8.4",
+    "@xmldom/xmldom": "0.8.12",
     "chokidar": "^3.5.3",
     "engine.io": "^6.4.2",
     "eslint": "^9.39.2",
