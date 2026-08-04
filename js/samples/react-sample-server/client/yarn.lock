@@ -6923,9 +6923,9 @@ mz@^2.7.0:
     object-assign "^4.0.1"
     thenify-all "^1.0.0"
 
-nanoid@^3.3.11:
-  version "3.3.11"
-  resolved "https://registry.yarnpkg.com/nanoid/-/nanoid-3.3.11.tgz#4f4f112cefbe303202f2199838128936266d185b"
+nanoid@^3.3.16:
+  version "3.3.17"
+  resolved "https://registry.yarnpkg.com/nanoid/-/nanoid-3.3.17.tgz#f1c3aa253c52547956a52c50bff754316f61037a"
 
 natural-compare-lite@^1.4.0:
   version "1.4.0"
@@ -7804,11 +7804,11 @@ postcss@^7.0.35:
     picocolors "^0.2.1"
     source-map "^0.6.1"
 
-postcss@^8.3.5, postcss@^8.4.23, postcss@^8.4.31, postcss@^8.4.4, postcss@^8.5.10:
-  version "8.5.10"
-  resolved "https://registry.yarnpkg.com/postcss/-/postcss-8.5.10.tgz#8992d8c30acf3f12169e7c09514a12fed7e48356"
+postcss@^8.3.5, postcss@^8.4.23, postcss@^8.4.31, postcss@^8.4.4, postcss@^8.5.23:
+  version "8.5.23"
+  resolved "https://registry.yarnpkg.com/postcss/-/postcss-8.5.23.tgz#3493550116f478487298301d2c2e8dc5a56e6594"
   dependencies:
-    nanoid "^3.3.11"
+    nanoid "^3.3.16"
     picocolors "^1.1.1"
     source-map-js "^1.2.1"
 
