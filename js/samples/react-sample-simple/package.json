@@ -8,7 +8,7 @@
     "loader-utils": "^3.2.1",
     "minimatch": "10.2.3",
     "node-forge": "^1.4.0",
-    "postcss": "^8.5.18",
+    "postcss": "^8.5.23",
     "react": "^17.0.2",
     "react-dom": "^17.0.2",
     "shell-quote": "^1.10.0",
