@@ -6,6 +6,14 @@
 * [IntelliJ IDEA Community](https://www.jetbrains.com/idea/download)
 * [Java 8 JDK](https://www.oracle.com/technetwork/java/javase/downloads/jdk8-downloads-2133151.html)
 
+## Security
+
+The `/getAuthTokenServlet` endpoint (`GetAuthTokenServlet` in **src/main/java/Microsoft/ImmersiveReader**) returns a real Azure AD bearer token, minted from this sample's confidential service-principal credentials (`CLIENT_ID` / `CLIENT_SECRET`) held in **.env**. Anyone who can reach that endpoint obtains a usable Cognitive Services token, because the servlet has no authentication of its own.
+
+* This sample is intended for **local development only** (`http://localhost:8888`).
+* **Do not** expose it on a public interface or deploy it as-is without first adding authentication.
+* For any non-local or production use, gate the servlet with a real authentication mechanism, such as a servlet filter, container-managed security constraints in **web.xml**, a signed request, or an authenticating API gateway in front of the app.
+
 ## Usage
 
 1. Create a new project in IntelliJ by clicking **New -> Project from Existing Sources...** from the menu bar.
