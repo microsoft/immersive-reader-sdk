@@ -5,6 +5,14 @@
 * An Immersive Reader resource configured for Azure Active Directory authentication. Follow [these instructions](https://docs.microsoft.com/azure/applied-ai-services/immersive-reader/how-to-create-immersive-reader) to get set up. You will need some of the values created here when configuring the sample project properties. Save the output of your session into a text file for future reference.
 * Install [Yarn](https://yarnpkg.com), [npm](https://npmjs.com)
 
+## Security
+
+The `/GetTokenAndSubdomain` route in **routes/index.js** returns a real Azure AD bearer token, minted from this sample's confidential service-principal credentials (`CLIENT_ID` / `CLIENT_SECRET`) held in **.env**. Anyone who can reach that route obtains a usable Cognitive Services token, because the route has no authentication of its own.
+
+* This sample is intended for **local development only** (`http://localhost:3000`).
+* **Do not** expose it on a public interface or deploy it as-is without first adding authentication.
+* For any non-local or production use, gate the token route with a real authentication mechanism, such as an Express authentication middleware (for example Passport.js or a session check), a signed request, or an authenticating API gateway in front of the app.
+
 ## Usage
 
 1. Open a command prompt (Windows) or terminal (OSX, Linux)

@@ -37,6 +37,14 @@
 1. Run `pip install python-dotenv --user` to install the [python-dotenv](https://github.com/theskumar/python-dotenv) module.
 1. Run `mkdir ~/.virtualenvs` to configure a folder to store your virtual environments.
 
+## Security
+
+The `/GetTokenAndSubdomain` route in **app.py** returns a real Azure AD bearer token, minted from this sample's confidential service-principal credentials (`CLIENT_ID` / `CLIENT_SECRET`). Anyone who can reach that route obtains a usable Cognitive Services token.
+
+* This sample is **loopback-only** by default. The `_require_local()` helper in **app.py** rejects any request whose remote address is not `127.0.0.1` or `::1` with an HTTP 403.
+* **Do not** run the sample with `flask run --host=0.0.0.0`, or otherwise bind it to a public interface, without first adding real authentication. Doing so exposes the token minter to your LAN or the internet.
+* For any non-local or production use, replace `_require_local()` with a real authentication mechanism, such as a login-required decorator, a session check, a signed request, or an authenticating API gateway in front of the app.
+
 ## Usage
 
 ### Windows Usage
