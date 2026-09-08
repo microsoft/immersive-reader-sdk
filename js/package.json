@@ -35,7 +35,7 @@
     "testEnvironment": "jsdom"
   },
   "dependencies": {
-    "decode-uri-component": "0.2.1",
+    "decode-uri-component": "0.5.0",
     "json-schema": "^0.4.0",
     "loader-utils": "^3.2.1",
     "minimatch": "3.1.4",
@@ -44,6 +44,9 @@
   "resolutions": {
     "@types/node": "16.11.26",
     "@babel/core": "7.29.6",
+    "browserslist": "4.28.7",
+    "decode-uri-component": "0.5.0",
+    "fast-uri": "3.1.6",
     "js-yaml": "3.15.1"
   }
 }
