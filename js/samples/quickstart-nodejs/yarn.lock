@@ -526,9 +526,9 @@ mime@1.6.0:
   integrity sha512-x0Vn8spI+wuJ1O6S7gnbaQg8Pxh4NNHb7KSINmEWKiPE4RKOplvijn+NkmYmmRgP68mc70j2EbeTFRsrswaQeg==
 
 morgan@~1.9.1:
-  version "1.11.0"
-  resolved "https://registry.npmjs.org/morgan/-/morgan-1.11.0.tgz"
-  integrity sha512-zSkVu3t18r39pwixfBKvfZi3y2UOqr7d4WYwcj3m8nXpEQK4rPO6GLzs/CExoRgmX3y9EjmmcXqv6jq0SK46g==
+  version "1.12.0"
+  resolved "https://registry.npmjs.org/morgan/-/morgan-1.12.0.tgz#5745ed972ce8a23443a26fc12a041b53cf8b0d22"
+  integrity sha512-OHpTRQwn2ezasILW8iKe+Yww1XsfWsZIpUOLF7RDb2g5GwO3trPaRwi7+8BDiJ7HFx2Kg2mfUdCBcVhwYlOz2g==
   dependencies:
     basic-auth "~2.0.1"
     debug "2.6.9"
