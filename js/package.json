@@ -47,6 +47,6 @@
     "browserslist": "4.28.7",
     "decode-uri-component": "0.5.0",
     "fast-uri": "3.1.6",
-    "js-yaml": "3.15.1"
+    "js-yaml": "3.15.2"
   }
 }
