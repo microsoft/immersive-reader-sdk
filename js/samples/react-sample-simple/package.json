@@ -51,7 +51,7 @@
     "braces": "^3.0.3",
     "browserslist": "4.28.7",
     "decode-uri-component": "0.5.0",
-    "fast-uri": "3.1.6",
+    "fast-uri": "3.1.7",
     "qs": "6.16.0"
   }
 }
