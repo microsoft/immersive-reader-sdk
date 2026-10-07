@@ -46,7 +46,7 @@
     "@babel/core": "7.29.6",
     "browserslist": "4.28.7",
     "decode-uri-component": "0.5.0",
-    "fast-uri": "3.1.6",
+    "fast-uri": "3.1.7",
     "js-yaml": "3.15.2"
   }
 }
