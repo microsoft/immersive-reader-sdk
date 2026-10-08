@@ -47,6 +47,7 @@ Normalize each alert to this shape in session storage, never in the repository:
   "advisoryUrl": "",
   "cve": "",
   "detectedPaths": [],
+  "dependencyScope": "unknown",
   "sourceBuildId": ""
 }
 ```
@@ -54,6 +55,17 @@ Normalize each alert to this shape in session storage, never in the repository:
 Do not invent missing fields. An alert without a package, detected version,
 affected range or authoritative advisory, and at least one detected path is
 inconclusive and must not be remediated automatically.
+
+`dependencyScope` must be `production`, `development-only`, or `unknown`.
+Determine it from the originating manifest and dependency chain:
+
+- **production**: the package is a direct `dependency` or `optionalDependency`,
+  or is transitively reachable from one.
+- **development-only**: the package is reachable only from `devDependencies`.
+- **unknown**: the available manifests and lockfiles cannot establish the
+  originating dependency chain.
+
+Do not infer scope from a directory name or lockfile entry alone.
 
 ## Workflow
 
@@ -148,6 +160,16 @@ available, stop without modifying files or creating a pull request. Report the
 missing API/artifact capability explicitly.
 
 Deduplicate alerts by advisory, package, detected version, and detected paths.
+
+If no active security alerts remain after filtering and deduplication, stop
+successfully. Make no repository changes, create no branch or pull request, and
+return the triggering build details with an explicit no-alerts result.
+
+Trace dependency scope before selecting remediation order. Process production
+alerts first, ordered by severity, followed by development-only alerts ordered
+by severity. Do not silently discard development-only alerts. Classify alerts
+whose scope cannot be established safely as **inconclusive** and report them
+without automatic remediation.
 
 In `currentCheckout` mode, search the applicable manifests, resolutions, and
 lockfiles for the exact alerted package/version:
@@ -291,8 +313,8 @@ the authoritative verification.
 
 ## Required final report
 
-| Alert | Package | Detected | Candidate | Classification | Result |
-| ----- | ------- | -------: | --------: | -------------- | ------ |
+| Alert | Scope | Package | Detected | Candidate | Classification | Result |
+| ----- | ----- | ------- | -------: | --------: | -------------- | ------ |
 
 Follow the table with the draft PR URL, the manual draft-PR compare URL, or the
 exact blocking reason.
