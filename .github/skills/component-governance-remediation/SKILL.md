@@ -249,8 +249,12 @@ For every detected path:
 
 ### 6. Apply the update
 
-1. Create a branch from the verified source revision using:
-   `copilot/cg-<normalized-package>-<fixed-version>-<build-id>`.
+1. Select the branch behavior for the execution environment:
+   - In a GitHub Agentic Workflow with `create-pull-request` safe output, keep
+     changes in the workflow workspace and provide an allowed branch name to
+     the safe output. Do not push directly.
+   - Otherwise, create a branch from the verified source revision using
+     `copilot/cg-<normalized-package>-<fixed-version>-<build-id>`.
 2. Use the repository's existing package manager and lockfile version.
 3. Update direct dependency or resolution declarations when they control the
    detected package.
@@ -287,16 +291,23 @@ and leave the alert classified as inconclusive.
 
 Only after all validation succeeds:
 
-1. Commit the dependency-source and lockfile changes with a concise security
-   upgrade message.
-2. Push the new branch without force.
-3. When `gh auth status` succeeds, create a **draft** pull request with
-   `gh pr create --draft`.
-4. When authenticated GitHub tooling is unavailable, construct a GitHub compare
-   URL from the actual base repository, default branch, pushed fork owner, and
-   remediation branch. Return that URL and instruct the user to select
-   **Create draft pull request**. Do not claim that a pull request exists.
-5. The draft PR body must include:
+1. In a GitHub Agentic Workflow with `create-pull-request` safe output:
+   - Do not push, invoke `gh pr create`, or write through a GitHub API tool.
+   - Request the configured safe output exactly once with the validated
+     workspace changes, an allowed branch name, title, and body.
+   - Use `noop` instead when there are no validated file changes.
+2. In other execution environments:
+   - Commit the dependency-source and lockfile changes with a concise security
+     upgrade message.
+   - Push the new branch without force.
+   - When `gh auth status` succeeds, create a **draft** pull request with
+     `gh pr create --draft`.
+   - When authenticated GitHub tooling is unavailable, construct a GitHub
+     compare URL from the actual base repository, default branch, pushed fork
+     owner, and remediation branch. Return that URL and instruct the user to
+     select **Create draft pull request**. Do not claim that a pull request
+     exists.
+3. The draft PR body must include:
    - triggering Azure DevOps build and Component Governance links;
    - alert IDs, advisories, and CVEs;
    - old and new package versions;
