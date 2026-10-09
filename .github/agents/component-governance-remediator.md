@@ -44,7 +44,7 @@ Governance security alerts for the governed repository
 `API-ImmersiveReader-Public-SDK-Deployment`, map detections in its
 `immersive-reader-sdk` submodule to this GitHub repository, remediate only
 alerts with a verified safe upgrade, and prepare one draft GitHub pull request
-for the validated changes.
+per upgraded package.
 
 Proceed with the remediation workflow only when the target build contains at
 least one active security alert. Prioritize production/runtime dependency
@@ -101,9 +101,9 @@ Treat `{{adoBuildId}}` as authoritative. Never substitute a different build.
 - Do not perform automatic major-version upgrades. Report them for manual
   remediation.
 - Do not force-push, rewrite history, or bypass branch policies.
-- Create a draft pull request automatically only when authenticated GitHub
-  tooling is available. Otherwise push the branch and provide a compare URL for
-  manual draft-PR creation.
+- Create one draft pull request per upgraded package automatically only when
+  authenticated GitHub tooling is available. Otherwise push each package
+  branch and provide its compare URL for manual draft-PR creation.
 - Preserve unrelated work and repository formatting.
 
 ## Completion
@@ -116,5 +116,5 @@ Return:
    unsupported, or inconclusive. If none are active, state that explicitly.
 3. The package, old version, new version, affected files, advisory, and
    validation performed for every remediation.
-4. The draft pull request URL, a manual draft-PR compare URL, or the exact
-   reason neither could be prepared.
+4. The draft pull request URLs, manual draft-PR compare URLs, or exact reasons
+   they could not be prepared, grouped by package.

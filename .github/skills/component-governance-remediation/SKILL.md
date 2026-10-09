@@ -1,6 +1,6 @@
 ---
 name: component-governance-remediation
-description: Safely converts active Component Governance security alerts from Azure DevOps pipeline 247975 into validated JavaScript dependency updates and one draft GitHub pull request.
+description: Safely converts active Component Governance security alerts from Azure DevOps pipeline 247975 into validated JavaScript dependency updates and one draft GitHub pull request per upgraded package.
 ---
 
 # Skill: Component Governance Remediation
@@ -249,27 +249,32 @@ For every detected path:
 
 ### 6. Apply the update
 
-1. Select the branch behavior for the execution environment:
+1. Group safe alerts by primary upgraded package. Multiple advisories and
+   vulnerable versions for the same package stay together. Required transitive
+   dependency changes stay with the primary package that introduces them.
+2. Select the branch behavior for the execution environment:
    - In a GitHub Agentic Workflow with `create-pull-request` safe output, keep
-     changes in the workflow workspace and provide an allowed branch name to
-     the safe output. Do not push directly.
-   - Otherwise, create a branch from the verified source revision using
+     each package patch on an isolated local branch or commit based on the
+     unchanged verified source revision. Provide an allowed branch name to the
+     safe output and do not push directly.
+   - Otherwise, create a separate branch for each upgraded package from the
+     verified source revision using
      `copilot/cg-<normalized-package>-<fixed-version>-<build-id>`.
-2. Use the repository's existing package manager and lockfile version.
-3. Update direct dependency or resolution declarations when they control the
+3. Use the repository's existing package manager and lockfile version.
+4. Update direct dependency or resolution declarations when they control the
    detected package.
-4. Regenerate affected lockfiles with the package manager and approved
+5. Regenerate affected lockfiles with the package manager and approved
    registry. Do not hand-edit generated lockfiles unless package-manager
    generation is impossible and the repository already follows a documented
    manual lockfile-update process.
-5. Include required transitive dependency changes introduced by the patched
+6. Include required transitive dependency changes introduced by the patched
    package. Do not omit them to minimize the diff.
-6. Do not upgrade unrelated packages. If regeneration produces unrelated
+7. Do not upgrade unrelated packages. If regeneration produces unrelated
    churn, revert the churn or classify the remediation as inconclusive.
 
-Process independent safe alerts in one run only when their generated changes
-and validation remain separable. Otherwise create no combined fix and report
-the conflict for manual handling.
+Each package patch must be independently reviewable and valid against the same
+base revision. If package patches overlap in a way that cannot be isolated,
+create no combined fix and report the conflict for manual handling.
 
 ### 7. Validate the exact remediation
 
@@ -293,30 +298,30 @@ Only after all validation succeeds:
 
 1. In a GitHub Agentic Workflow with `create-pull-request` safe output:
    - Do not push, invoke `gh pr create`, or write through a GitHub API tool.
-   - Request the configured safe output exactly once with the validated
-     workspace changes, an allowed branch name, title, and body.
-   - Use `noop` instead when there are no validated file changes.
+   - Request the configured safe output exactly once per upgraded package with
+     that package's isolated validated changes, allowed branch name, title, and
+     non-empty body.
+   - Use `noop` only when no package has validated file changes.
 2. In other execution environments:
-   - Commit the dependency-source and lockfile changes with a concise security
-     upgrade message.
-   - Push the new branch without force.
-   - When `gh auth status` succeeds, create a **draft** pull request with
-     `gh pr create --draft`.
+   - Commit each package's dependency-source and lockfile changes separately
+     with a concise security upgrade message.
+   - Push each package branch without force.
+   - When `gh auth status` succeeds, create one **draft** pull request per
+     package with `gh pr create --draft`.
    - When authenticated GitHub tooling is unavailable, construct a GitHub
-     compare URL from the actual base repository, default branch, pushed fork
-     owner, and remediation branch. Return that URL and instruct the user to
-     select **Create draft pull request**. Do not claim that a pull request
-     exists.
-3. The draft PR body must include:
+     compare URL for each package branch from the actual base repository,
+     default branch, pushed fork owner, and remediation branch. Return each URL
+     and instruct the user to select **Create draft pull request**. Do not claim
+     that a pull request exists.
+3. Every draft PR body must be non-empty and include:
    - triggering Azure DevOps build and Component Governance links;
-   - alert IDs, advisories, and CVEs;
-   - old and new package versions;
+   - a table containing alert ID, severity, dependency scope, package, current
+     version, upgraded version, and advisory;
    - direct and transitive dependency changes;
    - affected files;
    - validation commands and results;
-   - alerts skipped because no fix, a major upgrade, duplication, unsupported
-     format, or inconclusive evidence.
-6. Add the alert IDs, package names, and build ID to the PR body so later runs
+   - skipped alerts only when they concern the same package.
+4. Add the alert IDs, package name, and build ID to each PR body so later runs
    can detect duplicates.
 
 Never mark Component Governance alerts resolved. The next governance scan is
@@ -327,5 +332,5 @@ the authoritative verification.
 | Alert | Scope | Package | Detected | Candidate | Classification | Result |
 | ----- | ----- | ------- | -------: | --------: | -------------- | ------ |
 
-Follow the table with the draft PR URL, the manual draft-PR compare URL, or the
-exact blocking reason.
+Follow the table with the draft PR URLs, manual draft-PR compare URLs, or exact
+blocking reasons, grouped by package.

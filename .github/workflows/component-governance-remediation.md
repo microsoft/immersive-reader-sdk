@@ -1,6 +1,6 @@
 ---
 name: Component Governance Remediation
-description: Detects actionable Component Governance alerts and opens a validated draft dependency-remediation pull request.
+description: Detects actionable Component Governance alerts and opens one validated draft remediation pull request per upgraded package.
 intent: Keep production dependencies free of Component Governance vulnerabilities that have verified safe fixes.
 on:
   schedule: every 4 hours
@@ -10,7 +10,9 @@ on:
         description: Optional pipeline 247975 build ID; uses the latest completed build when omitted
         required: false
         type: string
-  skip-if-match: 'is:pr is:open "gh-aw-workflow-id: component-governance-remediation" in:body'
+  skip-if-match:
+    query: 'is:pr is:open "gh-aw-workflow-id: component-governance-remediation" in:body'
+    max: 10
 permissions:
   contents: read
   issues: read
@@ -64,10 +66,11 @@ safe-outputs:
       - "js/**/yarn.lock"
     protected-files: allowed
     draft: true
-    max: 1
+    max: 10
     if-no-changes: ignore
     fallback-as-issue: false
-    max-patch-files: 50
+    max-patch-files: 25
+    stacked: false
 ---
 
 # Component Governance Remediation
@@ -97,30 +100,42 @@ runbook.
    advisory and the approved registries. Do not make major-version upgrades or
    changes for alerts without a published safe fix.
 5. In the current checkout, classify absent vulnerable versions as already
-   remediated. Update only the manifests, resolutions, and lockfile entries
-   required for verified safe fixes.
+   remediated. Group actionable alerts by primary upgraded package. Required
+   transitive dependency changes belong to the primary package that introduces
+   them; they are not separate package upgrades.
 6. Run the smallest relevant validation for each changed dependency and verify
    that vulnerable versions and tarball references are gone.
 7. Search existing pull requests before requesting an output. Do not duplicate
-   a remediation already represented by an open pull request.
+   a package remediation already represented by an open pull request.
 
 ## Output
 
-When validated file changes exist, call `safeoutputs create_pull_request`
-exactly once to create a draft pull request. Use a branch name ending with the
-verified Azure DevOps build ID. Include:
+Create one independent draft pull request per primary upgraded package. Never
+combine unrelated package upgrades in one pull request.
 
-- the triggering build ID and URL;
-- production versus development-only scope;
-- alert and advisory identifiers;
-- old and new versions and affected files;
-- validation performed; and
-- all no-fix, major-upgrade, unsupported, duplicate, or inconclusive alerts
-  that were not changed.
+For each package:
+
+1. Start from the unchanged verified base and isolate only that package's
+   manifest, resolution, lockfile, and required transitive changes.
+2. Validate the isolated patch independently.
+3. Call `safeoutputs create_pull_request` exactly once for that package, using
+   a branch suffix `<normalized-package>-<build-id>`.
+4. Provide a non-empty title naming the package and upgraded version.
+5. Provide a non-empty body containing this tracking table:
+
+   | Alert | Severity | Scope | Package | Current version | Upgraded version | Advisory |
+   | ----- | -------- | ----- | ------- | --------------- | ---------------- | -------- |
+
+6. After the table, list the triggering build ID and URL, affected files,
+   direct and transitive changes, and validation commands with their results.
+
+Multiple advisories or vulnerable versions of the same package belong in that
+package's PR. If package patches cannot be isolated cleanly, do not create a
+combined PR; report the conflicting package groups as inconclusive.
 
 Do not push directly, force-push, dismiss alerts, or mark alerts resolved.
 
 Call `safeoutputs noop` with a concise reason when there are no active alerts,
 no actionable production or development alerts, all vulnerable versions are
-already absent, an equivalent pull request is open, or no safe validated file
-change can be produced.
+already absent, every package already has an equivalent pull request, or no
+safe validated package patch can be produced.
