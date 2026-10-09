@@ -21,15 +21,10 @@ Yarn v1 `yarn.lock`, or npm `package-lock.json` files.
 
 ## Inputs
 
-- `adoBuildId` (required): the completed triggering build.
-- `adoOrganization` (default `msazure`).
-- `adoProject` (default `Cognitive Services`).
-- `adoPipelineId` (default `247975`).
+- `liveAlertPayloadPath` (default from `CG_LIVE_ALERTS_PATH`): the structured
+  active-alert payload read from the Component Governance dashboard API.
 - `alertPayloadPath` (optional): a structured JSON export supplied for manual
-  invocation when the authenticated ADO tools cannot read active alerts.
-- `remediationTarget` (default `currentCheckout`):
-  - `currentCheckout` remediates the SDK repository and branch currently open.
-  - `buildCommit` remediates the exact SDK submodule commit tested by the build.
+  invocation when the live payload cannot be prepared automatically.
 
 ## Alert contract
 
@@ -53,8 +48,8 @@ Normalize each alert to this shape in session storage, never in the repository:
 ```
 
 Do not invent missing fields. An alert without a package, detected version,
-affected range or authoritative advisory, and at least one detected path is
-inconclusive and must not be remediated automatically.
+affected range, or authoritative advisory is inconclusive. Locate the exact
+package and version in the current checkout before remediating it.
 
 `dependencyScope` must be `production`, `development-only`, or `unknown`.
 Determine it from the originating manifest and dependency chain:
@@ -69,101 +64,27 @@ Do not infer scope from a directory name or lockfile entry alone.
 
 ## Workflow
 
-### 1. Resolve and verify the triggering build
+### 1. Read the live production alerts
 
-1. Read build `adoBuildId` with the ADO MCP.
-2. Confirm its definition ID is `247975` and its repository is
-   `API-ImmersiveReader-Public-SDK-Deployment`. Stop on a mismatch.
-3. Accept completed `Succeeded`, `PartiallySucceeded`, or `Failed` builds.
-   Component Governance alerts do not necessarily fail a build.
-4. Resolve the `immersive-reader-sdk` gitlink at the deployment repository
-   commit tested by the build. Confirm that it points to
-   `https://github.com/microsoft/immersive-reader-sdk.git`, and record the exact
-   submodule commit.
-5. Record the deployment source version, submodule source version, source
-   branch, build URL, and completion time.
-6. Use only focused Component Governance task logs and machine-readable
-   outputs. Do not download or expose unrelated logs.
-
-Select the remediation baseline from `remediationTarget`:
-
-- `currentCheckout`: use the open SDK repository's current branch and `HEAD`.
-  Record any difference from the build's submodule commit. The build alerts may
-  be stale relative to this checkout, so re-detect every alerted
-  package/version locally before changing files.
-- `buildCommit`: require `HEAD` to equal the resolved SDK submodule commit.
-
-Reject any other value.
-
-### 2. Read active Component Governance alerts
-
-Use the first supported source that returns structured alert data:
-
-1. An authenticated Component Governance or Governance tool exposed by the ADO
-   MCP for the governed repository.
-2. The focused log from the successful `ComponentGovernanceComponentDetection`
-   timeline task whose display name starts with `Component Governance`.
-3. A machine-readable Component Governance alert artifact produced by the
-   target build.
-4. Structured JSON emitted by the Component Governance pipeline task.
-5. The manually supplied `alertPayloadPath`, after validating it against the
-   target build and advisory sources.
-
-Filter to active security alerts. Do not treat component inventory as alert
-data, and do not infer alerts solely from package versions.
-
-For the verified pipeline shape:
-
-1. Read the build timeline.
-2. Select the successful `ComponentGovernanceComponentDetection` task named
-   `Component Governance (...)`. Do not select the post-job
-   `Component Detection (auto-injected by policy)` entry when it is skipped.
-3. Read only that task's log.
-4. Parse rows beneath the `Security Alerts` table into alert title, affected
-   component, version, severity, and due date.
-5. Parse the preceding `--- Component: ---` / `--- Found at: ---` records to map
-   each affected component and version to detected paths.
-6. Record the `Component Governance Alerts` URL emitted by the task. Do not
-   hard-code its governed-repository ID or `typeId`; those values can differ
-   between runs and views.
-7. Verify that the task's reported alert count equals the number of parsed
-   alert rows. Stop as inconclusive on a mismatch.
-
-The task log does not provide a patched version or full advisory details. Resolve
-those independently from the alert title and authoritative advisory sources
-before classifying an alert as safe.
-
-The deployment repository enables Component Governance through OneBranch
-`globalSdl.cg` in `.pipelines/OneBranch.Official.yml`. The governed OneBranch
-template produces the Component Governance results; the repository itself does
-not contain a tracked active-alert export. Its checked-in `yarn.lock` is not an
-alert source.
-
-The governed deployment repository currently contains
-`.config/PolicheckExclusion.xml` and `.config/tsaoptions.json`. Neither is an
-alert source:
-
-- `PolicheckExclusion.xml` contains terminology-scan path and filename
-  exclusions only.
-- `tsaoptions.json` contains TSA project routing and notification settings only.
-
-Do not parse either file for dependency alerts. A future file in the deployment
-repository is eligible only when its documented schema includes active security
-alerts with package versions, affected paths, and advisory identifiers.
-
-The Component Governance web route is useful only as a human link:
-
-`https://dev.azure.com/msazure/cognitive%20services/_componentGovernance/API-ImmersiveReader-Public-SDK-Deployment?_a=alerts&alerts-view-option=active`
-
-Never scrape this page. If no authenticated structured alert source is
-available, stop without modifying files or creating a pull request. Report the
-missing API/artifact capability explicitly.
+1. Start from the Component Governance dashboard URL configured by the
+   workflow. Read only the authenticated structured Governance API payload
+   prepared at `liveAlertPayloadPath`; never scrape or parse dashboard HTML.
+2. Verify that the payload identifies
+   `API-ImmersiveReader-Public-SDK-Deployment` and a production snapshot whose
+   build type identifies pipeline `247975`.
+3. Resolve the current production snapshot dynamically. The dashboard URL's
+   `typeId` can be stale and must not be treated as the current snapshot ID.
+4. Follow all continuation tokens when reading snapshot types and alerts.
+   Record each page count in the payload and select the production snapshot
+   only after every snapshot-type page has been read.
+5. Require the payload count to equal the number of normalized active security
+   alerts. If the payload is unavailable or invalid, stop without modifying
+   files or creating a pull request.
 
 Deduplicate alerts by advisory, package, detected version, and detected paths.
 
 If no active security alerts remain after filtering and deduplication, stop
-successfully. Make no repository changes, create no branch or pull request, and
-return the triggering build details with an explicit no-alerts result.
+successfully. Make no repository changes or pull requests.
 
 Trace dependency scope before selecting remediation order. Process production
 alerts first, ordered by severity, followed by development-only alerts ordered
@@ -171,8 +92,8 @@ by severity. Do not silently discard development-only alerts. Classify alerts
 whose scope cannot be established safely as **inconclusive** and report them
 without automatic remediation.
 
-In `currentCheckout` mode, search the applicable manifests, resolutions, and
-lockfiles for the exact alerted package/version:
+Search the applicable manifests, resolutions, and lockfiles in the current
+checkout for the exact alerted package/version:
 
 - If the vulnerable version is absent from all applicable dependency sources,
   classify the alert as **already remediated** and record the current resolved
@@ -181,29 +102,33 @@ lockfiles for the exact alerted package/version:
 - If only a generated `node_modules` path remains, trace it to its dependency
   source and never edit the generated package.
 
-### 3. Preflight repository and pull-request access
+### 2. Check for existing fixes before editing
 
-Before editing:
+For every active alert, search both open and merged pull requests using:
 
-1. Confirm the checkout is `microsoft/immersive-reader-sdk` and matches the
-   selected remediation baseline.
-2. Require a clean worktree.
-3. Determine the default branch from Git; do not assume its name.
-4. Read the configured `origin` and `upstream` remotes. Confirm the target
-   repository and fork relationship instead of assuming either remote name or
-   owner.
-5. Confirm the existing Git credentials can read the target remotes. Branch
-   push permission is verified only by the later non-force push.
-6. If authenticated GitHub tooling is available, search open pull requests for
-   the alert ID, CVE/advisory, package, and fixed version. Mark exact matches as
-   duplicates and do not create another PR.
-7. Without authenticated GitHub tooling, search remote branch names for the
-   deterministic remediation branch before editing. Stop when it already
-   exists, and report that a human must check for a corresponding PR.
+- alert ID;
+- GHSA or CVE identifier;
+- package name;
+- detected version and proposed fixed version.
 
-Do not reveal GitHub credentials or tokens. GitHub CLI authentication is
-optional; existing Git credentials are sufficient for branch push and manual
-draft-PR handoff.
+Apply these rules before changing any file:
+
+- Matching open PR: classify as **duplicate** and create no PR.
+- Matching merged PR whose fix is present on the current base: classify as
+  **already remediated** and create no PR.
+- Closed-unmerged PR: not a completed fix; continue evaluating the alert.
+- Ambiguous match: stop that alert as **inconclusive** rather than risk a
+  duplicate PR.
+
+If all alerts are duplicates or already remediated, stop with no repository
+changes and no pull requests.
+
+### 3. Verify the repository and current dependency state
+
+1. Confirm the checkout is `microsoft/immersive-reader-sdk`.
+2. Preserve unrelated work.
+3. Locate the exact alerted package and version in manifests and lockfiles.
+4. If the vulnerable version is absent, classify it as **already remediated**.
 
 ### 4. Establish a safe patched version
 
@@ -259,7 +184,7 @@ For every detected path:
      safe output and do not push directly.
    - Otherwise, create a separate branch for each upgraded package from the
      verified source revision using
-     `copilot/cg-<normalized-package>-<fixed-version>-<build-id>`.
+     `copilot/cg-<normalized-package>-<fixed-version>-<snapshot-type-id>`.
 3. Use the repository's existing package manager and lockfile version.
 4. Update direct dependency or resolution declarations when they control the
    detected package.
@@ -301,27 +226,24 @@ Only after all validation succeeds:
    - Request the configured safe output exactly once per upgraded package with
      that package's isolated validated changes, allowed branch name, title, and
      non-empty body.
-   - After requesting all package PRs, request the configured remediation email
-     safe output exactly once with a plain-text package, alert, and version
-     summary. The email job must depend on successful PR safe-output
-     processing.
    - Use `noop` only when no package has validated file changes.
 2. In other execution environments:
    - Leave every validated package change local and uncommitted unless the user
      explicitly asks for a commit.
-   - Do not push branches or create pull requests automatically.
+   - Do not use GitHub CLI, call a GitHub write API, push branches, or create
+     pull requests automatically.
    - Return a proposed branch name, commit message, PR title, and complete PR
      body for each package so a maintainer can review the local changes first.
 3. Every draft PR body must be non-empty and include:
-   - triggering Azure DevOps build and Component Governance links;
+   - Component Governance dashboard link and snapshot type ID;
    - a table containing alert ID, severity, dependency scope, package, current
      version, upgraded version, and advisory;
    - direct and transitive dependency changes;
    - affected files;
    - validation commands and results;
    - skipped alerts only when they concern the same package.
-4. Add the alert IDs, package name, and build ID to each PR body so later runs
-   can detect duplicates.
+4. Add the alert IDs, advisory identifiers, package name, detected version, and
+   fixed version to each PR body so later runs can detect duplicates.
 
 Never mark Component Governance alerts resolved. The next governance scan is
 the authoritative verification.
