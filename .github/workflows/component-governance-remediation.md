@@ -3,7 +3,7 @@ name: Component Governance Remediation
 description: Detects actionable Component Governance alerts and opens one validated draft remediation pull request per upgraded package.
 intent: Keep production dependencies free of Component Governance vulnerabilities that have verified safe fixes.
 on:
-  schedule: every 4 hours
+  schedule: daily
   workflow_dispatch:
     inputs:
       ado_build_id:
@@ -50,6 +50,8 @@ network:
     - defaults
     - "*.dev.azure.com"
     - "*.visualstudio.com"
+    - graph.microsoft.com
+    - login.microsoftonline.com
     - node
     - packagefeedproxy.microsoft.io
 safe-outputs:
@@ -71,6 +73,89 @@ safe-outputs:
     fallback-as-issue: false
     max-patch-files: 25
     stacked: false
+  jobs:
+    send-remediation-email:
+      description: Send one notification email after remediation pull requests are created
+      needs: safe_outputs
+      runs-on: ubuntu-latest
+      output: Remediation email sent
+      inputs:
+        summary:
+          description: Plain-text summary of the package pull requests requested in this run
+          required: true
+          type: string
+      permissions:
+        contents: read
+        pull-requests: read
+      env:
+        EMAIL_CLIENT_ID: ${{ vars.CG_EMAIL_CLIENT_ID }}
+        EMAIL_CLIENT_SECRET: ${{ secrets.CG_EMAIL_CLIENT_SECRET }}
+        EMAIL_SENDER: ${{ vars.CG_EMAIL_SENDER }}
+        EMAIL_TENANT_ID: ${{ vars.CG_EMAIL_TENANT_ID }}
+        CREATED_PR_URLS: ${{ needs.safe_outputs.outputs.created_pr_url }}
+      steps:
+        - name: Send remediation email with Microsoft Graph
+          shell: bash
+          run: |
+            set -euo pipefail
+
+            if [ -z "${CREATED_PR_URLS:-}" ]; then
+              echo "No pull request was created; skipping email."
+              exit 0
+            fi
+
+            for required in EMAIL_CLIENT_ID EMAIL_CLIENT_SECRET EMAIL_SENDER EMAIL_TENANT_ID; do
+              if [ -z "${!required:-}" ]; then
+                echo "::error::Required email configuration $required is missing."
+                exit 1
+              fi
+            done
+
+            summary=$(jq -r '
+              [.items[]
+                | select(.type == "send_remediation_email")
+                | .summary]
+              | join("\n\n")
+            ' "$GH_AW_AGENT_OUTPUT")
+            summary=${summary:0:12000}
+
+            token_response=$(curl --fail-with-body --silent --show-error \
+              --request POST \
+              --data-urlencode "client_id=${EMAIL_CLIENT_ID}" \
+              --data-urlencode "client_secret=${EMAIL_CLIENT_SECRET}" \
+              --data-urlencode "scope=https://graph.microsoft.com/.default" \
+              --data-urlencode "grant_type=client_credentials" \
+              "https://login.microsoftonline.com/${EMAIL_TENANT_ID}/oauth2/v2.0/token")
+            access_token=$(jq -er '.access_token' <<< "$token_response")
+            echo "::add-mask::$access_token"
+
+            run_url="${GITHUB_SERVER_URL}/${GITHUB_REPOSITORY}/actions/runs/${GITHUB_RUN_ID}"
+            body=$(printf '%s\n\nPull request URL(s):\n%s\n\nWorkflow run:\n%s' \
+              "$summary" "$CREATED_PR_URLS" "$run_url")
+            payload=$(jq -n \
+              --arg subject "Component Governance remediation pull request created" \
+              --arg body "$body" \
+              '{
+                message: {
+                  subject: $subject,
+                  body: {
+                    contentType: "Text",
+                    content: $body
+                  },
+                  toRecipients: [
+                    {emailAddress: {address: "v-meghashg@microsoft.com"}},
+                    {emailAddress: {address: "v-crbuenrost@microsoft.com"}}
+                  ]
+                },
+                saveToSentItems: true
+              }')
+
+            curl --fail-with-body --silent --show-error \
+              --request POST \
+              --header "Authorization: Bearer ${access_token}" \
+              --header "Content-Type: application/json" \
+              --data "$payload" \
+              "https://graph.microsoft.com/v1.0/users/${EMAIL_SENDER}/sendMail"
 ---
 
 # Component Governance Remediation
@@ -132,6 +217,12 @@ For each package:
 Multiple advisories or vulnerable versions of the same package belong in that
 package's PR. If package patches cannot be isolated cleanly, do not create a
 combined PR; report the conflicting package groups as inconclusive.
+
+After requesting all package pull requests, call
+`safeoutputs send_remediation_email` exactly once with a plain-text summary of
+the packages, alert IDs, and current-to-upgraded versions. The email job runs
+after pull-request creation and skips delivery when no pull request was
+created.
 
 Do not push directly, force-push, dismiss alerts, or mark alerts resolved.
 

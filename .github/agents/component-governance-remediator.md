@@ -101,9 +101,9 @@ Treat `{{adoBuildId}}` as authoritative. Never substitute a different build.
 - Do not perform automatic major-version upgrades. Report them for manual
   remediation.
 - Do not force-push, rewrite history, or bypass branch policies.
-- Create one draft pull request per upgraded package automatically only when
-  authenticated GitHub tooling is available. Otherwise push each package
-  branch and provide its compare URL for manual draft-PR creation.
+- For on-demand/manual execution, leave validated edits local and uncommitted
+  unless the user explicitly requests a commit. Never push or create pull
+  requests automatically.
 - Preserve unrelated work and repository formatting.
 
 ## Completion
@@ -116,5 +116,5 @@ Return:
    unsupported, or inconclusive. If none are active, state that explicitly.
 3. The package, old version, new version, affected files, advisory, and
    validation performed for every remediation.
-4. The draft pull request URLs, manual draft-PR compare URLs, or exact reasons
-   they could not be prepared, grouped by package.
+4. Proposed branch names, commit messages, PR titles and bodies, or exact
+   blocking reasons, grouped by package.

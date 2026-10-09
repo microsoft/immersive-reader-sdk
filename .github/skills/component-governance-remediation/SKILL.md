@@ -301,18 +301,17 @@ Only after all validation succeeds:
    - Request the configured safe output exactly once per upgraded package with
      that package's isolated validated changes, allowed branch name, title, and
      non-empty body.
+   - After requesting all package PRs, request the configured remediation email
+     safe output exactly once with a plain-text package, alert, and version
+     summary. The email job must depend on successful PR safe-output
+     processing.
    - Use `noop` only when no package has validated file changes.
 2. In other execution environments:
-   - Commit each package's dependency-source and lockfile changes separately
-     with a concise security upgrade message.
-   - Push each package branch without force.
-   - When `gh auth status` succeeds, create one **draft** pull request per
-     package with `gh pr create --draft`.
-   - When authenticated GitHub tooling is unavailable, construct a GitHub
-     compare URL for each package branch from the actual base repository,
-     default branch, pushed fork owner, and remediation branch. Return each URL
-     and instruct the user to select **Create draft pull request**. Do not claim
-     that a pull request exists.
+   - Leave every validated package change local and uncommitted unless the user
+     explicitly asks for a commit.
+   - Do not push branches or create pull requests automatically.
+   - Return a proposed branch name, commit message, PR title, and complete PR
+     body for each package so a maintainer can review the local changes first.
 3. Every draft PR body must be non-empty and include:
    - triggering Azure DevOps build and Component Governance links;
    - a table containing alert ID, severity, dependency scope, package, current
@@ -332,5 +331,5 @@ the authoritative verification.
 | Alert | Scope | Package | Detected | Candidate | Classification | Result |
 | ----- | ----- | ------- | -------: | --------: | -------------- | ------ |
 
-Follow the table with the draft PR URLs, manual draft-PR compare URLs, or exact
-blocking reasons, grouped by package.
+Follow the table with automated draft PR URLs, proposed manual PR details, or
+exact blocking reasons, grouped by package.
