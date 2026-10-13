@@ -1,0 +1,41 @@
+name: Update deployment submodule
+
+on:
+  pull_request_target:
+    types:
+      - closed
+  schedule:
+    - cron: "17 7 * * *"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: update-deployment-submodule
+  cancel-in-progress: false
+
+jobs:
+  update:
+    if: >-
+      github.event_name != 'pull_request_target' ||
+      (github.event.pull_request.merged == true &&
+      github.event.pull_request.base.ref == 'master')
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - name: Check out trusted master
+        uses: actions/checkout@v4
+        with:
+          ref: master
+          persist-credentials: false
+
+      - name: Create or update the Azure DevOps submodule PR
+        shell: pwsh
+        env:
+          ADO_MCP_PAT_B64: ${{ secrets.ADO_MCP_PAT_B64 }}
+          GITHUB_TOKEN: ${{ github.token }}
+          MERGED_PR_NUMBER: ${{ github.event.pull_request.number || '0' }}
+        run: |
+          ./.github/scripts/update-deployment-submodule.ps1 `
+            -MergedPullRequestNumber ([int]$env:MERGED_PR_NUMBER)
