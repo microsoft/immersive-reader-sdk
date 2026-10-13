@@ -4,9 +4,6 @@ on:
   pull_request_target:
     types:
       - closed
-  schedule:
-    - cron: "17 7 * * *"
-  workflow_dispatch:
 
 permissions:
   contents: read
@@ -18,9 +15,9 @@ concurrency:
 jobs:
   update:
     if: >-
-      github.event_name != 'pull_request_target' ||
-      (github.event.pull_request.merged == true &&
-      github.event.pull_request.base.ref == 'master')
+      github.event.pull_request.merged == true &&
+      github.event.pull_request.base.ref == 'master' &&
+      startsWith(github.event.pull_request.title, '[Component Governance] ')
     runs-on: ubuntu-latest
     timeout-minutes: 20
     steps:
@@ -35,7 +32,7 @@ jobs:
         env:
           ADO_MCP_PAT_B64: ${{ secrets.ADO_MCP_PAT_B64 }}
           GITHUB_TOKEN: ${{ github.token }}
-          MERGED_PR_NUMBER: ${{ github.event.pull_request.number || '0' }}
+          MERGED_PR_NUMBER: ${{ github.event.pull_request.number }}
         run: |
           ./.github/scripts/update-deployment-submodule.ps1 `
             -MergedPullRequestNumber ([int]$env:MERGED_PR_NUMBER)

@@ -11,8 +11,11 @@ param(
 
     [string]$GitHubBranch = "master",
 
-    [ValidateRange(0, [int]::MaxValue)]
-    [int]$MergedPullRequestNumber = 0,
+    [string]$RequiredPullRequestTitlePrefix = "[Component Governance] ",
+
+    [Parameter(Mandatory = $true)]
+    [ValidateRange(1, [int]::MaxValue)]
+    [int]$MergedPullRequestNumber,
 
     [switch]$DryRun
 )
@@ -81,18 +84,22 @@ $githubRepositoryUrl = "https://github.com/$GitHubRepository.git"
 $githubApiBase = "https://api.github.com/repos/$GitHubRepository"
 $automationBranchPrefix = "automation/update-immersive-reader-sdk-"
 
-if ($MergedPullRequestNumber -gt 0) {
-    $mergedPullRequest = Invoke-RestMethod `
-        -Method Get `
-        -Headers $githubHeaders `
-        -Uri "$githubApiBase/pulls/$MergedPullRequestNumber"
+$mergedPullRequest = Invoke-RestMethod `
+    -Method Get `
+    -Headers $githubHeaders `
+    -Uri "$githubApiBase/pulls/$MergedPullRequestNumber"
 
-    if (-not $mergedPullRequest.merged_at) {
-        throw "GitHub PR #$MergedPullRequestNumber is not merged."
-    }
-    if ($mergedPullRequest.base.ref -ne $GitHubBranch) {
-        throw "GitHub PR #$MergedPullRequestNumber targeted '$($mergedPullRequest.base.ref)', not '$GitHubBranch'."
-    }
+if (-not $mergedPullRequest.merged_at) {
+    throw "GitHub PR #$MergedPullRequestNumber is not merged."
+}
+if ($mergedPullRequest.base.ref -ne $GitHubBranch) {
+    throw "GitHub PR #$MergedPullRequestNumber targeted '$($mergedPullRequest.base.ref)', not '$GitHubBranch'."
+}
+if (-not $mergedPullRequest.title.StartsWith(
+    $RequiredPullRequestTitlePrefix,
+    [StringComparison]::Ordinal
+)) {
+    throw "GitHub PR #$MergedPullRequestNumber does not have the required title prefix '$RequiredPullRequestTitlePrefix'."
 }
 
 $pullRequestsUri = "$adoApiBase/pullrequests" +
@@ -180,14 +187,12 @@ try {
         throw "Unable to verify the GitHub commit ancestry."
     }
 
-    if ($MergedPullRequestNumber -gt 0) {
-        & git -C $sdkDirectory merge-base --is-ancestor $mergedPullRequest.merge_commit_sha $targetSdkCommit
-        if ($LASTEXITCODE -eq 1) {
-            throw "The merge commit for GitHub PR #$MergedPullRequestNumber is not present on '$GitHubBranch'."
-        }
-        if ($LASTEXITCODE -ne 0) {
-            throw "Unable to verify the merged GitHub pull request commit."
-        }
+    & git -C $sdkDirectory merge-base --is-ancestor $mergedPullRequest.merge_commit_sha $targetSdkCommit
+    if ($LASTEXITCODE -eq 1) {
+        throw "The merge commit for GitHub PR #$MergedPullRequestNumber is not present on '$GitHubBranch'."
+    }
+    if ($LASTEXITCODE -ne 0) {
+        throw "Unable to verify the merged GitHub pull request commit."
     }
 
     if ($automationPullRequests.Count -eq 1) {
@@ -335,12 +340,7 @@ try {
         return
     }
 
-    $triggerDescription = if ($MergedPullRequestNumber -gt 0) {
-        "Triggered after https://github.com/$GitHubRepository/pull/$MergedPullRequestNumber was merged into ``$GitHubBranch``."
-    }
-    else {
-        "Detected by the scheduled or manually dispatched convergence check."
-    }
+    $triggerDescription = "Triggered after agent-created Component Governance PR https://github.com/$GitHubRepository/pull/$MergedPullRequestNumber was merged into ``$GitHubBranch``."
     $description = @"
 Advance the ``immersive-reader-sdk`` submodule from ``$currentSdkCommit`` to ``$targetSdkCommit``.
 
