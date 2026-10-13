@@ -69,7 +69,7 @@
     "@microsoft/immersive-reader-sdk": "^1.4.0",
     "@xmldom/xmldom": "0.8.15",
     "chokidar": "^3.5.3",
-    "engine.io": "^6.6.8",
+    "engine.io": "^6.6.11",
     "eslint": "^9.39.2",
     "glob-parent": "^6.0.2",
     "markdown-it": "^14.3.2",
