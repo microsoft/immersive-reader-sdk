@@ -1128,9 +1128,9 @@ big.js@^5.2.2:
   integrity sha512-vyL2OymJxmarO8gxMr0mhChsO9QGwhynfuu4+MHTAW6czfq9humCB7rKpUjDd9YUiDPU4mzpyupFSvOClAwbmQ==
 
 brace-expansion@^1.1.7:
-  version "1.1.19"
-  resolved "https://registry.npmjs.org/brace-expansion/-/brace-expansion-1.1.19.tgz#c71503a186dd2b3b74b4b56675a8dfa1754c47ec"
-  integrity sha512-LIhWrVWxvCzgwzHCzK9Q+upu8lOZ7rmYha2CtlT0RDOKgw7Dcgp0YQePPrOVBDxHnQfeIWi16/+fa1R0+cbR7A==
+  version "1.1.21"
+  resolved "https://registry.yarnpkg.com/brace-expansion/-/brace-expansion-1.1.21.tgz#edf4fab5c64d051aea5a8def49aba1c7522279f3"
+  integrity sha512-9zeA+KLZNNzglF2TPKRQEDyx6Yby7daAkuy8MiPzpXPsYDWi/DRM8jmwUDxokQjYqBpv5DgPiwD4h4ZZSy1Ujw==
   dependencies:
     balanced-match "^1.0.0"
     concat-map "0.0.1"
