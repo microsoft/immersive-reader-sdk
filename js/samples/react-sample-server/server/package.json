@@ -17,6 +17,7 @@
   "request": "2.88.2"
   },
   "resolutions": {
+    "body-parser": "1.20.9",
     "qs": "6.16.1"
   }
 }
