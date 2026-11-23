@@ -4,7 +4,7 @@
   "private": true,
   "dependencies": {
     "@microsoft/immersive-reader-sdk": "^1.4.0",
-    "follow-redirects": "^1.16.1",
+    "follow-redirects": "^1.16.3",
     "loader-utils": "^3.2.1",
     "minimatch": "11.0.1",
     "node-forge": "^1.4.3",
